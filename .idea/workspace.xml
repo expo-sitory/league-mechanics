@@ -4,21 +4,9 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="cda9b1ea-0c5c-4d4f-b093-41df2f38c092" name="Changes" comment="">
+    <list default="true" id="cda9b1ea-0c5c-4d4f-b093-41df2f38c092" name="Changes" comment="debug session">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/LeagueMechanics/src/main/java/dev/ixpu/leaguemechanics/LeagueMechanics.java" beforeDir="false" afterPath="$PROJECT_DIR$/LeagueMechanics/src/main/java/dev/ixpu/leaguemechanics/LeagueMechanics.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/LeagueMechanics/src/main/java/dev/ixpu/leaguemechanics/item/ItemStatsData.java" beforeDir="false" afterPath="$PROJECT_DIR$/LeagueMechanics/src/main/java/dev/ixpu/leaguemechanics/item/ItemStatsData.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/LeagueMechanics/src/main/java/dev/ixpu/leaguemechanics/item/passives/verdant_barrier.java" beforeDir="false" afterPath="$PROJECT_DIR$/LeagueMechanics/src/main/java/dev/ixpu/leaguemechanics/item/passives/verdant_barrier.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/LeagueMechanics/src/main/java/dev/ixpu/leaguemechanics/item/shop/ItemShopData.java" beforeDir="false" afterPath="$PROJECT_DIR$/LeagueMechanics/src/main/java/dev/ixpu/leaguemechanics/item/shop/ItemShopData.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/LeagueMechanics/src/main/java/dev/ixpu/leaguemechanics/item/shop/ItemShopGUI.java" beforeDir="false" afterPath="$PROJECT_DIR$/LeagueMechanics/src/main/java/dev/ixpu/leaguemechanics/item/shop/ItemShopGUI.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/LeagueMechanics/src/main/java/dev/ixpu/leaguemechanics/item/shop/ItemShopRegistry.java" beforeDir="false" afterPath="$PROJECT_DIR$/LeagueMechanics/src/main/java/dev/ixpu/leaguemechanics/item/shop/ItemShopRegistry.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/LeagueMechanics/src/main/java/dev/ixpu/leaguemechanics/listener/PlayerEventListener.java" beforeDir="false" afterPath="$PROJECT_DIR$/LeagueMechanics/src/main/java/dev/ixpu/leaguemechanics/listener/PlayerEventListener.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/LeagueMechanics/src/main/java/dev/ixpu/leaguemechanics/manager/ItemShopManager.java" beforeDir="false" afterPath="$PROJECT_DIR$/LeagueMechanics/src/main/java/dev/ixpu/leaguemechanics/manager/ItemShopManager.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/LeagueMechanics/src/main/java/dev/ixpu/leaguemechanics/placeholder/PlaceholderRegistry.java" beforeDir="false" afterPath="$PROJECT_DIR$/LeagueMechanics/src/main/java/dev/ixpu/leaguemechanics/placeholder/PlaceholderRegistry.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/LeagueMechanics/src/main/java/dev/ixpu/leaguemechanics/player/PlayerStats.java" beforeDir="false" afterPath="$PROJECT_DIR$/LeagueMechanics/src/main/java/dev/ixpu/leaguemechanics/player/PlayerStats.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/LeagueMechanics/src/main/java/dev/ixpu/leaguemechanics/util/ItemModifier.java" beforeDir="false" afterPath="$PROJECT_DIR$/LeagueMechanics/src/main/java/dev/ixpu/leaguemechanics/util/ItemModifier.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/LeagueMechanics/src/main/resources/config.yml" beforeDir="false" afterPath="$PROJECT_DIR$/LeagueMechanics/src/main/resources/config.yml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/README.md" beforeDir="false" afterPath="$PROJECT_DIR$/README.md" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -56,61 +44,61 @@
   </component>
   <component name="NextEditCompletionFeaturesState">
     <decayedCancelled>
-      <entry key="MS100" value="1.0001168679058412" />
-      <entry key="MS500" value="1.2411222313917014" />
-      <entry key="S2" value="2.1666914625175067" />
-      <entry key="S5" value="2.742746145531454" />
-      <entry key="S10" value="3.3094225868341436" />
-      <entry key="S30" value="4.201061878105866" />
-      <entry key="S60" value="4.559150954392763" />
-      <entry key="M2" value="4.76803247947836" />
-      <entry key="M5" value="4.904273148640794" />
-      <entry key="M10" value="4.951631993905674" />
-      <entry key="M15" value="4.967761540106276" />
-      <entry key="M30" value="5.041586312089299" />
-      <entry key="H1" value="6.382913986090129" />
-      <entry key="H2" value="13.838459598537064" />
-      <entry key="H4" value="35.03463315808477" />
-      <entry key="D1" value="446.02372018429963" />
-      <entry key="W1" value="1418.0843941486685" />
+      <entry key="MS100" value="1.0387155805239676" />
+      <entry key="MS500" value="1.8065764507230513" />
+      <entry key="S2" value="2.581701466901136" />
+      <entry key="S5" value="2.819699486929021" />
+      <entry key="S10" value="2.911150990262554" />
+      <entry key="S30" value="3.525562573612455" />
+      <entry key="S60" value="6.466645741888965" />
+      <entry key="M2" value="16.0614307481346" />
+      <entry key="M5" value="37.55465123913211" />
+      <entry key="M10" value="52.18857245544462" />
+      <entry key="M15" value="58.51955510556337" />
+      <entry key="M30" value="66.53911741273284" />
+      <entry key="H1" value="75.86372730046568" />
+      <entry key="H2" value="92.41349554854717" />
+      <entry key="H4" value="133.50547705191494" />
+      <entry key="D1" value="531.5024977100786" />
+      <entry key="W1" value="1699.6571024014415" />
     </decayedCancelled>
     <decayedSelected>
       <entry key="MS100" value="0.0" />
-      <entry key="MS500" value="0.0" />
-      <entry key="S2" value="0.0" />
-      <entry key="S5" value="0.0" />
-      <entry key="S10" value="0.0" />
-      <entry key="S30" value="4.7109607926337265E-295" />
-      <entry key="S60" value="6.863643924792229E-148" />
-      <entry key="M2" value="2.6198557068648317E-74" />
-      <entry key="M5" value="3.6924187614275256E-30" />
-      <entry key="M10" value="1.9215667465449963E-15" />
-      <entry key="M15" value="1.5456232773159882E-10" />
-      <entry key="M30" value="1.2432310899591379E-5" />
-      <entry key="H1" value="0.0035325435059794567" />
-      <entry key="H2" value="0.07913366848758165" />
-      <entry key="H4" value="1.7872013310500696" />
-      <entry key="D1" value="136.87931808516518" />
-      <entry key="W1" value="393.96232854403286" />
+      <entry key="MS500" value="5.599681222943334E-176" />
+      <entry key="S2" value="1.5382992421290658E-44" />
+      <entry key="S5" value="2.984120323335743E-18" />
+      <entry key="S10" value="1.7274606575362996E-9" />
+      <entry key="S30" value="0.0011998751392160811" />
+      <entry key="S60" value="0.034639213894314666" />
+      <entry key="M2" value="0.18611613012932188" />
+      <entry key="M5" value="0.5104034549766947" />
+      <entry key="M10" value="0.7144270130691486" />
+      <entry key="M15" value="0.7993128794982096" />
+      <entry key="M30" value="0.9060154152747738" />
+      <entry key="H1" value="1.0560625275138442" />
+      <entry key="H2" value="1.3393085612861646" />
+      <entry key="H4" value="1.8290517955668073" />
+      <entry key="D1" value="59.83876880561492" />
+      <entry key="W1" value="351.0831554785513" />
     </decayedSelected>
     <decayedShown>
-      <entry key="MS100" value="0.10087859223731518" />
-      <entry key="MS500" value="0.8411455913717749" />
-      <entry key="S2" value="2.0210017390539834" />
-      <entry key="S5" value="2.668147922210926" />
-      <entry key="S10" value="3.2569337714105187" />
-      <entry key="S30" value="4.174090456067685" />
-      <entry key="S60" value="4.5436696057742285" />
-      <entry key="M2" value="4.759703040434609" />
-      <entry key="M5" value="4.900786911344772" />
-      <entry key="M10" value="4.949861958004384" />
-      <entry key="M15" value="4.96657533595491" />
-      <entry key="M30" value="5.040976247205936" />
-      <entry key="H1" value="6.38583662289212" />
-      <entry key="H2" value="13.916525985650916" />
-      <entry key="H4" value="36.82018530760315" />
-      <entry key="D1" value="582.8980176864935" />
-      <entry key="W1" value="1812.0448576390997" />
+      <entry key="MS100" value="0.17264730065798775" />
+      <entry key="MS500" value="1.3100725091053282" />
+      <entry key="S2" value="2.388570542946081" />
+      <entry key="S5" value="2.733823150876605" />
+      <entry key="S10" value="2.865807685940974" />
+      <entry key="S30" value="3.4867676609000973" />
+      <entry key="S60" value="6.450100797177565" />
+      <entry key="M2" value="16.197752938122672" />
+      <entry key="M5" value="38.03036917966633" />
+      <entry key="M10" value="52.880957259515114" />
+      <entry key="M15" value="59.30279752962487" />
+      <entry key="M30" value="67.43609425393957" />
+      <entry key="H1" value="76.91435625226077" />
+      <entry key="H2" value="93.7489759121906" />
+      <entry key="H4" value="135.33080336464437" />
+      <entry key="D1" value="591.336797147254" />
+      <entry key="W1" value="2050.7381459600115" />
     </decayedShown>
   </component>
   <component name="ProblemsViewState">
@@ -130,46 +118,46 @@
     <option name="openDirectoriesWithSingleClick" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent"><![CDATA[{
-  "keyToString": {
-    "ASKED_SHARE_PROJECT_CONFIGURATION_FILES": "true",
-    "JAR Application.LeagueMechanics-1.2.0.jar.executor": "Debug",
-    "JAR Application.Test Server.executor": "Debug",
-    "Maven.CoordsSync [clean].executor": "Run",
-    "Maven.HorseStamina [clean].executor": "Run",
-    "Maven.LeagueMechanics [clean, package].executor": "Run",
-    "Maven.LeagueMechanics [clean,package].executor": "Run",
-    "Maven.LeagueMechanics [clean,validate,compile...].executor": "Run",
-    "Maven.LeagueMechanics [clean].executor": "Run",
-    "Maven.cullingames [clean].executor": "Run",
-    "Maven.item-origin [clean].executor": "Run",
-    "ModuleVcsDetector.initialDetectionPerformed": "true",
-    "RunOnceActivity.MCP Project settings loaded": "true",
-    "RunOnceActivity.ShowReadmeOnStart": "true",
-    "RunOnceActivity.git.unshallow": "true",
-    "RunOnceActivity.typescript.service.memoryLimit.init": "true",
-    "SHARE_PROJECT_CONFIGURATION_FILES": "true",
-    "codeWithMe.voiceChat.enabledByDefault": "false",
-    "com.intellij.ml.llm.matterhorn.ej.ui.settings.DefaultModelSelectionForGA.v1": "true",
-    "deletionFromPopupRequiresConfirmation": "false",
-    "git-widget-placeholder": "main",
-    "junie.onboarding.icon.badge.shown": "true",
-    "kotlin-language-version-configured": "true",
-    "last_opened_file_path": "/home/exponent/test-server",
-    "node.js.detected.package.eslint": "true",
-    "node.js.detected.package.jshint": "true",
-    "node.js.detected.package.tslint": "true",
-    "node.js.selected.package.eslint": "(autodetect)",
-    "node.js.selected.package.jshint": "",
-    "node.js.selected.package.tslint": "(autodetect)",
-    "nodejs_package_manager_path": "npm",
-    "project.structure.last.edited": "Project",
-    "project.structure.proportion": "0.0",
-    "project.structure.side.proportion": "0.2",
-    "settings.editor.selected.configurable": "ml.llm.AcpAgentsConfigurable",
-    "to.speed.mode.migration.done": "true"
+  <component name="PropertiesComponent">{
+  &quot;keyToString&quot;: {
+    &quot;ASKED_SHARE_PROJECT_CONFIGURATION_FILES&quot;: &quot;true&quot;,
+    &quot;JAR Application.LeagueMechanics-1.2.0.jar.executor&quot;: &quot;Debug&quot;,
+    &quot;JAR Application.Test Server.executor&quot;: &quot;Debug&quot;,
+    &quot;Maven.CoordsSync [clean].executor&quot;: &quot;Run&quot;,
+    &quot;Maven.HorseStamina [clean].executor&quot;: &quot;Run&quot;,
+    &quot;Maven.LeagueMechanics [clean, package].executor&quot;: &quot;Run&quot;,
+    &quot;Maven.LeagueMechanics [clean,package].executor&quot;: &quot;Run&quot;,
+    &quot;Maven.LeagueMechanics [clean,validate,compile...].executor&quot;: &quot;Run&quot;,
+    &quot;Maven.LeagueMechanics [clean].executor&quot;: &quot;Run&quot;,
+    &quot;Maven.cullingames [clean].executor&quot;: &quot;Run&quot;,
+    &quot;Maven.item-origin [clean].executor&quot;: &quot;Run&quot;,
+    &quot;ModuleVcsDetector.initialDetectionPerformed&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.MCP Project settings loaded&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.git.unshallow&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.typescript.service.memoryLimit.init&quot;: &quot;true&quot;,
+    &quot;SHARE_PROJECT_CONFIGURATION_FILES&quot;: &quot;true&quot;,
+    &quot;codeWithMe.voiceChat.enabledByDefault&quot;: &quot;false&quot;,
+    &quot;com.intellij.ml.llm.matterhorn.ej.ui.settings.DefaultModelSelectionForGA.v1&quot;: &quot;true&quot;,
+    &quot;deletionFromPopupRequiresConfirmation&quot;: &quot;false&quot;,
+    &quot;git-widget-placeholder&quot;: &quot;main&quot;,
+    &quot;junie.onboarding.icon.badge.shown&quot;: &quot;true&quot;,
+    &quot;kotlin-language-version-configured&quot;: &quot;true&quot;,
+    &quot;last_opened_file_path&quot;: &quot;/home/exponent/minecraft-projects/league-mechanics&quot;,
+    &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,
+    &quot;node.js.detected.package.jshint&quot;: &quot;true&quot;,
+    &quot;node.js.detected.package.tslint&quot;: &quot;true&quot;,
+    &quot;node.js.selected.package.eslint&quot;: &quot;(autodetect)&quot;,
+    &quot;node.js.selected.package.jshint&quot;: &quot;&quot;,
+    &quot;node.js.selected.package.tslint&quot;: &quot;(autodetect)&quot;,
+    &quot;nodejs_package_manager_path&quot;: &quot;npm&quot;,
+    &quot;project.structure.last.edited&quot;: &quot;Project&quot;,
+    &quot;project.structure.proportion&quot;: &quot;0.0&quot;,
+    &quot;project.structure.side.proportion&quot;: &quot;0.2&quot;,
+    &quot;settings.editor.selected.configurable&quot;: &quot;preferences.pluginManager&quot;,
+    &quot;to.speed.mode.migration.done&quot;: &quot;true&quot;
   }
-}]]></component>
+}</component>
   <component name="RecentsManager">
     <key name="MoveFile.RECENT_KEYS">
       <recent name="$PROJECT_DIR$" />
@@ -218,32 +206,32 @@
     </option>
   </component>
   <component name="VcsManagerConfiguration">
-    <MESSAGE value="refactor and registered new items stats" />
-    <MESSAGE value="modified" />
-    <MESSAGE value="updated" />
+    <MESSAGE value="Reduce boots AS values" />
+    <MESSAGE value="Fix after effects cooldown" />
+    <MESSAGE value="Fixed after effects cooldown" />
+    <MESSAGE value="Added attribute cleaner on player quit event" />
+    <MESSAGE value="Added concurrent purchase handler for security measures" />
+    <MESSAGE value="Update tenacity lore icon color" />
+    <MESSAGE value="Now removes all players attributes on server shutdown" />
+    <MESSAGE value="Delete rune/ directory" />
+    <MESSAGE value="Update README.d" />
+    <MESSAGE value="Added KDA system listener" />
+    <MESSAGE value="Register KDA placeholder" />
+    <MESSAGE value="Refactor GUI import directory" />
+    <MESSAGE value="Damage output Rebalancing 2/3" />
+    <MESSAGE value="Added KDA sytem death event listener" />
+    <MESSAGE value="Load models for class selection GUI" />
+    <MESSAGE value="Register player build inspection" />
+    <MESSAGE value="Register class selection GUI task" />
+    <MESSAGE value="Update permission node requirement" />
+    <MESSAGE value="Modified" />
+    <MESSAGE value="Bind to DamageManager" />
+    <MESSAGE value="Item stats Re-balancing 2/10" />
+    <MESSAGE value="Fixed double death triggers" />
+    <MESSAGE value="Fixed guaranteed Crit on percentage greater than 99" />
     <MESSAGE value="Update README.md" />
-    <MESSAGE value="skip op on perms check" />
-    <MESSAGE value="re-evaluate rune ticker period" />
-    <MESSAGE value="Create PlayerOrigin.java" />
-    <MESSAGE value="Separate player permission check method to another class" />
-    <MESSAGE value="new line on desc" />
-    <MESSAGE value="Modified dark seal stack removal events" />
-    <MESSAGE value="set Cull limit to 1" />
-    <MESSAGE value="Destroys the item instead of per player disabling" />
-    <MESSAGE value="Update description" />
-    <MESSAGE value="only show tab completions for op players" />
-    <MESSAGE value="Remove dark harvest level cost per stack" />
-    <MESSAGE value="Update regen task schedule values" />
-    <MESSAGE value="Update regen items lore" />
-    <MESSAGE value="Refactor aftershock to after-shock" />
-    <MESSAGE value="Update config.yml" />
-    <MESSAGE value="added debuff calculation method" />
-    <MESSAGE value="added temporary stat units modification" />
-    <MESSAGE value="added aftershock call on damage event" />
-    <MESSAGE value="Modified debuff procedures" />
-    <MESSAGE value="Rebalancing 1/5" />
-    <MESSAGE value="Refactor aftershock" />
-    <option name="LAST_COMMIT_MESSAGE" value="Refactor aftershock" />
+    <MESSAGE value="debug session" />
+    <option name="LAST_COMMIT_MESSAGE" value="debug session" />
   </component>
   <component name="XSLT-Support.FileAssociations.UIState">
     <expand />
