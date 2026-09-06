@@ -23,29 +23,4 @@ public class phage implements ItemPassive {
         return "§7ᴜɴɪQᴜᴇ – ʀᴀɢᴇ: §fAttacking a target grants §a+15 movement\n§aspeed §ffor §e2 seconds§f, §fwhich refreshes on each hit.";
     }
 
-    @Override
-    public void onEntityKill(Player player, ItemStack item) {}
-
-    public void onAttack(Player player) {
-        if (player == null) return;
-        UUID uuid = player.getUniqueId();
-        PlayerStats stats = PlayerStats.getOrCreate(player);
-
-        stats.modifyMS(RAGE_MS_BONUS);
-
-        LeagueMechanics plugin = LeagueMechanics.getInstance();
-        if (plugin == null) return;
-        new BukkitRunnable() {
-            @Override
-            public void run() {
-                if (!player.isOnline()) {
-                    cancel();
-                    return;
-                }
-                PlayerStats s = PlayerStats.getOrCreate(player);
-                s.modifyMS(-RAGE_MS_BONUS);
-                plugin.getPlayerEventListener().applyPlayerStats(player);
-            }
-        }.runTaskLater(plugin, RAGE_DURATION_TICKS);
-    }
 }
