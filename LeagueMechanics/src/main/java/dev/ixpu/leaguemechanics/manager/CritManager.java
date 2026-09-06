@@ -12,7 +12,7 @@ public class CritManager {
 
     private static final double[] LUCK_MODIFIER_TABLE = buildLuckModifierTable();
 
-    private final Map<UUID, Integer> critFailureStreaks = new ConcurrentHashMap<>();
+    private final Map<UUID, Integer> critStreaks = new ConcurrentHashMap<>();
 
     private static final CritManager INSTANCE = new CritManager();
 
@@ -42,43 +42,46 @@ public class CritManager {
         UUID uuid = player.getUniqueId();
 
         if (critChancePercent <= 0) {
-            critFailureStreaks.put(uuid, 0);
+            critStreaks.put(uuid, 0);
             return false;
         }
         if (critChancePercent >= 99.9) {
-            critFailureStreaks.put(uuid, 0);
+            critStreaks.put(uuid, 0);
             return true;
         }
 
-        int failureStreak = critFailureStreaks.getOrDefault(uuid, 0);
-        int cappedStreak = Math.min(failureStreak, MAX_STREAK);
+        int critStreak = critStreaks.getOrDefault(uuid, 0);
+        int cappedStreak = Math.min(critStreak, MAX_STREAK);
 
         double cappedCritChance = Math.min(critChancePercent, 100.0);
-        double maxPenalty = 0.20 * cappedCritChance;
-        double penalty = Math.min(maxPenalty, 0.20 * cappedStreak);
+        double bonusChance = (MAX_STREAK - cappedStreak) * 0.5; 
+        double effectiveCritChance = Math.min(100.0, cappedCritChance + bonusChance);
 
-        double effectiveCritChance = Math.max(0, cappedCritChance - penalty);
         boolean isCrit = Math.random() * 100 < effectiveCritChance;
 
         if (isCrit) {
-            critFailureStreaks.put(uuid, 0);
+            critStreaks.put(uuid, critStreak + 1);
         } else {
-            critFailureStreaks.put(uuid, failureStreak + 1);
+            critStreaks.put(uuid, 0);
         }
 
         return isCrit;
     }
 
+    public int getCritStreak(Player player) {
+        return critStreaks.getOrDefault(player.getUniqueId(), 0);
+    }
+
     public int getFailureStreak(Player player) {
-        return critFailureStreaks.getOrDefault(player.getUniqueId(), 0);
+        return getCritStreak(player);
     }
 
     public void resetFailureStreak(Player player) {
-        critFailureStreaks.remove(player.getUniqueId());
+        critStreaks.remove(player.getUniqueId());
     }
 
     public void removePlayer(Player player) {
-        critFailureStreaks.remove(player.getUniqueId());
+        critStreaks.remove(player.getUniqueId());
     }
 
     public double getLuckModifierForPlayer(Player player, double critChancePercent) {

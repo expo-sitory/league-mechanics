@@ -1059,7 +1059,7 @@ public class PlayerEventListener implements Listener, RuneCooldownGate {
         DebugLogger.debug(player, "§7[Debug] §f[§dAttacker§f] Total AD = §d" + Math.ceil(attackerAD * 100) / 100.0);
         DebugLogger.debug(player, "§7[Debug] §f[§dAttacker§f] Total AP = §d" + Math.ceil(attackerAP * 100) / 100.0);
         DebugLogger.debug(player, "§7[Debug] §f[§dAttacker§f] Crit Chance = §d" + Math.ceil(damage.getPlayerCritChance(player) * 100) / 100.0 + "%");
-        DebugLogger.debug(player, "§7[Debug] §f[§dAttacker§f] Crit Streak = §d" + critStreak(CritManager.getInstance().getFailureStreak(player)));
+        DebugLogger.debug(player, "§7[Debug] §f[§dAttacker§f] Crit Streak = §d" + CritManager.getInstance().getCritStreak(player));
         DebugLogger.debug(player, "§7[Debug] §f[§dTarget§f] Total AR = §d" + Math.ceil(targetAR * 100) / 100.0);
         DebugLogger.debug(player, "§7[Debug] §f[§dTarget§f] Total MR = §d" + Math.ceil(targetMR * 100) / 100.0);
 
@@ -1073,14 +1073,6 @@ public class PlayerEventListener implements Listener, RuneCooldownGate {
         } else {
             target.setHealth(newHealth);
         }
-    }
-
-    private int critStreak(int failedStreak) {
-        int successStreak = 0;
-        if (failedStreak > 0) {
-            return 0;
-        }
-        return successStreak++;
     }
 
     private boolean preventBundleInsert(ItemStack currentItem, ItemStack cursor) {
