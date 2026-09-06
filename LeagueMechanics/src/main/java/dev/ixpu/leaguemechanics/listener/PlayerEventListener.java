@@ -598,7 +598,6 @@ public class PlayerEventListener implements Listener, RuneCooldownGate {
                     && projectile.getShooter() instanceof Player shooter) {
                 attacker = shooter;
             }
-            // Track mob damage for death messages
             if (!(event.getDamager() instanceof Projectile) && event.getDamager() instanceof LivingEntity mob && !(mob instanceof Player)) {
                 lastMobDamager.put(player.getUniqueId(), mob);
             }
@@ -755,7 +754,6 @@ public class PlayerEventListener implements Listener, RuneCooldownGate {
                 online.sendMessage(component);
             }
         } else {
-            // Fallback: check tracked mob damager
             LivingEntity trackedMob = lastMobDamager.remove(player.getUniqueId());
             if (trackedMob != null) {
                 String mobName = formatMobName(trackedMob);
