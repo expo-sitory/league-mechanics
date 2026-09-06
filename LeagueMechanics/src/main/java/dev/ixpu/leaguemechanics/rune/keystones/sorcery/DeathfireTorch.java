@@ -8,6 +8,7 @@ import dev.ixpu.leaguemechanics.rune.RuneSlot;
 import dev.ixpu.leaguemechanics.player.PlayerStats;
 import dev.ixpu.leaguemechanics.util.DebugLogger;
 import dev.ixpu.leaguemechanics.manager.DamageManager;
+import dev.ixpu.leaguemechanics.manager.KillSourceTracker;
 import dev.ixpu.leaguemechanics.manager.StatScalingManager;
 
 
@@ -239,6 +240,9 @@ public class DeathfireTorch extends CooldownHandler {
                         double newHealth = Math.max(0, target.getHealth() - damagePerTick);
                         DebugLogger.debug(player, "§7[Debug] §f[§dAttacker§f] §f[§9Deathfire Torch§f] Keystone Damage = §d" + Math.ceil(damagePerTick * 100) / 100.0);
                         DebugLogger.debug(player, "§7[Debug] §f[§dTarget§f] Target New HP = §d" + Math.ceil(newHealth * 100) / 100.0);
+                        if (target instanceof Player targetPlayer) {
+                            KillSourceTracker.getInstance().setSource(targetPlayer, player);
+                        }
                         target.setHealth(newHealth);
                         spawnBurnParticles(target);
                         target.getWorld().playSound(target.getLocation(), Sound.ENTITY_ENDER_DRAGON_SHOOT, 1.0f, 2.0f);

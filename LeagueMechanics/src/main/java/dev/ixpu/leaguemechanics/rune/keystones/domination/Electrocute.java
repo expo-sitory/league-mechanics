@@ -5,6 +5,7 @@ import dev.ixpu.leaguemechanics.rune.RunePath;
 import dev.ixpu.leaguemechanics.rune.RuneSlot;
 import dev.ixpu.leaguemechanics.rune.StacksHandler;
 import dev.ixpu.leaguemechanics.manager.DamageManager;
+import dev.ixpu.leaguemechanics.manager.KillSourceTracker;
 import dev.ixpu.leaguemechanics.player.PlayerStats;
 import dev.ixpu.leaguemechanics.util.DebugLogger;
 import dev.ixpu.leaguemechanics.listener.PlayerEventListener;
@@ -104,6 +105,9 @@ public class Electrocute extends StacksHandler {
             player.playSound(player.getLocation(), Sound.ITEM_TRIDENT_THUNDER, 1.0f, 1.2f);
             target.getWorld().playSound(target.getLocation(), Sound.ITEM_TRIDENT_THUNDER, 1.0f, 1.0f);
 
+            if (livingTarget instanceof Player livingTargetPlayer) {
+                KillSourceTracker.getInstance().setSource(livingTargetPlayer, player);
+            }
             livingTarget.setHealth(newHealth);
             DebugLogger.debug(player, "§7[Debug] §f[§dAttacker§f] §f[§cElectrocute§f] Keystone Damage = §d" + Math.ceil(keystoneDamage(player, target) * 100) / 100.0);
             DebugLogger.debug(player, "§7[Debug] §f[§dTarget§f] Target New HP = §d" + Math.ceil(newHealth * 100) / 100.0);

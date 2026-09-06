@@ -224,7 +224,7 @@ public class FleetFootwork extends StacksHandler {
         return switch (state) {
             case ACTIVE -> {
                 double remainingSeconds = buffTicks / 20.0;
-                yield String.format("§e👣 (%.1f)", remainingSeconds);
+                yield String.format("§e👣 (%.1fs)", remainingSeconds);
             }
             case STACKING -> "§6👣 " + stacks + "/" + MAXIMUM_STACKS;
             case IDLE -> "§6👣";

@@ -5,6 +5,7 @@ import dev.ixpu.leaguemechanics.rune.RunePath;
 import dev.ixpu.leaguemechanics.rune.RuneSlot;
 import dev.ixpu.leaguemechanics.rune.StacksHandler;
 import dev.ixpu.leaguemechanics.manager.DamageManager;
+import dev.ixpu.leaguemechanics.manager.KillSourceTracker;
 import dev.ixpu.leaguemechanics.player.PlayerStats;
 import dev.ixpu.leaguemechanics.listener.PlayerEventListener;
 
@@ -87,6 +88,9 @@ public class Conqueror extends StacksHandler {
         DebugLogger.debug(player, "§7[Debug] §f[§dAttacker§f] [§eConqueror§f] Keystone Damage = §d" + Math.ceil(keystoneDamage(player, target, getStacks(player, targetUUID)) * 100) / 100.0);
         DebugLogger.debug(player, "§7[Debug] §f[§dTarget§f] Target New HP = §d" + Math.ceil(newHealth * 100) / 100.0);
 
+        if (livingTarget instanceof Player livingPlayer) {
+            KillSourceTracker.getInstance().setSource(livingPlayer, player);
+        }
         livingTarget.setHealth(newHealth);
     }
 

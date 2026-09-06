@@ -2,6 +2,7 @@ package dev.ixpu.leaguemechanics.item.passives;
 
 import dev.ixpu.leaguemechanics.manager.DamageManager;
 import dev.ixpu.leaguemechanics.manager.DebuffManager;
+import dev.ixpu.leaguemechanics.manager.KillSourceTracker;
 import dev.ixpu.leaguemechanics.rune.DebuffType;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
@@ -34,6 +35,8 @@ public class bramble_vest implements ItemPassive {
         dm.DamageCalculation(victim, attacker, 0, THORNS_MAGIC_DAMAGE, 0);
 
         double attackerHealth = Math.max(0, attacker.getHealth() - THORNS_MAGIC_DAMAGE);
+        KillSourceTracker.getInstance().setSource(attacker, victim);
+        attacker.damage(0.00001);
         attacker.setHealth(attackerHealth);
 
         DebuffManager.getInstance().applyDebuff(attacker, DebuffType.GRIEVOUS_WOUNDS, GRIEVOUS_DURATION_TICKS);

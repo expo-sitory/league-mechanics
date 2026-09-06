@@ -1,6 +1,7 @@
 package dev.ixpu.leaguemechanics.item.passives;
 
 import dev.ixpu.leaguemechanics.manager.ItemPassivesManager;
+import dev.ixpu.leaguemechanics.manager.KillSourceTracker;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
@@ -31,6 +32,7 @@ public class hextech_alternator implements ItemPassive {
         if (manager.isOnCooldown(attacker, getId())) return;
 
         double newHealth = Math.max(0, targetPlayer.getHealth() - REVVED_BONUS_MAGIC_DAMAGE);
+        KillSourceTracker.getInstance().setSource(targetPlayer, attacker);
         targetPlayer.setHealth(newHealth);
         manager.setCooldown(attacker, getId(), REVVED_COOLDOWN_TICKS);
     }

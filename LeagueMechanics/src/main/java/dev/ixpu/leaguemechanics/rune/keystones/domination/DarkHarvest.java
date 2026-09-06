@@ -5,6 +5,7 @@ import dev.ixpu.leaguemechanics.rune.RunePath;
 import dev.ixpu.leaguemechanics.rune.RuneSlot;
 import dev.ixpu.leaguemechanics.rune.StacksHandler;
 import dev.ixpu.leaguemechanics.manager.DamageManager;
+import dev.ixpu.leaguemechanics.manager.KillSourceTracker;
 import dev.ixpu.leaguemechanics.player.PlayerStats;
 import dev.ixpu.leaguemechanics.util.DebugLogger;
 import dev.ixpu.leaguemechanics.listener.PlayerEventListener;
@@ -94,6 +95,9 @@ public class DarkHarvest extends StacksHandler {
         DebugLogger.debug(player, "§7[Debug] §f[§dAttacker Stats§f] §f[§cDark Harvest§f] Keystone Damage = §d" + Math.ceil(keystoneDamage(player, target) * 100) / 100.0);
         DebugLogger.debug(player, "§7[Debug] §f[§dTarget§f] Target New HP = §d" + Math.ceil(newHealth * 100) / 100.0);
 
+        if (livingTarget instanceof Player livingTargetPlayer) {
+            KillSourceTracker.getInstance().setSource(livingTargetPlayer, player);
+        }
         livingTarget.setHealth(newHealth);
 
         if (isOnCooldown(player)) {

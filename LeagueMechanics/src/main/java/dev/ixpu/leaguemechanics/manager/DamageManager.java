@@ -55,9 +55,8 @@ public class DamageManager {
         ItemStatsManager statsManager = LeagueMechanics.getInstance().getStatsManager();
 
         double doransBonus = getDoransOnHitAD(player);
-
-        double attackerAD = (stats.getPlayerAD(player) + doransBonus) / 12.0;
-        double attackerAP = stats.getPlayerAP(player) / 12.0;
+        double attackerAD = (stats.getPlayerAD(player) + doransBonus);
+        double attackerAP = stats.getPlayerAP(player);
         double targetAR = getTargetAR(target);
         double targetMR = getTargetMR(target);
 
@@ -107,12 +106,6 @@ public class DamageManager {
             return itemStatsManager.getItemCC(player);
         }
         return 0;
-    }
-
-    public static boolean criticalChance(double playerCritChance) {
-        if (playerCritChance <= 0) return false;
-        if (playerCritChance >= 100) return true;
-        return RANDOM.nextDouble() * 100 < playerCritChance;
     }
 
     public static boolean criticalChance(Player player, double playerCritChance) {

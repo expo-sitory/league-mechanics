@@ -9,6 +9,7 @@ public interface ItemPassive {
     String getDescription();
     void onEntityKill(Player player, ItemStack item);
 
+    default void onAttack(Player player) {}
     default void onDealDamage(Player attacker, LivingEntity target, double damage,
                               boolean isPhysical, boolean isMagic) {}
     default void onTakeDamage(Player victim, Player attacker, double damage, boolean isMagic) {}

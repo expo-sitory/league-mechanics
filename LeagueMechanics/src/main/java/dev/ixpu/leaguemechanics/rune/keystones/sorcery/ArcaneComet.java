@@ -8,6 +8,7 @@ import dev.ixpu.leaguemechanics.player.PlayerStats;
 import dev.ixpu.leaguemechanics.util.DebugLogger;
 import dev.ixpu.leaguemechanics.manager.DamageManager;
 import dev.ixpu.leaguemechanics.manager.StatScalingManager;
+import dev.ixpu.leaguemechanics.manager.KillSourceTracker;
 import dev.ixpu.leaguemechanics.listener.PlayerEventListener;
 
 import java.util.HashMap;
@@ -139,6 +140,9 @@ public class ArcaneComet extends CooldownHandler {
             @Override
             public void run() {
                 if (tick >= COMET_FALL_TICKS) {
+                    if (target instanceof Player targetPlayer) {
+                        KillSourceTracker.getInstance().setSource(targetPlayer, shooter);
+                    }
                     target.damage(0.00001);
                     target.setHealth(newHealth);
                     DebugLogger.debug(shooter, "§7[Debug] §f[§dAttacker§f] §f[§9Arcane Comet§f] Keystone Damage = §d" + Math.ceil(keystoneDamage(shooter, target) * 100) / 100.0);

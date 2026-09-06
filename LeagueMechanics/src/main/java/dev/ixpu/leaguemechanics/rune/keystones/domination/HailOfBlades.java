@@ -7,6 +7,7 @@ import dev.ixpu.leaguemechanics.rune.CooldownHandler;
 import dev.ixpu.leaguemechanics.rune.RunePath;
 import dev.ixpu.leaguemechanics.rune.RuneSlot;
 import dev.ixpu.leaguemechanics.manager.DamageManager;
+import dev.ixpu.leaguemechanics.manager.KillSourceTracker;
 import dev.ixpu.leaguemechanics.manager.StatScalingManager;
 import dev.ixpu.leaguemechanics.listener.PlayerEventListener;
 
@@ -25,8 +26,8 @@ public class HailOfBlades extends CooldownHandler {
     private double ATTACK_SPEED = 10.0;
     private double TRUE_DAMAGE_PERCENT = 7.0;
 
-    private double AD_PERCENTAGE_MULTIPLIER = 12.0;
-    private double AP_PERCENTAGE_MULTIPLIER = 8.0;
+    private double AD_PERCENTAGE_MULTIPLIER = 6.0;
+    private double AP_PERCENTAGE_MULTIPLIER = 4.0;
 
     int COOLDOWN_DURATION_SECONDS = 60;
 
@@ -139,6 +140,9 @@ public class HailOfBlades extends CooldownHandler {
                 DebugLogger.debug(player, "§7[Debug] §f[§dAttacker§f] §f[§cHail of Blades§f] Keystone Damage = §d" + Math.ceil(keystoneDamage(player, target) * 100) / 100.0);
                 DebugLogger.debug(player, "§7[Debug] §f[§dTarget§f] Target New HP = §d" + Math.ceil(newHealth * 100) / 100.0);
 
+                if (livingTarget instanceof Player livingPlayer) {
+                    KillSourceTracker.getInstance().setSource(livingPlayer, player);
+                }
                 livingTarget.setHealth(newHealth);
 
                 return;

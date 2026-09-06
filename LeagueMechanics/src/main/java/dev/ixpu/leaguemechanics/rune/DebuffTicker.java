@@ -3,6 +3,7 @@ package dev.ixpu.leaguemechanics.rune;
 import dev.ixpu.leaguemechanics.LeagueMechanics;
 import dev.ixpu.leaguemechanics.manager.DebuffManager;
 import dev.ixpu.leaguemechanics.manager.ItemStatsManager;
+import dev.ixpu.leaguemechanics.manager.KillSourceTracker;
 import dev.ixpu.leaguemechanics.player.PlayerStats;
 import dev.ixpu.leaguemechanics.rune.DebuffType;
 import org.bukkit.entity.Player;
@@ -32,6 +33,9 @@ public class DebuffTicker {
                 }
                 double inflameDamage = INFLAME_BASE_DAMAGE + (INFLAME_AP_SCALING * attackerAP);
                 double newHealth = Math.max(0, target.getHealth() - inflameDamage);
+                if (attacker != null) {
+                    KillSourceTracker.getInstance().setSource(target, attacker);
+                }
                 target.setHealth(newHealth);
             }
         } else {

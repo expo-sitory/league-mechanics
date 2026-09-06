@@ -7,6 +7,7 @@ import dev.ixpu.leaguemechanics.rune.StacksHandler;
 import dev.ixpu.leaguemechanics.player.PlayerStats;
 import dev.ixpu.leaguemechanics.util.DebugLogger;
 import dev.ixpu.leaguemechanics.manager.DamageManager;
+import dev.ixpu.leaguemechanics.manager.KillSourceTracker;
 import dev.ixpu.leaguemechanics.listener.PlayerEventListener;
 
 import java.util.*;
@@ -122,6 +123,9 @@ public class GraspOfTheUndying extends StacksHandler {
         DebugLogger.debug(player, "§7[Debug] §f[§dAttacker§f] §f[§aGrasp Of The Undying§f] Keystone Damage = §d" + (keystoneDamage(player, target) * absorptionHearts * 0.2));
         DebugLogger.debug(player, "§7[Debug] §f[§dTarget§f] Target New HP = §d" + newHealth);
 
+        if (livingTarget instanceof Player livingPlayer) {
+            KillSourceTracker.getInstance().setSource(livingPlayer, player);
+        }
         livingTarget.setHealth(newHealth);
 
         var maxHealthAttr = player.getAttribute(Attribute.MAX_HEALTH);

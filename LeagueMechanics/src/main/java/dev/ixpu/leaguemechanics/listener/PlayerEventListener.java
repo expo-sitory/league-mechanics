@@ -504,14 +504,6 @@ public class PlayerEventListener implements Listener, RuneCooldownGate {
             }
         }
 
-        for (ItemStack inv : attacker.getInventory().getContents()) {
-            if (inv == null || inv.getType().isAir()) continue;
-            ItemPassive passive = getEquippedPassive(inv);
-            if (passive instanceof dev.ixpu.leaguemechanics.item.passives.phage phage) {
-                phage.onAttack(attacker);
-            }
-        }
-
         if (target instanceof Player targetPlayer) {
             PlayerRuneData targetRuneData = runeManager.getPlayerRuneData(targetPlayer);
             if (targetRuneData != null) {
@@ -680,10 +672,12 @@ public class PlayerEventListener implements Listener, RuneCooldownGate {
         return ItemShopGUI.getInventoryTitle().equals(view.getTitle());
     }
 
-    @EventHandler(priority = EventPriority.NORMAL)
+    @EventHandler(priority = EventPriority.HIGHEST)
     public void onPlayerDeath(PlayerDeathEvent event) {
         Player player = event.getEntity();
         Player killer = player.getKiller();
+
+        event.deathMessage(net.kyori.adventure.text.Component.empty());
 
         if (processedDeaths.contains(player.getUniqueId())) {
             return;
@@ -692,13 +686,25 @@ public class PlayerEventListener implements Listener, RuneCooldownGate {
 
         dev.ixpu.leaguemechanics.player.PlayerKDA.getInstance().recordDeath(player);
 
-        event.deathMessage(null);
-
         fireTakedowns(player);
         CritManager.getInstance().resetFailureStreak(player);
 
+        if (killer == null) {
+            killer = dev.ixpu.leaguemechanics.manager.KillSourceTracker.getInstance().getAndClearSource(player);
+        }
         if (killer != null) {
             broadcastKillMessage(killer, player);
+        } else {
+            Entity damageSource = player.getLastDamageCause() != null
+                    ? player.getLastDamageCause().getEntity()
+                    : null;
+            if (damageSource instanceof LivingEntity mob && !(damageSource instanceof Player)) {
+                String mobName = formatMobName(mob);
+                String message = "§c[Executed] §c" + player.getName() + " §chas been executed by §c" + mobName;
+                for (Player online : Bukkit.getOnlinePlayers()) {
+                    online.sendMessage(message);
+                }
+            }
         }
 
         List<Map.Entry<ItemStack, Integer>> leagueItems = new ArrayList<>();
@@ -1174,6 +1180,28 @@ public class PlayerEventListener implements Listener, RuneCooldownGate {
             online.sendMessage(message);
             online.playSound(online.getLocation(), Sound.ENTITY_PLAYER_LEVELUP, 1.0f, 1.5f);
         }
+    }
+
+    private String formatMobName(LivingEntity mob) {
+        String customName = mob.getCustomName();
+        if (customName != null && !customName.isEmpty()) {
+            return customName;
+        }
+        String typeName = mob.getType().name().toLowerCase().replace('_', ' ');
+        StringBuilder sb = new StringBuilder();
+        boolean capitalizeNext = true;
+        for (char c : typeName.toCharArray()) {
+            if (c == ' ') {
+                sb.append(c);
+                capitalizeNext = true;
+            } else if (capitalizeNext) {
+                sb.append(Character.toUpperCase(c));
+                capitalizeNext = false;
+            } else {
+                sb.append(c);
+            }
+        }
+        return sb.toString();
     }
 
     public void onTakedown(Player attacker, Player victim, boolean isKill) {

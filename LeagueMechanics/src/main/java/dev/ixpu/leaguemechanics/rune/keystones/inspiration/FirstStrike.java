@@ -2,6 +2,7 @@ package dev.ixpu.leaguemechanics.rune.keystones.inspiration;
 
 import dev.ixpu.leaguemechanics.LeagueMechanics;
 import dev.ixpu.leaguemechanics.manager.DamageManager;
+import dev.ixpu.leaguemechanics.manager.KillSourceTracker;
 import dev.ixpu.leaguemechanics.rune.CooldownHandler;
 import dev.ixpu.leaguemechanics.rune.RunePath;
 import dev.ixpu.leaguemechanics.rune.RuneSlot;
@@ -133,6 +134,9 @@ public class FirstStrike extends CooldownHandler {
             }
 
             double newHealth = Math.clamp(livingTarget.getHealth() - damageToApply, 0, livingTarget.getMaxHealth());
+            if (livingTarget instanceof Player livingPlayer) {
+                KillSourceTracker.getInstance().setSource(livingPlayer, player);
+            }
             livingTarget.setHealth(newHealth);
             bonusDamageTracked.put(attackerUUID, tracked + damageToApply);
             spawnXPOrbs(player, livingTarget);

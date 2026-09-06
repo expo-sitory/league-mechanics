@@ -72,7 +72,7 @@ public class PlayerStats {
         if (itemStatsManager != null) {
             itemAD += itemStatsManager.getItemAD(player);
         }
-        return Math.max(0, baseAD + itemAD + enchantAD + temporaryADModification);
+        return Math.max(0, baseAD + enchantAD + temporaryADModification + (itemAD / 14));
     }
 
     public double getPlayerAP(Player player) {
@@ -88,7 +88,7 @@ public class PlayerStats {
             itemAP += darkSeal.getAbilityPower(player);
         }
 
-        return Math.max(0, baseAP + itemAP + temporaryAPModification);
+        return Math.max(0, baseAP + temporaryAPModification + (itemAP / 14));
     }
 
     public double getPlayerAF(Player player) {
@@ -392,15 +392,15 @@ public class PlayerStats {
         DebuffManager debuffs = DebuffManager.getInstance();
         if (debuffs.hasDebuff(player, DebuffType.GRIEVOUS_WOUNDS)) {
             double remaining = debuffs.getRemainingSeconds(player, DebuffType.GRIEVOUS_WOUNDS);
-            sb.append(" §2🍀 (").append(remaining).append("s)");
+            sb.append(" §2🍀 (").append(String.format("%.1f", remaining)).append("s)");
         }
         if (debuffs.hasDebuff(player, DebuffType.INFLAME)) {
             double remaining = debuffs.getRemainingSeconds(player, DebuffType.INFLAME);
-            sb.append(" §6🔥 (").append(remaining).append("s)");
+            sb.append(" §6🔥 (").append(String.format("%.1f", remaining)).append("s)");
         }
         if (debuffs.hasDebuff(player, DebuffType.SLOW)) {
             double remaining = debuffs.getRemainingSeconds(player, DebuffType.SLOW);
-            sb.append(" §3❄ (").append(remaining).append("s)");
+            sb.append(" §3❄ (").append(String.format("%.1f", remaining)).append("s)");
         }
 
         dev.ixpu.leaguemechanics.manager.ItemPassivesManager passiveManager =
@@ -420,6 +420,6 @@ public class PlayerStats {
                                        Player player, String passiveId, String icon) {
         double remaining = manager.getRemainingCooldownSeconds(player, passiveId);
         if (remaining <= 0) return;
-        sb.append(" ").append(icon).append(" §7(").append(String.format("%.1fs", remaining)).append(")");
+        sb.append(" ").append(icon).append(" §7").append(String.format("%.1fs", remaining));
     }
 }

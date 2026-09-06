@@ -72,7 +72,7 @@ public class DebuffManager {
         return true;
     }
 
-    public int getRemainingSeconds(Player target, DebuffType type) {
+    public double getRemainingSeconds(Player target, DebuffType type) {
         if (target == null) return 0;
         Map<DebuffType, Long> debuffs = playerDebuffs.get(target.getUniqueId());
         if (debuffs == null) return 0;
@@ -85,7 +85,7 @@ public class DebuffManager {
             clearAuxiliaryMaps(target.getUniqueId(), type);
             return 0;
         }
-        return (int) Math.ceil(remainingMs / 1000.0);
+        return remainingMs / 1000.0;
     }
 
     public double getDebuffStrength(Player target, DebuffType type) {

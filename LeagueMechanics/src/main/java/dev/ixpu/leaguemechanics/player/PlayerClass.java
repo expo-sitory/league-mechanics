@@ -24,9 +24,9 @@ public class PlayerClass {
     static {
         CLASS_STATS.put(PlayerClassType.FIGHTER,   new ClassStats(10.0,  0.0, 0.0, 10.0,  0.0, 0.90, 0.90));
         CLASS_STATS.put(PlayerClassType.SUPPORT,   new ClassStats( 7.5,  5.0, 3.0,  5.0, 5.0, 0.70, 0.70));
-        CLASS_STATS.put(PlayerClassType.ASSASSIN,  new ClassStats( 4.5,  2.5, 0.0,  0.0,  0.0, 1.10, 1.10));
+        CLASS_STATS.put(PlayerClassType.ASSASSIN,  new ClassStats( 4.5,  2.5, 0.0,  0.0,  0.0, 1.15, 1.15));
         CLASS_STATS.put(PlayerClassType.MAGE,      new ClassStats( 0.0, 15.0, 0.0,  0.0,  0.0, 1.05, 1.05));
-        CLASS_STATS.put(PlayerClassType.TANK,      new ClassStats( 3.5,  2.0, 6.0, 25.0, 15.0, 0.80, 0.80));
+        CLASS_STATS.put(PlayerClassType.TANK,      new ClassStats( 3.5,  2.0, 6.0, 25.0, 15.0, 0.50, 0.50));
         CLASS_STATS.put(PlayerClassType.MARKSMAN,  new ClassStats( 6.0,  0.0, 0.0,  5.0,  0.0, 1.30, 1.30));
     }
 

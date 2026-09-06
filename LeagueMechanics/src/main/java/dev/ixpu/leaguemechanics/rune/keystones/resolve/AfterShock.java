@@ -3,6 +3,7 @@ package dev.ixpu.leaguemechanics.rune.keystones.resolve;
 import dev.ixpu.leaguemechanics.LeagueMechanics;
 import dev.ixpu.leaguemechanics.listener.PlayerEventListener;
 import dev.ixpu.leaguemechanics.manager.DamageManager;
+import dev.ixpu.leaguemechanics.manager.KillSourceTracker;
 import dev.ixpu.leaguemechanics.rune.CooldownHandler;
 import dev.ixpu.leaguemechanics.rune.RunePath;
 import dev.ixpu.leaguemechanics.rune.RuneSlot;
@@ -15,8 +16,6 @@ import org.bukkit.Sound;
 import org.bukkit.entity.Player;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Entity;
-import org.bukkit.entity.Mob;
-import org.bukkit.entity.Enemy;
 import org.bukkit.Color;
 import org.bukkit.Location;
 import org.bukkit.Particle;
@@ -173,11 +172,6 @@ public class AfterShock extends CooldownHandler {
 
     private void releaseShockwave(Player player) {
         clearResistances(player);
-        double totalHP = PlayerStats.getOrCreate(player).getPlayerHP(player);
-        double bonusHP = Math.max(0, totalHP - 20.0);
-        double baseComponent = baseShockwaveDamage + (shockwaveBonusHpPercent / 100.0 * bonusHP);
-        DamageManager damageManager = new DamageManager(LeagueMechanics.getInstance().getStatsManager());
-        damageManager.enableOnlyAP();
 
         Location playerLoc = player.getLocation();
         Collection<Entity> nearby = playerLoc.getWorld().getNearbyEntities(
@@ -190,20 +184,13 @@ public class AfterShock extends CooldownHandler {
         int hitCount = 0;
         for (Entity entity : nearby) {
             if (entity.equals(player)) continue;
-            if (!(entity instanceof Mob mob)) continue;
-            if (!(mob instanceof Enemy)) continue;
-            if (mob.getMaxHealth() < 20) continue;
+            if (!(entity instanceof LivingEntity living)) continue;
 
-            double targetMR = getTargetMR(mob);
-            double mitigatedBase = baseComponent / (1.0 + (targetMR / 100.0));
+            double damageToApply = keystoneDamage(player, living);
 
-            double apComponent = damageManager.DamageCalculation(player, mob, 0, 0, 0);
+            applyMagicDamage(living, damageToApply, player);
 
-            double finalDamage = mitigatedBase + apComponent;
-
-            applyMagicDamage(mob, finalDamage);
-
-            DebugLogger.debug(player, "§7[Debug] §f[§dAttacker§f] §f[§aAfter Shock§f] Keystone Damage = §d" + String.format("%.1f", finalDamage));
+            DebugLogger.debug(player, "§7[Debug] §f[§dAttacker§f] §f[§aAfter Shock§f] Keystone Damage = §d" + String.format("%.1f", damageToApply));
 
             hitCount++;
         }
@@ -213,7 +200,22 @@ public class AfterShock extends CooldownHandler {
         player.getWorld().playSound(playerLoc, Sound.ENTITY_GENERIC_EXPLODE, 0.8f, 0.5f);
     }
 
-    private void applyMagicDamage(LivingEntity target, double damage) {
+    private double keystoneDamage(Player player, Entity target) {
+        double totalHP = PlayerStats.getOrCreate(player).getPlayerHP(player);
+        double bonusHP = Math.max(0, totalHP - 20.0);
+        double baseComponent = baseShockwaveDamage + (shockwaveBonusHpPercent / 100.0 * bonusHP);
+
+        double targetMR = getTargetMR(target);
+        double mitigatedBase = baseComponent / (1.0 + (targetMR / 100.0));
+
+        DamageManager damageManager = new DamageManager(LeagueMechanics.getInstance().getStatsManager());
+        damageManager.enableOnlyAP();
+        double apComponent = damageManager.DamageCalculation(player, target, 0, 0, 0);
+
+        return mitigatedBase + apComponent;
+    }
+
+    private void applyMagicDamage(LivingEntity target, double damage, Player source) {
         if (target.isDead() || target.getHealth() <= 0) return;
 
         if (target instanceof Player targetPlayer) {
@@ -228,6 +230,11 @@ public class AfterShock extends CooldownHandler {
         }
 
         double newHealth = Math.clamp(target.getHealth() - damage, 0, target.getMaxHealth());
+
+        if (target instanceof Player targetPlayer) {
+            KillSourceTracker.getInstance().setSource(targetPlayer, source);
+        }
+
         target.damage(0.00001);
         target.setHealth(newHealth);
     }

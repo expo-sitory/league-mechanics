@@ -3,6 +3,7 @@ package dev.ixpu.leaguemechanics.item.passives;
 import dev.ixpu.leaguemechanics.LeagueMechanics;
 import dev.ixpu.leaguemechanics.manager.DamageManager;
 import dev.ixpu.leaguemechanics.manager.ItemStatsManager;
+import dev.ixpu.leaguemechanics.manager.KillSourceTracker;
 import org.bukkit.Color;
 import org.bukkit.Location;
 import org.bukkit.Particle;
@@ -119,6 +120,11 @@ public class bamis_cinder implements ItemPassive {
         }
 
         double newHealth = Math.clamp(target.getHealth() - damage, 0, target.getMaxHealth());
+
+        if (target instanceof Player targetPlayer) {
+            KillSourceTracker.getInstance().setSource(targetPlayer, source);
+        }
+
         target.damage(0.00001);
         target.setHealth(newHealth);
     }

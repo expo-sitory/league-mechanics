@@ -47,10 +47,22 @@ public class ItemShopManager implements Listener {
             return;
         }
         ItemStack currentItem = event.getCurrentItem();
+        ItemStack cursor = event.getCursor();
 
         if (event.getClickedInventory() == player.getInventory() && event.isShiftClick()
                 && currentItem != null && !currentItem.getType().isAir()
                 && ItemModifier.getItemId(currentItem) != null) {
+            event.setCancelled(true);
+            sellItem(player, currentItem, event.getSlot());
+            ItemShopGUI.updateShopDisplay(player);
+            return;
+        }
+
+        if (event.getClickedInventory() == player.getInventory()
+                && currentItem != null && !currentItem.getType().isAir()
+                && ItemModifier.getItemId(currentItem) != null
+                && (event.getClick().isLeftClick() || event.getClick().isRightClick())
+                && (cursor == null || cursor.getType().isAir())) {
             event.setCancelled(true);
             sellItem(player, currentItem, event.getSlot());
             ItemShopGUI.updateShopDisplay(player);
