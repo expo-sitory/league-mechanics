@@ -13,6 +13,7 @@ import dev.ixpu.leaguemechanics.manager.DamageManager;
 import dev.ixpu.leaguemechanics.manager.ItemPassivesManager;
 import dev.ixpu.leaguemechanics.manager.ItemShopManager;
 import dev.ixpu.leaguemechanics.manager.ItemStatsManager;
+import dev.ixpu.leaguemechanics.manager.KillSourceTracker;
 import dev.ixpu.leaguemechanics.manager.RuneManager;
 import dev.ixpu.leaguemechanics.manager.CritManager;
 
@@ -52,6 +53,8 @@ import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.event.player.*;
 import org.bukkit.inventory.ItemStack;
 
+import net.kyori.adventure.text.minimessage.MiniMessage;
+
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -75,9 +78,11 @@ public class PlayerEventListener implements Listener, RuneCooldownGate {
     private final Map<UUID, List<ItemStack>> pendingLeagueItemRestore = new HashMap<>();
     private final Map<UUID, Long> lastKillTime = new ConcurrentHashMap<>();
     private final Map<UUID, Integer> killStreak = new ConcurrentHashMap<>();
+    private final Map<UUID, LivingEntity> lastMobDamager = new ConcurrentHashMap<>();
     private final Set<UUID> processedDeaths = ConcurrentHashMap.newKeySet();
-    private static final long ASSIST_WINDOW_MS = 10_000L;
+    private final Map<UUID, List<Integer>> pendingTaskIds = new ConcurrentHashMap<>();
     private static final long MULTIKILL_WINDOW_MS = 10_000L;
+    private static final long ASSIST_WINDOW_MS = 10_000L;
 
     public PlayerEventListener(LeagueMechanics plugin) {
         this.plugin = plugin;
@@ -103,19 +108,19 @@ public class PlayerEventListener implements Listener, RuneCooldownGate {
         Player player = event.getPlayer();
         UUID uuid = player.getUniqueId();
 
-        GraspOfTheUndying grasp = (GraspOfTheUndying) runeRegistry.getRune("grasp-of-the-undying");
-        if (grasp != null) {
+        if (runeRegistry.getRune("grasp-of-the-undying") instanceof GraspOfTheUndying grasp) {
             grasp.resetAbsorption(player);
         }
         runeManager.unloadPlayerRunes(player);
         dev.ixpu.leaguemechanics.player.PlayerClass.unloadPlayer(uuid);
         lastHitTimes.remove(uuid);
+        lastKillTime.remove(uuid);
+        killStreak.remove(uuid);
+        lastMobDamager.remove(uuid);
         processedDeaths.remove(uuid);
         dev.ixpu.leaguemechanics.player.PlayerKDA.getInstance().saveForPlayer(uuid);
 
-        dev.ixpu.leaguemechanics.item.passives.dark_seal darkSeal =
-                (dev.ixpu.leaguemechanics.item.passives.dark_seal) ItemPassivesRegistry.getInstance().getPassive("dark-seal");
-        if (darkSeal != null) {
+        if (ItemPassivesRegistry.getInstance().getPassive("dark-seal") instanceof dev.ixpu.leaguemechanics.item.passives.dark_seal darkSeal) {
             darkSeal.clearStacks(player);
         }
 
@@ -123,6 +128,7 @@ public class PlayerEventListener implements Listener, RuneCooldownGate {
         itemStatsManager.invalidateCache(uuid);
         CritManager.getInstance().removePlayer(player);
         removeAllAttributeModifiers(player);
+        cancelPendingTasks(uuid);
     }
 
     @EventHandler(priority = EventPriority.NORMAL)
@@ -131,31 +137,8 @@ public class PlayerEventListener implements Listener, RuneCooldownGate {
             return;
         }
 
-        if (event.getView().getTitle().equals(ItemShopGUI.getInventoryTitle())) {
-            if (event.getClickedInventory() == event.getView().getTopInventory()) {
-                event.setCancelled(true);
-                int slot = event.getRawSlot();
-                if (slot >= 0 && slot < event.getInventory().getSize()) {
-                    ItemShopGUI.getInstance().handleClick(player, slot);
-                }
-                return;
-            }
-        }
-
-        if (event.getView().getTitle().equals(InspectGUI.getInventoryTitle())) {
-            event.setCancelled(true);
+        if (handleGUIClick(event, player)) {
             return;
-        }
-
-        if (event.getView().getTitle().equals(ClassSelectionGUI.getInventoryTitle())) {
-            if (event.getClickedInventory() == event.getView().getTopInventory()) {
-                event.setCancelled(true);
-                int slot = event.getRawSlot();
-                if (slot >= 0 && slot < event.getInventory().getSize()) {
-                    ClassSelectionGUI.getInstance().handleClick(player, slot);
-                }
-                return;
-            }
         }
 
         if (isLeagueItemTransfer(event)) {
@@ -175,54 +158,114 @@ public class PlayerEventListener implements Listener, RuneCooldownGate {
             return;
         }
 
-        if (currentItem != null && !currentItem.getType().isAir() && event.getClickedInventory() != player.getInventory()) {
-            String itemId = ItemModifier.getItemId(currentItem);
-            if (itemId != null) {
-                ItemStatsManager statsManager = plugin.getStatsManager();
-                if (statsManager.countLeagueItems(player) > 5) {
-                    event.setCancelled(true);
-                    player.sendMessage(Component.text("§cLeague Items Count: 6/6"));
-                    return;
+        if (!checkItemLimit(event, player, currentItem)) {
+            return;
+        }
+
+        if (!checkItemGroupRestriction(event, player, cursor)) {
+            return;
+        }
+
+        syncItemStatsOnMove(cursor, currentItem);
+
+        UUID uuid = player.getUniqueId();
+        PlayerStats.invalidateCache(uuid);
+        itemStatsManager.invalidateCache(uuid);
+
+        scheduleTask(uuid, () -> applyPlayerStats(player), 1L);
+    }
+
+    private boolean handleGUIClick(InventoryClickEvent event, Player player) {
+        String title = event.getView().getTitle();
+
+        if (title.equals(ItemShopGUI.getInventoryTitle())) {
+            if (event.getClickedInventory() == event.getView().getTopInventory()) {
+                event.setCancelled(true);
+                int slot = event.getRawSlot();
+                if (slot >= 0 && slot < event.getInventory().getSize()) {
+                    ItemShopGUI.getInstance().handleClick(player, slot);
                 }
+                return true;
             }
         }
 
-        if (!cursor.getType().isAir() && event.getClickedInventory() != player.getInventory()) {
-            String cursorItemId = ItemModifier.getItemId(cursor);
-            if (cursorItemId != null) {
-                ItemShopData shopData = ItemShopData.getInstance();
-                String itemGroup = shopData.getGroup(cursorItemId);
+        if (title.equals(InspectGUI.getInventoryTitle())) {
+            event.setCancelled(true);
+            return true;
+        }
 
-                if (itemGroup != null) {
-                    for (ItemStack inv : player.getInventory().getContents()) {
-                        if (inv != null && !inv.getType().isAir()) {
-                            String invItemId = ItemModifier.getItemId(inv);
-                            if (invItemId != null && !invItemId.equals(cursorItemId)) {
-                                String ownerGroup = shopData.getGroup(invItemId);
-                                if (ownerGroup != null && ownerGroup.equals(itemGroup)) {
-                                    event.setCancelled(true);
-                                    player.sendMessage(Component.text("§cYou can only apply one (1) " + itemGroup + " item to your build."));
-                                    return;
-                                }
-                            }
-                        }
-                    }
+        if (title.equals(ClassSelectionGUI.getInventoryTitle())) {
+            if (event.getClickedInventory() == event.getView().getTopInventory()) {
+                event.setCancelled(true);
+                int slot = event.getRawSlot();
+                if (slot >= 0 && slot < event.getInventory().getSize()) {
+                    ClassSelectionGUI.getInstance().handleClick(player, slot);
                 }
+                return true;
             }
         }
 
+        return false;
+    }
+
+    private boolean checkItemLimit(InventoryClickEvent event, Player player, ItemStack currentItem) {
+        if (currentItem == null || currentItem.getType().isAir() || event.getClickedInventory() == player.getInventory()) {
+            return true;
+        }
+
+        String itemId = ItemModifier.getItemId(currentItem);
+        if (itemId != null) {
+            ItemStatsManager statsManager = plugin.getStatsManager();
+            if (statsManager.countLeagueItems(player) > 5) {
+                event.setCancelled(true);
+                player.sendMessage(Component.text("§cLeague Items Count: 6/6"));
+                return false;
+            }
+        }
+        return true;
+    }
+
+    private boolean checkItemGroupRestriction(InventoryClickEvent event, Player player, ItemStack cursor) {
+        if (cursor.getType().isAir() || event.getClickedInventory() == player.getInventory()) {
+            return true;
+        }
+
+        String cursorItemId = ItemModifier.getItemId(cursor);
+        if (cursorItemId == null) {
+            return true;
+        }
+
+        ItemShopData shopData = ItemShopData.getInstance();
+        String itemGroup = shopData.getGroup(cursorItemId);
+        if (itemGroup == null) {
+            return true;
+        }
+
+        for (ItemStack inv : player.getInventory().getContents()) {
+            if (inv == null || inv.getType().isAir()) {
+                continue;
+            }
+            String invItemId = ItemModifier.getItemId(inv);
+            if (invItemId == null || invItemId.equals(cursorItemId)) {
+                continue;
+            }
+            String ownerGroup = shopData.getGroup(invItemId);
+            if (itemGroup.equals(ownerGroup)) {
+                event.setCancelled(true);
+                player.sendMessage(Component.text("§cYou can only apply one (1) " + itemGroup + " item to your build."));
+                return false;
+            }
+        }
+        return true;
+    }
+
+    private void syncItemStatsOnMove(ItemStack cursor, ItemStack currentItem) {
         if (!cursor.getType().isAir()) {
             ItemModifier.syncItemStats(cursor);
         }
         if (currentItem != null && !currentItem.getType().isAir()) {
             ItemModifier.syncItemStats(currentItem);
         }
-
-        UUID uuid = player.getUniqueId();
-        PlayerStats.invalidateCache(uuid);
-        itemStatsManager.invalidateCache(uuid);
-
-        plugin.getServer().getScheduler().runTaskLater(plugin, () -> applyPlayerStats(player), 1L);
     }
 
     private boolean isLeagueItemTransfer(InventoryClickEvent event) {
@@ -555,6 +598,10 @@ public class PlayerEventListener implements Listener, RuneCooldownGate {
                     && projectile.getShooter() instanceof Player shooter) {
                 attacker = shooter;
             }
+            // Track mob damage for death messages
+            if (!(event.getDamager() instanceof Projectile) && event.getDamager() instanceof LivingEntity mob && !(mob instanceof Player)) {
+                lastMobDamager.put(player.getUniqueId(), mob);
+            }
             boolean isMagic = event.getCause() == EntityDamageEvent.DamageCause.MAGIC
                     || event.getCause() == EntityDamageEvent.DamageCause.POISON
                     || event.getCause() == EntityDamageEvent.DamageCause.WITHER;
@@ -575,8 +622,7 @@ public class PlayerEventListener implements Listener, RuneCooldownGate {
             return;
         }
 
-        DeathfireTorch deathfire = (DeathfireTorch) runeRegistry.getRune("deathfire-torch");
-        if (deathfire != null) {
+        if (runeRegistry.getRune("deathfire-torch") instanceof DeathfireTorch deathfire) {
             deathfire.clearBurnForTarget(event.getEntity().getUniqueId());
         }
 
@@ -643,7 +689,7 @@ public class PlayerEventListener implements Listener, RuneCooldownGate {
         ItemStack drop = event.getItemDrop().getItemStack();
 
         if (!isLeagueItem(drop)) {
-            plugin.getServer().getScheduler().runTaskLater(plugin, () -> applyPlayerStats(player), 1L);
+            scheduleTask(player.getUniqueId(), () -> applyPlayerStats(player), 1L);
             return;
         }
 
@@ -651,7 +697,8 @@ public class PlayerEventListener implements Listener, RuneCooldownGate {
 
         if (shopOpen) {
             org.bukkit.entity.Item itemEntity = event.getItemDrop();
-            plugin.getServer().getScheduler().runTask(plugin, () -> {
+            UUID playerId = player.getUniqueId();
+            scheduleTask(playerId, () -> {
                 if (itemEntity.isValid() && !itemEntity.isDead()) {
                     itemEntity.remove();
                 }
@@ -675,6 +722,12 @@ public class PlayerEventListener implements Listener, RuneCooldownGate {
     @EventHandler(priority = EventPriority.HIGHEST)
     public void onPlayerDeath(PlayerDeathEvent event) {
         Player player = event.getEntity();
+
+        Entity originalDamager = null;
+        if (player.getLastDamageCause() != null) {
+            originalDamager = player.getLastDamageCause().getEntity();
+        }
+
         Player killer = player.getKiller();
 
         event.deathMessage(net.kyori.adventure.text.Component.empty());
@@ -690,20 +743,29 @@ public class PlayerEventListener implements Listener, RuneCooldownGate {
         CritManager.getInstance().resetFailureStreak(player);
 
         if (killer == null) {
-            killer = dev.ixpu.leaguemechanics.manager.KillSourceTracker.getInstance().getAndClearSource(player);
+            killer = KillSourceTracker.getInstance().getAndClearSource(player);
         }
         if (killer != null) {
             broadcastKillMessage(killer, player);
+        } else if (originalDamager instanceof LivingEntity mob && !(originalDamager instanceof Player)) {
+            String mobName = formatMobName(mob);
+            String message = "§c[Executed] §c" + player.getName() + " §chas been executed by §c" + mobName;
+            Component component = legacyMessage(message);
+            for (Player online : Bukkit.getOnlinePlayers()) {
+                online.sendMessage(component);
+            }
         } else {
-            Entity damageSource = player.getLastDamageCause() != null
-                    ? player.getLastDamageCause().getEntity()
-                    : null;
-            if (damageSource instanceof LivingEntity mob && !(damageSource instanceof Player)) {
-                String mobName = formatMobName(mob);
+            // Fallback: check tracked mob damager
+            LivingEntity trackedMob = lastMobDamager.remove(player.getUniqueId());
+            if (trackedMob != null) {
+                String mobName = formatMobName(trackedMob);
                 String message = "§c[Executed] §c" + player.getName() + " §chas been executed by §c" + mobName;
+                Component component = legacyMessage(message);
                 for (Player online : Bukkit.getOnlinePlayers()) {
-                    online.sendMessage(message);
+                    online.sendMessage(component);
                 }
+            } else {
+                DebugLogger.debug(player, "§c[Death] No killer found. originalDamager=" + originalDamager);
             }
         }
 
@@ -740,9 +802,7 @@ public class PlayerEventListener implements Listener, RuneCooldownGate {
                 continue;
             }
 
-            dev.ixpu.leaguemechanics.item.passives.dark_seal darkSeal =
-                    (dev.ixpu.leaguemechanics.item.passives.dark_seal) ItemPassivesRegistry.getInstance().getPassive("dark-seal");
-            if (darkSeal != null) {
+            if (ItemPassivesRegistry.getInstance().getPassive("dark-seal") instanceof dev.ixpu.leaguemechanics.item.passives.dark_seal darkSeal) {
                 int currentStacks = darkSeal.getStacks(player);
                 int newStacks = Math.max(currentStacks - 2, 0);
                 ItemPassivesManager.getInstance().setKillCount(player, "dark-seal", newStacks);
@@ -755,6 +815,7 @@ public class PlayerEventListener implements Listener, RuneCooldownGate {
     public void onPlayerRespawn(PlayerRespawnEvent event) {
         Player player = event.getPlayer();
         processedDeaths.remove(player.getUniqueId());
+        lastMobDamager.remove(player.getUniqueId());
         List<ItemStack> cached = pendingLeagueItemRestore.remove(player.getUniqueId());
         if (cached == null || cached.isEmpty()) {
             return;
@@ -948,16 +1009,14 @@ public class PlayerEventListener implements Listener, RuneCooldownGate {
 
     public boolean isPlayerOnAttackCooldown(Player player) {
         UUID uuid = player.getUniqueId();
-        if (!attackCooldown.containsKey(uuid)) {
+        Long cooldownEnd = attackCooldown.get(uuid);
+        if (cooldownEnd == null) {
             return false;
         }
-
-        long cooldownEnd = attackCooldown.get(uuid);
         if (System.currentTimeMillis() >= cooldownEnd) {
             attackCooldown.remove(uuid);
             return false;
         }
-
         return true;
     }
 
@@ -973,6 +1032,10 @@ public class PlayerEventListener implements Listener, RuneCooldownGate {
     }
 
     private void damageEvent(Player player, LivingEntity target, String type) {
+        if (target instanceof Player targetPlayer) {
+            KillSourceTracker.getInstance().setSource(targetPlayer, player);
+        }
+
         DamageManager damage = new DamageManager(itemStatsManager);
         PlayerStats stats = PlayerStats.getOrCreate(player);
 
@@ -1177,7 +1240,7 @@ public class PlayerEventListener implements Listener, RuneCooldownGate {
         }
 
         for (Player online : Bukkit.getOnlinePlayers()) {
-            online.sendMessage(message);
+            online.sendMessage(legacyMessage(message));
             online.playSound(online.getLocation(), Sound.ENTITY_PLAYER_LEVELUP, 1.0f, 1.5f);
         }
     }
@@ -1215,5 +1278,55 @@ public class PlayerEventListener implements Listener, RuneCooldownGate {
             }
             rune.onTakedown(attacker, victim, isKill);
         }
+    }
+
+    private int scheduleTask(UUID playerId, Runnable task, long delay) {
+        int taskId = plugin.getServer().getScheduler().runTaskLater(plugin, task, delay).getTaskId();
+        pendingTaskIds.computeIfAbsent(playerId, k -> new ArrayList<>()).add(taskId);
+        return taskId;
+    }
+
+    private int scheduleTask(UUID playerId, Runnable task) {
+        int taskId = plugin.getServer().getScheduler().runTask(plugin, task).getTaskId();
+        pendingTaskIds.computeIfAbsent(playerId, k -> new ArrayList<>()).add(taskId);
+        return taskId;
+    }
+
+    private void cancelPendingTasks(UUID playerId) {
+        List<Integer> taskIds = pendingTaskIds.remove(playerId);
+        if (taskIds != null) {
+            for (int taskId : taskIds) {
+                plugin.getServer().getScheduler().cancelTask(taskId);
+            }
+        }
+    }
+
+    private static final MiniMessage MINI_MESSAGE = MiniMessage.miniMessage();
+
+    private Component legacyMessage(String legacyText) {
+        String mmText = legacyText
+            .replace("§0", "<black>")
+            .replace("§1", "<dark_blue>")
+            .replace("§2", "<dark_green>")
+            .replace("§3", "<dark_aqua>")
+            .replace("§4", "<dark_red>")
+            .replace("§5", "<dark_purple>")
+            .replace("§6", "<gold>")
+            .replace("§7", "<gray>")
+            .replace("§8", "<dark_gray>")
+            .replace("§9", "<blue>")
+            .replace("§a", "<green>")
+            .replace("§b", "<aqua>")
+            .replace("§c", "<red>")
+            .replace("§d", "<light_purple>")
+            .replace("§e", "<yellow>")
+            .replace("§f", "<white>")
+            .replace("§k", "<obfuscated>")
+            .replace("§l", "<bold>")
+            .replace("§m", "<strikethrough>")
+            .replace("§n", "<underlined>")
+            .replace("§o", "<italic>")
+            .replace("§r", "<reset>");
+        return MINI_MESSAGE.deserialize(mmText);
     }
 }
