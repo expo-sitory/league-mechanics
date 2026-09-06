@@ -55,8 +55,8 @@ public class DamageManager {
         ItemStatsManager statsManager = LeagueMechanics.getInstance().getStatsManager();
 
         double doransBonus = getDoransOnHitAD(player);
-        double attackerAD = (stats.getPlayerAD(player) + doransBonus);
-        double attackerAP = stats.getPlayerAP(player);
+        double attackerAD = ((stats.getPlayerAD(player) + doransBonus) - statsManager.getItemAD(player)) + (statsManager.getItemAP(player) / 14);
+        double attackerAP = (stats.getPlayerAP(player) - statsManager.getItemAP(player)) + (statsManager.getItemAP(player) / 14); 
         double targetAR = getTargetAR(target);
         double targetMR = getTargetMR(target);
 
