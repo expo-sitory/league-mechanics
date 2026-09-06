@@ -72,7 +72,7 @@ public class PlayerStats {
         if (itemStatsManager != null) {
             itemAD += itemStatsManager.getItemAD(player);
         }
-        return Math.max(0, baseAD + enchantAD + temporaryADModification + (itemAD / 14));
+        return Math.max(0, baseAD + itemAD + enchantAD + temporaryADModification);
     }
 
     public double getPlayerAP(Player player) {
@@ -88,7 +88,7 @@ public class PlayerStats {
             itemAP += darkSeal.getAbilityPower(player);
         }
 
-        return Math.max(0, baseAP + temporaryAPModification + (itemAP / 14));
+        return Math.max(0, baseAP + itemAP + temporaryAPModification);
     }
 
     public double getPlayerAF(Player player) {
