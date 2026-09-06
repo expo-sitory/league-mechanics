@@ -45,17 +45,17 @@ public class CritManager {
             critStreaks.put(uuid, 0);
             return false;
         }
-        if (critChancePercent >= 99.9) {
-            critStreaks.put(uuid, 0);
+        if (critChancePercent >= 100.0) {
+            int currentStreak = critStreaks.getOrDefault(uuid, 0);
+            critStreaks.put(uuid, currentStreak + 1);
             return true;
         }
 
         int critStreak = critStreaks.getOrDefault(uuid, 0);
         int cappedStreak = Math.min(critStreak, MAX_STREAK);
 
-        double cappedCritChance = Math.min(critChancePercent, 100.0);
-        double bonusChance = (MAX_STREAK - cappedStreak) * 0.5; 
-        double effectiveCritChance = Math.min(100.0, cappedCritChance + bonusChance);
+        double bonusChance = (MAX_STREAK - cappedStreak) * 0.5;
+        double effectiveCritChance = Math.min(100.0, critChancePercent + bonusChance);
 
         boolean isCrit = Math.random() * 100 < effectiveCritChance;
 
