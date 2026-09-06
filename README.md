@@ -16,7 +16,7 @@ Increases and reductions to the statistics that are gained from any other source
 
 #### Types
 
-There are only **10** current types of player statistics divided into 3 different categories: **Defensive**, **Offensive** and **Utility**. In the list below, only the basic attribute of each statistic is presented. Inside the server, **weapons**, **items**, and **runes**, may freely scale off of any and/or multiple statistics (and sometimes other effects), whether in their damage, defense, or any other attribute. 
+There are only **14** current types of player statistics divided into 3 different categories: **Defensive**, **Offensive** and **Utility**. In the list below, only the basic attribute of each statistic is presented. Inside the server, **weapons**, **items**, and **runes**, may freely scale off of any and/or multiple statistics (and sometimes other effects), whether in their damage, defense, or any other attribute. 
 
 - ##### Defensive
   - <a id="health-bullet"></a>Health **[HP]**: A player dies when their health is reduced to zero. Some items and effects may scale off of your own, on your ally's, or on a target enemy's: current, bonus, missing, or maximum health.
@@ -91,7 +91,7 @@ A damage event is resolved in four steps: **base damage → resistance → multi
 
 The base damage value depends on the source's outgoing damage and the type of the attack:
 
-- **Stats Damage** (default): The attack's raw damage is the sum of two components, the attacker's total **attack damage** (AD) and the attacker's total **ability power** (AP), each divided by `12`. Physical damage uses the AD component; magic damage uses the AP component scaled by a `0.6` default ratio. Both are summed.
+- **Stats Damage** (default): The attack's raw damage is the sum of two components, the attacker's total **attack damage** (AD) and the attacker's total **ability power** (AP), each bonus value from the items divided by `14`. Physical damage uses the AD component; magic damage uses the AP component scaled by a `0.6` default ratio. Both are summed.
 - **True Damage**: The base damage is the attacker's total **true damage** (TD) plus `(AD + AP) × runesTrueDamage / 100`.
 - **Adaptive Damage**: The base damage is `runesAdaptive × levelBasedBonus(player)`, optionally multiplied further by the attacker's adaptive force if adaptive scaling is enabled. The damage type (physical or magic) is chosen by comparing the attacker's total AD vs AP, higher AP means magic damage, higher AD means physical damage.
 
