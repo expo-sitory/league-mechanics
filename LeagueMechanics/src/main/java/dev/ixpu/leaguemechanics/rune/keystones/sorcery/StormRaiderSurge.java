@@ -1,12 +1,15 @@
 package dev.ixpu.leaguemechanics.rune.keystones.sorcery;
 
 import dev.ixpu.leaguemechanics.LeagueMechanics;
-import dev.ixpu.leaguemechanics.listener.PlayerEventListener;
-import dev.ixpu.leaguemechanics.manager.DamageManager;
+import dev.ixpu.leaguemechanics.player.PlayerStats;
+
 import dev.ixpu.leaguemechanics.rune.CooldownHandler;
 import dev.ixpu.leaguemechanics.rune.RunePath;
 import dev.ixpu.leaguemechanics.rune.RuneSlot;
-import dev.ixpu.leaguemechanics.player.PlayerStats;
+
+import dev.ixpu.leaguemechanics.manager.DamageManager;
+
+import dev.ixpu.leaguemechanics.listener.PlayerEventListener;
 
 import java.util.HashMap;
 import java.util.Map;

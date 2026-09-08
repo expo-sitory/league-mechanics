@@ -87,10 +87,10 @@ public class ItemShopData {
         addItem("last-whisper", 35, 1, 5, ItemRarity.RARE, null, "marksman");
         addItem("hearthbound-axe", 30, 6, 6, ItemRarity.RARE, null, "marksman");
         addItem("zeal", 30, 6, 7, ItemRarity.RARE, null, "marksman");
-        addItem("berserkers-greaves", 30, 6, 12, ItemRarity.RARE, "boots", "main");
-        addItem("mercurys-treads", 33, 6, 13, ItemRarity.RARE, "boots", "main");
-        addItem("plated-steelcaps", 35, 6, 14, ItemRarity.RARE, "boots", "main");
-        addItem("sorcerers-shoes", 33, 6, 15, ItemRarity.RARE, "boots", "main");
+        addItem("berserkers-greaves", 30, 1, 12, ItemRarity.RARE, "boots", "main");
+        addItem("mercurys-treads", 33, 1, 13, ItemRarity.RARE, "boots", "main");
+        addItem("plated-steelcaps", 35, 1, 14, ItemRarity.RARE, "boots", "main");
+        addItem("sorcerers-shoes", 33, 1, 15, ItemRarity.RARE, "boots", "main");
         addItem("spectres-cowl", 30, 6, 8, ItemRarity.RARE, null, "tank");
         addItem("winged-moonplate", 28, 6, 9, ItemRarity.RARE, null, "tank");
         addItem("wardens-mail", 29, 6, 10, ItemRarity.RARE, null, "tank");

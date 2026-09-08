@@ -1,19 +1,25 @@
 package dev.ixpu.leaguemechanics;
 
 import dev.ixpu.leaguemechanics.gui.ClassSelectionGUI;
-import dev.ixpu.leaguemechanics.listener.PlayerEventListener;
+
+import dev.ixpu.leaguemechanics.placeholder.PlaceholderRegistry;
+import dev.ixpu.leaguemechanics.util.ItemModifier;
+import dev.ixpu.leaguemechanics.util.RunePersistence;
+
+import dev.ixpu.leaguemechanics.command.CommandHandler;
+import dev.ixpu.leaguemechanics.command.CommandTabCompletions;
 
 import dev.ixpu.leaguemechanics.manager.DebuffManager;
 import dev.ixpu.leaguemechanics.manager.RuneManager;
 import dev.ixpu.leaguemechanics.manager.ItemStatsManager;
 import dev.ixpu.leaguemechanics.manager.ItemShopManager;
 
-import dev.ixpu.leaguemechanics.command.CommandHandler;
-import dev.ixpu.leaguemechanics.command.CommandTabCompletions;
-
-import dev.ixpu.leaguemechanics.placeholder.PlaceholderRegistry;
-import dev.ixpu.leaguemechanics.util.ItemModifier;
-import dev.ixpu.leaguemechanics.util.RunePersistence;
+import dev.ixpu.leaguemechanics.listener.DamageListener;
+import dev.ixpu.leaguemechanics.listener.DeathListener;
+import dev.ixpu.leaguemechanics.listener.PlayerEventListener;
+import dev.ixpu.leaguemechanics.listener.PlayerStatsListener;
+import dev.ixpu.leaguemechanics.listener.PlayerInventoryListener;
+import dev.ixpu.leaguemechanics.listener.RuneListener;
 
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
@@ -56,7 +62,12 @@ public class LeagueMechanics extends JavaPlugin {
     private RuneManager runeManager;
     private ItemStatsManager itemStatsManager;
     private RunePersistence runePersistence;
+    private PlayerStatsListener playerStatsListener;
     private PlayerEventListener playerEventListener;
+    private PlayerInventoryListener playerInventoryListener;
+    private DamageListener damageListener;
+    private DeathListener deathListener;
+    private RuneListener runeListener;
     private boolean debugMode;
 
     @Override
@@ -66,7 +77,12 @@ public class LeagueMechanics extends JavaPlugin {
         runeManager = new RuneManager(this);
         itemStatsManager = new ItemStatsManager();
         runePersistence = new RunePersistence(this);
-        playerEventListener = new PlayerEventListener(this);
+        playerStatsListener = new PlayerStatsListener(this);
+        playerEventListener = new PlayerEventListener(this, playerStatsListener, damageListener);
+        playerInventoryListener = new PlayerInventoryListener(this, playerStatsListener);
+        damageListener = new DamageListener(this, playerStatsListener);
+        deathListener = new DeathListener(this, playerStatsListener);
+        runeListener = new RuneListener(this);
 
 
         getLogger().info("League Mechanics is starting...");
@@ -82,7 +98,11 @@ public class LeagueMechanics extends JavaPlugin {
         registerHotbarCleanupTask();
         registerDebuffTicker();
 
+        Bukkit.getPluginManager().registerEvents(damageListener, this);
+        Bukkit.getPluginManager().registerEvents(deathListener, this);
         Bukkit.getPluginManager().registerEvents(playerEventListener, this);
+        Bukkit.getPluginManager().registerEvents(playerInventoryListener, this);
+        Bukkit.getPluginManager().registerEvents(runeListener, this);
         Bukkit.getPluginManager().registerEvents(ItemShopManager.getInstance(), this);
 
         startRuneTicker();
@@ -153,6 +173,10 @@ public class LeagueMechanics extends JavaPlugin {
 
     public PlayerEventListener getPlayerEventListener() {
         return playerEventListener;
+    }
+
+    public DamageListener getDamageListener() {
+        return damageListener;
     }
 
     public RunePersistence getRunePersistence() {

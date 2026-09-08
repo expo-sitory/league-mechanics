@@ -1,20 +1,20 @@
 package dev.ixpu.leaguemechanics.command;
 
 import dev.ixpu.leaguemechanics.LeagueMechanics;
+import dev.ixpu.leaguemechanics.util.RunePersistence;
 
 import dev.ixpu.leaguemechanics.gui.InspectGUI;
 import dev.ixpu.leaguemechanics.gui.ItemShopGUI;
-
-import dev.ixpu.leaguemechanics.listener.PlayerEventListener;
-import dev.ixpu.leaguemechanics.manager.ItemStatsManager;
-import dev.ixpu.leaguemechanics.manager.RuneManager;
 
 import dev.ixpu.leaguemechanics.rune.CooldownHandler;
 import dev.ixpu.leaguemechanics.rune.RunePath;
 import dev.ixpu.leaguemechanics.rune.RuneRegistry;
 import dev.ixpu.leaguemechanics.rune.RuneSlot;
 
-import dev.ixpu.leaguemechanics.util.RunePersistence;
+import dev.ixpu.leaguemechanics.manager.ItemStatsManager;
+import dev.ixpu.leaguemechanics.manager.RuneManager;
+
+import dev.ixpu.leaguemechanics.listener.PlayerEventListener;
 
 import net.kyori.adventure.text.Component;
 import org.bukkit.Bukkit;

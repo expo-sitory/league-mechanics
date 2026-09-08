@@ -77,11 +77,11 @@ Adaptive Damage: This effect deals either physical or magic damage depending on 
 
 The player total adaptive damage scales with their current level across 5 tiers:
 
-- Level 1-49: **1.03x**
-- Level 50-99: **1.07x**
-- Level 100-199: **1.2x**
-- Level 200-299: **1.5x**
-- Level 300+: **1.7x**
+- Level 1-49: **1.02x**
+- Level 50-99: **1.03x**
+- Level 100-199: **1.07x**
+- Level 200-299: **1.2x**
+- Level 300+: **1.5x**
 
 #### Damage Calculation
 

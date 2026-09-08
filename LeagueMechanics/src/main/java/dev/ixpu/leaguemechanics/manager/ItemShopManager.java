@@ -58,11 +58,7 @@ public class ItemShopManager implements Listener {
             return;
         }
 
-        if (event.getClickedInventory() == player.getInventory()
-                && currentItem != null && !currentItem.getType().isAir()
-                && ItemModifier.getItemId(currentItem) != null
-                && (event.getClick().isLeftClick() || event.getClick().isRightClick())
-                && (cursor == null || cursor.getType().isAir())) {
+        if (event.getClickedInventory() == player.getInventory() && currentItem != null && !currentItem.getType().isAir() && ItemModifier.getItemId(currentItem) != null && (event.getClick().isLeftClick() || event.getClick().isRightClick()) && cursor.getType().isAir()) {
             event.setCancelled(true);
             sellItem(player, currentItem, event.getSlot());
             ItemShopGUI.updateShopDisplay(player);
@@ -344,7 +340,7 @@ public class ItemShopManager implements Listener {
         return false;
     }
 
-    public void consumeSellXp(Player player, ItemStack item) {
+    private void processItemSale(Player player, ItemStack item, int slotToRemove) {
         String itemId = ItemModifier.getItemId(item);
         if (itemId == null) return;
 
@@ -353,44 +349,15 @@ public class ItemShopManager implements Listener {
         if (shopItem == null) return;
 
         int refundAmount = (int) Math.floor(shopItem.getEffectivePrice(player) * 0.70);
-        player.setLevel(player.getLevel() + refundAmount);
-        player.playSound(player.getLocation(), Sound.ENTITY_EXPERIENCE_ORB_PICKUP, 1.0f, 1.0f);
-        player.sendMessage(Component.text("§fSold §e" + shopItem.getDisplayName() + " §ffor §a◎" + refundAmount + " §flevels (70%)"));
 
-        LeagueMechanics plugin = LeagueMechanics.getInstance();
-        if (plugin != null) {
-            plugin.getServer().getScheduler().runTaskLater(plugin, () -> {
-                UUID uuid = player.getUniqueId();
-                dev.ixpu.leaguemechanics.player.PlayerStats.invalidateCache(uuid);
-                dev.ixpu.leaguemechanics.manager.ItemStatsManager manager =
-                        dev.ixpu.leaguemechanics.LeagueMechanics.getInstance().getStatsManager();
-                if (manager != null) manager.invalidateCache(uuid);
-            }, 1L);
-        }
-    }
-
-    public void sellItem(Player player, ItemStack item, int knownSlot) {
-        String itemId = ItemModifier.getItemId(item);
-        if (itemId == null) {
-            return;
-        }
-
-        ItemShopRegistry registry = ItemShopRegistry.getInstance();
-        ItemShopRegistry.ShopItem shopItem = registry.getShopItem(itemId);
-        if (shopItem == null) {
-            return;
-        }
-
-        int refundAmount = (int) Math.floor(shopItem.getEffectivePrice(player) * 0.70);
-
-        if (knownSlot >= 0 && knownSlot < 36) {
-            ItemStack inInv = player.getInventory().getItem(knownSlot);
+        if (slotToRemove >= 0 && slotToRemove < 36) {
+            ItemStack inInv = player.getInventory().getItem(slotToRemove);
             if (inInv != null && !inInv.getType().isAir()
                     && itemId.equals(ItemModifier.getItemId(inInv))) {
                 if (inInv.getAmount() > 1) {
                     inInv.setAmount(inInv.getAmount() - 1);
                 } else {
-                    player.getInventory().clear(knownSlot);
+                    player.getInventory().clear(slotToRemove);
                 }
             }
         }
@@ -404,10 +371,18 @@ public class ItemShopManager implements Listener {
             plugin.getServer().getScheduler().runTaskLater(plugin, () -> {
                 UUID uuid = player.getUniqueId();
                 dev.ixpu.leaguemechanics.player.PlayerStats.invalidateCache(uuid);
-                dev.ixpu.leaguemechanics.manager.ItemStatsManager manager =
-                        dev.ixpu.leaguemechanics.LeagueMechanics.getInstance().getStatsManager();
+                ItemStatsManager manager = plugin.getStatsManager();
                 if (manager != null) manager.invalidateCache(uuid);
+                plugin.getPlayerEventListener().applyPlayerStats(player);
             }, 1L);
         }
+    }
+
+    public void consumeSellXp(Player player, ItemStack item) {
+        processItemSale(player, item, -1);
+    }
+
+    public void sellItem(Player player, ItemStack item, int knownSlot) {
+        processItemSale(player, item, knownSlot);
     }
 }

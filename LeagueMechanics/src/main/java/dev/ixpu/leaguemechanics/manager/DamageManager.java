@@ -55,8 +55,10 @@ public class DamageManager {
         ItemStatsManager statsManager = LeagueMechanics.getInstance().getStatsManager();
 
         double doransBonus = getDoransOnHitAD(player);
-        double attackerAD = ((stats.getPlayerAD(player) + doransBonus) - statsManager.getItemAD(player)) + (statsManager.getItemAP(player) / 14);
-        double attackerAP = (stats.getPlayerAP(player) - statsManager.getItemAP(player)) + (statsManager.getItemAP(player) / 14); 
+
+        double attackerAD = (stats.getPlayerAD(player) - statsManager.getItemAD(player)) + (statsManager.getItemAP(player) / 16) + doransBonus;
+        double attackerAP = (stats.getPlayerAP(player) - statsManager.getItemAP(player)) + (statsManager.getItemAP(player) / 16);
+
         double targetAR = getTargetAR(target);
         double targetMR = getTargetMR(target);
 
@@ -124,15 +126,15 @@ public class DamageManager {
 
     public static double levelBasedBonusForLevel(double playerLevel) {
         if (playerLevel >= 300) {
-            return 1.7;
+            return 1.3;
         } else if (playerLevel >= 200) {
-            return 1.5;
-        } else if (playerLevel >= 100) {
             return 1.2;
-        } else if (playerLevel >= 50) {
+        } else if (playerLevel >= 100) {
             return 1.07;
+        } else if (playerLevel >= 50) {
+            return 1.05;
         } else {
-            return 1.03;
+            return 1.02;
         }
     }
 
