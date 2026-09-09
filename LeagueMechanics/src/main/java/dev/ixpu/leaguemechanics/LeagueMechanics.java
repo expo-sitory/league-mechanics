@@ -78,9 +78,9 @@ public class LeagueMechanics extends JavaPlugin {
         itemStatsManager = new ItemStatsManager();
         runePersistence = new RunePersistence(this);
         playerStatsListener = new PlayerStatsListener(this);
+        damageListener = new DamageListener(this, playerStatsListener);
         playerEventListener = new PlayerEventListener(this, playerStatsListener, damageListener);
         playerInventoryListener = new PlayerInventoryListener(this, playerStatsListener);
-        damageListener = new DamageListener(this, playerStatsListener);
         deathListener = new DeathListener(this, playerStatsListener);
         runeListener = new RuneListener(this);
 

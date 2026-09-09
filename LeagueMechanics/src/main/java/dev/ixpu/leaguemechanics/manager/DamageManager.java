@@ -56,8 +56,8 @@ public class DamageManager {
 
         double doransBonus = getDoransOnHitAD(player);
 
-        double attackerAD = (stats.getPlayerAD(player) - statsManager.getItemAD(player)) + (statsManager.getItemAP(player) / 16) + doransBonus;
-        double attackerAP = (stats.getPlayerAP(player) - statsManager.getItemAP(player)) + (statsManager.getItemAP(player) / 16);
+        double attackerAD = (stats.getPlayerAD(player) - statsManager.getItemAD(player)) + (statsManager.getItemAP(player) / 17) + doransBonus;
+        double attackerAP = (stats.getPlayerAP(player) - statsManager.getItemAP(player)) + (statsManager.getItemAP(player) / 17);
 
         double targetAR = getTargetAR(target);
         double targetMR = getTargetMR(target);
