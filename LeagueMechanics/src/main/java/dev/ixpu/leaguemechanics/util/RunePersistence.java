@@ -194,6 +194,32 @@ public class RunePersistence {
         }
     }
 
+    public void saveRuneShards(UUID playerUUID, String row1, String row2, String row3) {
+        FileConfiguration config = YamlConfiguration.loadConfiguration(dataFile);
+        String playerKey = playerUUID.toString();
+        config.set(playerKey + ".rune-shards.row1", row1);
+        config.set(playerKey + ".rune-shards.row2", row2);
+        config.set(playerKey + ".rune-shards.row3", row3);
+        try {
+            config.save(dataFile);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    public String[] loadRuneShards(UUID playerUUID) {
+        FileConfiguration config = YamlConfiguration.loadConfiguration(dataFile);
+        String playerKey = playerUUID.toString();
+        String row1 = config.getString(playerKey + ".rune-shards.row1");
+        String row2 = config.getString(playerKey + ".rune-shards.row2");
+        String row3 = config.getString(playerKey + ".rune-shards.row3");
+
+        if (row1 == null || row2 == null || row3 == null) {
+            return null;
+        }
+        return new String[]{row1, row2, row3};
+    }
+
     public void clearAllRunes(UUID playerUUID) {
         FileConfiguration config = YamlConfiguration.loadConfiguration(dataFile);
         String playerKey = playerUUID.toString();
@@ -205,6 +231,7 @@ public class RunePersistence {
         config.set(playerKey + ".primary-slot-3-rune", null);
         config.set(playerKey + ".secondary-slot-1-rune", null);
         config.set(playerKey + ".secondary-slot-2-rune", null);
+        config.set(playerKey + ".rune-shards", null);
 
         if (config.getConfigurationSection(playerKey) != null && config.getConfigurationSection(playerKey).getKeys(false).isEmpty()) {
             config.set(playerKey, null);

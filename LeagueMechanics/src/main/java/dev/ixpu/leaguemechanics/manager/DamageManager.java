@@ -2,12 +2,11 @@ package dev.ixpu.leaguemechanics.manager;
 
 import dev.ixpu.leaguemechanics.LeagueMechanics;
 import dev.ixpu.leaguemechanics.player.PlayerStats;
+import dev.ixpu.leaguemechanics.rune.shards.ShardStats;
 import dev.ixpu.leaguemechanics.util.ItemModifier;
 
 import org.bukkit.entity.Player;
 import org.bukkit.entity.Entity;
-
-import java.util.Random;
 
 
 public class DamageManager {
@@ -18,8 +17,6 @@ public class DamageManager {
     protected boolean isTrueDamage = false;
     protected boolean isPerStack = false;
     protected boolean isOnlyAP = false;
-
-    private static final Random RANDOM = new Random();
 
     private static final double CRIT_DAMAGE_MULTIPLIER = 1.75;
 
@@ -55,8 +52,18 @@ public class DamageManager {
         ItemStatsManager statsManager = LeagueMechanics.getInstance().getStatsManager();
 
         double doransBonus = getDoransOnHitAD(player);
-        double attackerAD = ((stats.getPlayerAD(player) + doransBonus) - statsManager.getItemAD(player)) + (statsManager.getItemAP(player) / 14);
-        double attackerAP = (stats.getPlayerAP(player) - statsManager.getItemAP(player)) + (statsManager.getItemAP(player) / 14); 
+        ShardStats shards = stats.getRuneShards();
+        double shardsAdOrAp = shards.getAdOrAp(player);
+        double af = stats.getPlayerAF(player);
+        double attackerAD = (stats.getPlayerAD(player) - statsManager.getItemAD(player)) + (statsManager.getItemAP(player) / 17) + doransBonus;
+        double attackerAP = (stats.getPlayerAP(player) - statsManager.getItemAP(player)) + (statsManager.getItemAP(player) / 17);
+
+        if (af <= 0.7) {
+            attackerAD += shardsAdOrAp;
+        } else {
+            attackerAP += shardsAdOrAp;
+        }
+
         double targetAR = getTargetAR(target);
         double targetMR = getTargetMR(target);
 
@@ -124,15 +131,15 @@ public class DamageManager {
 
     public static double levelBasedBonusForLevel(double playerLevel) {
         if (playerLevel >= 300) {
-            return 1.7;
+            return 1.3;
         } else if (playerLevel >= 200) {
-            return 1.5;
-        } else if (playerLevel >= 100) {
             return 1.2;
-        } else if (playerLevel >= 50) {
+        } else if (playerLevel >= 100) {
             return 1.07;
+        } else if (playerLevel >= 50) {
+            return 1.05;
         } else {
-            return 1.03;
+            return 1.02;
         }
     }
 
@@ -165,4 +172,3 @@ public class DamageManager {
         return bonus;
     }
 }
-

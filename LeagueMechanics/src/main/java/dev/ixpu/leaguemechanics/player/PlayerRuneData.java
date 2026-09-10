@@ -14,6 +14,9 @@ public class PlayerRuneData {
     private CooldownHandler primarySlot3Rune;
     private CooldownHandler secondarySlot1Rune;
     private CooldownHandler secondarySlot2Rune;
+    private CooldownHandler shardSlot1Rune;
+    private CooldownHandler shardSlot2Rune;
+    private CooldownHandler shardSlot3Rune;
 
     public PlayerRuneData(Player player) {
         this.player = player;
@@ -87,6 +90,30 @@ public class PlayerRuneData {
         this.secondarySlot2Rune = rune;
     }
 
+    public CooldownHandler getShardSlot1Rune() {
+        return shardSlot1Rune;
+    }
+
+    public void setShardSlot1Rune(CooldownHandler rune) {
+        this.shardSlot1Rune = rune;
+    }
+
+    public CooldownHandler getShardSlot2Rune() {
+        return shardSlot2Rune;
+    }
+
+    public void setShardSlot2Rune(CooldownHandler rune) {
+        this.shardSlot2Rune = rune;
+    }
+
+    public CooldownHandler getShardSlot3Rune() {
+        return shardSlot3Rune;
+    }
+
+    public void setShardSlot3Rune(CooldownHandler rune) {
+        this.shardSlot3Rune = rune;
+    }
+
     public CooldownHandler[] getAllRunes() {
         return new CooldownHandler[] {
             keystoneRune,
@@ -94,7 +121,10 @@ public class PlayerRuneData {
             primarySlot2Rune,
             primarySlot3Rune,
             secondarySlot1Rune,
-            secondarySlot2Rune
+            secondarySlot2Rune,
+            shardSlot1Rune,
+            shardSlot2Rune,
+            shardSlot3Rune
         };
     }
 }

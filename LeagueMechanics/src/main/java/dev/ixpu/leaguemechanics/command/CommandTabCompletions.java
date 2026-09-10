@@ -68,6 +68,7 @@ public class CommandTabCompletions implements org.bukkit.command.TabCompleter {
 
         if (args.length == 3 && args[0].equalsIgnoreCase("runes") && args[1].equalsIgnoreCase("select")) {
             completions.add("primary");
+            completions.add("shards");
             //completions.add("secondary");
             return filter(completions, args[2]);
         }
@@ -78,6 +79,8 @@ public class CommandTabCompletions implements org.bukkit.command.TabCompleter {
                 return tabSelectPrimary(player, args);
             } else if (location.equals("secondary")) {
                 return tabSelectSecondary(player, args);
+            } else if (location.equals("shards")) {
+                return tabSelectShards(args);
             }
         }
 
@@ -144,6 +147,22 @@ public class CommandTabCompletions implements org.bukkit.command.TabCompleter {
                 .filter(rune -> rune.getPath().equals(path) && rune.getSlot().equals(slot))
                 .map(CooldownHandler::getId)
                 .collect(Collectors.toList());
+    }
+
+    private List<String> tabSelectShards(String[] args) {
+        List<String> shardOptions = List.of("option-1", "option-2", "option-3");
+
+        if (args.length == 4) {
+            return filter(shardOptions, args[3]);
+        }
+        if (args.length == 5) {
+            return filter(shardOptions, args[4]);
+        }
+        if (args.length == 6) {
+            return filter(shardOptions, args[5]);
+        }
+
+        return new ArrayList<>();
     }
 
     private List<String> filter(List<String> suggestions, String input) {

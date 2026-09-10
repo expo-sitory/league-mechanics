@@ -9,6 +9,8 @@ import dev.ixpu.leaguemechanics.manager.DebuffManager;
 import dev.ixpu.leaguemechanics.rune.DebuffType;
 import dev.ixpu.leaguemechanics.item.passives.ItemPassivesRegistry;
 import dev.ixpu.leaguemechanics.item.passives.dark_seal;
+import dev.ixpu.leaguemechanics.rune.shards.ShardStats;
+import dev.ixpu.leaguemechanics.rune.RuneShard;
 
 import org.bukkit.entity.Player;
 import org.bukkit.Material;
@@ -35,6 +37,8 @@ public class PlayerStats {
     private double temporaryCritDamageModification = 0.0;
     private double temporaryHealingMultiplier = 1.0;
 
+    private ShardStats shardStats;
+
     public static PlayerStats getOrCreate(Player player) {
         UUID uuid = player.getUniqueId();
         return INSTANCE_CACHE.computeIfAbsent(uuid, k -> new PlayerStats());
@@ -51,12 +55,14 @@ public class PlayerStats {
         if (itemStatsManager != null) {
             itemHP += itemStatsManager.getItemHP(player);
         }
-        return baseHP + itemHP;
+        double shardsHP = getRuneShards().getHealth();
+        return baseHP + itemHP + shardsHP;
     }
 
     public double getPlayerHR(Player player) {
         ItemStatsManager itemStatsManager = LeagueMechanics.getInstance().getStatsManager();
-        return itemStatsManager.getItemHR(player);
+        double shardsHR = getRuneShards().getHealthRegen();
+        return itemStatsManager.getItemHR(player) + shardsHR;
     }
 
 
@@ -139,8 +145,9 @@ public class PlayerStats {
                 }
             }
         }
+        double shardsAS = getRuneShards().getAttackSpeed();
         double asRatio = getPlayerClassAttackSpeedRatio(player);
-        double bonusASMultiplier = (itemAS + runeAS) / 100.0;
+        double bonusASMultiplier = (itemAS + runeAS + shardsAS) / 100.0;
         return asRatio * bonusASMultiplier + baseAS;
     }
 
@@ -178,9 +185,10 @@ public class PlayerStats {
             }
             ItemStatsManager itemStatsManager = LeagueMechanics.getInstance().getStatsManager();
             double itemMS = itemStatsManager != null ? itemStatsManager.getItemMS(player) : 0;
+            double shardsMS = getRuneShards().getMovementSpeed();
             double totalMS = (baseMS + attributeMS) * 100;
             totalMS += (speedEffectBonus * 100);
-            totalMS += itemMS;
+            totalMS += itemMS + shardsMS;
             totalMS += temporaryMSModification;
 
             return totalMS;
@@ -195,15 +203,19 @@ public class PlayerStats {
     }
 
     public double getPlayerCH(Player player) {
+        double shardsCH = getRuneShards().getCooldownHaste();
         ItemStatsManager itemStatsManager = LeagueMechanics.getInstance().getStatsManager();
-        if (itemStatsManager == null) return 0;
-        return itemStatsManager.getItemCH(player);
+        if (itemStatsManager == null) {
+            return shardsCH;
+        }
+        return itemStatsManager.getItemCH(player) + shardsCH;
     }
 
     public double getPlayerTN(Player player) {
         ItemStatsManager itemStatsManager = LeagueMechanics.getInstance().getStatsManager();
         if (itemStatsManager == null) return 0;
-        return itemStatsManager.getItemTN(player);
+        double shardsTN = getRuneShards().getTenacity();
+        return itemStatsManager.getItemTN(player) + shardsTN;
     }
 
     private double levelBasedTD(Player player) {
@@ -421,5 +433,16 @@ public class PlayerStats {
         double remaining = manager.getRemainingCooldownSeconds(player, passiveId);
         if (remaining <= 0) return;
         sb.append(" ").append(icon).append(" §7").append(String.format("%.1fs", remaining));
+    }
+
+    public ShardStats getRuneShards() {
+        if (shardStats == null) {
+            shardStats = new ShardStats();
+        }
+        return shardStats;
+    }
+
+    public void setRuneShards(ShardStats shards) {
+        this.shardStats = shards;
     }
 }

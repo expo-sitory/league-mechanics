@@ -1,20 +1,23 @@
 package dev.ixpu.leaguemechanics.command;
 
 import dev.ixpu.leaguemechanics.LeagueMechanics;
+import dev.ixpu.leaguemechanics.rune.shards.ShardStats;
+import dev.ixpu.leaguemechanics.util.RunePersistence;
 
 import dev.ixpu.leaguemechanics.gui.InspectGUI;
 import dev.ixpu.leaguemechanics.gui.ItemShopGUI;
-
-import dev.ixpu.leaguemechanics.listener.PlayerEventListener;
-import dev.ixpu.leaguemechanics.manager.ItemStatsManager;
-import dev.ixpu.leaguemechanics.manager.RuneManager;
 
 import dev.ixpu.leaguemechanics.rune.CooldownHandler;
 import dev.ixpu.leaguemechanics.rune.RunePath;
 import dev.ixpu.leaguemechanics.rune.RuneRegistry;
 import dev.ixpu.leaguemechanics.rune.RuneSlot;
+import dev.ixpu.leaguemechanics.rune.RuneShard;
 
-import dev.ixpu.leaguemechanics.util.RunePersistence;
+import dev.ixpu.leaguemechanics.manager.ItemStatsManager;
+import dev.ixpu.leaguemechanics.manager.RuneManager;
+
+import dev.ixpu.leaguemechanics.listener.PlayerEventListener;
+import dev.ixpu.leaguemechanics.player.PlayerStats;
 
 import net.kyori.adventure.text.Component;
 import org.bukkit.Bukkit;
@@ -26,14 +29,12 @@ import org.jetbrains.annotations.NotNull;
 
 public class CommandHandler implements CommandExecutor {
     private final LeagueMechanics plugin;
-    private final ItemStatsManager itemStatsManager;
     private final RuneManager runeManager;
     private final RunePersistence runePersistence;
     private final PlayerEventListener playerEventListener;
 
     public CommandHandler(LeagueMechanics plugin, ItemStatsManager itemStatsManager, RuneManager runeManager, RunePersistence runePersistence, PlayerEventListener playerEventListener) {
         this.plugin = plugin;
-        this.itemStatsManager = itemStatsManager;
         this.runeManager = runeManager;
         this.runePersistence = runePersistence;
         this.playerEventListener = playerEventListener;
@@ -107,6 +108,7 @@ public class CommandHandler implements CommandExecutor {
             case "select"   -> handleRuneSelect(player, args);
             case "clear"    -> handleRunesClear(player, args);
             case "info"     -> handleRunesInfo(player);
+            case "shards"   -> handleRuneShards(player, args);
             default -> {
                 sendRunesUsage(player);
                 yield true;
@@ -118,6 +120,7 @@ public class CommandHandler implements CommandExecutor {
         player.sendMessage(Component.text("§6§lRunes Commands:"));
         player.sendMessage(Component.text("§7  /lm runes select primary §e<path> [keystone] [slot1] [slot2] [slot3]"));
         //player.sendMessage(Component.text("§7  /lm runes select secondary §e<path> [slot1] [slot2]"));
+        player.sendMessage(Component.text("§7  /lm runes select shards §e<row1-option> <row2-option> <row3-option>"));
         player.sendMessage(Component.text("§7  /lm runes clear §8— §fclear all runes"));
         player.sendMessage(Component.text("§7  /lm runes info §8— §fshow currently equipped runes"));
     }
@@ -285,6 +288,39 @@ public class CommandHandler implements CommandExecutor {
         player.sendMessage(Component.text("§7   slot 1: §e" + p1 + " §7| slot 2: §e" + p2 + " §7| slot 3: §e" + p3));
         player.sendMessage(Component.text("§7  Secondary: §e" + secondary));
         player.sendMessage(Component.text("§7   slot 1: §e" + s1 + " §7| slot 2: §e" + s2));
+        return true;
+    }
+
+    private boolean handleRuneShards(Player player, String[] args) {
+        if (args.length < 5) {
+            player.sendMessage(Component.text("§cUsage: /lm runes select shards <row1-option> <row2-option> <row3-option>"));
+            return true;
+        }
+
+        String row1Option = args[2];
+        String row2Option = args[3];
+        String row3Option = args[4];
+
+        RuneShard row1 = RuneShard.fromRowAndOption(1, row1Option);
+        RuneShard row2 = RuneShard.fromRowAndOption(2, row2Option);
+        RuneShard row3 = RuneShard.fromRowAndOption(3, row3Option);
+
+        if (row1 == null || row2 == null || row3 == null) {
+            player.sendMessage(Component.text("§cInvalid shard selection. Use option-1, option-2, or option-3"));
+            return true;
+        }
+
+        ShardStats shards = PlayerStats.getOrCreate(player).getRuneShards();
+        shards.selectShards(row1, row2, row3);
+
+        runePersistence.saveRuneShards(player.getUniqueId(), row1.name(), row2.name(), row3.name());
+
+        player.sendMessage(Component.text("§aRune Shards selected:"));
+        player.sendMessage(Component.text("§7Row 1: §b" + row1.getDisplay()));
+        player.sendMessage(Component.text("§7Row 2: §b" + row2.getDisplay()));
+        player.sendMessage(Component.text("§7Row 3: §b" + row3.getDisplay()));
+
+        playerEventListener.applyPlayerStats(player);
         return true;
     }
 

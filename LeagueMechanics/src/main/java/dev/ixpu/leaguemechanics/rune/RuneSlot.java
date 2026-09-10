@@ -6,7 +6,10 @@ public enum RuneSlot {
     PRIMARY_SLOT_2(2, "primary-slot-2", false),
     PRIMARY_SLOT_3(3, "primary-slot-3", false),
     SECONDARY_SLOT_1(4, "secondary-slot-1", false),
-    SECONDARY_SLOT_2(5, "secondary-slot-2", false);
+    SECONDARY_SLOT_2(5, "secondary-slot-2", false),
+    SHARD_SLOT_1(6, "shard-slot-1", false),
+    SHARD_SLOT_2(7, "shard-slot-2", false),
+    SHARD_SLOT_3(8, "shard-slot-3", false);
 
     private final int position;
     private final String id;
