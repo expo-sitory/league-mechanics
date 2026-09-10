@@ -52,10 +52,10 @@ public class DamageManager {
         ItemStatsManager statsManager = LeagueMechanics.getInstance().getStatsManager();
 
         double doransBonus = getDoransOnHitAD(player);
-        ShardStats shards = stats.getRuneShards();
+        ShardStats shards = stats.getRuneShards(player);
         double shardsAdOrAp = shards.getAdOrAp(player);
         double af = stats.getPlayerAF(player);
-        double attackerAD = (stats.getPlayerAD(player) - statsManager.getItemAD(player)) + (statsManager.getItemAP(player) / 17) + doransBonus;
+        double attackerAD = (stats.getPlayerAD(player) - statsManager.getItemAD(player)) + (statsManager.getItemAD(player) / 17) + doransBonus;
         double attackerAP = (stats.getPlayerAP(player) - statsManager.getItemAP(player)) + (statsManager.getItemAP(player) / 17);
 
         if (af <= 0.7) {

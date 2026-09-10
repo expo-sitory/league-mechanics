@@ -134,6 +134,6 @@ public class PlaceholderRegistry extends PlaceholderExpansion {
         double cc = stats.getPlayerCC(player);
         double ms = stats.getPlayerMS(player);
         String ccFormatted = String.format("%.0f", cc) + "%";
-        return "§4.➷ §7" + String.format("%-4s", ccFormatted) + "  §f👣 §7" + String.format("%-4.0f", ms);
+        return "§0.§4➷ §7" + String.format("%-4s", ccFormatted) + "  §f👣 §7" + String.format("%-4.0f", ms);
     }
 }

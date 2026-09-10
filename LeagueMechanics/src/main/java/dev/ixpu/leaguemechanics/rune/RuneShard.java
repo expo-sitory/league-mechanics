@@ -8,7 +8,7 @@ public enum RuneShard {
 
     ROW2_ADAP("row2", "option-1", "Adaptive Force", 2),
     ROW2_MS("row2", "option-2", "Movement Speed", 2),
-    ROW2_HR("row2", "option-3", "Heatlh Regen", 2),
+    ROW2_HR("row2", "option-3", "Health Regen", 2),
 
     ROW3_HP("row3", "option-1", "Health", 3),
     ROW3_TN("row3", "option-2", "Tenacity", 3),

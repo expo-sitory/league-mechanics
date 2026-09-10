@@ -3,6 +3,7 @@ package dev.ixpu.leaguemechanics;
 import dev.ixpu.leaguemechanics.gui.ClassSelectionGUI;
 
 import dev.ixpu.leaguemechanics.placeholder.PlaceholderRegistry;
+import dev.ixpu.leaguemechanics.player.PlayerStats;
 import dev.ixpu.leaguemechanics.util.ItemModifier;
 import dev.ixpu.leaguemechanics.util.RunePersistence;
 
@@ -221,7 +222,7 @@ public class LeagueMechanics extends JavaPlugin {
                 ItemStatsManager itemStatsManager = getStatsManager();
 
                 for (Player player : Bukkit.getOnlinePlayers()) {
-                    double healthRegen = itemStatsManager.getItemHR(player);
+                    double healthRegen = itemStatsManager.getItemHR(player) + PlayerStats.getOrCreate(player).getRuneShards(player).getHealthRegen();
                     double saturationRegen = itemStatsManager.getItemSR(player);
 
                     dev.ixpu.leaguemechanics.player.PlayerStats ps = dev.ixpu.leaguemechanics.player.PlayerStats.getOrCreate(player);

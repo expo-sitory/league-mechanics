@@ -233,6 +233,48 @@ public class RuneManager {
         playerRuneData.put(uuid, runeData);
     }
 
+    public void setPlayerShardSlot1Rune(Player player, CooldownHandler rune) {
+        UUID uuid = player.getUniqueId();
+        PlayerRuneData runeData = playerRuneData.getOrDefault(uuid, new PlayerRuneData(player));
+
+        CooldownHandler oldRune = runeData.getShardSlot1Rune();
+        if (oldRune != null) {
+            oldRune.onDisable(player);
+        }
+
+        runeData.setShardSlot1Rune(rune);
+        rune.onEnable(player);
+        playerRuneData.put(uuid, runeData);
+    }
+
+    public void setPlayerShardSlot2Rune(Player player, CooldownHandler rune) {
+        UUID uuid = player.getUniqueId();
+        PlayerRuneData runeData = playerRuneData.getOrDefault(uuid, new PlayerRuneData(player));
+
+        CooldownHandler oldRune = runeData.getShardSlot2Rune();
+        if (oldRune != null) {
+            oldRune.onDisable(player);
+        }
+
+        runeData.setShardSlot2Rune(rune);
+        rune.onEnable(player);
+        playerRuneData.put(uuid, runeData);
+    }
+
+    public void setPlayerShardSlot3Rune(Player player, CooldownHandler rune) {
+        UUID uuid = player.getUniqueId();
+        PlayerRuneData runeData = playerRuneData.getOrDefault(uuid, new PlayerRuneData(player));
+
+        CooldownHandler oldRune = runeData.getShardSlot3Rune();
+        if (oldRune != null) {
+            oldRune.onDisable(player);
+        }
+
+        runeData.setShardSlot3Rune(rune);
+        rune.onEnable(player);
+        playerRuneData.put(uuid, runeData);
+    }
+
     public void clearPlayerRunes(Player player) {
         UUID uuid = player.getUniqueId();
         PlayerRuneData runeData = playerRuneData.get(uuid);
@@ -252,6 +294,9 @@ public class RuneManager {
             runeData.setPrimarySlot3Rune(null);
             runeData.setSecondarySlot1Rune(null);
             runeData.setSecondarySlot2Rune(null);
+            runeData.setShardSlot1Rune(null);
+            runeData.setShardSlot2Rune(null);
+            runeData.setShardSlot3Rune(null);
         }
     }
 

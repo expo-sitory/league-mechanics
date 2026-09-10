@@ -55,13 +55,13 @@ public class PlayerStats {
         if (itemStatsManager != null) {
             itemHP += itemStatsManager.getItemHP(player);
         }
-        double shardsHP = getRuneShards().getHealth();
+        double shardsHP = getRuneShards(player).getHealth();
         return baseHP + itemHP + shardsHP;
     }
 
     public double getPlayerHR(Player player) {
         ItemStatsManager itemStatsManager = LeagueMechanics.getInstance().getStatsManager();
-        double shardsHR = getRuneShards().getHealthRegen();
+        double shardsHR = getRuneShards(player).getHealthRegen();
         return itemStatsManager.getItemHR(player) + shardsHR;
     }
 
@@ -145,7 +145,7 @@ public class PlayerStats {
                 }
             }
         }
-        double shardsAS = getRuneShards().getAttackSpeed();
+        double shardsAS = getRuneShards(player).getAttackSpeed();
         double asRatio = getPlayerClassAttackSpeedRatio(player);
         double bonusASMultiplier = (itemAS + runeAS + shardsAS) / 100.0;
         return asRatio * bonusASMultiplier + baseAS;
@@ -185,7 +185,7 @@ public class PlayerStats {
             }
             ItemStatsManager itemStatsManager = LeagueMechanics.getInstance().getStatsManager();
             double itemMS = itemStatsManager != null ? itemStatsManager.getItemMS(player) : 0;
-            double shardsMS = getRuneShards().getMovementSpeed();
+            double shardsMS = getRuneShards(player).getMovementSpeed();
             double totalMS = (baseMS + attributeMS) * 100;
             totalMS += (speedEffectBonus * 100);
             totalMS += itemMS + shardsMS;
@@ -203,7 +203,7 @@ public class PlayerStats {
     }
 
     public double getPlayerCH(Player player) {
-        double shardsCH = getRuneShards().getCooldownHaste();
+        double shardsCH = getRuneShards(player).getCooldownHaste();
         ItemStatsManager itemStatsManager = LeagueMechanics.getInstance().getStatsManager();
         if (itemStatsManager == null) {
             return shardsCH;
@@ -214,7 +214,7 @@ public class PlayerStats {
     public double getPlayerTN(Player player) {
         ItemStatsManager itemStatsManager = LeagueMechanics.getInstance().getStatsManager();
         if (itemStatsManager == null) return 0;
-        double shardsTN = getRuneShards().getTenacity();
+        double shardsTN = getRuneShards(player).getTenacity();
         return itemStatsManager.getItemTN(player) + shardsTN;
     }
 
@@ -435,9 +435,25 @@ public class PlayerStats {
         sb.append(" ").append(icon).append(" §7").append(String.format("%.1fs", remaining));
     }
 
-    public ShardStats getRuneShards() {
+    public ShardStats getRuneShards(Player player) {
         if (shardStats == null) {
-            shardStats = new ShardStats();
+            String[] shardSelections = LeagueMechanics.getInstance().getRunePersistence().loadRuneShards(player.getUniqueId());
+            if (shardSelections != null) {
+                shardStats = new ShardStats();
+                try {
+                    RuneShard shard1 = (shardSelections.length > 0 && shardSelections[0] != null) ?
+                            RuneShard.valueOf(shardSelections[0]) : null;
+                    RuneShard shard2 = (shardSelections.length > 1 && shardSelections[1] != null) ?
+                            RuneShard.valueOf(shardSelections[1]) : null;
+                    RuneShard shard3 = (shardSelections.length > 2 && shardSelections[2] != null) ?
+                            RuneShard.valueOf(shardSelections[2]) : null;
+                    shardStats.selectShards(shard1, shard2, shard3);
+                } catch (IllegalArgumentException e) {
+                    shardStats = new ShardStats();
+                }
+            } else {
+                shardStats = new ShardStats();
+            }
         }
         return shardStats;
     }

@@ -108,7 +108,6 @@ public class CommandHandler implements CommandExecutor {
             case "select"   -> handleRuneSelect(player, args);
             case "clear"    -> handleRunesClear(player, args);
             case "info"     -> handleRunesInfo(player);
-            case "shards"   -> handleRuneShards(player, args);
             default -> {
                 sendRunesUsage(player);
                 yield true;
@@ -136,6 +135,8 @@ public class CommandHandler implements CommandExecutor {
             return handleRuneSelectPrimary(player, args);
         } else if (location.equals("secondary")) {
             return handleRuneSelectSecondary(player, args);
+        } else if (location.equals("shards")) {
+            return handleRuneSelectShards(player, args);
         } else {
             sendRunesUsage(player);
             return true;
@@ -230,6 +231,48 @@ public class CommandHandler implements CommandExecutor {
         }
     }
 
+    private void applyShardRune(Player player, RuneSlot slot, CooldownHandler rune) {
+        switch (slot) {
+            case SHARD_SLOT_1 -> runeManager.setPlayerShardSlot1Rune(player, rune);
+            case SHARD_SLOT_2 -> runeManager.setPlayerShardSlot2Rune(player, rune);
+            case SHARD_SLOT_3 -> runeManager.setPlayerShardSlot3Rune(player, rune);
+            default -> throw new IllegalArgumentException("Not a shard slot: " + slot);
+        }
+    }
+
+    private boolean handleRuneSelectShards(Player player, String[] args) {
+        if (args.length != 6) {
+            player.sendMessage(Component.text("§cUsage: /lm runes select shards <row1-option> <row2-option> <row3-option>"));
+            return true;
+        }
+
+        String row1Option = args[3];
+        String row2Option = args[4];
+        String row3Option = args[5];
+
+        RuneShard row1 = RuneShard.fromRowAndOption(1, row1Option);
+        RuneShard row2 = RuneShard.fromRowAndOption(2, row2Option);
+        RuneShard row3 = RuneShard.fromRowAndOption(3, row3Option);
+
+        if (row1 == null || row2 == null || row3 == null) {
+            player.sendMessage(Component.text("§cInvalid shard selection. Use option-1, option-2, or option-3"));
+            return true;
+        }
+
+        ShardStats shards = PlayerStats.getOrCreate(player).getRuneShards(player);
+        shards.selectShards(row1, row2, row3);
+
+        runePersistence.saveRuneShards(player.getUniqueId(), row1.name(), row2.name(), row3.name());
+
+        player.sendMessage(Component.text("§aRune Shards selected:"));
+        player.sendMessage(Component.text("§7Row 1: §b" + row1.getDisplay()));
+        player.sendMessage(Component.text("§7Row 2: §b" + row2.getDisplay()));
+        player.sendMessage(Component.text("§7Row 3: §b" + row3.getDisplay()));
+
+        playerEventListener.applyPlayerStats(player);
+        return true;
+    }
+
     private CooldownHandler resolveAndValidateRune(Player player, String runeId, RunePath path, RuneSlot slot) {
         String normalized = runeId.toLowerCase();
         CooldownHandler rune = RuneRegistry.getInstance().getRune(normalized);
@@ -283,47 +326,25 @@ public class CommandHandler implements CommandExecutor {
         String s1 = data.getSecondarySlot1Rune() != null ? data.getSecondarySlot1Rune().getId() : "§7none";
         String s2 = data.getSecondarySlot2Rune() != null ? data.getSecondarySlot2Rune().getId() : "§7none";
 
+        ShardStats shardStats = PlayerStats.getOrCreate(player).getRuneShards(player);
+        RuneShard selectedShard1 = shardStats.getRow1();
+        RuneShard selectedShard2 = shardStats.getRow2();
+        RuneShard selectedShard3 = shardStats.getRow3();
+
+        String shard1Display = selectedShard1 != null ? selectedShard1.getDisplay() : "§7none";
+        String shard2Display = selectedShard2 != null ? selectedShard2.getDisplay() : "§7none";
+        String shard3Display = selectedShard3 != null ? selectedShard3.getDisplay() : "§7none";
+
         player.sendMessage(Component.text("§6ᴍʏ ᴀᴄᴛɪᴠᴇ ʀᴜɴᴇꜱ:"));
         player.sendMessage(Component.text("§7  Primary:   §e" + primary + " §7— keystone: §e" + keystone));
         player.sendMessage(Component.text("§7   slot 1: §e" + p1 + " §7| slot 2: §e" + p2 + " §7| slot 3: §e" + p3));
         player.sendMessage(Component.text("§7  Secondary: §e" + secondary));
         player.sendMessage(Component.text("§7   slot 1: §e" + s1 + " §7| slot 2: §e" + s2));
+        player.sendMessage(Component.text("§7    Shards: §e" + shard1Display + " §7| §e" + shard2Display + " §7| §e" + shard3Display));
         return true;
     }
 
-    private boolean handleRuneShards(Player player, String[] args) {
-        if (args.length < 5) {
-            player.sendMessage(Component.text("§cUsage: /lm runes select shards <row1-option> <row2-option> <row3-option>"));
-            return true;
-        }
-
-        String row1Option = args[2];
-        String row2Option = args[3];
-        String row3Option = args[4];
-
-        RuneShard row1 = RuneShard.fromRowAndOption(1, row1Option);
-        RuneShard row2 = RuneShard.fromRowAndOption(2, row2Option);
-        RuneShard row3 = RuneShard.fromRowAndOption(3, row3Option);
-
-        if (row1 == null || row2 == null || row3 == null) {
-            player.sendMessage(Component.text("§cInvalid shard selection. Use option-1, option-2, or option-3"));
-            return true;
-        }
-
-        ShardStats shards = PlayerStats.getOrCreate(player).getRuneShards();
-        shards.selectShards(row1, row2, row3);
-
-        runePersistence.saveRuneShards(player.getUniqueId(), row1.name(), row2.name(), row3.name());
-
-        player.sendMessage(Component.text("§aRune Shards selected:"));
-        player.sendMessage(Component.text("§7Row 1: §b" + row1.getDisplay()));
-        player.sendMessage(Component.text("§7Row 2: §b" + row2.getDisplay()));
-        player.sendMessage(Component.text("§7Row 3: §b" + row3.getDisplay()));
-
-        playerEventListener.applyPlayerStats(player);
-        return true;
-    }
-
+    
     private boolean handleShop(Player player) {
         if (!player.hasPermission("leaguemechanics.user")) {
             player.sendMessage(Component.text("§cYou don't have permission to use this command."));

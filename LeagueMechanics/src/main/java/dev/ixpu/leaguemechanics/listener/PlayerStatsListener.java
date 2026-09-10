@@ -91,7 +91,8 @@ public class PlayerStatsListener {
 
         double classBaseHP = dev.ixpu.leaguemechanics.player.PlayerClass.getPlayerClassBaseHP(player);
         double itemBonusHP = statsManager.getItemHP(player);
-        double bonusHP = classBaseHP + itemBonusHP;
+        double runeBonusHP = PlayerStats.getOrCreate(player).getRuneShards(player).getHealth();
+        double bonusHP = classBaseHP + itemBonusHP + runeBonusHP;
         UUID playerId = player.getUniqueId();
         var attr = player.getAttribute(Attribute.MAX_HEALTH);
         if (attr != null) {
