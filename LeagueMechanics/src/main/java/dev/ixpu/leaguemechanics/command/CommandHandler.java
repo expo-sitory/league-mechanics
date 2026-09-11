@@ -3,6 +3,7 @@ package dev.ixpu.leaguemechanics.command;
 import dev.ixpu.leaguemechanics.LeagueMechanics;
 import dev.ixpu.leaguemechanics.rune.shards.ShardStats;
 import dev.ixpu.leaguemechanics.util.RunePersistence;
+import dev.ixpu.leaguemechanics.player.PlayerKDA;
 
 import dev.ixpu.leaguemechanics.gui.InspectGUI;
 import dev.ixpu.leaguemechanics.gui.ItemShopGUI;
@@ -27,11 +28,16 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.HashSet;
+import java.util.Set;
+import java.util.UUID;
+
 public class CommandHandler implements CommandExecutor {
     private final LeagueMechanics plugin;
     private final RuneManager runeManager;
     private final RunePersistence runePersistence;
     private final PlayerEventListener playerEventListener;
+    private final Set<UUID> pvpEnabledPlayers = new HashSet<>();
 
     public CommandHandler(LeagueMechanics plugin, ItemStatsManager itemStatsManager, RuneManager runeManager, RunePersistence runePersistence, PlayerEventListener playerEventListener) {
         this.plugin = plugin;
@@ -48,7 +54,7 @@ public class CommandHandler implements CommandExecutor {
         }
 
         if (args.length == 0) {
-            player.sendMessage(Component.text("§cUsage: /lm <shop|class|runes|reload|inspect>"));
+            player.sendMessage(Component.text("§cUsage: /lm <shop|class|runes|reload|inspect|pvp>"));
             return true;
         }
 
@@ -69,6 +75,8 @@ public class CommandHandler implements CommandExecutor {
             }
             case "runes" -> handleRunesCommand(player, args);
             case "class" -> handleClassCommand(player, args);
+            case "pvp" -> handlePvpCommand(player, args);
+            case "clearkda" -> handleClearKda(player);
             default -> {
                 player.sendMessage(Component.text("§cUnknown subcommand."));
                 yield false;
@@ -90,6 +98,55 @@ public class CommandHandler implements CommandExecutor {
         dev.ixpu.leaguemechanics.player.PlayerClass.clearPlayerClass(player);
         player.sendMessage(Component.text("§a✓ Class cleared!"));
         return true;
+    }
+
+    private boolean handlePvpCommand(Player player, String[] args) {
+        if (!player.hasPermission("leaguemechanics.user")) {
+            player.sendMessage(Component.text("§cYou don't have permission to use this command."));
+            return true;
+        }
+
+        if (args.length < 2) {
+            player.sendMessage(Component.text("§cUsage: /lm pvp <on|off>"));
+            return true;
+        }
+
+        String mode = args[1].toLowerCase();
+        UUID uuid = player.getUniqueId();
+
+        if (mode.equals("on")) {
+            pvpEnabledPlayers.add(uuid);
+            player.sendMessage(Component.text("§a✓ PVP mode enabled!"));
+        } else if (mode.equals("off")) {
+            pvpEnabledPlayers.remove(uuid);
+            player.sendMessage(Component.text("§a✓ PVP mode disabled!"));
+        } else {
+            player.sendMessage(Component.text("§cUsage: /lm pvp <on|off>"));
+            return true;
+        }
+
+        return true;
+    }
+
+    private boolean handleClearKda(Player player) {
+        if (!player.hasPermission("leaguemechanics.admin")) {
+            player.sendMessage(Component.text("§cYou don't have permission to use this command."));
+            return true;
+        }
+
+        // Clear all KDA data
+        PlayerKDA.getInstance().clearAllKda();
+
+        // Reload KDA data from database to clear the cache
+        PlayerKDA.getInstance().loadAllFromDatabase();
+
+        player.sendMessage(Component.text("§a✓ All player KDA data has been cleared!"));
+        return true;
+    }
+
+    public boolean isPvpEnabled(Player attacker, Player target) {
+        return pvpEnabledPlayers.contains(attacker.getUniqueId()) &&
+               pvpEnabledPlayers.contains(target.getUniqueId());
     }
 
     private boolean handleRunesCommand(Player player, String[] args) {

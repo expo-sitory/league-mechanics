@@ -1,5 +1,7 @@
 package dev.ixpu.leaguemechanics.util;
 
+import dev.ixpu.leaguemechanics.LeagueMechanics;
+import dev.ixpu.leaguemechanics.manager.MySQLManager;
 import dev.ixpu.leaguemechanics.player.PlayerClassType;
 import dev.ixpu.leaguemechanics.rune.RunePath;
 import dev.ixpu.leaguemechanics.rune.RuneSlot;
@@ -11,42 +13,55 @@ import java.io.File;
 import java.util.UUID;
 
 public class RunePersistence {
-    private final File dataFile;
+    private final MySQLManager mysqlManager;
 
     public RunePersistence(Plugin plugin) {
-        File dataFolder = plugin.getDataFolder();
-        if (!dataFolder.exists()) {
-            dataFolder.mkdirs();
-        }
-        this.dataFile = new File(dataFolder, "player-runes.yml");
-        if (!this.dataFile.exists()) {
-            try {
-                this.dataFile.createNewFile();
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-        }
+        this.mysqlManager = new MySQLManager((LeagueMechanics) plugin);
+    }
+
+
+    public String[] loadPlayerRunes(UUID playerUUID) {
+        return mysqlManager.loadPlayerRunes(playerUUID);
     }
 
     public void savePrimaryPath(UUID playerUUID, RunePath path) {
-        FileConfiguration config = YamlConfiguration.loadConfiguration(dataFile);
-        String playerKey = playerUUID.toString();
-        if (path == null) {
-            config.set(playerKey + ".primary-path", null);
-        } else {
-            config.set(playerKey + ".primary-path", path.getId());
-        }
-        try {
-            config.save(dataFile);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+        String primaryPathId = path != null ? path.getId() : null;
+        String[] existingData = loadPlayerRunes(playerUUID);
+        String secondaryPath = existingData != null ? existingData[1] : null;
+        String keystoneRune = existingData != null ? existingData[2] : null;
+        String primarySlot1 = existingData != null ? existingData[3] : null;
+        String primarySlot2 = existingData != null ? existingData[4] : null;
+        String primarySlot3 = existingData != null ? existingData[5] : null;
+        String secondarySlot1 = existingData != null ? existingData[6] : null;
+        String secondarySlot2 = existingData != null ? existingData[7] : null;
+        String shardsRow1 = existingData != null ? existingData[8] : null;
+        String shardsRow2 = existingData != null ? existingData[9] : null;
+        String shardsRow3 = existingData != null ? existingData[10] : null;
+        String playerClass = existingData != null ? existingData[11] : null;
+
+        mysqlManager.savePlayerRunes(
+            playerUUID,
+            primaryPathId,
+            secondaryPath,
+            keystoneRune,
+            primarySlot1,
+            primarySlot2,
+            primarySlot3,
+            secondarySlot1,
+            secondarySlot2,
+            shardsRow1,
+            shardsRow2,
+            shardsRow3,
+            playerClass
+        );
     }
 
     public RunePath loadPrimaryPath(UUID playerUUID) {
-        FileConfiguration config = YamlConfiguration.loadConfiguration(dataFile);
-        String playerKey = playerUUID.toString();
-        String pathId = config.getString(playerKey + ".primary-path");
+        String[] data = loadPlayerRunes(playerUUID);
+        if (data == null) {
+            return null;
+        }
+        String pathId = data[0];
         if (pathId == null) {
             return null;
         }
@@ -54,24 +69,43 @@ public class RunePersistence {
     }
 
     public void saveSecondaryPath(UUID playerUUID, RunePath path) {
-        FileConfiguration config = YamlConfiguration.loadConfiguration(dataFile);
-        String playerKey = playerUUID.toString();
-        if (path == null) {
-            config.set(playerKey + ".secondary-path", null);
-        } else {
-            config.set(playerKey + ".secondary-path", path.getId());
-        }
-        try {
-            config.save(dataFile);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+        String secondaryPathId = path != null ? path.getId() : null;
+        String[] existingData = loadPlayerRunes(playerUUID);
+        String primaryPath = existingData != null ? existingData[0] : null;
+        String keystoneRune = existingData != null ? existingData[2] : null;
+        String primarySlot1 = existingData != null ? existingData[3] : null;
+        String primarySlot2 = existingData != null ? existingData[4] : null;
+        String primarySlot3 = existingData != null ? existingData[5] : null;
+        String secondarySlot1 = existingData != null ? existingData[6] : null;
+        String secondarySlot2 = existingData != null ? existingData[7] : null;
+        String shardsRow1 = existingData != null ? existingData[8] : null;
+        String shardsRow2 = existingData != null ? existingData[9] : null;
+        String shardsRow3 = existingData != null ? existingData[10] : null;
+        String playerClass = existingData != null ? existingData[11] : null;
+
+        mysqlManager.savePlayerRunes(
+            playerUUID,
+            primaryPath,
+            secondaryPathId,
+            keystoneRune,
+            primarySlot1,
+            primarySlot2,
+            primarySlot3,
+            secondarySlot1,
+            secondarySlot2,
+            shardsRow1,
+            shardsRow2,
+            shardsRow3,
+            playerClass
+        );
     }
 
     public RunePath loadSecondaryPath(UUID playerUUID) {
-        FileConfiguration config = YamlConfiguration.loadConfiguration(dataFile);
-        String playerKey = playerUUID.toString();
-        String pathId = config.getString(playerKey + ".secondary-path");
+        String[] data = loadPlayerRunes(playerUUID);
+        if (data == null) {
+            return null;
+        }
+        String pathId = data[1];
         if (pathId == null) {
             return null;
         }
@@ -79,41 +113,83 @@ public class RunePersistence {
     }
 
     public void saveKeystoneRune(UUID playerUUID, String runeId) {
-        FileConfiguration config = YamlConfiguration.loadConfiguration(dataFile);
-        String playerKey = playerUUID.toString();
-        config.set(playerKey + ".keystone-rune", runeId);
-        try {
-            config.save(dataFile);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+        String[] existingData = loadPlayerRunes(playerUUID);
+        String primaryPath = existingData != null ? existingData[0] : null;
+        String secondaryPath = existingData != null ? existingData[1] : null;
+        String keystoneRune = existingData != null ? existingData[2] : null;
+        String primarySlot1 = existingData != null ? existingData[3] : null;
+        String primarySlot2 = existingData != null ? existingData[4] : null;
+        String primarySlot3 = existingData != null ? existingData[5] : null;
+        String secondarySlot1 = existingData != null ? existingData[6] : null;
+        String secondarySlot2 = existingData != null ? existingData[7] : null;
+        String shardsRow1 = existingData != null ? existingData[8] : null;
+        String shardsRow2 = existingData != null ? existingData[9] : null;
+        String shardsRow3 = existingData != null ? existingData[10] : null;
+        String playerClass = existingData != null ? existingData[11] : null;
+
+        mysqlManager.savePlayerRunes(
+            playerUUID,
+            primaryPath,
+            secondaryPath,
+            runeId,
+            primarySlot1,
+            primarySlot2,
+            primarySlot3,
+            secondarySlot1,
+            secondarySlot2,
+            shardsRow1,
+            shardsRow2,
+            shardsRow3,
+            playerClass
+        );
     }
 
     public String loadKeystoneRune(UUID playerUUID) {
-        FileConfiguration config = YamlConfiguration.loadConfiguration(dataFile);
-        String playerKey = playerUUID.toString();
-        return config.getString(playerKey + ".keystone-rune");
+        String[] data = loadPlayerRunes(playerUUID);
+        if (data == null) {
+            return null;
+        }
+        return data[2];
     }
 
     public void savePlayerClass(UUID playerUUID, PlayerClassType classType) {
-        FileConfiguration config = YamlConfiguration.loadConfiguration(dataFile);
-        String playerKey = playerUUID.toString();
-        if (classType == null) {
-            config.set(playerKey + ".player-class", null);
-        } else {
-            config.set(playerKey + ".player-class", classType.getId());
-        }
-        try {
-            config.save(dataFile);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+        String[] existingData = loadPlayerRunes(playerUUID);
+        String primaryPath = existingData != null ? existingData[0] : null;
+        String secondaryPath = existingData != null ? existingData[1] : null;
+        String keystoneRune = existingData != null ? existingData[2] : null;
+        String primarySlot1 = existingData != null ? existingData[3] : null;
+        String primarySlot2 = existingData != null ? existingData[4] : null;
+        String primarySlot3 = existingData != null ? existingData[5] : null;
+        String secondarySlot1 = existingData != null ? existingData[6] : null;
+        String secondarySlot2 = existingData != null ? existingData[7] : null;
+        String shardsRow1 = existingData != null ? existingData[8] : null;
+        String shardsRow2 = existingData != null ? existingData[9] : null;
+        String shardsRow3 = existingData != null ? existingData[10] : null;
+        String playerClass = classType != null ? classType.getId() : null;
+
+        mysqlManager.savePlayerRunes(
+            playerUUID,
+            primaryPath,
+            secondaryPath,
+            keystoneRune,
+            primarySlot1,
+            primarySlot2,
+            primarySlot3,
+            secondarySlot1,
+            secondarySlot2,
+            shardsRow1,
+            shardsRow2,
+            shardsRow3,
+            playerClass
+        );
     }
 
     public PlayerClassType loadPlayerClass(UUID playerUUID) {
-        FileConfiguration config = YamlConfiguration.loadConfiguration(dataFile);
-        String playerKey = playerUUID.toString();
-        String classId = config.getString(playerKey + ".player-class");
+        String[] data = loadPlayerRunes(playerUUID);
+        if (data == null) {
+            return null;
+        }
+        String classId = data[11];
         if (classId == null) {
             return null;
         }
@@ -121,24 +197,76 @@ public class RunePersistence {
     }
 
     private void saveRuneSlot(UUID playerUUID, String slotKey, String runeId) {
-        FileConfiguration config = YamlConfiguration.loadConfiguration(dataFile);
-        String playerKey = playerUUID.toString();
-        if (runeId == null) {
-            config.set(playerKey + ".rune-slots." + slotKey, null);
-        } else {
-            config.set(playerKey + ".rune-slots." + slotKey, runeId);
+        String[] existingData = loadPlayerRunes(playerUUID);
+        String primaryPath = existingData != null ? existingData[0] : null;
+        String secondaryPath = existingData != null ? existingData[1] : null;
+        String keystoneRune = existingData != null ? existingData[2] : null;
+        String primarySlot1 = existingData != null ? existingData[3] : null;
+        String primarySlot2 = existingData != null ? existingData[4] : null;
+        String primarySlot3 = existingData != null ? existingData[5] : null;
+        String secondarySlot1 = existingData != null ? existingData[6] : null;
+        String secondarySlot2 = existingData != null ? existingData[7] : null;
+        String shardsRow1 = existingData != null ? existingData[8] : null;
+        String shardsRow2 = existingData != null ? existingData[9] : null;
+        String shardsRow3 = existingData != null ? existingData[10] : null;
+        String playerClass = existingData != null ? existingData[11] : null;
+
+        switch (slotKey) {
+            case "primary-slot-1":
+                primarySlot1 = runeId;
+                break;
+            case "primary-slot-2":
+                primarySlot2 = runeId;
+                break;
+            case "primary-slot-3":
+                primarySlot3 = runeId;
+                break;
+            case "secondary-slot-1":
+                secondarySlot1 = runeId;
+                break;
+            case "secondary-slot-2":
+                secondarySlot2 = runeId;
+                break;
+            default:
+                return;
         }
-        try {
-            config.save(dataFile);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+
+        mysqlManager.savePlayerRunes(
+            playerUUID,
+            primaryPath,
+            secondaryPath,
+            keystoneRune,
+            primarySlot1,
+            primarySlot2,
+            primarySlot3,
+            secondarySlot1,
+            secondarySlot2,
+            shardsRow1,
+            shardsRow2,
+            shardsRow3,
+            playerClass
+        );
     }
 
     private String loadRuneSlot(UUID playerUUID, String slotKey) {
-        FileConfiguration config = YamlConfiguration.loadConfiguration(dataFile);
-        String playerKey = playerUUID.toString();
-        return config.getString(playerKey + ".rune-slots." + slotKey);
+        String[] data = loadPlayerRunes(playerUUID);
+        if (data == null) {
+            return null;
+        }
+        switch (slotKey) {
+            case "primary-slot-1":
+                return data[3];
+            case "primary-slot-2":
+                return data[4];
+            case "primary-slot-3":
+                return data[5];
+            case "secondary-slot-1":
+                return data[6];
+            case "secondary-slot-2":
+                return data[7];
+            default:
+                return null;
+        }
     }
 
     public void savePrimarySlot1Rune(UUID playerUUID, String runeId) {
@@ -195,52 +323,60 @@ public class RunePersistence {
     }
 
     public void saveRuneShards(UUID playerUUID, String row1, String row2, String row3) {
-        FileConfiguration config = YamlConfiguration.loadConfiguration(dataFile);
-        String playerKey = playerUUID.toString();
-        config.set(playerKey + ".rune-shards.row1", row1);
-        config.set(playerKey + ".rune-shards.row2", row2);
-        config.set(playerKey + ".rune-shards.row3", row3);
-        try {
-            config.save(dataFile);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+        String[] existingData = loadPlayerRunes(playerUUID);
+        String primaryPath = existingData != null ? existingData[0] : null;
+        String secondaryPath = existingData != null ? existingData[1] : null;
+        String keystoneRune = existingData != null ? existingData[2] : null;
+        String primarySlot1 = existingData != null ? existingData[3] : null;
+        String primarySlot2 = existingData != null ? existingData[4] : null;
+        String primarySlot3 = existingData != null ? existingData[5] : null;
+        String secondarySlot1 = existingData != null ? existingData[6] : null;
+        String secondarySlot2 = existingData != null ? existingData[7] : null;
+        String shardsRow1 = existingData != null ? existingData[8] : null;
+        String shardsRow2 = existingData != null ? existingData[9] : null;
+        String shardsRow3 = existingData != null ? existingData[10] : null;
+        String playerClass = existingData != null ? existingData[11] : null;
+
+        mysqlManager.savePlayerRunes(
+            playerUUID,
+            primaryPath,
+            secondaryPath,
+            keystoneRune,
+            primarySlot1,
+            primarySlot2,
+            primarySlot3,
+            secondarySlot1,
+            secondarySlot2,
+            row1,
+            row2,
+            row3,
+            playerClass
+        );
     }
 
     public String[] loadRuneShards(UUID playerUUID) {
-        FileConfiguration config = YamlConfiguration.loadConfiguration(dataFile);
-        String playerKey = playerUUID.toString();
-        String row1 = config.getString(playerKey + ".rune-shards.row1");
-        String row2 = config.getString(playerKey + ".rune-shards.row2");
-        String row3 = config.getString(playerKey + ".rune-shards.row3");
-
-        if (row1 == null || row2 == null || row3 == null) {
+        String[] data = loadPlayerRunes(playerUUID);
+        if (data == null) {
             return null;
         }
-        return new String[]{row1, row2, row3};
+        return new String[]{data[8], data[9], data[10]};
     }
 
     public void clearAllRunes(UUID playerUUID) {
-        FileConfiguration config = YamlConfiguration.loadConfiguration(dataFile);
-        String playerKey = playerUUID.toString();
-        config.set(playerKey + ".primary-path", null);
-        config.set(playerKey + ".keystone-rune", null);
-        config.set(playerKey + ".secondary-path", null);
-        config.set(playerKey + ".primary-slot-1-rune", null);
-        config.set(playerKey + ".primary-slot-2-rune", null);
-        config.set(playerKey + ".primary-slot-3-rune", null);
-        config.set(playerKey + ".secondary-slot-1-rune", null);
-        config.set(playerKey + ".secondary-slot-2-rune", null);
-        config.set(playerKey + ".rune-shards", null);
-
-        if (config.getConfigurationSection(playerKey) != null && config.getConfigurationSection(playerKey).getKeys(false).isEmpty()) {
-            config.set(playerKey, null);
-        }
-
-        try {
-            config.save(dataFile);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+        mysqlManager.savePlayerRunes(
+            playerUUID,
+            null, // primary-path
+            null, // secondary-path
+            null, // keystone-rune
+            null, // primary-slot-1-rune
+            null, // primary-slot-2-rune
+            null, // primary-slot-3-rune
+            null, // secondary-slot-1-rune
+            null, // secondary-slot-2-rune
+            null, // rune-shards-row1
+            null, // rune-shards-row2
+            null, // rune-shards-row3
+            null  // player-class
+        );
     }
 }

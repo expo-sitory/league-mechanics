@@ -55,8 +55,8 @@ public class DamageManager {
         ShardStats shards = stats.getRuneShards(player);
         double shardsAdOrAp = shards.getAdOrAp(player);
         double af = stats.getPlayerAF(player);
-        double attackerAD = (stats.getPlayerAD(player) - statsManager.getItemAD(player)) + (statsManager.getItemAD(player) / 17) + doransBonus;
-        double attackerAP = (stats.getPlayerAP(player) - statsManager.getItemAP(player)) + (statsManager.getItemAP(player) / 17);
+        double attackerAD = ((stats.getPlayerAD(player) - statsManager.getItemAD(player)) + (statsManager.getItemAD(player) / 17) + doransBonus) / 2;
+        double attackerAP = ((stats.getPlayerAP(player) - statsManager.getItemAP(player)) + (statsManager.getItemAP(player) / 17)) / 2;
 
         if (af <= 0.7) {
             attackerAD += shardsAdOrAp;

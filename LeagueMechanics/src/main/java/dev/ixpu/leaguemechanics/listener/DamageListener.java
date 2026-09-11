@@ -37,6 +37,7 @@ import java.util.concurrent.ConcurrentHashMap;
 
 public class DamageListener implements Listener, RuneCooldownGate {
 
+    private final LeagueMechanics plugin;
     private final RuneManager runeManager;
     private final ItemStatsManager itemStatsManager;
     private final PlayerStatsListener playerStatsListener;
@@ -45,6 +46,7 @@ public class DamageListener implements Listener, RuneCooldownGate {
     private final Map<UUID, Long> attackCooldown = new ConcurrentHashMap<>();
 
     public DamageListener(LeagueMechanics plugin, PlayerStatsListener playerStatsListener) {
+        this.plugin = plugin;
         this.runeManager = plugin.getRuneManager();
         this.itemStatsManager = plugin.getStatsManager();
         this.playerStatsListener = playerStatsListener;
@@ -125,6 +127,13 @@ public class DamageListener implements Listener, RuneCooldownGate {
         if (event.getHitEntity() == null || !(event.getHitEntity() instanceof LivingEntity target)) {
             return;
         }
+
+        if (target instanceof Player targetPlayer) {
+            if (!plugin.getCommandHandler().isPvpEnabled(shooter, targetPlayer)) {
+                return;
+            }
+        }
+
         combatState.addLetRunesThrough(shooter.getUniqueId());
 
         if (event.getEntity() instanceof Arrow) {
@@ -175,6 +184,14 @@ public class DamageListener implements Listener, RuneCooldownGate {
         if (!(event.getEntity() instanceof LivingEntity target)) {
             return;
         }
+
+        if (target instanceof Player targetPlayer) {
+            if (!plugin.getCommandHandler().isPvpEnabled(attacker, targetPlayer)) {
+                event.setCancelled(true);
+                return;
+            }
+        }
+
         if (isPlayerOnAttackCooldown(attacker)) {
             event.setCancelled(true);
             return;

@@ -88,12 +88,14 @@ public class PlayerEventListener implements Listener, RuneCooldownGate {
         dev.ixpu.leaguemechanics.player.PlayerClass.loadPlayerClass(player);
         UUID uuid = player.getUniqueId();
         String[] shardNames = runePersistence.loadRuneShards(uuid);
-        if (shardNames != null) {
+        if (shardNames != null && shardNames.length >= 3) {
             try {
-                RuneShard row1 = RuneShard.valueOf(shardNames[0]);
-                RuneShard row2 = RuneShard.valueOf(shardNames[1]);
-                RuneShard row3 = RuneShard.valueOf(shardNames[2]);
-                PlayerStats.getOrCreate(player).getRuneShards(player).selectShards(row1, row2, row3);
+                if (shardNames[0] != null && shardNames[1] != null && shardNames[2] != null) {
+                    RuneShard row1 = RuneShard.valueOf(shardNames[0]);
+                    RuneShard row2 = RuneShard.valueOf(shardNames[1]);
+                    RuneShard row3 = RuneShard.valueOf(shardNames[2]);
+                    PlayerStats.getOrCreate(player).getRuneShards(player).selectShards(row1, row2, row3);
+                }
             } catch (IllegalArgumentException e) {
                 //
             }

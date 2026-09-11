@@ -1,24 +1,49 @@
 package dev.ixpu.leaguemechanics.player;
 
+import dev.ixpu.leaguemechanics.LeagueMechanics;
+import dev.ixpu.leaguemechanics.manager.MySQLManager;
 import org.bukkit.entity.Player;
 
-import java.io.File;
-import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Path;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
+import java.util.logging.Level;
 
 public class PlayerKDA {
     private static PlayerKDA instance;
     private final ConcurrentMap<UUID, KDAData> playerData = new ConcurrentHashMap<>();
-    private final Path dataFile;
+    private final MySQLManager mysqlManager;
 
     private PlayerKDA() {
-        File pluginFolder = dev.ixpu.leaguemechanics.LeagueMechanics.getInstance().getDataFolder();
-        dataFile = pluginFolder.toPath().resolve("kda-data.txt");
-        loadFromFile();
+        this.mysqlManager = new MySQLManager(LeagueMechanics.getInstance());
+        loadAllFromDatabase();
+    }
+
+    public void close() {
+        if (mysqlManager != null) {
+            mysqlManager.close();
+        }
+    }
+
+    /**
+     * Clears all KDA data from the database.
+     */
+    public void clearAllKda() {
+        String query = "DELETE FROM player_kda";
+
+        try (Connection connection = mysqlManager.getConnection();
+             PreparedStatement statement = connection.prepareStatement(query)) {
+
+            int rowsDeleted = statement.executeUpdate();
+            LeagueMechanics.getInstance().getLogger().info("Cleared " + rowsDeleted + " KDA records from database");
+
+        } catch (SQLException e) {
+            LeagueMechanics.getInstance().getLogger().warning("Failed to clear KDA data: " + e.getMessage());
+        }
     }
 
     public static PlayerKDA getInstance() {
@@ -63,28 +88,7 @@ public class PlayerKDA {
         KDAData data = playerData.get(uuid);
         if (data == null) return;
 
-        try {
-            java.util.List<String> lines = Files.exists(dataFile) ? Files.readAllLines(dataFile) : new java.util.ArrayList<>();
-            boolean found = false;
-
-            for (int i = 0; i < lines.size(); i++) {
-                String line = lines.get(i);
-                if (line.startsWith(uuid.toString() + ":")) {
-                    lines.set(i, uuid.toString() + ":" + data.kills + ":" + data.deaths + ":" + data.assists);
-                    found = true;
-                    break;
-                }
-            }
-
-            if (!found) {
-                lines.add(uuid.toString() + ":" + data.kills + ":" + data.deaths + ":" + data.assists);
-            }
-
-            Files.createDirectories(dataFile.getParent());
-            Files.write(dataFile, lines);
-        } catch (IOException e) {
-            dev.ixpu.leaguemechanics.LeagueMechanics.getInstance().getLogger().warning("Failed to save KDA for " + uuid + ": " + e.getMessage());
-        }
+        mysqlManager.savePlayerKDA(uuid, data.kills, data.deaths, data.assists);
     }
 
     public void saveAll() {
@@ -93,29 +97,29 @@ public class PlayerKDA {
         }
     }
 
-    private void loadFromFile() {
-        if (!Files.exists(dataFile)) return;
+    public void loadAllFromDatabase() {
+        playerData.clear();
+        String query = "SELECT uuid, kills, deaths, assists FROM player_kda";
 
-        try {
-            for (String line : Files.readAllLines(dataFile)) {
-                String[] parts = line.split(":");
-                if (parts.length >= 4) {
-                    try {
-                        UUID uuid = UUID.fromString(parts[0]);
-                        int kills = Integer.parseInt(parts[1]);
-                        int deaths = Integer.parseInt(parts[2]);
-                        int assists = Integer.parseInt(parts[3]);
-                        KDAData data = new KDAData();
-                        data.kills = kills;
-                        data.deaths = deaths;
-                        data.assists = assists;
-                        playerData.put(uuid, data);
-                    } catch (NumberFormatException ignored) {
-                    }
-                }
+        try (Connection connection = mysqlManager.getConnection();
+             PreparedStatement statement = connection.prepareStatement(query);
+             ResultSet resultSet = statement.executeQuery()) {
+
+            while (resultSet.next()) {
+                UUID uuid = UUID.fromString(resultSet.getString("uuid"));
+                int kills = resultSet.getInt("kills");
+                int deaths = resultSet.getInt("deaths");
+                int assists = resultSet.getInt("assists");
+                KDAData data = new KDAData();
+                data.kills = kills;
+                data.deaths = deaths;
+                data.assists = assists;
+                playerData.put(uuid, data);
             }
-        } catch (IOException e) {
-            dev.ixpu.leaguemechanics.LeagueMechanics.getInstance().getLogger().warning("Failed to load KDA data: " + e.getMessage());
+
+        } catch (SQLException e) {
+            dev.ixpu.leaguemechanics.LeagueMechanics.getInstance().getLogger().warning("Failed to load KDA data from database: " + e.getMessage());
+            e.printStackTrace();
         }
     }
 

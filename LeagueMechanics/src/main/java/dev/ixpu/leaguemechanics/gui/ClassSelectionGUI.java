@@ -79,7 +79,7 @@ public class ClassSelectionGUI {
         ItemMeta meta = item.getItemMeta();
 
         if (meta != null) {
-            meta.setDisplayName("§7" + classType.getDisplayName());
+            meta.setDisplayName("§f§l" + classType.getDisplayName());
 
             List<String> lore = new ArrayList<>();
             lore.add("§7This class grants the following base stats:");

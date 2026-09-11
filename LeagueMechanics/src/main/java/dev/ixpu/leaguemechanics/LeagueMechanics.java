@@ -69,6 +69,7 @@ public class LeagueMechanics extends JavaPlugin {
     private DamageListener damageListener;
     private DeathListener deathListener;
     private RuneListener runeListener;
+    private CommandHandler commandHandler;
     private boolean debugMode;
 
     @Override
@@ -123,6 +124,7 @@ public class LeagueMechanics extends JavaPlugin {
         }
 
         dev.ixpu.leaguemechanics.player.PlayerKDA.getInstance().saveAll();
+        dev.ixpu.leaguemechanics.player.PlayerKDA.getInstance().close();
 
         CooldownHandler glacial = runeRegistry != null ? runeRegistry.getRune("glacial-augment") : null;
         if (glacial instanceof dev.ixpu.leaguemechanics.rune.keystones.inspiration.GlacialAugment glacialAugment) {
@@ -184,6 +186,10 @@ public class LeagueMechanics extends JavaPlugin {
         return runePersistence;
     }
 
+    public CommandHandler getCommandHandler() {
+        return commandHandler;
+    }
+
     public boolean isDebugMode() {
         return debugMode;
     }
@@ -208,9 +214,9 @@ public class LeagueMechanics extends JavaPlugin {
     }
 
     private void registerCommands() {
-        CommandHandler commandExecutor = new CommandHandler(this, itemStatsManager, runeManager, runePersistence, playerEventListener);
+        commandHandler = new CommandHandler(this, itemStatsManager, runeManager, runePersistence, playerEventListener);
         CommandTabCompletions tabCompleter = new CommandTabCompletions(runeRegistry);
-        Objects.requireNonNull(getCommand("leaguemechanics")).setExecutor(commandExecutor);
+        Objects.requireNonNull(getCommand("leaguemechanics")).setExecutor(commandHandler);
         Objects.requireNonNull(getCommand("leaguemechanics")).setTabCompleter(tabCompleter);
         getLogger().info("Commands registered!");
     }
