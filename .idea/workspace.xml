@@ -7,21 +7,9 @@
     <list default="true" id="cda9b1ea-0c5c-4d4f-b093-41df2f38c092" name="Changes" comment="debug session">
       <change beforePath="$PROJECT_DIR$/.gitignore" beforeDir="false" afterPath="$PROJECT_DIR$/.gitignore" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/LeagueMechanics/.claude-flow/neural/patterns.json" beforeDir="false" afterPath="$PROJECT_DIR$/LeagueMechanics/.claude-flow/neural/patterns.json" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/LeagueMechanics/.claude-flow/neural/stats.json" beforeDir="false" afterPath="$PROJECT_DIR$/LeagueMechanics/.claude-flow/neural/stats.json" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/LeagueMechanics/.claude-flow/policy/state.json" beforeDir="false" afterPath="$PROJECT_DIR$/LeagueMechanics/.claude-flow/policy/state.json" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/LeagueMechanics/pom.xml" beforeDir="false" afterPath="$PROJECT_DIR$/LeagueMechanics/pom.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/LeagueMechanics/ruvector.db" beforeDir="false" afterPath="$PROJECT_DIR$/LeagueMechanics/ruvector.db" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/LeagueMechanics/src/main/java/dev/ixpu/leaguemechanics/LeagueMechanics.java" beforeDir="false" afterPath="$PROJECT_DIR$/LeagueMechanics/src/main/java/dev/ixpu/leaguemechanics/LeagueMechanics.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/LeagueMechanics/src/main/java/dev/ixpu/leaguemechanics/command/CommandHandler.java" beforeDir="false" afterPath="$PROJECT_DIR$/LeagueMechanics/src/main/java/dev/ixpu/leaguemechanics/command/CommandHandler.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/LeagueMechanics/src/main/java/dev/ixpu/leaguemechanics/gui/ClassSelectionGUI.java" beforeDir="false" afterPath="$PROJECT_DIR$/LeagueMechanics/src/main/java/dev/ixpu/leaguemechanics/gui/ClassSelectionGUI.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/LeagueMechanics/src/main/java/dev/ixpu/leaguemechanics/listener/DamageListener.java" beforeDir="false" afterPath="$PROJECT_DIR$/LeagueMechanics/src/main/java/dev/ixpu/leaguemechanics/listener/DamageListener.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/LeagueMechanics/src/main/java/dev/ixpu/leaguemechanics/listener/PlayerEventListener.java" beforeDir="false" afterPath="$PROJECT_DIR$/LeagueMechanics/src/main/java/dev/ixpu/leaguemechanics/listener/PlayerEventListener.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/LeagueMechanics/src/main/java/dev/ixpu/leaguemechanics/manager/DamageManager.java" beforeDir="false" afterPath="$PROJECT_DIR$/LeagueMechanics/src/main/java/dev/ixpu/leaguemechanics/manager/DamageManager.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/LeagueMechanics/src/main/java/dev/ixpu/leaguemechanics/player/PlayerKDA.java" beforeDir="false" afterPath="$PROJECT_DIR$/LeagueMechanics/src/main/java/dev/ixpu/leaguemechanics/player/PlayerKDA.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/LeagueMechanics/src/main/java/dev/ixpu/leaguemechanics/util/RunePersistence.java" beforeDir="false" afterPath="$PROJECT_DIR$/LeagueMechanics/src/main/java/dev/ixpu/leaguemechanics/util/RunePersistence.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/LeagueMechanics/src/main/resources/config.yml" beforeDir="false" afterPath="$PROJECT_DIR$/LeagueMechanics/src/main/resources/config.yml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/LeagueMechanics/src/main/resources/plugin.yml" beforeDir="false" afterPath="$PROJECT_DIR$/LeagueMechanics/src/main/resources/plugin.yml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/LeagueMechanics/.claude-flow/neural/patterns.json" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/LeagueMechanics/.claude-flow/neural/stats.json" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/LeagueMechanics/.claude-flow/policy/state.json" beforeDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -155,7 +143,7 @@
     "codeWithMe.voiceChat.enabledByDefault": "false",
     "com.intellij.ml.llm.matterhorn.ej.ui.settings.DefaultModelSelectionForGA.v1": "true",
     "deletionFromPopupRequiresConfirmation": "false",
-    "git-widget-placeholder": "feature-workshop",
+    "git-widget-placeholder": "Merging feature-workshop",
     "junie.onboarding.icon.badge.shown": "true",
     "kotlin-language-version-configured": "true",
     "last_opened_file_path": "/home/exponent/minecraft-projects/league-mechanics",
