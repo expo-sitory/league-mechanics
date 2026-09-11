@@ -38,8 +38,8 @@ public class CommandTabCompletions implements org.bukkit.command.TabCompleter {
             if (player.hasPermission("leaguemechanics.admin")) {
                 completions.add("reload");
                 completions.add("shop");
+                completions.add("class");
             }
-            completions.add("class");
             completions.add("runes");
             completions.add("inspect");
             return filter(completions, args[0]);
@@ -51,10 +51,7 @@ public class CommandTabCompletions implements org.bukkit.command.TabCompleter {
 
         if (args.length == 2 && args[0].equalsIgnoreCase("runes")) {
             completions.add("select");
-            completions.add("clear");
-            if (player.hasPermission("leaguemechanics.admin")) {
-                completions.add("info");
-            }
+            completions.add("info");
             return filter(completions, args[1]);
         }
 

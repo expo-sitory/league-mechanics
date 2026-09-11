@@ -48,66 +48,99 @@ public class CommandHandler implements CommandExecutor {
 
     @Override
     public boolean onCommand(@NotNull CommandSender sender, @NotNull Command command, @NotNull String label, String[] args) {
-        if (!(sender instanceof Player player)) {
-            sender.sendMessage("§cOnly players can use this command!");
-            return true;
-        }
-
         if (args.length == 0) {
-            player.sendMessage(Component.text("§cUsage: /lm <shop|class|runes|reload|inspect|pvp>"));
+            sender.sendMessage(Component.text("§cUsage: /lm <shop|class|runes|reload|inspect|pvp>"));
             return true;
         }
 
         String subcommand = args[0].toLowerCase();
 
         return switch (subcommand) {
-            case "shop" -> handleShop(player);
-            case "inspect" -> handleInspect(player, args);
+            case "shop" -> handleShop(sender);
+            case "inspect" -> handleInspect(sender, args);
             case "reload" -> {
-                if (!player.hasPermission("leaguemechanics.admin")) {
-                    player.sendMessage(Component.text("§cYou don't have permission to use this command."));
+                if (!sender.hasPermission("leaguemechanics.admin")) {
+                    sender.sendMessage(Component.text("§cYou don't have permission to use this command."));
                     yield true;
                 }
-                player.sendMessage(Component.text("§6⟳ Reloading LeagueMechanics..."));
+                sender.sendMessage(Component.text("§6⟳ Reloading LeagueMechanics..."));
                 plugin.reloadPlugin();
-                player.sendMessage(Component.text("§a✓ LeagueMechanics reloaded"));
+                sender.sendMessage(Component.text("§a✓ LeagueMechanics reloaded"));
                 yield true;
             }
-            case "runes" -> handleRunesCommand(player, args);
-            case "class" -> handleClassCommand(player, args);
-            case "pvp" -> handlePvpCommand(player, args);
-            case "clearkda" -> handleClearKda(player);
+            case "runes" -> handleRunesCommand(sender, args);
+            case "class" -> handleClassCommand(sender, args);
+            case "pvp" -> handlePvpCommand(sender, args);
+            case "clearkda" -> handleClearKda(sender);
             default -> {
-                player.sendMessage(Component.text("§cUnknown subcommand."));
+                sender.sendMessage(Component.text("§cUnknown subcommand."));
                 yield false;
             }
         };
     }
 
-    private boolean handleClassCommand(Player player, String[] args) {
-        if (!player.hasPermission("leaguemechanics.user")) {
-            player.sendMessage(Component.text("§cYou don't have permission to use this command."));
+    private boolean handleClassCommand(CommandSender sender, String[] args) {
+        if (!sender.hasPermission("leaguemechanics.user")) {
+            sender.sendMessage(Component.text("§cYou don't have permission to use this command."));
             return true;
         }
 
-        if (args.length < 2 || !args[1].equalsIgnoreCase("clear")) {
-            player.sendMessage(Component.text("§cUsage: §e/lm class clear"));
+        if (args.length >= 2 && args[1].equalsIgnoreCase("clear")) {
+            if (args.length >= 3) {
+                String targetName = args[2];
+                Player target = Bukkit.getPlayerExact(targetName);
+                if (target == null) {
+                    sender.sendMessage(Component.text("§cPlayer not found: §e" + targetName));
+                    return true;
+                }
+
+                dev.ixpu.leaguemechanics.player.PlayerClass.clearPlayerClass(target);
+                sender.sendMessage(Component.text("§a✓ Cleared class for player §e" + target.getName()));
+                return true;
+            } else {
+                if (sender instanceof Player player) {
+                    dev.ixpu.leaguemechanics.player.PlayerClass.clearPlayerClass(player);
+                    sender.sendMessage(Component.text("§a✓ Your class has been cleared!"));
+                    return true;
+                } else {
+                    sender.sendMessage(Component.text("§cUsage: /lm class clear <player>"));
+                    return true;
+                }
+            }
+        } else {
+            sender.sendMessage(Component.text("§cUsage: /lm class clear <player>"));
+            return true;
+        }
+    }
+
+    private boolean handleShop(CommandSender sender) {
+        if (!sender.hasPermission("leaguemechanics.user")) {
+            sender.sendMessage(Component.text("§cYou don't have permission to use this command."));
             return true;
         }
 
-        dev.ixpu.leaguemechanics.player.PlayerClass.clearPlayerClass(player);
-        player.sendMessage(Component.text("§a✓ Class cleared!"));
+        if (!(sender instanceof Player player)) {
+            sender.sendMessage(Component.text("§cOnly players can use the shop command!"));
+            return true;
+        }
+
+        ItemShopGUI.openShop(player);
         return true;
     }
 
-    private boolean handlePvpCommand(Player player, String[] args) {
-        if (!player.hasPermission("leaguemechanics.user")) {
-            player.sendMessage(Component.text("§cYou don't have permission to use this command."));
+    private boolean handlePvpCommand(CommandSender sender, String[] args) {
+        if (!sender.hasPermission("leaguemechanics.user")) {
+            sender.sendMessage(Component.text("§cYou don't have permission to use this command."));
+            return true;
+        }
+
+        if (!(sender instanceof Player player)) {
+            sender.sendMessage(Component.text("§cOnly players can toggle PVP mode!"));
             return true;
         }
 
         if (args.length < 2) {
-            player.sendMessage(Component.text("§cUsage: /lm pvp <on|off>"));
+            sender.sendMessage(Component.text("§cUsage: /lm pvp <on|off>"));
             return true;
         }
 
@@ -116,31 +149,29 @@ public class CommandHandler implements CommandExecutor {
 
         if (mode.equals("on")) {
             pvpEnabledPlayers.add(uuid);
-            player.sendMessage(Component.text("§a✓ PVP mode enabled!"));
+            sender.sendMessage(Component.text("§a✓ PVP mode enabled!"));
         } else if (mode.equals("off")) {
             pvpEnabledPlayers.remove(uuid);
-            player.sendMessage(Component.text("§a✓ PVP mode disabled!"));
+            sender.sendMessage(Component.text("§a✓ PVP mode disabled!"));
         } else {
-            player.sendMessage(Component.text("§cUsage: /lm pvp <on|off>"));
+            sender.sendMessage(Component.text("§cUsage: /lm pvp <on|off>"));
             return true;
         }
 
         return true;
     }
 
-    private boolean handleClearKda(Player player) {
-        if (!player.hasPermission("leaguemechanics.admin")) {
-            player.sendMessage(Component.text("§cYou don't have permission to use this command."));
+    private boolean handleClearKda(CommandSender sender) {
+        if (!sender.hasPermission("leaguemechanics.admin")) {
+            sender.sendMessage(Component.text("§cYou don't have permission to use this command."));
             return true;
         }
 
-        // Clear all KDA data
         PlayerKDA.getInstance().clearAllKda();
 
-        // Reload KDA data from database to clear the cache
         PlayerKDA.getInstance().loadAllFromDatabase();
 
-        player.sendMessage(Component.text("§a✓ All player KDA data has been cleared!"));
+        sender.sendMessage(Component.text("§a✓ All player KDA data has been cleared!"));
         return true;
     }
 
@@ -149,9 +180,14 @@ public class CommandHandler implements CommandExecutor {
                pvpEnabledPlayers.contains(target.getUniqueId());
     }
 
-    private boolean handleRunesCommand(Player player, String[] args) {
-        if (!player.hasPermission("leaguemechanics.user")) {
-            player.sendMessage(Component.text("§cYou don't have permission to use this command."));
+    private boolean handleRunesCommand(CommandSender sender, String[] args) {
+        if (!sender.hasPermission("leaguemechanics.user")) {
+            sender.sendMessage(Component.text("§cYou don't have permission to use this command."));
+            return true;
+        }
+
+        if (!(sender instanceof Player player)) {
+            sender.sendMessage(Component.text("§cOnly players can use runes commands!"));
             return true;
         }
 
@@ -242,27 +278,27 @@ public class CommandHandler implements CommandExecutor {
 //            player.sendMessage(Component.text("§cUsage: /lm runes select secondary <path> [slot1] [slot2]"));
 //            return true;
 //        }
-//
+
 //        RunePath path = RunePath.fromId(args[3].toLowerCase());
 //        if (path == null) {
 //            player.sendMessage(Component.text("§cInvalid path. Use: domination, precision, inspiration, resolve, or sorcery"));
 //            return true;
 //        }
-//
+
 //        runeManager.setPlayerSecondaryPath(player, path);
 //        runePersistence.saveSecondaryPath(player.getUniqueId(), path);
-//
+
 //        RuneSlot[] slotOrder = {RuneSlot.SECONDARY_SLOT_1, RuneSlot.SECONDARY_SLOT_2};
 //        StringBuilder summary = new StringBuilder("§a✓ Secondary path set to §e" + path.getId());
-//
+
 //        for (int i = 4; i < args.length; i++) {
 //            RuneSlot slot = slotOrder[i - 4];
 //            CooldownHandler rune = resolveAndValidateRune(player, args[i], path, slot);
 //            if (rune == null) return true;
-//
+
 //            applySecondaryRune(player, slot, rune);
 //            runePersistence.saveSecondaryRuneSlot(player.getUniqueId(), slot, rune.getId());
-//
+
 //            summary.append(" §7| ").append(slot.getId()).append(": §e").append(rune.getId());
 //        }
 //        player.sendMessage(Component.text(summary.toString()));
@@ -401,42 +437,36 @@ public class CommandHandler implements CommandExecutor {
         return true;
     }
 
-    
-    private boolean handleShop(Player player) {
-        if (!player.hasPermission("leaguemechanics.user")) {
-            player.sendMessage(Component.text("§cYou don't have permission to use this command."));
+    private boolean handleInspect(CommandSender sender, String[] args) {
+        if (!sender.hasPermission("leaguemechanics.user")) {
+            sender.sendMessage(Component.text("§cYou don't have permission to use this command."));
             return true;
         }
-        ItemShopGUI.openShop(player);
-        return true;
-    }
 
-    @SuppressWarnings("unchecked")
-    private boolean handleInspect(Player player, String[] args) {
-        if (!player.hasPermission("leaguemechanics.user")) {
-            player.sendMessage(Component.text("§cYou don't have permission to use this command."));
+        if (!(sender instanceof Player player)) {
+            sender.sendMessage(Component.text("§cOnly players can use the inspect command!"));
             return true;
         }
 
         if (args.length < 2) {
-            player.sendMessage(Component.text("§cUsage: /lm inspect <player>"));
+            sender.sendMessage(Component.text("§cUsage: /lm inspect <player>"));
             return true;
         }
 
         String targetName = args[1];
         Player target = Bukkit.getPlayerExact(targetName);
         if (target == null) {
-            player.sendMessage(Component.text("§cPlayer not found: §e" + targetName));
+            sender.sendMessage(Component.text("§cPlayer not found: §e" + targetName));
             return true;
         }
 
         if (target.getUniqueId().equals(player.getUniqueId())) {
-            player.sendMessage(Component.text("§cYou cannot inspect yourself! Use /lm inspect <other-player>"));
+            sender.sendMessage(Component.text("§cYou cannot inspect yourself! Use /lm inspect <other-player>"));
             return true;
         }
 
         InspectGUI.openInspect(player, target);
-        player.sendMessage(Component.text("§6⟳ Inspecting §e" + target.getName()));
+        sender.sendMessage(Component.text("§6⟳ Inspecting §e" + target.getName()));
 
         return true;
     }
