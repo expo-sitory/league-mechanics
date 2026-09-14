@@ -77,11 +77,11 @@ Adaptive Damage: This effect deals either physical or magic damage depending on 
 
 The player total adaptive damage scales with their current level across 5 tiers:
 
-- Level 1-49: **1.03x**
-- Level 50-99: **1.07x**
-- Level 100-199: **1.2x**
-- Level 200-299: **1.5x**
-- Level 300+: **1.7x**
+- Level 1-2: **1.07x**
+- Level 3-7: **1.15x**
+- Level 8-12: **1.3x**
+- Level 13-17: **1.5x**
+- Level 18: **1.7x**
 
 #### Damage Calculation
 
@@ -100,6 +100,7 @@ The base damage value depends on the source's outgoing damage and the type of th
 Each damage component is individually mitigated by the target's resistance:
 
 ```
+damage =  BaseDamage + (vanillaDamage / 2) + ((ItemAD + ItemAP)/ 17)
 effectiveResist = max(0, resist − flatPen) × (1 − percentPen / 100)
 finalDamage = damage / (1 + effectiveResist / 100)
 ```

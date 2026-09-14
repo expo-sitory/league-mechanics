@@ -113,7 +113,8 @@ public class DamageListener implements Listener, RuneCooldownGate {
         if (!(event.getDamager() instanceof Player)) {
             return;
         }
-        event.setDamage(0);
+        double damage = event.getDamage();
+        event.setDamage(damage / 0.5);
     }
 
     @EventHandler (priority = EventPriority.HIGHEST)

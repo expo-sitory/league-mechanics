@@ -23,6 +23,7 @@ import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.*;
 import org.bukkit.event.player.*;
+import org.bukkit.attribute.Attribute;
 import org.bukkit.inventory.ItemStack;
 
 import java.util.*;
@@ -44,6 +45,7 @@ public class PlayerEventListener implements Listener, RuneCooldownGate {
     private final DamageListener damageListener;
     private final CombatStateManager combatState = CombatStateManager.getInstance();
     private final RunePersistence runePersistence;
+    private final LeagueMechanics plugin;
 
     public PlayerEventListener(LeagueMechanics plugin, PlayerStatsListener playerStatsListener, DamageListener damageListener) {
         this.runeManager = plugin.getRuneManager();
@@ -53,6 +55,7 @@ public class PlayerEventListener implements Listener, RuneCooldownGate {
         this.damageListener = damageListener;
         this.playerStatsListener = playerStatsListener;
         this.playerInventoryListener = new PlayerInventoryListener(plugin, playerStatsListener);
+        this.plugin = plugin;
     }
 
     public void applyPlayerStats(Player player) {
@@ -101,6 +104,17 @@ public class PlayerEventListener implements Listener, RuneCooldownGate {
             }
         }
         applyPlayerStats(player);
+        dev.ixpu.leaguemechanics.player.PlayerKDA.getInstance().loadForPlayer(uuid);
+
+        float healthPercentage = plugin.getMySQLManager().loadPlayerHealthPercentage(uuid);
+        double maxHealth = player.getAttribute(Attribute.MAX_HEALTH).getValue();
+        double targetHealth = maxHealth * (healthPercentage / 100.0);
+
+        if (targetHealth > maxHealth) {
+            targetHealth = maxHealth;
+        }
+        player.setHealth(targetHealth);
+
         CooldownHandler glacial = runeRegistry.getRune("glacial-augment");
         if (glacial instanceof dev.ixpu.leaguemechanics.rune.keystones.inspiration.GlacialAugment glacialAugment) {
             glacialAugment.reapplyDebuffsForRejoin(player);
@@ -111,6 +125,11 @@ public class PlayerEventListener implements Listener, RuneCooldownGate {
     public void onPlayerQuit(PlayerQuitEvent event) {
         Player player = event.getPlayer();
         UUID uuid = player.getUniqueId();
+
+        double maxHealth = player.getAttribute(Attribute.MAX_HEALTH).getValue();
+        double currentHealth = player.getHealth();
+        float healthPercentage = (float) ((currentHealth / maxHealth) * 100.0);
+        plugin.getMySQLManager().savePlayerHealthPercentage(uuid, healthPercentage);
 
         if (runeRegistry.getRune("grasp-of-the-undying") instanceof GraspOfTheUndying grasp) {
             grasp.resetAbsorption(player);

@@ -11,6 +11,7 @@ import dev.ixpu.leaguemechanics.command.CommandHandler;
 import dev.ixpu.leaguemechanics.command.CommandTabCompletions;
 
 import dev.ixpu.leaguemechanics.manager.DebuffManager;
+    import dev.ixpu.leaguemechanics.manager.MySQLManager;
 import dev.ixpu.leaguemechanics.manager.RuneManager;
 import dev.ixpu.leaguemechanics.manager.ItemStatsManager;
 import dev.ixpu.leaguemechanics.manager.ItemShopManager;
@@ -63,6 +64,7 @@ public class LeagueMechanics extends JavaPlugin {
     private RuneManager runeManager;
     private ItemStatsManager itemStatsManager;
     private RunePersistence runePersistence;
+    private MySQLManager mySQLManager;
     private PlayerStatsListener playerStatsListener;
     private PlayerEventListener playerEventListener;
     private PlayerInventoryListener playerInventoryListener;
@@ -79,6 +81,7 @@ public class LeagueMechanics extends JavaPlugin {
         runeManager = new RuneManager(this);
         itemStatsManager = new ItemStatsManager();
         runePersistence = new RunePersistence(this);
+        mySQLManager = new MySQLManager(this);
         playerStatsListener = new PlayerStatsListener(this);
         damageListener = new DamageListener(this, playerStatsListener);
         playerEventListener = new PlayerEventListener(this, playerStatsListener, damageListener);
@@ -188,6 +191,10 @@ public class LeagueMechanics extends JavaPlugin {
 
     public CommandHandler getCommandHandler() {
         return commandHandler;
+    }
+
+    public MySQLManager getMySQLManager() {
+        return mySQLManager;
     }
 
     public boolean isDebugMode() {

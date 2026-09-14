@@ -62,6 +62,7 @@ public class PlaceholderRegistry extends PlaceholderExpansion {
             case "af" -> String.format("%.0f", stats.getPlayerAF(player));
             case "ch" -> String.format("%.0f", stats.getPlayerCH(player));
 
+            case "level" -> String.valueOf(stats.getLeagueLevel());
             case "rune_path" -> getRunePathPlaceholder(player);
             case "class"      -> getClassPlaceholder(player);
 

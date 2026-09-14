@@ -127,7 +127,7 @@ public class ItemShopManager implements Listener {
         }
 
         if (playerLevel < price) {
-            player.sendMessage(Component.text("§cInsufficient levels."));
+            player.sendMessage(Component.text("§cInsufficient XP."));
             return false;
         }
         if (playerOwnsConflictingItem(player, shopItem)) {
@@ -364,7 +364,7 @@ public class ItemShopManager implements Listener {
 
         player.setLevel(player.getLevel() + refundAmount);
         player.playSound(player.getLocation(), Sound.ENTITY_EXPERIENCE_ORB_PICKUP, 1.0f, 1.0f);
-        player.sendMessage(Component.text("§fSold §e" + shopItem.getDisplayName() + " §ffor §a◎" + refundAmount + " §flevels (70%)"));
+        player.sendMessage(Component.text("§fSold §e" + shopItem.getDisplayName() + " §ffor §a◎" + refundAmount + " §fXP (70%)"));
 
         LeagueMechanics plugin = LeagueMechanics.getInstance();
         if (plugin != null) {

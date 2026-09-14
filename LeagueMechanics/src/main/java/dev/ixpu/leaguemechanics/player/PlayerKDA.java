@@ -123,6 +123,17 @@ public class PlayerKDA {
         }
     }
 
+    public void loadForPlayer(UUID uuid) {
+        int[] kda = mysqlManager.loadPlayerKDA(uuid);
+        if (kda != null) {
+            KDAData data = new KDAData();
+            data.kills = kda[0];
+            data.deaths = kda[1];
+            data.assists = kda[2];
+            playerData.put(uuid, data);
+        }
+    }
+
     private static class KDAData {
         int kills = 0;
         int deaths = 0;

@@ -125,21 +125,22 @@ public class DamageManager {
     }
 
     private double levelBasedBonus(Player player) {
-        return levelBasedBonusForLevel(player.getLevel());
+        PlayerStats stats = PlayerStats.getOrCreate(player);
+        return levelBasedBonusForLevel(stats.getLeagueLevel());
     }
 
 
-    public static double levelBasedBonusForLevel(double playerLevel) {
-        if (playerLevel >= 300) {
+    public static double levelBasedBonusForLevel(double leagueLevel) {
+        if (leagueLevel >= 18) {
+            return 1.7;
+        } else if (leagueLevel >= 13) {
+            return 1.5;
+        } else if (leagueLevel >= 8) {
             return 1.3;
-        } else if (playerLevel >= 200) {
-            return 1.2;
-        } else if (playerLevel >= 100) {
-            return 1.07;
-        } else if (playerLevel >= 50) {
-            return 1.05;
+        } else if (leagueLevel >= 3) {
+            return 1.15;
         } else {
-            return 1.02;
+            return 1.07;
         }
     }
 

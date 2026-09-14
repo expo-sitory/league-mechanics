@@ -40,7 +40,9 @@ public class CommandTabCompletions implements org.bukkit.command.TabCompleter {
                 completions.add("shop");
                 completions.add("class");
             }
-            completions.add("runes");
+            if (player.hasPermission("leaguemechanics.user")) {
+                completions.add("runes");
+            }
             completions.add("inspect");
             return filter(completions, args[0]);
         }
