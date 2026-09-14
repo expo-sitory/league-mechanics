@@ -310,11 +310,10 @@ public class CommandHandler implements CommandExecutor {
     }
 
     private void sendRunesUsage(Player player) {
-        player.sendMessage(Component.text("§6§lRunes Commands:"));
+        player.sendMessage(Component.text("§6§lʀᴜɴᴇꜱ ᴄᴏᴍᴍᴀɴᴅꜱ:"));
         player.sendMessage(Component.text("§7  /lm runes select primary §e<path> [keystone] [slot1] [slot2] [slot3]"));
         //player.sendMessage(Component.text("§7  /lm runes select secondary §e<path> [slot1] [slot2]"));
         player.sendMessage(Component.text("§7  /lm runes select shards §e<row1-option> <row2-option> <row3-option>"));
-        player.sendMessage(Component.text("§7  /lm runes clear §8— §fclear all runes"));
         player.sendMessage(Component.text("§7  /lm runes info §8— §fshow currently equipped runes"));
     }
 
