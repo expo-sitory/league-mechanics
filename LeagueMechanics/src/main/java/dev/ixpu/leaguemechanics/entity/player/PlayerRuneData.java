@@ -1,4 +1,4 @@
-package dev.ixpu.leaguemechanics.player;
+package dev.ixpu.leaguemechanics.entity.player;
 
 import dev.ixpu.leaguemechanics.rune.CooldownHandler;
 import dev.ixpu.leaguemechanics.rune.RunePath;

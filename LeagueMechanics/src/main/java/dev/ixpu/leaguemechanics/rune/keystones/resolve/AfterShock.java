@@ -2,7 +2,7 @@ package dev.ixpu.leaguemechanics.rune.keystones.resolve;
 
 import dev.ixpu.leaguemechanics.LeagueMechanics;
 import dev.ixpu.leaguemechanics.util.DebugLogger;
-import dev.ixpu.leaguemechanics.player.PlayerStats;
+import dev.ixpu.leaguemechanics.entity.player.PlayerStats;
 
 import dev.ixpu.leaguemechanics.rune.CooldownHandler;
 import dev.ixpu.leaguemechanics.rune.RunePath;
@@ -213,7 +213,7 @@ public class AfterShock extends CooldownHandler {
 
         DamageManager damageManager = new DamageManager(LeagueMechanics.getInstance().getStatsManager());
         damageManager.enableOnlyAP();
-        double apComponent = damageManager.DamageCalculation(player, target, 0, 0, 0);
+        double apComponent = damageManager.DamageCalculation(player, target, 0, 0, 0, 0);
 
         return mitigatedBase + apComponent;
     }

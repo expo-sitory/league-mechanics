@@ -6,7 +6,7 @@ import dev.ixpu.leaguemechanics.manager.DamageManager;
 import dev.ixpu.leaguemechanics.rune.CooldownHandler;
 import dev.ixpu.leaguemechanics.rune.RunePath;
 import dev.ixpu.leaguemechanics.rune.RuneSlot;
-import dev.ixpu.leaguemechanics.player.PlayerStats;
+import dev.ixpu.leaguemechanics.entity.player.PlayerStats;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -95,7 +95,7 @@ public class StormRaiderSurge extends CooldownHandler {
 
     private double playerDamage(Player player, Entity target) {
         DamageManager damageManager = new DamageManager(LeagueMechanics.getInstance().getStatsManager());
-        return damageManager.DamageCalculation(player, target, 0, 0, 0);
+        return damageManager.DamageCalculation(player, target, 0, 0, 0, 0);
     }
 
     private void enterActiveState(Player player) {

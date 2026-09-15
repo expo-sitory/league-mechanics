@@ -1,7 +1,7 @@
 package dev.ixpu.leaguemechanics.listener;
 
 import dev.ixpu.leaguemechanics.LeagueMechanics;
-import dev.ixpu.leaguemechanics.player.PlayerRuneData;
+import dev.ixpu.leaguemechanics.entity.player.PlayerRuneData;
 
 import dev.ixpu.leaguemechanics.manager.RuneManager;
 
@@ -13,8 +13,6 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.block.BlockBreakEvent;
 
 import org.bukkit.entity.Player;
-
-import java.util.*;
 
 public class RuneListener implements Listener {
     private final RuneManager runeManager;

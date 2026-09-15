@@ -4,7 +4,7 @@ import dev.ixpu.leaguemechanics.LeagueMechanics;
 import dev.ixpu.leaguemechanics.manager.ItemShopManager;
 import dev.ixpu.leaguemechanics.rune.shards.ShardStats;
 import dev.ixpu.leaguemechanics.util.RunePersistence;
-import dev.ixpu.leaguemechanics.player.PlayerKDA;
+import dev.ixpu.leaguemechanics.entity.player.PlayerKDA;
 
 import dev.ixpu.leaguemechanics.gui.InspectGUI;
 import dev.ixpu.leaguemechanics.gui.ItemShopGUI;
@@ -19,7 +19,7 @@ import dev.ixpu.leaguemechanics.manager.ItemStatsManager;
 import dev.ixpu.leaguemechanics.manager.RuneManager;
 
 import dev.ixpu.leaguemechanics.listener.PlayerEventListener;
-import dev.ixpu.leaguemechanics.player.PlayerStats;
+import dev.ixpu.leaguemechanics.entity.player.PlayerStats;
 import dev.ixpu.leaguemechanics.item.shop.ItemShopRegistry;
 
 import net.kyori.adventure.text.Component;
@@ -30,6 +30,7 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.UUID;
@@ -96,12 +97,12 @@ public class CommandHandler implements CommandExecutor {
                     return true;
                 }
 
-                dev.ixpu.leaguemechanics.player.PlayerClass.clearPlayerClass(target);
+                dev.ixpu.leaguemechanics.entity.player.PlayerClass.clearPlayerClass(target);
                 sender.sendMessage(Component.text("§a✓ Cleared class for player §e" + target.getName()));
                 return true;
             } else {
                 if (sender instanceof Player player) {
-                    dev.ixpu.leaguemechanics.player.PlayerClass.clearPlayerClass(player);
+                    dev.ixpu.leaguemechanics.entity.player.PlayerClass.clearPlayerClass(player);
                     sender.sendMessage(Component.text("§a✓ Your class has been cleared!"));
                     return true;
                 } else {
@@ -313,7 +314,7 @@ public class CommandHandler implements CommandExecutor {
         player.sendMessage(Component.text("§6§lʀᴜɴᴇꜱ ᴄᴏᴍᴍᴀɴᴅꜱ:"));
         player.sendMessage(Component.text("§7  /lm runes select primary §e<path> [keystone] [slot1] [slot2] [slot3]"));
         //player.sendMessage(Component.text("§7  /lm runes select secondary §e<path> [slot1] [slot2]"));
-        player.sendMessage(Component.text("§7  /lm runes select shards §e<row1-option> <row2-option> <row3-option>"));
+        player.sendMessage(Component.text("§7  /lm runes select shards §e<row-1|row-2|row-3> <option-1|option-2|option-3>"));
         player.sendMessage(Component.text("§7  /lm runes info §8— §fshow currently equipped runes"));
     }
 
@@ -431,33 +432,58 @@ public class CommandHandler implements CommandExecutor {
     }
 
     private boolean handleRuneSelectShards(Player player, String[] args) {
-        if (args.length != 6) {
-            player.sendMessage(Component.text("§cUsage: /lm runes select shards <row1-option> <row2-option> <row3-option>"));
+        if (args.length != 5) {
+            player.sendMessage(Component.text("§cUsage: /lm runes select shards <row-1|row-2|row-3> <option-1|option-2|option-3>"));
             return true;
         }
 
-        String row1Option = args[3];
-        String row2Option = args[4];
-        String row3Option = args[5];
-
-        RuneShard row1 = RuneShard.fromRowAndOption(1, row1Option);
-        RuneShard row2 = RuneShard.fromRowAndOption(2, row2Option);
-        RuneShard row3 = RuneShard.fromRowAndOption(3, row3Option);
-
-        if (row1 == null || row2 == null || row3 == null) {
-            player.sendMessage(Component.text("§cInvalid shard selection. Use option-1, option-2, or option-3"));
+        int row;
+        int option;
+        try {
+            row = Integer.parseInt(args[3]);
+            option = Integer.parseInt(args[4]);
+        } catch (NumberFormatException e) {
+            player.sendMessage(Component.text("§cRow and option must be numbers (1-3)"));
             return true;
         }
+
+        if (row < 1 || row > 3 || option < 1 || option > 3) {
+            player.sendMessage(Component.text("§cRow and option must be between 1 and 3"));
+            return true;
+        }
+
+        String optionId = String.valueOf(option);
+        RuneShard selectedShard = RuneShard.fromRowAndOption(row, optionId);
+        if (selectedShard == null) {
+            player.sendMessage(Component.text("§cInvalid combination: row " + row + ", option " + option));
+            return true;
+        }
+
+        RuneShard defaultRow1 = Arrays.stream(RuneShard.values())
+                .filter(s -> s.getRowNumber() == 1)
+                .findFirst()
+                .orElse(null);
+        RuneShard defaultRow2 = Arrays.stream(RuneShard.values())
+                .filter(s -> s.getRowNumber() == 2)
+                .findFirst()
+                .orElse(null);
+        RuneShard defaultRow3 = Arrays.stream(RuneShard.values())
+                .filter(s -> s.getRowNumber() == 3)
+                .findFirst()
+                .orElse(null);
+
+        RuneShard finalRow1 = (row == 1) ? selectedShard : defaultRow1;
+        RuneShard finalRow2 = (row == 2) ? selectedShard : defaultRow2;
+        RuneShard finalRow3 = (row == 3) ? selectedShard : defaultRow3;
+
+        if (finalRow1 == null) finalRow1 = RuneShard.ROW1_ADAP;
+        if (finalRow2 == null) finalRow2 = RuneShard.ROW2_ADAP;
+        if (finalRow3 == null) finalRow3 = RuneShard.ROW3_HP;
 
         ShardStats shards = PlayerStats.getOrCreate(player).getRuneShards(player);
-        shards.selectShards(row1, row2, row3);
+        shards.selectShards(finalRow1, finalRow2, finalRow3);
 
-        runePersistence.saveRuneShards(player.getUniqueId(), row1.name(), row2.name(), row3.name());
-
-        player.sendMessage(Component.text("§aRune Shards selected:"));
-        player.sendMessage(Component.text("§7Row 1: §b" + row1.getDisplay()));
-        player.sendMessage(Component.text("§7Row 2: §b" + row2.getDisplay()));
-        player.sendMessage(Component.text("§7Row 3: §b" + row3.getDisplay()));
+        runePersistence.saveRuneShards(player.getUniqueId(), finalRow1.name(), finalRow2.name(), finalRow3.name());
 
         playerEventListener.applyPlayerStats(player);
         return true;
@@ -501,7 +527,7 @@ public class CommandHandler implements CommandExecutor {
     }
 
     private boolean handleRunesInfo(Player player) {
-        dev.ixpu.leaguemechanics.player.PlayerRuneData data = runeManager.getPlayerRuneData(player);
+        dev.ixpu.leaguemechanics.entity.player.PlayerRuneData data = runeManager.getPlayerRuneData(player);
         if (data == null) {
             player.sendMessage(Component.text("§cNo runes loaded. Try rejoining."));
             return true;
@@ -526,11 +552,11 @@ public class CommandHandler implements CommandExecutor {
         String shard3Display = selectedShard3 != null ? selectedShard3.getDisplay() : "§7none";
 
         player.sendMessage(Component.text("§6ᴍʏ ᴀᴄᴛɪᴠᴇ ʀᴜɴᴇꜱ:"));
-        player.sendMessage(Component.text("§7  Primary:   §e" + primary + " §7— keystone: §e" + keystone));
-        player.sendMessage(Component.text("§7   slot 1: §e" + p1 + " §7| slot 2: §e" + p2 + " §7| slot 3: §e" + p3));
-        player.sendMessage(Component.text("§7  Secondary: §e" + secondary));
-        player.sendMessage(Component.text("§7   slot 1: §e" + s1 + " §7| slot 2: §e" + s2));
-        player.sendMessage(Component.text("§7    Shards: §e" + shard1Display + " §7| §e" + shard2Display + " §7| §e" + shard3Display));
+        player.sendMessage(Component.text("§7  Primary Path:  §e" + primary + " §7— Keystone: §e" + keystone));
+        player.sendMessage(Component.text("§7    Slot 1: §e" + p1 + " §7| Slot 2: §e" + p2 + " §7| Slot 3: §e" + p3));
+        player.sendMessage(Component.text("§7  Secondary Path: §e" + secondary));
+        player.sendMessage(Component.text("§7    Slot 1: §e" + s1 + " §7| Slot 2: §e" + s2));
+        player.sendMessage(Component.text("§7  Shards: §e" + shard1Display + " §7| §e" + shard2Display + " §7| §e" + shard3Display));
         return true;
     }
 

@@ -1,7 +1,7 @@
 package dev.ixpu.leaguemechanics.rune.keystones.domination;
 
 import dev.ixpu.leaguemechanics.LeagueMechanics;
-import dev.ixpu.leaguemechanics.player.PlayerStats;
+import dev.ixpu.leaguemechanics.entity.player.PlayerStats;
 import dev.ixpu.leaguemechanics.util.DebugLogger;
 
 import dev.ixpu.leaguemechanics.rune.RunePath;
@@ -120,7 +120,7 @@ public class Electrocute extends StacksHandler {
     private double keystoneDamage(Player player, Entity target) {
         DamageManager damageManager = new DamageManager(LeagueMechanics.getInstance().getStatsManager());
         damageManager.enableAdaptiveDamage();
-        return damageManager.DamageCalculation(player, target, 0, BASE_ADAPTIVE_DAMAGE, 0);
+        return damageManager.DamageCalculation(player, target, 0, BASE_ADAPTIVE_DAMAGE, 0, 0);
     }
 
     private int trackPerTargetStacks(Player player) {

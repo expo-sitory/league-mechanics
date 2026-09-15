@@ -370,7 +370,7 @@ public class ItemShopManager implements Listener {
         if (plugin != null) {
             plugin.getServer().getScheduler().runTaskLater(plugin, () -> {
                 UUID uuid = player.getUniqueId();
-                dev.ixpu.leaguemechanics.player.PlayerStats.invalidateCache(uuid);
+                dev.ixpu.leaguemechanics.entity.player.PlayerStats.invalidateCache(uuid);
                 ItemStatsManager manager = plugin.getStatsManager();
                 if (manager != null) manager.invalidateCache(uuid);
                 plugin.getPlayerEventListener().applyPlayerStats(player);

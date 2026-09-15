@@ -1,4 +1,4 @@
-package dev.ixpu.leaguemechanics.player;
+package dev.ixpu.leaguemechanics.entity.player;
 
 import dev.ixpu.leaguemechanics.LeagueMechanics;
 import dev.ixpu.leaguemechanics.manager.MySQLManager;
@@ -11,7 +11,6 @@ import java.sql.SQLException;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
-import java.util.logging.Level;
 
 public class PlayerKDA {
     private static PlayerKDA instance;

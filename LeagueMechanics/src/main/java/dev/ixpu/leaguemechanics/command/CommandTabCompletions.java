@@ -149,16 +149,13 @@ public class CommandTabCompletions implements org.bukkit.command.TabCompleter {
     }
 
     private List<String> tabSelectShards(String[] args) {
-        List<String> shardOptions = List.of("option-1", "option-2", "option-3");
-
         if (args.length == 4) {
-            return filter(shardOptions, args[3]);
+            List<String> rows = List.of("1", "2", "3");
+            return filter(rows, args[3]);
         }
         if (args.length == 5) {
-            return filter(shardOptions, args[4]);
-        }
-        if (args.length == 6) {
-            return filter(shardOptions, args[5]);
+            List<String> options = List.of("1", "2", "3");
+            return filter(options, args[4]);
         }
 
         return new ArrayList<>();

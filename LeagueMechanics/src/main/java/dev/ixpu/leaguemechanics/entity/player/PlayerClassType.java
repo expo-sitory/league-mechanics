@@ -1,4 +1,4 @@
-package dev.ixpu.leaguemechanics.player;
+package dev.ixpu.leaguemechanics.entity.player;
 
 public enum PlayerClassType {
     FIGHTER("fighter", "Fighter"),

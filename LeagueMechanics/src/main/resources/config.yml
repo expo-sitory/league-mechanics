@@ -134,48 +134,141 @@ runes:
         cooldown: 25 # seconds
 
 
-  slots:
+    slots:
 
-    primary:
+      primary:
 
-      slot-1:
+        slot-1:
 
-        domination:
-          cheap-shot:
-            bonus-true-damage: 10.0 # bonus true damage on qualifying attacks
-            cooldown: 10 # seconds
-          taste-of-blood:
-            heal-percent: 10.0 # percent of damage dealt as healing
-            cooldown: 10 # seconds
+          domination:
+            cheap-shot:
+              bonus-true-damage: 10.0 # bonus true damage on qualifying attacks
+              cooldown: 10 # seconds
+            taste-of-blood:
+              heal-percent: 10.0 # percent of damage dealt as healing
+              cooldown: 10 # seconds
 
-        inspiration:
-          cash-back:
-            refund-percent: 7.5 # percent of XP cost refunded for EPIC items
-          magical-footwear:
-            movement-speed-percent: 10.0 # flat movement speed bonus percent
+          inspiration:
+            cash-back:
+              refund-percent: 7.5 # percent of XP cost refunded for EPIC items
+            magical-footwear:
+              movement-speed-percent: 10.0 # flat movement speed bonus percent
 
-        precision:
-          absorb-life:
-            missing-health-heal-percent: 0.20 # healing percent from missing health on kill
-          triumph:
-            max-health-heal-percent: 0.025 # flat heal percent on takedown
-            missing-health-heal-percent: 0.05 # additional heal from missing health
-            bonus-xp-levels: 20 # XP granted on takedown
+          precision:
+            absorb-life:
+              missing-health-heal-percent: 0.20 # healing percent from missing health on kill
+            triumph:
+              max-health-heal-percent: 0.025 # flat heal percent on takedown
+              missing-health-heal-percent: 0.05 # additional heal from missing health
+              bonus-xp-levels: 20 # XP granted on takedown
 
-        resolve:
-          demolish:
-            blocks-per-stack: 5 # blocks broken to gain 1 demolish stack
-            stacks-for-activation: 20 # stacks (100 blocks) to trigger Haste I
-            active-duration-ticks: 300 # Haste I duration in ticks (15 seconds)
-            haste-amplifier: 0 # 0 = Haste I, 1 = Haste II, etc.
-          shield-bash:
-            bonus-ad: 15.0 # attack damage bonus on shield block
-            bonus-duration-ticks: 100 # bonus duration in ticks (5 seconds)
+          resolve:
+            demolish:
+              blocks-per-stack: 5 # blocks broken to gain 1 demolish stack
+              stacks-for-activation: 20 # stacks (100 blocks) to trigger Haste I
+              active-duration-ticks: 300 # Haste I duration in ticks (15 seconds)
+              haste-amplifier: 0 # 0 = Haste I, 1 = Haste II, etc.
+            shield-bash:
+              bonus-ad: 15.0 # attack damage bonus on shield block
+              bonus-duration-ticks: 100 # bonus duration in ticks (5 seconds)
 
-        sorcery:
-          axiom-arcanist:
-            bonus-crit-damage: 0.12 # crit damage multiplier bonus on crit
-            cooldown: 60 # seconds
-          nimbus-cloak:
-            movement-speed-percent: 60.0 # flat movement speed bonus on SPEED potion gain
-            decay-ticks: 100 # bonus duration in ticks (5 seconds)
+          sorcery:
+            axiom-arcanist:
+              bonus-crit-damage: 0.12 # crit damage multiplier bonus on crit
+              cooldown: 60 # seconds
+            nimbus-cloak:
+              movement-speed-percent: 60.0 # flat movement speed bonus on SPEED potion gain
+              decay-ticks: 100 # bonus duration in ticks (5 seconds)
+
+# Mob Statistics Configuration
+mob-stats:
+  zombie:
+    ad: 57.0
+    ap: 22.0
+    ar: 200.0
+    mr: 70.0
+    type: UNDEAD
+  skeleton:
+    ad: 35.0
+    ap: 65.0
+    ar: 120.0
+    mr: 25.0
+    type: UNDEAD
+  spider:
+    ad: 28.0
+    ap: 20.0
+    ar: 70.0
+    mr: 20.0
+    type: ARTHROPOD
+  cave_spider:
+    ad: 34.0
+    ap: 32.0
+    ar: 90.0
+    mr: 40.0
+    type: ARTHROPOD
+  creeper:
+    ad: 0.0
+    ap: 0.0
+    ar: 500.0
+    mr: 500.0
+    type: CRITTER
+  enderman:
+    ad: 70.0
+    ap: 70.0
+    ar: 220.0
+    mr: 220.0
+    type: ENDERMAN
+  witch:
+    ad: 0.0
+    ap: 185.0
+    ar: 55.0
+    mr: 530.0
+    type: WITCH
+  slime:
+    ad: 40.0
+    ap: 40.0
+    ar: 850.0
+    mr: 10.0
+    type: SLIME
+  magma_cube:
+    ad: 45.0
+    ap: 35.0
+    ar: 400.0
+    mr: 400.0
+    type: SLIME
+  blaze:
+    ad: 40.0
+    ap: 220.0
+    ar: 999.0
+    mr: 500.0
+    type: BLAZE
+  ghast:
+    ad: 0.0
+    ap: 290.0
+    ar: 200.0
+    mr: 800.0
+    type: GHAST
+  stray:
+    ad: 25.0
+    ap: 0.0
+    ar: 150.0
+    mr: 25.0
+    type: UNDEAD
+  husk:
+    ad: 62.0
+    ap: 30.0
+    ar: 87.0
+    mr: 57.0
+    type: UNDEAD
+  zombie_villager:
+    ad: 72.0
+    ap: 60.0
+    ar: 120.0
+    mr: 57.0
+    type: UNDEAD
+  wither_skeleton:
+    ad: 197.0
+    ap: 20.0
+    ar: 487.0
+    mr: 120.0
+    type: UNDEAD

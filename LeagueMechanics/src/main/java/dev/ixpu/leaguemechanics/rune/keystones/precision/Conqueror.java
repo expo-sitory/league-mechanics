@@ -1,7 +1,7 @@
 package dev.ixpu.leaguemechanics.rune.keystones.precision;
 
 import dev.ixpu.leaguemechanics.LeagueMechanics;
-import dev.ixpu.leaguemechanics.player.PlayerStats;
+import dev.ixpu.leaguemechanics.entity.player.PlayerStats;
 
 import dev.ixpu.leaguemechanics.rune.RunePath;
 import dev.ixpu.leaguemechanics.rune.RuneSlot;
@@ -102,7 +102,7 @@ public class Conqueror extends StacksHandler {
         damageManager.enableAdaptiveDamage();
         damageManager.enableAdaptiveScaling();
         damageManager.enablePerStackScaling();
-        return damageManager.DamageCalculation(player, target, currentStacks, BASE_ADAPTIVE_DAMAGE_PER_STACK, 0);
+        return damageManager.DamageCalculation(player, target, currentStacks, BASE_ADAPTIVE_DAMAGE_PER_STACK, 0, 0);
     }
 
     private int trackActiveStacks(Player player) {

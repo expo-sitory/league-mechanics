@@ -1,4 +1,4 @@
-package dev.ixpu.leaguemechanics.player;
+package dev.ixpu.leaguemechanics.entity.player;
 
 import dev.ixpu.leaguemechanics.LeagueMechanics;
 import dev.ixpu.leaguemechanics.manager.ItemStatsManager;
@@ -22,7 +22,7 @@ import org.bukkit.potion.PotionEffectType;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 
-import static dev.ixpu.leaguemechanics.player.PlayerClass.*;
+import static dev.ixpu.leaguemechanics.entity.player.PlayerClass.*;
 
 public class PlayerStats {
     private static final Map<UUID, PlayerStats> INSTANCE_CACHE = new ConcurrentHashMap<>();
@@ -79,7 +79,7 @@ public class PlayerStats {
             itemHP += itemStatsManager.getItemHP(player);
         }
         double shardsHP = getRuneShards(player).getHealth();
-        double leagueLevelHP = getLeagueLevel() * 4.0; // +4 HP per league level
+        double leagueLevelHP = getLeagueLevel() * 4.0;
         return baseHP + itemHP + shardsHP + leagueLevelHP;
     }
 
@@ -194,7 +194,7 @@ public class PlayerStats {
     public double getPlayerAR(Player player) {
         ItemStatsManager itemStatsManager = LeagueMechanics.getInstance().getStatsManager();
         double itemAR = 0;
-        double baseAR = getPlayerClassBaseAR(player) + player.getAttribute(Attribute.ARMOR).getValue();
+        double baseAR = getPlayerClassBaseAR(player) + player.getAttribute(Attribute.ARMOR).getValue() * 7;
         double enchantAR = getArmorEnchant(player);
         if (itemStatsManager != null) {
             itemAR += itemStatsManager.getItemAR(player);
@@ -512,9 +512,5 @@ public class PlayerStats {
             }
         }
         return shardStats;
-    }
-
-    public void setRuneShards(ShardStats shards) {
-        this.shardStats = shards;
     }
 }

@@ -1,7 +1,7 @@
 package dev.ixpu.leaguemechanics.rune.keystones.resolve;
 
 import dev.ixpu.leaguemechanics.LeagueMechanics;
-import dev.ixpu.leaguemechanics.player.PlayerStats;
+import dev.ixpu.leaguemechanics.entity.player.PlayerStats;
 import dev.ixpu.leaguemechanics.util.DebugLogger;
 
 import dev.ixpu.leaguemechanics.rune.RunePath;
@@ -148,7 +148,7 @@ public class GraspOfTheUndying extends StacksHandler {
 
     private double keystoneDamage(Player player, Entity target) {
         DamageManager damageManager = new DamageManager(LeagueMechanics.getInstance().getStatsManager());
-        return damageManager.DamageCalculation(player, target, 0, 0, 0);
+        return damageManager.DamageCalculation(player, target, 0, 0, 0, 0);
     }
 
     private void activateEffects(Player player) {

@@ -1,17 +1,17 @@
 package dev.ixpu.leaguemechanics.rune;
 
 import dev.ixpu.leaguemechanics.LeagueMechanics;
+import dev.ixpu.leaguemechanics.manager.DamageManager;
 import dev.ixpu.leaguemechanics.manager.DebuffManager;
 import dev.ixpu.leaguemechanics.manager.ItemStatsManager;
 import dev.ixpu.leaguemechanics.manager.KillSourceTracker;
-import dev.ixpu.leaguemechanics.player.PlayerStats;
-import dev.ixpu.leaguemechanics.rune.DebuffType;
+import dev.ixpu.leaguemechanics.entity.player.PlayerStats;
+import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 
 public class DebuffTicker {
-    private static final int INFLAME_INTERVAL_TICKS = 10;
-    private static final double INFLAME_BASE_DAMAGE = 2.5;
-    private static final double INFLAME_AP_SCALING = 0.01;
+    private static final int INFLAME_INTERVAL_TICKS = 30;
+    private static final double INFLAME_BASE_DAMAGE = 1.7;
 
     private final java.util.Map<java.util.UUID, Integer> inflameTickCounters = new java.util.HashMap<>();
 
@@ -27,12 +27,21 @@ public class DebuffTicker {
             if (counter >= INFLAME_INTERVAL_TICKS) {
                 inflameTickCounters.put(target.getUniqueId(), 0);
 
-                double attackerAP = 0;
-                if (attacker != null) {
-                    attackerAP = PlayerStats.getOrCreate(attacker).getPlayerAP(attacker);
+                double inflameDamage = inflameDamage(attacker, target);
+
+                if (target instanceof Player targetPlayer) {
+                    double absorption = targetPlayer.getAbsorptionAmount();
+                    if (inflameDamage > absorption) {
+                        inflameDamage -= absorption;
+                        targetPlayer.setAbsorptionAmount(0);
+                    } else {
+                        targetPlayer.setAbsorptionAmount(absorption - inflameDamage);
+                        inflameDamage = 0;
+                    }
                 }
-                double inflameDamage = INFLAME_BASE_DAMAGE + (INFLAME_AP_SCALING * attackerAP);
-                double newHealth = Math.max(0, target.getHealth() - inflameDamage);
+
+                double newHealth = Math.clamp(target.getHealth() - inflameDamage, 0, target.getMaxHealth());
+
                 if (attacker != null) {
                     KillSourceTracker.getInstance().setSource(target, attacker);
                 }
@@ -61,5 +70,12 @@ public class DebuffTicker {
                 }
             }
         }
+    }
+
+    private double inflameDamage(Player source, Entity target) {
+        ItemStatsManager statsManager = LeagueMechanics.getInstance().getStatsManager();
+        DamageManager damageManager = new DamageManager(statsManager);
+        damageManager.enableOnlyAP();
+        return damageManager.DamageCalculation(source, target, 0, 0, 0, INFLAME_BASE_DAMAGE);
     }
 }

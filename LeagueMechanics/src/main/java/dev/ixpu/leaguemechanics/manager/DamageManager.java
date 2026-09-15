@@ -1,7 +1,8 @@
 package dev.ixpu.leaguemechanics.manager;
 
 import dev.ixpu.leaguemechanics.LeagueMechanics;
-import dev.ixpu.leaguemechanics.player.PlayerStats;
+import dev.ixpu.leaguemechanics.entity.mob.MobStats;
+import dev.ixpu.leaguemechanics.entity.player.PlayerStats;
 import dev.ixpu.leaguemechanics.rune.shards.ShardStats;
 import dev.ixpu.leaguemechanics.util.ItemModifier;
 
@@ -19,8 +20,16 @@ public class DamageManager {
     protected boolean isOnlyAP = false;
 
     private static final double CRIT_DAMAGE_MULTIPLIER = 1.75;
+    private static final double BALANCER = 1.4;
 
-    private static final double DEFAULT_MAGIC_RATIO = 0.6;
+    private static final double BASE_BONUS = 1.07;
+    private static final double LEVEL_3_BONUS = 1.15;
+    private static final double LEVEL_8_BONUS = 1.3;
+    private static final double LEVEL_13_BONUS = 1.5;
+    private static final double LEVEL_18_BONUS = 1.7;
+
+    // Adaptive damage threshold
+    private static final double ADAPTIVE_DAMAGE_THRESHOLD = 0.7;
 
     public DamageManager(ItemStatsManager itemStatsManager) {
         this.itemStatsManager = itemStatsManager;
@@ -41,24 +50,61 @@ public class DamageManager {
     public void enableOnlyAP() {
         this.isOnlyAP = true;
     }
-
     public boolean isMagicDamage() {
         return isOnlyAP;
     }
 
 
-    public double DamageCalculation(Player player, Entity target, int currentStacks, double runesAdaptive, double runesTrueDamage) {
-        PlayerStats stats = PlayerStats.getOrCreate(player);
+    public double DamageCalculation(Entity source, Entity target, int currentStacks, double runesAdaptive, double runesTrueDamage, double procDamage) {
         ItemStatsManager statsManager = LeagueMechanics.getInstance().getStatsManager();
+        boolean isPlayerSource = source instanceof Player;
 
-        double doransBonus = getDoransOnHitAD(player);
-        ShardStats shards = stats.getRuneShards(player);
-        double shardsAdOrAp = shards.getAdOrAp(player);
-        double af = stats.getPlayerAF(player);
-        double attackerAD = ((stats.getPlayerAD(player) - statsManager.getItemAD(player)) + (statsManager.getItemAD(player) / 17) + doransBonus) / 2;
-        double attackerAP = ((stats.getPlayerAP(player) - statsManager.getItemAP(player)) + (statsManager.getItemAP(player) / 17)) / 2;
+        double itemAP = 0, itemAD = 0, doransBonus = 0, shardsAdOrAp = 0;
+        double af, rawAD, rawAP, attackerAD, attackerAP, playerTD, itemAPen, itemAPenPercent, itemMPen, itemMPenPercent, leagueLevel;
+        PlayerStats stats;
 
-        if (af <= 0.7) {
+        if (isPlayerSource) {
+            Player player = (Player) source;
+            stats = PlayerStats.getOrCreate(player);
+
+            doransBonus = getDoransOnHitAD(player);
+            ShardStats shards = stats.getRuneShards(player);
+            shardsAdOrAp = shards.getAdOrAp(player);
+
+            af = stats.getPlayerAF(player);
+
+            playerTD = stats.getPlayerTD(player);
+
+            itemAP = statsManager.getItemAP(player);
+            itemAD = statsManager.getItemAD(player);
+
+            rawAD = stats.getPlayerAD(player);
+            rawAP = stats.getPlayerAP(player);
+
+            itemAPen = statsManager.getItemAPen(player);
+            itemAPenPercent = statsManager.getItemAPenPercent(player);
+            itemMPen = statsManager.getItemMPen(player);
+            itemMPenPercent = statsManager.getItemMPenPercent(player);
+            leagueLevel = stats.getLeagueLevel();
+        } else {
+
+            rawAD = MobStats.getMobAD(source);
+            rawAP = MobStats.getMobAP(source);
+
+            af = 0.0;
+            playerTD = 0.0;
+            itemAPen = 0.0;
+            itemAPenPercent = 0.0;
+            itemMPen = 0.0;
+            itemMPenPercent = 0.0;
+
+            leagueLevel = 1.0;
+        }
+
+        attackerAD = rawAD + doransBonus;
+        attackerAP = rawAP;
+
+        if (af <= ADAPTIVE_DAMAGE_THRESHOLD) {
             attackerAD += shardsAdOrAp;
         } else {
             attackerAP += shardsAdOrAp;
@@ -67,43 +113,45 @@ public class DamageManager {
         double targetAR = getTargetAR(target);
         double targetMR = getTargetMR(target);
 
-        double apenFlat = statsManager.getItemAPen(player);
-        double apenPercent = statsManager.getItemAPenPercent(player);
-        double mpenFlat = statsManager.getItemMPen(player);
-        double mpenPercent = statsManager.getItemMPenPercent(player);
+        double apenFlat = itemAPen;
+        double apenPercent = itemAPenPercent;
+        double mpenFlat = itemMPen;
+        double mpenPercent = itemMPenPercent;
 
         double baseDamage;
 
         if (isOnlyAP) {
-            baseDamage = attackerAP;
+            baseDamage = applyResistance(procDamage * levelBasedBonusForLevel(leagueLevel), true, targetAR, targetMR, apenFlat, apenPercent, mpenFlat, mpenPercent);
         } else if (isTrueDamage) {
-            baseDamage = stats.getPlayerTD(player)
+            baseDamage = playerTD
                     + ((attackerAD + attackerAP) * (runesTrueDamage / 100.0));
         } else if (isAdaptiveDamage) {
-            double adaptive = runesAdaptive * levelBasedBonus(player);
+            double adaptive = runesAdaptive * levelBasedBonusForLevel(leagueLevel);
             if (isAdaptiveScaling) {
-                adaptive += adaptive * stats.getPlayerAF(player);
+                adaptive += adaptive * af;
             }
-            boolean preferMagic = statsManager.getItemAP(player) > statsManager.getItemAD(player);
+            boolean preferMagic = itemAP > itemAD;
             baseDamage = applyResistance(adaptive, preferMagic, targetAR, targetMR, apenFlat, apenPercent, mpenFlat, mpenPercent);
         } else {
+
             double physical = applyResistance(attackerAD, false, targetAR, targetMR, apenFlat, apenPercent, mpenFlat, mpenPercent);
-            double magic = applyResistance(attackerAP * DEFAULT_MAGIC_RATIO, true, targetAR, targetMR, apenFlat, apenPercent, mpenFlat, mpenPercent);
+            double magic = applyResistance(attackerAP, true, targetAR, targetMR, apenFlat, apenPercent, mpenFlat, mpenPercent);
             baseDamage = physical + magic;
         }
 
         int stacks = isPerStack ? currentStacks : 1;
-        return baseDamage * stacks;
+        return (baseDamage + procDamage) * stacks;
     }
 
     private double applyResistance(double damage, boolean isMagic, double targetAR, double targetMR,
                                    double apenFlat, double apenPercent, double mpenFlat, double mpenPercent) {
+
         double resist = isMagic ? targetMR : targetAR;
         double flatPen = isMagic ? mpenFlat : apenFlat;
         double percentPen = isMagic ? mpenPercent : apenPercent;
 
         double effectiveResist = Math.max(0, resist - flatPen);
-        effectiveResist = effectiveResist * (1.0 - percentPen / 100.0);
+        effectiveResist = (effectiveResist * (1.0 - percentPen / 100.0)) * BALANCER;
 
         return damage / (1.0 + (effectiveResist / 100.0));
     }
@@ -124,41 +172,43 @@ public class DamageManager {
         return CRIT_DAMAGE_MULTIPLIER + bonus;
     }
 
-    private double levelBasedBonus(Player player) {
-        PlayerStats stats = PlayerStats.getOrCreate(player);
-        return levelBasedBonusForLevel(stats.getLeagueLevel());
-    }
-
-
     public static double levelBasedBonusForLevel(double leagueLevel) {
         if (leagueLevel >= 18) {
-            return 1.7;
+            return LEVEL_18_BONUS;
         } else if (leagueLevel >= 13) {
-            return 1.5;
+            return LEVEL_13_BONUS;
         } else if (leagueLevel >= 8) {
-            return 1.3;
+            return LEVEL_8_BONUS;
         } else if (leagueLevel >= 3) {
-            return 1.15;
+            return LEVEL_3_BONUS;
         } else {
-            return 1.07;
+            return BASE_BONUS;
         }
     }
 
     public double getTargetAR(Entity target) {
-        if (!(target instanceof Player targetPlayer)) {
-            return 0;
+        if (target instanceof Player targetPlayer) {
+            return PlayerStats.getOrCreate(targetPlayer).getPlayerAR(targetPlayer);
+        } else if (MobStats.isSupportedMob(target)) {
+            return MobStats.getMobAR(target);
         }
-        return PlayerStats.getOrCreate(targetPlayer).getPlayerAR(targetPlayer);
+        return 0;
     }
 
     public double getTargetMR(Entity target) {
-        if (!(target instanceof Player targetPlayer)) {
-            return 0;
+        if (target instanceof Player targetPlayer) {
+            return PlayerStats.getOrCreate(targetPlayer).getPlayerMR(targetPlayer);
+        } else if (MobStats.isSupportedMob(target)) {
+            return MobStats.getMobMR(target);
         }
-        return PlayerStats.getOrCreate(targetPlayer).getPlayerMR(targetPlayer);
+        return 0;
     }
 
-    public double getDoransOnHitAD(Player player) {
+    public double getDoransOnHitAD(Entity entity) {
+        if (!(entity instanceof Player player)) {
+            return 0;
+        }
+
         double bonus = 0;
         for (org.bukkit.inventory.ItemStack item : player.getInventory().getContents()) {
             if (item == null || item.getType().isAir()) {

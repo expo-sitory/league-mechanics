@@ -1,9 +1,11 @@
 package dev.ixpu.leaguemechanics.item.passives;
 
+import dev.ixpu.leaguemechanics.LeagueMechanics;
 import dev.ixpu.leaguemechanics.manager.DamageManager;
 import dev.ixpu.leaguemechanics.manager.DebuffManager;
 import dev.ixpu.leaguemechanics.manager.KillSourceTracker;
 import dev.ixpu.leaguemechanics.rune.DebuffType;
+import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
@@ -28,17 +30,32 @@ public class bramble_vest implements ItemPassive {
     public void onTakeDamage(Player victim, Player attacker, double damage, boolean isMagic) {
         if (attacker == null || !attacker.isOnline()) return;
 
-        DamageManager dm = new DamageManager(
-            dev.ixpu.leaguemechanics.LeagueMechanics.getInstance().getStatsManager()
-        );
-        dm.enableOnlyAP();
-        dm.DamageCalculation(victim, attacker, 0, THORNS_MAGIC_DAMAGE, 0);
 
-        double attackerHealth = Math.max(0, attacker.getHealth() - THORNS_MAGIC_DAMAGE);
+        double damageToApply = procDamage(attacker, victim);
+        double absorption = attacker.getAbsorptionAmount();
+
+        if (damageToApply > absorption) {
+            damageToApply -= absorption;
+            attacker.setAbsorptionAmount(0);
+        } else {
+            attacker.setAbsorptionAmount(absorption - damageToApply);
+            damageToApply = 0;
+        }
+
+        double newHealth = Math.clamp(attacker.getHealth() - damageToApply, 0, attacker.getMaxHealth());
+
         KillSourceTracker.getInstance().setSource(attacker, victim);
         attacker.damage(0.00001);
-        attacker.setHealth(attackerHealth);
+        attacker.setHealth(newHealth);
 
         DebuffManager.getInstance().applyDebuff(attacker, DebuffType.GRIEVOUS_WOUNDS, GRIEVOUS_DURATION_TICKS);
+    }
+
+    private double procDamage(Player player, Entity target) {
+        DamageManager damageManager = new DamageManager(LeagueMechanics.getInstance().getStatsManager());
+        damageManager.enableOnlyAP();
+        double baseDamage = damageManager.DamageCalculation(player, target, 0, 0, 0, THORNS_MAGIC_DAMAGE);
+
+        return baseDamage;
     }
 }

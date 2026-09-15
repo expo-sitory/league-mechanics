@@ -31,9 +31,9 @@ public class fated_ashes implements ItemPassive {
         ItemStack weapon = attacker.getInventory().getItemInMainHand();
         if (weapon == null || weapon.getType().isAir()) return;
 
-        boolean hasFireAspect = weapon.containsEnchantment(Enchantment.FIRE_ASPECT)
-                || weapon.getType() == Material.MAGMA_BLOCK;
-        if (!hasFireAspect) return;
+        boolean hasFireEnchant = weapon.containsEnchantment(Enchantment.FIRE_ASPECT)
+                || weapon.containsEnchantment(Enchantment.FLAME);
+        if (!hasFireEnchant) return;
 
         if (target instanceof Player targetPlayer) {
             DebuffManager.getInstance().applyDebuff(targetPlayer, DebuffType.INFLAME, INFLAME_DURATION_TICKS);

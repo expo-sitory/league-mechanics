@@ -6,7 +6,7 @@
 
     <groupId>dev.ixpu</groupId>
     <artifactId>LeagueMechanics</artifactId>
-    <version>1.7.0</version>
+    <version>1.8.2</version>
     <packaging>jar</packaging>
 
     <name>LeagueMechanics</name>

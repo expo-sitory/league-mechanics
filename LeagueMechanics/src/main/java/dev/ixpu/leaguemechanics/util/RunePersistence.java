@@ -2,14 +2,11 @@ package dev.ixpu.leaguemechanics.util;
 
 import dev.ixpu.leaguemechanics.LeagueMechanics;
 import dev.ixpu.leaguemechanics.manager.MySQLManager;
-import dev.ixpu.leaguemechanics.player.PlayerClassType;
+import dev.ixpu.leaguemechanics.entity.player.PlayerClassType;
 import dev.ixpu.leaguemechanics.rune.RunePath;
 import dev.ixpu.leaguemechanics.rune.RuneSlot;
-import org.bukkit.configuration.file.FileConfiguration;
-import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.plugin.Plugin;
 
-import java.io.File;
 import java.util.UUID;
 
 public class RunePersistence {
