@@ -1,7 +1,7 @@
 package dev.ixpu.leaguemechanics.rune.keystones.inspiration;
 
 import dev.ixpu.leaguemechanics.LeagueMechanics;
-import dev.ixpu.leaguemechanics.player.PlayerStats;
+import dev.ixpu.leaguemechanics.entity.player.PlayerStats;
 import dev.ixpu.leaguemechanics.util.DebugLogger;
 
 import dev.ixpu.leaguemechanics.manager.DamageManager;
@@ -149,7 +149,7 @@ public class FirstStrike extends CooldownHandler {
     private double keystoneDamage(Player player, Entity target) {
         DamageManager damageManager = new DamageManager(LeagueMechanics.getInstance().getStatsManager());
         damageManager.enableTrueDamage();
-        return damageManager.DamageCalculation(player, target, 0, 0, TRUE_DAMAGE_PERCENT);
+        return damageManager.DamageCalculation(player, target, 0, 0, TRUE_DAMAGE_PERCENT, 0);
     }
 
     private void spawnXPOrbs(Player attacker, LivingEntity target) {

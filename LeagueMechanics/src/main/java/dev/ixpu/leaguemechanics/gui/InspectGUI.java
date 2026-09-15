@@ -1,9 +1,9 @@
 package dev.ixpu.leaguemechanics.gui;
 
 import dev.ixpu.leaguemechanics.LeagueMechanics;
-import dev.ixpu.leaguemechanics.player.PlayerClass;
-import dev.ixpu.leaguemechanics.player.PlayerClassType;
-import dev.ixpu.leaguemechanics.player.PlayerRuneData;
+import dev.ixpu.leaguemechanics.entity.player.PlayerClass;
+import dev.ixpu.leaguemechanics.entity.player.PlayerClassType;
+import dev.ixpu.leaguemechanics.entity.player.PlayerRuneData;
 import dev.ixpu.leaguemechanics.rune.CooldownHandler;
 import dev.ixpu.leaguemechanics.rune.RunePath;
 import dev.ixpu.leaguemechanics.util.ItemModifier;

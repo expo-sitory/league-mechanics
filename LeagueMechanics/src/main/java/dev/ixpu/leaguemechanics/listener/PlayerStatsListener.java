@@ -1,7 +1,7 @@
 package dev.ixpu.leaguemechanics.listener;
 
 import dev.ixpu.leaguemechanics.LeagueMechanics;
-import dev.ixpu.leaguemechanics.player.PlayerStats;
+import dev.ixpu.leaguemechanics.entity.player.PlayerStats;
 import dev.ixpu.leaguemechanics.util.ItemModifier;
 
 import dev.ixpu.leaguemechanics.item.ItemStatsData;
@@ -89,10 +89,11 @@ public class PlayerStatsListener {
         ItemStatsManager statsManager = plugin.getStatsManager();
         if (statsManager == null) return;
 
-        double classBaseHP = dev.ixpu.leaguemechanics.player.PlayerClass.getPlayerClassBaseHP(player);
+        double classBaseHP = dev.ixpu.leaguemechanics.entity.player.PlayerClass.getPlayerClassBaseHP(player);
         double itemBonusHP = statsManager.getItemHP(player);
         double runeBonusHP = PlayerStats.getOrCreate(player).getRuneShards(player).getHealth();
-        double bonusHP = classBaseHP + itemBonusHP + runeBonusHP;
+        double leagueLevelHP = PlayerStats.getOrCreate(player).getLeagueLevel() * 4.0;
+        double bonusHP = classBaseHP + itemBonusHP + runeBonusHP + leagueLevelHP;
         UUID playerId = player.getUniqueId();
         var attr = player.getAttribute(Attribute.MAX_HEALTH);
         if (attr != null) {

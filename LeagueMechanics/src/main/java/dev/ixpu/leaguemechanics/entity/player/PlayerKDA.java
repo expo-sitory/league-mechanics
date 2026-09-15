@@ -1,4 +1,4 @@
-package dev.ixpu.leaguemechanics.player;
+package dev.ixpu.leaguemechanics.entity.player;
 
 import dev.ixpu.leaguemechanics.LeagueMechanics;
 import dev.ixpu.leaguemechanics.manager.MySQLManager;
@@ -11,7 +11,6 @@ import java.sql.SQLException;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
-import java.util.logging.Level;
 
 public class PlayerKDA {
     private static PlayerKDA instance;
@@ -120,6 +119,17 @@ public class PlayerKDA {
         } catch (SQLException e) {
             dev.ixpu.leaguemechanics.LeagueMechanics.getInstance().getLogger().warning("Failed to load KDA data from database: " + e.getMessage());
             e.printStackTrace();
+        }
+    }
+
+    public void loadForPlayer(UUID uuid) {
+        int[] kda = mysqlManager.loadPlayerKDA(uuid);
+        if (kda != null) {
+            KDAData data = new KDAData();
+            data.kills = kda[0];
+            data.deaths = kda[1];
+            data.assists = kda[2];
+            playerData.put(uuid, data);
         }
     }
 

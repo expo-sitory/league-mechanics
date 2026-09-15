@@ -1,7 +1,7 @@
 package dev.ixpu.leaguemechanics.rune.keystones.sorcery;
 
 import dev.ixpu.leaguemechanics.LeagueMechanics;
-import dev.ixpu.leaguemechanics.player.PlayerStats;
+import dev.ixpu.leaguemechanics.entity.player.PlayerStats;
 import dev.ixpu.leaguemechanics.util.DebugLogger;
 
 import dev.ixpu.leaguemechanics.rune.CooldownHandler;
@@ -35,6 +35,7 @@ import net.kyori.adventure.text.Component;
 
 public class DeathfireTorch extends CooldownHandler {
     private double DAMAGE_TICKS = 20;
+    private double BASE_MAGIC_DAMAGE = 3;
 
     private double AD_PERCENTAGE_MULTIPLIER = 3.0;
     private double AP_PERCENTAGE_MULTIPLIER = 6.0;
@@ -102,7 +103,7 @@ public class DeathfireTorch extends CooldownHandler {
     private double keystoneDamage(Player player, Entity target) {
         DamageManager damageManager = new DamageManager(LeagueMechanics.getInstance().getStatsManager());
         damageManager.enableOnlyAP();
-        double baseDamage = damageManager.DamageCalculation(player, target, 0, 0, 0);
+        double baseDamage = damageManager.DamageCalculation(player, target, 0, 0, 0, BASE_MAGIC_DAMAGE);
         double scaledBonus = getScaledBonusDamage(player);
 
         return baseDamage + scaledBonus;

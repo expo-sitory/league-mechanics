@@ -1,6 +1,6 @@
 package dev.ixpu.leaguemechanics.manager;
 
-import dev.ixpu.leaguemechanics.player.PlayerStats;
+import dev.ixpu.leaguemechanics.entity.player.PlayerStats;
 
 import org.bukkit.entity.Player;
 

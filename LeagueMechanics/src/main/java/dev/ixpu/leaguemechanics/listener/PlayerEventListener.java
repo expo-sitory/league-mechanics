@@ -1,15 +1,14 @@
 package dev.ixpu.leaguemechanics.listener;
 
 import dev.ixpu.leaguemechanics.LeagueMechanics;
-import dev.ixpu.leaguemechanics.item.*;
 import dev.ixpu.leaguemechanics.item.passives.ItemPassivesRegistry;
 import dev.ixpu.leaguemechanics.manager.CombatStateManager;
 import dev.ixpu.leaguemechanics.manager.ItemStatsManager;
 import dev.ixpu.leaguemechanics.manager.RuneManager;
 import dev.ixpu.leaguemechanics.manager.CritManager;
 
-import dev.ixpu.leaguemechanics.player.PlayerRuneData;
-import dev.ixpu.leaguemechanics.player.PlayerStats;
+import dev.ixpu.leaguemechanics.entity.player.PlayerRuneData;
+import dev.ixpu.leaguemechanics.entity.player.PlayerStats;
 
 import dev.ixpu.leaguemechanics.rune.CooldownHandler;
 import dev.ixpu.leaguemechanics.rune.RuneCooldownGate;
@@ -23,10 +22,8 @@ import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.*;
 import org.bukkit.event.player.*;
+import org.bukkit.attribute.Attribute;
 import org.bukkit.inventory.ItemStack;
-
-import java.util.*;
-
 
 
 import dev.ixpu.leaguemechanics.util.RunePersistence;
@@ -44,6 +41,7 @@ public class PlayerEventListener implements Listener, RuneCooldownGate {
     private final DamageListener damageListener;
     private final CombatStateManager combatState = CombatStateManager.getInstance();
     private final RunePersistence runePersistence;
+    private final LeagueMechanics plugin;
 
     public PlayerEventListener(LeagueMechanics plugin, PlayerStatsListener playerStatsListener, DamageListener damageListener) {
         this.runeManager = plugin.getRuneManager();
@@ -53,6 +51,7 @@ public class PlayerEventListener implements Listener, RuneCooldownGate {
         this.damageListener = damageListener;
         this.playerStatsListener = playerStatsListener;
         this.playerInventoryListener = new PlayerInventoryListener(plugin, playerStatsListener);
+        this.plugin = plugin;
     }
 
     public void applyPlayerStats(Player player) {
@@ -85,7 +84,7 @@ public class PlayerEventListener implements Listener, RuneCooldownGate {
     public void onPlayerJoin(PlayerJoinEvent event) {
         Player player = event.getPlayer();
         runeManager.loadPlayerRunes(player);
-        dev.ixpu.leaguemechanics.player.PlayerClass.loadPlayerClass(player);
+        dev.ixpu.leaguemechanics.entity.player.PlayerClass.loadPlayerClass(player);
         UUID uuid = player.getUniqueId();
         String[] shardNames = runePersistence.loadRuneShards(uuid);
         if (shardNames != null && shardNames.length >= 3) {
@@ -101,6 +100,17 @@ public class PlayerEventListener implements Listener, RuneCooldownGate {
             }
         }
         applyPlayerStats(player);
+        dev.ixpu.leaguemechanics.entity.player.PlayerKDA.getInstance().loadForPlayer(uuid);
+
+        float healthPercentage = plugin.getMySQLManager().loadPlayerHealthPercentage(uuid);
+        double maxHealth = player.getAttribute(Attribute.MAX_HEALTH).getValue();
+        double targetHealth = maxHealth * (healthPercentage / 100.0);
+
+        if (targetHealth > maxHealth) {
+            targetHealth = maxHealth;
+        }
+        player.setHealth(targetHealth);
+
         CooldownHandler glacial = runeRegistry.getRune("glacial-augment");
         if (glacial instanceof dev.ixpu.leaguemechanics.rune.keystones.inspiration.GlacialAugment glacialAugment) {
             glacialAugment.reapplyDebuffsForRejoin(player);
@@ -112,13 +122,18 @@ public class PlayerEventListener implements Listener, RuneCooldownGate {
         Player player = event.getPlayer();
         UUID uuid = player.getUniqueId();
 
+        double maxHealth = player.getAttribute(Attribute.MAX_HEALTH).getValue();
+        double currentHealth = player.getHealth();
+        float healthPercentage = (float) ((currentHealth / maxHealth) * 100.0);
+        plugin.getMySQLManager().savePlayerHealthPercentage(uuid, healthPercentage);
+
         if (runeRegistry.getRune("grasp-of-the-undying") instanceof GraspOfTheUndying grasp) {
             grasp.resetAbsorption(player);
         }
         runeManager.unloadPlayerRunes(player);
-        dev.ixpu.leaguemechanics.player.PlayerClass.unloadPlayer(uuid);
+        dev.ixpu.leaguemechanics.entity.player.PlayerClass.unloadPlayer(uuid);
         combatState.clearPlayer(uuid);
-        dev.ixpu.leaguemechanics.player.PlayerKDA.getInstance().saveForPlayer(uuid);
+        dev.ixpu.leaguemechanics.entity.player.PlayerKDA.getInstance().saveForPlayer(uuid);
 
         if (ItemPassivesRegistry.getInstance().getPassive("dark-seal") instanceof dev.ixpu.leaguemechanics.item.passives.dark_seal darkSeal) {
             darkSeal.clearStacks(player);

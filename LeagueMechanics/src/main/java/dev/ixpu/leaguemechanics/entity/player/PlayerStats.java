@@ -1,4 +1,4 @@
-package dev.ixpu.leaguemechanics.player;
+package dev.ixpu.leaguemechanics.entity.player;
 
 import dev.ixpu.leaguemechanics.LeagueMechanics;
 import dev.ixpu.leaguemechanics.manager.ItemStatsManager;
@@ -17,11 +17,12 @@ import org.bukkit.Material;
 import org.bukkit.attribute.Attribute;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.enchantments.Enchantment;
+import org.bukkit.potion.PotionEffectType;
 
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 
-import static dev.ixpu.leaguemechanics.player.PlayerClass.*;
+import static dev.ixpu.leaguemechanics.entity.player.PlayerClass.*;
 
 public class PlayerStats {
     private static final Map<UUID, PlayerStats> INSTANCE_CACHE = new ConcurrentHashMap<>();
@@ -38,14 +39,36 @@ public class PlayerStats {
     private double temporaryHealingMultiplier = 1.0;
 
     private ShardStats shardStats;
+    private int leagueLevel;
 
     public static PlayerStats getOrCreate(Player player) {
         UUID uuid = player.getUniqueId();
-        return INSTANCE_CACHE.computeIfAbsent(uuid, k -> new PlayerStats());
+        return INSTANCE_CACHE.computeIfAbsent(uuid, k -> {
+            PlayerStats stats = new PlayerStats();
+            // Load league level from persistence
+            int leagueLevel = LeagueMechanics.getInstance().getRunePersistence().loadLeagueLevel(uuid);
+            stats.setLeagueLevel(leagueLevel);
+            return stats;
+        });
     }
 
     public static void invalidateCache(UUID uuid) {
         INSTANCE_CACHE.remove(uuid);
+    }
+
+    public int getLeagueLevel() {
+        return leagueLevel;
+    }
+
+    public void setLeagueLevel(int level) {
+        this.leagueLevel = level;
+        // Save to persistence when level changes
+        // Note: We don't have the player reference here, so saving will need to be done elsewhere
+    }
+
+    public void saveLeagueLevel(Player player) {
+        UUID uuid = player.getUniqueId();
+        LeagueMechanics.getInstance().getRunePersistence().saveLeagueLevel(uuid, this.leagueLevel);
     }
 
     public double getPlayerHP(Player player) {
@@ -56,7 +79,8 @@ public class PlayerStats {
             itemHP += itemStatsManager.getItemHP(player);
         }
         double shardsHP = getRuneShards(player).getHealth();
-        return baseHP + itemHP + shardsHP;
+        double leagueLevelHP = getLeagueLevel() * 4.0;
+        return baseHP + itemHP + shardsHP + leagueLevelHP;
     }
 
     public double getPlayerHR(Player player) {
@@ -78,7 +102,15 @@ public class PlayerStats {
         if (itemStatsManager != null) {
             itemAD += itemStatsManager.getItemAD(player);
         }
-        return Math.max(0, baseAD + itemAD + enchantAD + temporaryADModification);
+        double totalAD = Math.max(0, baseAD + itemAD + enchantAD + temporaryADModification);
+
+        if (player.hasPotionEffect(PotionEffectType.WEAKNESS)) {
+            int amplifier = player.getPotionEffect(PotionEffectType.WEAKNESS).getAmplifier();
+            double multiplier = 1 - (0.2 * (amplifier + 1));
+            totalAD = Math.max(0, totalAD * multiplier);
+        }
+
+        return totalAD;
     }
 
     public double getPlayerAP(Player player) {
@@ -94,7 +126,15 @@ public class PlayerStats {
             itemAP += darkSeal.getAbilityPower(player);
         }
 
-        return Math.max(0, baseAP + itemAP + temporaryAPModification);
+        double totalAP = Math.max(0, baseAP + itemAP + temporaryAPModification);
+
+        if (player.hasPotionEffect(PotionEffectType.WEAKNESS)) {
+            int amplifier = player.getPotionEffect(PotionEffectType.WEAKNESS).getAmplifier();
+            double multiplier = 1 - (0.2 * (amplifier + 1));
+            totalAP = Math.max(0, totalAP * multiplier);
+        }
+
+        return totalAP;
     }
 
     public double getPlayerAF(Player player) {
@@ -154,12 +194,20 @@ public class PlayerStats {
     public double getPlayerAR(Player player) {
         ItemStatsManager itemStatsManager = LeagueMechanics.getInstance().getStatsManager();
         double itemAR = 0;
-        double baseAR = getPlayerClassBaseAR(player) + player.getAttribute(Attribute.ARMOR).getValue();
+        double baseAR = getPlayerClassBaseAR(player) + player.getAttribute(Attribute.ARMOR).getValue() * 7;
         double enchantAR = getArmorEnchant(player);
         if (itemStatsManager != null) {
             itemAR += itemStatsManager.getItemAR(player);
         }
-        return baseAR + itemAR + enchantAR + temporaryARModification;
+        double totalAR = baseAR + itemAR + enchantAR + temporaryARModification;
+
+        if (player.hasPotionEffect(PotionEffectType.RESISTANCE)) {
+            int amplifier = player.getPotionEffect(PotionEffectType.RESISTANCE).getAmplifier();
+            double multiplier = 1 + (0.2 * (amplifier + 1));
+            totalAR = totalAR * multiplier;
+        }
+
+        return Math.max(0, totalAR);
     }
 
     public double getPlayerMR(Player player) {
@@ -169,7 +217,15 @@ public class PlayerStats {
         if (itemStatsManager != null) {
             itemMR += itemStatsManager.getItemMR(player);
         }
-        return baseMR + itemMR + temporaryMRModification;
+        double totalMR = baseMR + itemMR + temporaryMRModification;
+
+        if (player.hasPotionEffect(PotionEffectType.RESISTANCE)) {
+            int amplifier = player.getPotionEffect(PotionEffectType.RESISTANCE).getAmplifier();
+            double multiplier = 1 + (0.2 * (amplifier + 1));
+            totalMR = totalMR * multiplier;
+        }
+
+        return Math.max(0, totalMR);
     }
 
     public double getPlayerMS(Player player) {
@@ -456,9 +512,5 @@ public class PlayerStats {
             }
         }
         return shardStats;
-    }
-
-    public void setRuneShards(ShardStats shards) {
-        this.shardStats = shards;
     }
 }

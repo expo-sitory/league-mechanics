@@ -1,8 +1,8 @@
 package dev.ixpu.leaguemechanics.gui;
 
 import dev.ixpu.leaguemechanics.LeagueMechanics;
-import dev.ixpu.leaguemechanics.player.PlayerClass;
-import dev.ixpu.leaguemechanics.player.PlayerClassType;
+import dev.ixpu.leaguemechanics.entity.player.PlayerClass;
+import dev.ixpu.leaguemechanics.entity.player.PlayerClassType;
 import dev.ixpu.leaguemechanics.util.ItemModifier;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;

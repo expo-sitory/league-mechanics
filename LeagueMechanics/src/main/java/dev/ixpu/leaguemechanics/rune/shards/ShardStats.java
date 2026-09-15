@@ -2,7 +2,7 @@ package dev.ixpu.leaguemechanics.rune.shards;
 
 import dev.ixpu.leaguemechanics.rune.RuneShard;
 import org.bukkit.entity.Player;
-import dev.ixpu.leaguemechanics.player.PlayerStats;
+import dev.ixpu.leaguemechanics.entity.player.PlayerStats;
 
 public class ShardStats {
     private RuneShard row1;
@@ -42,11 +42,11 @@ public class ShardStats {
     }
 
     public int getCooldownHaste() {
-        return row1 == RuneShard.ROW1_CH ? 8 : 0;
+        return row1 == RuneShard.ROW1_CH ? 18 : 0;
     }
 
     public int getMovementSpeed() {
-        return row2 == RuneShard.ROW2_MS ? 5 : 0;
+        return row2 == RuneShard.ROW2_MS ? 15 : 0;
     }
 
     public int getHealthRegen() {

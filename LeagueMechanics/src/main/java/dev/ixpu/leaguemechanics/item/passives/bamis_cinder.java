@@ -102,7 +102,7 @@ public class bamis_cinder implements ItemPassive {
         ItemStatsManager statsManager = LeagueMechanics.getInstance().getStatsManager();
         DamageManager damageManager = new DamageManager(statsManager);
         damageManager.enableOnlyAP();
-        return damageManager.DamageCalculation(source, target, 0, 0, 0);
+        return damageManager.DamageCalculation(source, target, 0, 0, 0, IMMOLATE_DAMAGE_PER_TICK);
     }
 
     private void applyMagicDamage(LivingEntity target, double damage, Player source) {

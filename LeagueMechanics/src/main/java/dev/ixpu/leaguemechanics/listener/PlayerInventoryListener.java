@@ -3,7 +3,7 @@ package dev.ixpu.leaguemechanics.listener;
 import dev.ixpu.leaguemechanics.LeagueMechanics;
 import dev.ixpu.leaguemechanics.item.shop.ItemShopData;
 import dev.ixpu.leaguemechanics.util.ItemModifier;
-import dev.ixpu.leaguemechanics.player.PlayerStats;
+import dev.ixpu.leaguemechanics.entity.player.PlayerStats;
 
 import dev.ixpu.leaguemechanics.gui.ClassSelectionGUI;
 import dev.ixpu.leaguemechanics.gui.InspectGUI;

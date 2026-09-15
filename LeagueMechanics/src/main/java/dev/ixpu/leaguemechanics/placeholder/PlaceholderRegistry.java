@@ -1,10 +1,12 @@
 package dev.ixpu.leaguemechanics.placeholder;
 
 import dev.ixpu.leaguemechanics.LeagueMechanics;
-import dev.ixpu.leaguemechanics.player.PlayerClass;
-import dev.ixpu.leaguemechanics.player.PlayerClassType;
-import dev.ixpu.leaguemechanics.player.PlayerStats;
+import dev.ixpu.leaguemechanics.entity.player.PlayerClass;
+import dev.ixpu.leaguemechanics.entity.player.PlayerClassType;
+import dev.ixpu.leaguemechanics.entity.player.PlayerStats;
 import dev.ixpu.leaguemechanics.rune.RunePath;
+import dev.ixpu.leaguemechanics.rune.RuneShard;
+import dev.ixpu.leaguemechanics.rune.shards.ShardStats;
 import me.clip.placeholderapi.expansion.PlaceholderExpansion;
 import org.bukkit.entity.Player;
 
@@ -62,17 +64,114 @@ public class PlaceholderRegistry extends PlaceholderExpansion {
             case "af" -> String.format("%.0f", stats.getPlayerAF(player));
             case "ch" -> String.format("%.0f", stats.getPlayerCH(player));
 
+            case "level" -> String.valueOf(stats.getLeagueLevel());
             case "rune_path" -> getRunePathPlaceholder(player);
             case "class"      -> getClassPlaceholder(player);
 
-            case "kda" -> dev.ixpu.leaguemechanics.player.PlayerKDA.getInstance().getFormattedKDA(player.getUniqueId());
+            case "kda" -> dev.ixpu.leaguemechanics.entity.player.PlayerKDA.getInstance().getFormattedKDA(player.getUniqueId());
 
             case "line1" -> getLine1(player, stats);
             case "line2" -> getLine2(player, stats);
             case "line3" -> getLine3(player, stats);
             case "line4" -> getLine4(player, stats);
 
+            case "shard-1" -> {
+                RuneShard shard1 = stats.getRuneShards(player).getRow1();
+                yield shard1 != null ? shard1.getDisplay() : "None";
+            }
+            case "shard-2" -> {
+                RuneShard shard2 = stats.getRuneShards(player).getRow2();
+                yield shard2 != null ? shard2.getDisplay() : "None";
+            }
+            case "shard-3" -> {
+                RuneShard shard3 = stats.getRuneShards(player).getRow3();
+                yield shard3 != null ? shard3.getDisplay() : "None";
+            }
+
+            case "shard-1_stats" -> getShard1StatsPlaceholder(player, stats);
+            case "shard-2_stats" -> getShard2StatsPlaceholder(player, stats);
+            case "shard-3_stats" -> getShard3StatsPlaceholder(player, stats);
+
             default -> null;
+        };
+    }
+
+    private String getShard1StatsPlaceholder(Player player, PlayerStats stats) {
+        RuneShard shard = stats.getRuneShards(player).getRow1();
+        ShardStats shardStats = stats.getRuneShards(player);
+
+        if (shard == null) {
+            return "None";
+        }
+
+        return switch (shard) {
+            case ROW1_ADAP -> {
+                double value = shardStats.getAdOrAp(player);
+                double af = stats.getPlayerAF(player);
+                String type = af <= 0.7 ? "AD" : "AP";
+                yield String.format("+%.1f %s", value, type);
+            }
+            case ROW1_AS -> {
+                int value = shardStats.getAttackSpeed();
+                yield value > 0 ? String.format("+%d Attack Speed", value) : "None";
+            }
+            case ROW1_CH -> {
+                int value = shardStats.getCooldownHaste();
+                yield value > 0 ? String.format("+%d Cooldown Haste", value) : "None";
+            }
+            default -> "None";
+        };
+    }
+
+    private String getShard2StatsPlaceholder(Player player, PlayerStats stats) {
+        RuneShard shard = stats.getRuneShards(player).getRow2();
+        ShardStats shardStats = stats.getRuneShards(player);
+
+        if (shard == null) {
+            return "None";
+        }
+
+        return switch (shard) {
+            case ROW2_ADAP -> {
+                double value = shardStats.getAdOrAp(player);
+                double af = stats.getPlayerAF(player);
+                String type = af <= 0.7 ? "AD" : "AP";
+                yield String.format("+%.1f %s", value, type);
+            }
+            case ROW2_MS -> {
+                int value = shardStats.getMovementSpeed();
+                yield value > 0 ? String.format("+%d Movement Speed", value) : "None";
+            }
+            case ROW2_HR -> {
+                int value = shardStats.getHealthRegen();
+                yield value > 0 ? String.format("+%d Health Regen", value) : "None";
+            }
+            default -> "None";
+        };
+    }
+
+    private String getShard3StatsPlaceholder(Player player, PlayerStats stats) {
+        RuneShard shard = stats.getRuneShards(player).getRow3();
+        ShardStats shardStats = stats.getRuneShards(player);
+
+        if (shard == null) {
+            return "None";
+        }
+
+        return switch (shard) {
+            case ROW3_HP -> {
+                int value = shardStats.getHealth();
+                yield value > 0 ? String.format("+%d Health", value) : "None";
+            }
+            case ROW3_TN -> {
+                int value = shardStats.getTenacity();
+                yield value > 0 ? String.format("+%d Tenacity", value) : "None";
+            }
+            case ROW3_HR -> {
+                int value = shardStats.getHealthRegen();
+                yield value > 0 ? String.format("+%d Health Regen", value) : "None";
+            }
+            default -> "None";
         };
     }
 

@@ -3,7 +3,7 @@ package dev.ixpu.leaguemechanics.rune.keystones.resolve;
 import dev.ixpu.leaguemechanics.rune.CooldownHandler;
 import dev.ixpu.leaguemechanics.rune.RunePath;
 import dev.ixpu.leaguemechanics.rune.RuneSlot;
-import dev.ixpu.leaguemechanics.player.PlayerStats;
+import dev.ixpu.leaguemechanics.entity.player.PlayerStats;
 
 import java.util.ArrayList;
 import java.util.HashMap;

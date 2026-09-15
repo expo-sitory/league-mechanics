@@ -2,7 +2,7 @@ package dev.ixpu.leaguemechanics.listener;
 
 import dev.ixpu.leaguemechanics.LeagueMechanics;
 
-import dev.ixpu.leaguemechanics.player.PlayerRuneData;
+import dev.ixpu.leaguemechanics.entity.player.PlayerRuneData;
 
 import dev.ixpu.leaguemechanics.util.DebugLogger;
 import dev.ixpu.leaguemechanics.util.ItemModifier;
@@ -29,6 +29,8 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
+import org.bukkit.entity.Projectile;
+import org.bukkit.projectiles.ProjectileSource;
 
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.Bukkit;
@@ -119,18 +121,16 @@ public class DeathListener implements Listener {
         }
         combatState.addProcessedDeath(player.getUniqueId());
 
-        dev.ixpu.leaguemechanics.player.PlayerKDA.getInstance().recordDeath(player);
+        dev.ixpu.leaguemechanics.entity.player.PlayerKDA.getInstance().recordDeath(player);
 
         fireTakedowns(player);
         CritManager.getInstance().resetFailureStreak(player);
 
-        if (killer == null) {
-            killer = KillSourceTracker.getInstance().getAndClearSource(player);
-        }
         if (killer != null) {
             combatState.clearLastMobDamager(player.getUniqueId());
             broadcastKillMessage(killer, player);
-        } else if (originalDamager instanceof LivingEntity mob && !(originalDamager instanceof Player)) {
+        }
+        else if (originalDamager instanceof LivingEntity mob && !(originalDamager instanceof Player)) {
             combatState.clearLastMobDamager(player.getUniqueId());
             String mobName = formatMobName(mob);
             String message = "§c[Executed] §c" + player.getName() + " §chas been executed by §c" + mobName;
@@ -139,7 +139,34 @@ public class DeathListener implements Listener {
                 online.sendMessage(component);
                 online.playSound(online.getLocation(), Sound.ENTITY_PLAYER_DEATH, 1.0f, 1.0f);
             }
-        } else {
+        }
+        else if (originalDamager instanceof Projectile projectile) {
+            ProjectileSource shooterSource = projectile.getShooter();
+            if (shooterSource instanceof LivingEntity shooter) {
+                combatState.clearLastMobDamager(player.getUniqueId());
+                String shooterName = formatMobName(shooter);
+                String message = "§c[Executed] §c" + player.getName() + " §chas been executed by §c" + shooterName;
+                Component component = legacyMessage(message);
+                for (Player online : Bukkit.getOnlinePlayers()) {
+                    online.sendMessage(component);
+                    online.playSound(online.getLocation(), Sound.ENTITY_PLAYER_DEATH, 1.0f, 1.0f);
+                }
+            } else {
+                LivingEntity trackedMob = combatState.getAndRemoveLastMobDamager(player.getUniqueId());
+                if (trackedMob != null) {
+                    String mobName = formatMobName(trackedMob);
+                    String message = "§c[Executed] §c" + player.getName() + " §chas been executed by §c" + mobName;
+                    Component component = legacyMessage(message);
+                    for (Player online : Bukkit.getOnlinePlayers()) {
+                        online.sendMessage(component);
+                        online.playSound(online.getLocation(), Sound.ENTITY_PLAYER_DEATH, 1.0f, 1.0f);
+                    }
+                } else {
+                    DebugLogger.debug(player, "§c[Death] No killer found. originalDamager=" + originalDamager);
+                }
+            }
+        }
+        else {
             LivingEntity trackedMob = combatState.getAndRemoveLastMobDamager(player.getUniqueId());
             if (trackedMob != null) {
                 String mobName = formatMobName(trackedMob);
@@ -222,9 +249,9 @@ public class DeathListener implements Listener {
             boolean isKill = killerUuid != null && killerUuid.equals(entry.getKey());
 
             if (isKill) {
-                dev.ixpu.leaguemechanics.player.PlayerKDA.getInstance().recordKill(attacker);
+                dev.ixpu.leaguemechanics.entity.player.PlayerKDA.getInstance().recordKill(attacker);
             } else {
-                dev.ixpu.leaguemechanics.player.PlayerKDA.getInstance().recordAssist(attacker);
+                dev.ixpu.leaguemechanics.entity.player.PlayerKDA.getInstance().recordAssist(attacker);
             }
 
             onTakedown(attacker, victim, isKill);

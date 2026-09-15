@@ -25,7 +25,7 @@ public class executioners_calling implements ItemPassive {
     @Override
     public void onDealDamage(Player attacker, LivingEntity target, double damage,
                              boolean isPhysical, boolean isMagic) {
-        if (target instanceof Player targetPlayer && isPhysical) {
+        if (target instanceof Player targetPlayer && isMagic) {
             DebuffManager.getInstance().applyDebuff(targetPlayer, DebuffType.GRIEVOUS_WOUNDS, GRIEVOUS_DURATION_TICKS);
         }
     }

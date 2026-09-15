@@ -77,11 +77,11 @@ Adaptive Damage: This effect deals either physical or magic damage depending on 
 
 The player total adaptive damage scales with their current level across 5 tiers:
 
-- Level 1-49: **1.03x**
-- Level 50-99: **1.07x**
-- Level 100-199: **1.2x**
-- Level 200-299: **1.5x**
-- Level 300+: **1.7x**
+- Level 1-2: **1.07x**
+- Level 3-7: **1.15x**
+- Level 8-12: **1.3x**
+- Level 13-17: **1.5x**
+- Level 18: **1.7x**
 
 #### Damage Calculation
 
@@ -91,7 +91,7 @@ A damage event is resolved in four steps: **base damage → resistance → multi
 
 The base damage value depends on the source's outgoing damage and the type of the attack:
 
-- **Stats Damage** (default): The attack's raw damage is the sum of two components, the attacker's total **attack damage** (AD) and the attacker's total **ability power** (AP), each bonus value from the items divided by `17`. Physical damage uses the AD component; magic damage uses the AP component scaled by a `0.6` default ratio. Both are summed.
+- **Stats Damage** (default): The attack's raw damage is the sum of two components, the attacker's total **attack damage** (AD) and the attacker's total **ability power** (AP).
 - **True Damage**: The base damage is the attacker's total **true damage** (TD) plus `(AD + AP) × runesTrueDamage / 100`.
 - **Adaptive Damage**: The base damage is `runesAdaptive × levelBasedBonus(player)`, optionally multiplied further by the attacker's adaptive force if adaptive scaling is enabled. The damage type (physical or magic) is chosen by comparing the attacker's total AD vs AP, higher AP means magic damage, higher AD means physical damage.
 

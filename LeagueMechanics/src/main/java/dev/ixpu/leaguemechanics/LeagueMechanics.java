@@ -3,7 +3,7 @@ package dev.ixpu.leaguemechanics;
 import dev.ixpu.leaguemechanics.gui.ClassSelectionGUI;
 
 import dev.ixpu.leaguemechanics.placeholder.PlaceholderRegistry;
-import dev.ixpu.leaguemechanics.player.PlayerStats;
+import dev.ixpu.leaguemechanics.entity.player.PlayerStats;
 import dev.ixpu.leaguemechanics.util.ItemModifier;
 import dev.ixpu.leaguemechanics.util.RunePersistence;
 
@@ -11,6 +11,7 @@ import dev.ixpu.leaguemechanics.command.CommandHandler;
 import dev.ixpu.leaguemechanics.command.CommandTabCompletions;
 
 import dev.ixpu.leaguemechanics.manager.DebuffManager;
+    import dev.ixpu.leaguemechanics.manager.MySQLManager;
 import dev.ixpu.leaguemechanics.manager.RuneManager;
 import dev.ixpu.leaguemechanics.manager.ItemStatsManager;
 import dev.ixpu.leaguemechanics.manager.ItemShopManager;
@@ -21,6 +22,7 @@ import dev.ixpu.leaguemechanics.listener.PlayerEventListener;
 import dev.ixpu.leaguemechanics.listener.PlayerStatsListener;
 import dev.ixpu.leaguemechanics.listener.PlayerInventoryListener;
 import dev.ixpu.leaguemechanics.listener.RuneListener;
+import dev.ixpu.leaguemechanics.entity.mob.MobStats;
 
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
@@ -63,6 +65,7 @@ public class LeagueMechanics extends JavaPlugin {
     private RuneManager runeManager;
     private ItemStatsManager itemStatsManager;
     private RunePersistence runePersistence;
+    private MySQLManager mySQLManager;
     private PlayerStatsListener playerStatsListener;
     private PlayerEventListener playerEventListener;
     private PlayerInventoryListener playerInventoryListener;
@@ -79,6 +82,7 @@ public class LeagueMechanics extends JavaPlugin {
         runeManager = new RuneManager(this);
         itemStatsManager = new ItemStatsManager();
         runePersistence = new RunePersistence(this);
+        mySQLManager = new MySQLManager(this);
         playerStatsListener = new PlayerStatsListener(this);
         damageListener = new DamageListener(this, playerStatsListener);
         playerEventListener = new PlayerEventListener(this, playerStatsListener, damageListener);
@@ -92,6 +96,9 @@ public class LeagueMechanics extends JavaPlugin {
         saveDefaultConfig();
         reloadConfig();
         debugMode = getConfig().getBoolean("debug", false);
+
+        // Initialize MobStats with plugin reference to load configuration
+        MobStats.initialize(this);
 
         ItemModifier.initialize(this);
         registerRunes();
@@ -123,8 +130,8 @@ public class LeagueMechanics extends JavaPlugin {
             }
         }
 
-        dev.ixpu.leaguemechanics.player.PlayerKDA.getInstance().saveAll();
-        dev.ixpu.leaguemechanics.player.PlayerKDA.getInstance().close();
+        dev.ixpu.leaguemechanics.entity.player.PlayerKDA.getInstance().saveAll();
+        dev.ixpu.leaguemechanics.entity.player.PlayerKDA.getInstance().close();
 
         CooldownHandler glacial = runeRegistry != null ? runeRegistry.getRune("glacial-augment") : null;
         if (glacial instanceof dev.ixpu.leaguemechanics.rune.keystones.inspiration.GlacialAugment glacialAugment) {
@@ -190,6 +197,10 @@ public class LeagueMechanics extends JavaPlugin {
         return commandHandler;
     }
 
+    public MySQLManager getMySQLManager() {
+        return mySQLManager;
+    }
+
     public boolean isDebugMode() {
         return debugMode;
     }
@@ -207,7 +218,7 @@ public class LeagueMechanics extends JavaPlugin {
 
         for (Player player : Bukkit.getOnlinePlayers()) {
             runeManager.loadPlayerRunes(player);
-            dev.ixpu.leaguemechanics.player.PlayerClass.loadPlayerClass(player);
+            dev.ixpu.leaguemechanics.entity.player.PlayerClass.loadPlayerClass(player);
         }
 
         getLogger().info("LeagueMechanics reload completed!");
@@ -231,7 +242,7 @@ public class LeagueMechanics extends JavaPlugin {
                     double healthRegen = itemStatsManager.getItemHR(player) + PlayerStats.getOrCreate(player).getRuneShards(player).getHealthRegen();
                     double saturationRegen = itemStatsManager.getItemSR(player);
 
-                    dev.ixpu.leaguemechanics.player.PlayerStats ps = dev.ixpu.leaguemechanics.player.PlayerStats.getOrCreate(player);
+                    dev.ixpu.leaguemechanics.entity.player.PlayerStats ps = dev.ixpu.leaguemechanics.entity.player.PlayerStats.getOrCreate(player);
                     double effectiveHR = ps.getEffectiveHealthRegen(player, healthRegen);
 
                     if (effectiveHR > 0) {

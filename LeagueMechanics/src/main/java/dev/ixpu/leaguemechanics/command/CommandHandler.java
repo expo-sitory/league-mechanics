@@ -1,9 +1,10 @@
 package dev.ixpu.leaguemechanics.command;
 
 import dev.ixpu.leaguemechanics.LeagueMechanics;
+import dev.ixpu.leaguemechanics.manager.ItemShopManager;
 import dev.ixpu.leaguemechanics.rune.shards.ShardStats;
 import dev.ixpu.leaguemechanics.util.RunePersistence;
-import dev.ixpu.leaguemechanics.player.PlayerKDA;
+import dev.ixpu.leaguemechanics.entity.player.PlayerKDA;
 
 import dev.ixpu.leaguemechanics.gui.InspectGUI;
 import dev.ixpu.leaguemechanics.gui.ItemShopGUI;
@@ -18,7 +19,8 @@ import dev.ixpu.leaguemechanics.manager.ItemStatsManager;
 import dev.ixpu.leaguemechanics.manager.RuneManager;
 
 import dev.ixpu.leaguemechanics.listener.PlayerEventListener;
-import dev.ixpu.leaguemechanics.player.PlayerStats;
+import dev.ixpu.leaguemechanics.entity.player.PlayerStats;
+import dev.ixpu.leaguemechanics.item.shop.ItemShopRegistry;
 
 import net.kyori.adventure.text.Component;
 import org.bukkit.Bukkit;
@@ -28,6 +30,7 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.UUID;
@@ -49,14 +52,13 @@ public class CommandHandler implements CommandExecutor {
     @Override
     public boolean onCommand(@NotNull CommandSender sender, @NotNull Command command, @NotNull String label, String[] args) {
         if (args.length == 0) {
-            sender.sendMessage(Component.text("§cUsage: /lm <shop|class|runes|reload|inspect|pvp>"));
             return true;
         }
 
         String subcommand = args[0].toLowerCase();
 
         return switch (subcommand) {
-            case "shop" -> handleShop(sender);
+            case "shop" -> handleShop(sender, args);
             case "inspect" -> handleInspect(sender, args);
             case "reload" -> {
                 if (!sender.hasPermission("leaguemechanics.admin")) {
@@ -72,6 +74,7 @@ public class CommandHandler implements CommandExecutor {
             case "class" -> handleClassCommand(sender, args);
             case "pvp" -> handlePvpCommand(sender, args);
             case "clearkda" -> handleClearKda(sender);
+            case "levelup" -> handleLevelUpCommand(sender, args);
             default -> {
                 sender.sendMessage(Component.text("§cUnknown subcommand."));
                 yield false;
@@ -94,12 +97,12 @@ public class CommandHandler implements CommandExecutor {
                     return true;
                 }
 
-                dev.ixpu.leaguemechanics.player.PlayerClass.clearPlayerClass(target);
+                dev.ixpu.leaguemechanics.entity.player.PlayerClass.clearPlayerClass(target);
                 sender.sendMessage(Component.text("§a✓ Cleared class for player §e" + target.getName()));
                 return true;
             } else {
                 if (sender instanceof Player player) {
-                    dev.ixpu.leaguemechanics.player.PlayerClass.clearPlayerClass(player);
+                    dev.ixpu.leaguemechanics.entity.player.PlayerClass.clearPlayerClass(player);
                     sender.sendMessage(Component.text("§a✓ Your class has been cleared!"));
                     return true;
                 } else {
@@ -113,7 +116,7 @@ public class CommandHandler implements CommandExecutor {
         }
     }
 
-    private boolean handleShop(CommandSender sender) {
+    private boolean handleShop(CommandSender sender, String[] args) {
         if (!sender.hasPermission("leaguemechanics.user")) {
             sender.sendMessage(Component.text("§cYou don't have permission to use this command."));
             return true;
@@ -121,6 +124,25 @@ public class CommandHandler implements CommandExecutor {
 
         if (!(sender instanceof Player player)) {
             sender.sendMessage(Component.text("§cOnly players can use the shop command!"));
+            return true;
+        }
+
+        if (args.length >= 2 && args[1].equalsIgnoreCase("buy")) {
+            if (args.length < 3) {
+                sender.sendMessage(Component.text("§cUsage: /lm shop buy <item-id>"));
+                return true;
+            }
+
+            String itemId = args[2].toLowerCase();
+            ItemShopRegistry registry = ItemShopRegistry.getInstance();
+            ItemShopRegistry.ShopItem shopItem = registry.getShopItem(itemId);
+
+            if (shopItem == null) {
+                sender.sendMessage(Component.text("§cItem not found: §e" + itemId));
+                return true;
+            }
+
+            ItemShopManager.getInstance().purchaseFromGUI(player, shopItem);
             return true;
         }
 
@@ -134,28 +156,72 @@ public class CommandHandler implements CommandExecutor {
             return true;
         }
 
-        if (!(sender instanceof Player player)) {
-            sender.sendMessage(Component.text("§cOnly players can toggle PVP mode!"));
-            return true;
-        }
-
         if (args.length < 2) {
             sender.sendMessage(Component.text("§cUsage: /lm pvp <on|off>"));
             return true;
         }
 
         String mode = args[1].toLowerCase();
-        UUID uuid = player.getUniqueId();
+        Player targetPlayer = null;
+        boolean isSelfTarget = false;
+        boolean isConsoleSender = !(sender instanceof Player);
+
+        if (args.length >= 3) {
+            String targetName = args[2];
+            targetPlayer = Bukkit.getPlayerExact(targetName);
+            if (targetPlayer == null) {
+                sender.sendMessage(Component.text("§cPlayer not found: §e" + targetName));
+                return true;
+            }
+
+            if (!sender.hasPermission("leaguemechanics.admin")) {
+                sender.sendMessage(Component.text("§cYou don't have permission to modify other players' PVP state!"));
+                return true;
+            }
+
+            isSelfTarget = false;
+        } else {
+            if (!(sender instanceof Player player)) {
+                sender.sendMessage(Component.text("§cYou must specify a player when using from console!"));
+                return true;
+            }
+            targetPlayer = player;
+            isSelfTarget = true;
+        }
+
+        UUID uuid = targetPlayer.getUniqueId();
+        boolean wasEnabledBefore = pvpEnabledPlayers.contains(uuid);
+        boolean willBeEnabled = mode.equals("on");
 
         if (mode.equals("on")) {
             pvpEnabledPlayers.add(uuid);
-            sender.sendMessage(Component.text("§a✓ PVP mode enabled!"));
         } else if (mode.equals("off")) {
             pvpEnabledPlayers.remove(uuid);
-            sender.sendMessage(Component.text("§a✓ PVP mode disabled!"));
         } else {
             sender.sendMessage(Component.text("§cUsage: /lm pvp <on|off>"));
             return true;
+        }
+
+        if (isSelfTarget) {
+            if (willBeEnabled) {
+                sender.sendMessage(Component.text("§c⚠ ᴘᴠᴘ ᴍᴏᴅᴇ ᴇɴᴀʙʟᴇᴅ ⚠"));
+            } else {
+                sender.sendMessage(Component.text("§a⚠ ᴘᴠᴘ ᴍᴏᴅᴇ ᴅɪꜱᴀʙʟᴇᴅ ⚠"));
+            }
+        } else {
+            if (sender instanceof Player) {
+                if (willBeEnabled) {
+                    sender.sendMessage(Component.text("§a✓ You have enabled PVP mode for §e" + targetPlayer.getName()));
+                } else {
+                    sender.sendMessage(Component.text("§a✓ You have disabled PVP mode for §e" + targetPlayer.getName()));
+                }
+
+                if (willBeEnabled) {
+                    targetPlayer.sendMessage(Component.text("§6⚠ ᴘᴠᴘ ᴍᴏᴅᴇ ᴇɴᴀʙʟᴇᴅ ⚠"));
+                } else {
+                    targetPlayer.sendMessage(Component.text("§a⚠ ᴘᴠᴘ ᴍᴏᴅᴇ ᴅɪꜱᴀʙʟᴇᴅ ⚠"));
+                }
+            }
         }
 
         return true;
@@ -172,6 +238,42 @@ public class CommandHandler implements CommandExecutor {
         PlayerKDA.getInstance().loadAllFromDatabase();
 
         sender.sendMessage(Component.text("§a✓ All player KDA data has been cleared!"));
+        return true;
+    }
+
+    private boolean handleLevelUpCommand(CommandSender sender, String[] args) {
+        if (!(sender instanceof Player player)) {
+            sender.sendMessage(Component.text("§cOnly players can level up!"));
+            return true;
+        }
+
+        PlayerStats stats = PlayerStats.getOrCreate(player);
+        int currentLevel = stats.getLeagueLevel();
+        int maxLevel = 18;
+
+        if (currentLevel >= maxLevel) {
+            sender.sendMessage(Component.text("§cYou are already at the maximum level (§e" + maxLevel + "§c)!"));
+            return true;
+        }
+
+        double requiredXP = 100 * Math.pow(1.4, currentLevel);
+        int xp = player.getLevel();
+
+        if (xp < requiredXP) {
+            double neededXP = requiredXP - xp;
+            sender.sendMessage(Component.text("§cYou need §e" + String.format("%.0f", neededXP) + " §cmore XP to reach level §e" + (currentLevel + 1) + "§c!"));
+            sender.sendMessage(Component.text("§cCurrent XP: §e" + xp + " §c| Required XP: §e" + String.format("%.0f", requiredXP)));
+            return true;
+        }
+
+        player.setLevel(xp - (int) requiredXP);
+        stats.setLeagueLevel(currentLevel + 1);
+        stats.saveLeagueLevel(player);
+
+        sender.sendMessage(Component.text("§a✓ Level Up! §e[" + (currentLevel + 1) + "]"));
+
+        playerEventListener.applyPlayerStats(player);
+
         return true;
     }
 
@@ -209,11 +311,10 @@ public class CommandHandler implements CommandExecutor {
     }
 
     private void sendRunesUsage(Player player) {
-        player.sendMessage(Component.text("§6§lRunes Commands:"));
+        player.sendMessage(Component.text("§6§lʀᴜɴᴇꜱ ᴄᴏᴍᴍᴀɴᴅꜱ:"));
         player.sendMessage(Component.text("§7  /lm runes select primary §e<path> [keystone] [slot1] [slot2] [slot3]"));
         //player.sendMessage(Component.text("§7  /lm runes select secondary §e<path> [slot1] [slot2]"));
-        player.sendMessage(Component.text("§7  /lm runes select shards §e<row1-option> <row2-option> <row3-option>"));
-        player.sendMessage(Component.text("§7  /lm runes clear §8— §fclear all runes"));
+        player.sendMessage(Component.text("§7  /lm runes select shards §e<row-1|row-2|row-3> <option-1|option-2|option-3>"));
         player.sendMessage(Component.text("§7  /lm runes info §8— §fshow currently equipped runes"));
     }
 
@@ -245,6 +346,12 @@ public class CommandHandler implements CommandExecutor {
         RunePath path = RunePath.fromId(args[3].toLowerCase());
         if (path == null) {
             player.sendMessage(Component.text("§cInvalid path. Use: domination, precision, inspiration, resolve, or sorcery"));
+            return true;
+        }
+
+        String pathPermission = "primary-rune-path." + path.getId();
+        if (!player.hasPermission(pathPermission)) {
+            player.sendMessage(Component.text("§cYou don't have permission to use the " + path.getId() + " path."));
             return true;
         }
 
@@ -324,43 +431,59 @@ public class CommandHandler implements CommandExecutor {
         }
     }
 
-    private void applyShardRune(Player player, RuneSlot slot, CooldownHandler rune) {
-        switch (slot) {
-            case SHARD_SLOT_1 -> runeManager.setPlayerShardSlot1Rune(player, rune);
-            case SHARD_SLOT_2 -> runeManager.setPlayerShardSlot2Rune(player, rune);
-            case SHARD_SLOT_3 -> runeManager.setPlayerShardSlot3Rune(player, rune);
-            default -> throw new IllegalArgumentException("Not a shard slot: " + slot);
-        }
-    }
-
     private boolean handleRuneSelectShards(Player player, String[] args) {
-        if (args.length != 6) {
-            player.sendMessage(Component.text("§cUsage: /lm runes select shards <row1-option> <row2-option> <row3-option>"));
+        if (args.length != 5) {
+            player.sendMessage(Component.text("§cUsage: /lm runes select shards <row-1|row-2|row-3> <option-1|option-2|option-3>"));
             return true;
         }
 
-        String row1Option = args[3];
-        String row2Option = args[4];
-        String row3Option = args[5];
-
-        RuneShard row1 = RuneShard.fromRowAndOption(1, row1Option);
-        RuneShard row2 = RuneShard.fromRowAndOption(2, row2Option);
-        RuneShard row3 = RuneShard.fromRowAndOption(3, row3Option);
-
-        if (row1 == null || row2 == null || row3 == null) {
-            player.sendMessage(Component.text("§cInvalid shard selection. Use option-1, option-2, or option-3"));
+        int row;
+        int option;
+        try {
+            row = Integer.parseInt(args[3]);
+            option = Integer.parseInt(args[4]);
+        } catch (NumberFormatException e) {
+            player.sendMessage(Component.text("§cRow and option must be numbers (1-3)"));
             return true;
         }
+
+        if (row < 1 || row > 3 || option < 1 || option > 3) {
+            player.sendMessage(Component.text("§cRow and option must be between 1 and 3"));
+            return true;
+        }
+
+        String optionId = String.valueOf(option);
+        RuneShard selectedShard = RuneShard.fromRowAndOption(row, optionId);
+        if (selectedShard == null) {
+            player.sendMessage(Component.text("§cInvalid combination: row " + row + ", option " + option));
+            return true;
+        }
+
+        RuneShard defaultRow1 = Arrays.stream(RuneShard.values())
+                .filter(s -> s.getRowNumber() == 1)
+                .findFirst()
+                .orElse(null);
+        RuneShard defaultRow2 = Arrays.stream(RuneShard.values())
+                .filter(s -> s.getRowNumber() == 2)
+                .findFirst()
+                .orElse(null);
+        RuneShard defaultRow3 = Arrays.stream(RuneShard.values())
+                .filter(s -> s.getRowNumber() == 3)
+                .findFirst()
+                .orElse(null);
+
+        RuneShard finalRow1 = (row == 1) ? selectedShard : defaultRow1;
+        RuneShard finalRow2 = (row == 2) ? selectedShard : defaultRow2;
+        RuneShard finalRow3 = (row == 3) ? selectedShard : defaultRow3;
+
+        if (finalRow1 == null) finalRow1 = RuneShard.ROW1_ADAP;
+        if (finalRow2 == null) finalRow2 = RuneShard.ROW2_ADAP;
+        if (finalRow3 == null) finalRow3 = RuneShard.ROW3_HP;
 
         ShardStats shards = PlayerStats.getOrCreate(player).getRuneShards(player);
-        shards.selectShards(row1, row2, row3);
+        shards.selectShards(finalRow1, finalRow2, finalRow3);
 
-        runePersistence.saveRuneShards(player.getUniqueId(), row1.name(), row2.name(), row3.name());
-
-        player.sendMessage(Component.text("§aRune Shards selected:"));
-        player.sendMessage(Component.text("§7Row 1: §b" + row1.getDisplay()));
-        player.sendMessage(Component.text("§7Row 2: §b" + row2.getDisplay()));
-        player.sendMessage(Component.text("§7Row 3: §b" + row3.getDisplay()));
+        runePersistence.saveRuneShards(player.getUniqueId(), finalRow1.name(), finalRow2.name(), finalRow3.name());
 
         playerEventListener.applyPlayerStats(player);
         return true;
@@ -404,7 +527,7 @@ public class CommandHandler implements CommandExecutor {
     }
 
     private boolean handleRunesInfo(Player player) {
-        dev.ixpu.leaguemechanics.player.PlayerRuneData data = runeManager.getPlayerRuneData(player);
+        dev.ixpu.leaguemechanics.entity.player.PlayerRuneData data = runeManager.getPlayerRuneData(player);
         if (data == null) {
             player.sendMessage(Component.text("§cNo runes loaded. Try rejoining."));
             return true;
@@ -429,20 +552,15 @@ public class CommandHandler implements CommandExecutor {
         String shard3Display = selectedShard3 != null ? selectedShard3.getDisplay() : "§7none";
 
         player.sendMessage(Component.text("§6ᴍʏ ᴀᴄᴛɪᴠᴇ ʀᴜɴᴇꜱ:"));
-        player.sendMessage(Component.text("§7  Primary:   §e" + primary + " §7— keystone: §e" + keystone));
-        player.sendMessage(Component.text("§7   slot 1: §e" + p1 + " §7| slot 2: §e" + p2 + " §7| slot 3: §e" + p3));
-        player.sendMessage(Component.text("§7  Secondary: §e" + secondary));
-        player.sendMessage(Component.text("§7   slot 1: §e" + s1 + " §7| slot 2: §e" + s2));
-        player.sendMessage(Component.text("§7    Shards: §e" + shard1Display + " §7| §e" + shard2Display + " §7| §e" + shard3Display));
+        player.sendMessage(Component.text("§7  Primary Path:  §e" + primary + " §7— Keystone: §e" + keystone));
+        player.sendMessage(Component.text("§7    Slot 1: §e" + p1 + " §7| Slot 2: §e" + p2 + " §7| Slot 3: §e" + p3));
+        player.sendMessage(Component.text("§7  Secondary Path: §e" + secondary));
+        player.sendMessage(Component.text("§7    Slot 1: §e" + s1 + " §7| Slot 2: §e" + s2));
+        player.sendMessage(Component.text("§7  Shards: §e" + shard1Display + " §7| §e" + shard2Display + " §7| §e" + shard3Display));
         return true;
     }
 
     private boolean handleInspect(CommandSender sender, String[] args) {
-        if (!sender.hasPermission("leaguemechanics.user")) {
-            sender.sendMessage(Component.text("§cYou don't have permission to use this command."));
-            return true;
-        }
-
         if (!(sender instanceof Player player)) {
             sender.sendMessage(Component.text("§cOnly players can use the inspect command!"));
             return true;

@@ -86,7 +86,8 @@ public class MySQLManager {
             "rune_shards_row1 VARCHAR(50)," +
             "rune_shards_row2 VARCHAR(50)," +
             "rune_shards_row3 VARCHAR(50)," +
-            "player_class VARCHAR(50)" +
+            "player_class VARCHAR(50)," +
+            "league_level INT DEFAULT 0" +
             ")",
 
             "CREATE TABLE IF NOT EXISTS player_kda (" +
@@ -115,6 +116,28 @@ public class MySQLManager {
                 }
             }
 
+            try {
+                statement.execute("ALTER TABLE player_runes ADD COLUMN league_level INT DEFAULT 0");
+            } catch (SQLException e) {
+                //
+                if (e.getErrorCode() == 1060) {
+                    plugin.getLogger().info("league_level column already exists in player_runes table");
+                } else {
+                    plugin.getLogger().warning("Failed to add league_level column: " + e.getMessage());
+                }
+            }
+
+            try {
+                statement.execute("ALTER TABLE player_kda ADD COLUMN health_percentage FLOAT DEFAULT 100.0");
+            } catch (SQLException e) {
+                //
+                if (e.getErrorCode() == 1060) {
+                    plugin.getLogger().info("health_percentage column already exists in player_kda table");
+                } else {
+                    plugin.getLogger().warning("Failed to add health_percentage column: " + e.getMessage());
+                }
+            }
+
             plugin.getLogger().info("MySQL tables initialized successfully");
 
         } catch (SQLException e) {
@@ -140,12 +163,12 @@ public class MySQLManager {
                                String keystoneRune, String primarySlot1, String primarySlot2,
                                String primarySlot3, String secondarySlot1, String secondarySlot2,
                                String shardsRow1, String shardsRow2, String shardsRow3,
-                               String playerClass) {
+                               String playerClass, int leagueLevel) {
         String query = "INSERT INTO player_runes (uuid, primary_path, secondary_path, keystone_rune, " +
                       "primary_slot_1_rune, primary_slot_2_rune, primary_slot_3_rune, " +
                       "secondary_slot_1_rune, secondary_slot_2_rune, rune_shards_row1, " +
-                      "rune_shards_row2, rune_shards_row3, player_class) " +
-                      "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?) " +
+                      "rune_shards_row2, rune_shards_row3, player_class, league_level) " +
+                      "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?) " +
                       "ON DUPLICATE KEY UPDATE " +
                       "primary_path = VALUES(primary_path), " +
                       "secondary_path = VALUES(secondary_path), " +
@@ -158,7 +181,8 @@ public class MySQLManager {
                       "rune_shards_row1 = VALUES(rune_shards_row1), " +
                       "rune_shards_row2 = VALUES(rune_shards_row2), " +
                       "rune_shards_row3 = VALUES(rune_shards_row3), " +
-                      "player_class = VALUES(player_class)";
+                      "player_class = VALUES(player_class), " +
+                      "league_level = VALUES(league_level)";
 
         try (Connection connection = getConnection();
              PreparedStatement statement = connection.prepareStatement(query)) {
@@ -176,6 +200,7 @@ public class MySQLManager {
             statement.setString(11, shardsRow2);
             statement.setString(12, shardsRow3);
             statement.setString(13, playerClass);
+            statement.setInt(14, leagueLevel);
 
             statement.executeUpdate();
 
@@ -189,7 +214,7 @@ public class MySQLManager {
                       "primary_slot_1_rune, primary_slot_2_rune, primary_slot_3_rune, " +
                       "secondary_slot_1_rune, secondary_slot_2_rune, " +
                       "rune_shards_row1, rune_shards_row2, rune_shards_row3, " +
-                      "player_class " +
+                      "player_class, league_level " +
                       "FROM player_runes WHERE uuid = ?";
 
         try (Connection connection = getConnection();
@@ -211,7 +236,8 @@ public class MySQLManager {
                         resultSet.getString("rune_shards_row1"),
                         resultSet.getString("rune_shards_row2"),
                         resultSet.getString("rune_shards_row3"),
-                        resultSet.getString("player_class")
+                        resultSet.getString("player_class"),
+                        String.valueOf(resultSet.getInt("league_level"))
                     };
                 }
             }
@@ -269,5 +295,45 @@ public class MySQLManager {
         }
 
         return new int[]{0, 0, 0};
+    }
+
+    public void savePlayerHealthPercentage(UUID uuid, float healthPercentage) {
+        String query = "INSERT INTO player_kda (uuid, health_percentage) " +
+                      "VALUES (?, ?) " +
+                      "ON DUPLICATE KEY UPDATE " +
+                      "health_percentage = VALUES(health_percentage)";
+
+        try (Connection connection = getConnection();
+             PreparedStatement statement = connection.prepareStatement(query)) {
+
+            statement.setString(1, uuid.toString());
+            statement.setFloat(2, healthPercentage);
+
+            statement.executeUpdate();
+
+        } catch (SQLException e) {
+            plugin.getLogger().warning("Failed to save player health percentage for " + uuid + ": " + e.getMessage());
+        }
+    }
+
+    public float loadPlayerHealthPercentage(UUID uuid) {
+        String query = "SELECT health_percentage FROM player_kda WHERE uuid = ?";
+
+        try (Connection connection = getConnection();
+             PreparedStatement statement = connection.prepareStatement(query)) {
+
+            statement.setString(1, uuid.toString());
+
+            try (ResultSet resultSet = statement.executeQuery()) {
+                if (resultSet.next()) {
+                    return resultSet.getFloat("health_percentage");
+                }
+            }
+
+        } catch (SQLException e) {
+            plugin.getLogger().warning("Failed to load player health percentage for " + uuid + ": " + e.getMessage());
+        }
+
+        return 100.0f; // Default to full health
     }
 }

@@ -1,7 +1,7 @@
 package dev.ixpu.leaguemechanics.rune.keystones.domination;
 
 import dev.ixpu.leaguemechanics.LeagueMechanics;
-import dev.ixpu.leaguemechanics.player.PlayerStats;
+import dev.ixpu.leaguemechanics.entity.player.PlayerStats;
 import dev.ixpu.leaguemechanics.util.DebugLogger;
 
 import dev.ixpu.leaguemechanics.rune.RunePath;
@@ -117,7 +117,7 @@ public class DarkHarvest extends StacksHandler {
         damageManager.enableAdaptiveDamage();
 
         int currentStacks = getStacks(player);
-        return damageManager.DamageCalculation(player, target, currentStacks, BASE_ADAPTIVE_DAMAGE_PER_STACK, 0);
+        return damageManager.DamageCalculation(player, target, currentStacks, BASE_ADAPTIVE_DAMAGE_PER_STACK, 0, 0);
     }
 
     private void scheduleAddStack(Player attacker) {
