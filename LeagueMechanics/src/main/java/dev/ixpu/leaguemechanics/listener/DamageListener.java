@@ -90,7 +90,9 @@ public class DamageListener implements Listener, RuneCooldownGate {
 
     @EventHandler
     public void onAttackSwing(PlayerArmSwingEvent event) {
-        Player attacker = event.getPlayer();
+        if (!(event.getPlayer() instanceof Player attacker)) {
+            return;
+        }
         if (isPlayerOnAttackCooldown(attacker)) {
             event.setCancelled(true);
             return;
@@ -102,6 +104,7 @@ public class DamageListener implements Listener, RuneCooldownGate {
 
     @EventHandler (priority = EventPriority.HIGHEST)
     public void onProjectileHit(ProjectileHitEvent event) {
+
         if (!(event.getEntity().getShooter() instanceof Player shooter)) {
             LivingEntity shooter = (LivingEntity) event.getEntity().getShooter();
             LivingEntity target = (LivingEntity) event.getHitEntity();
@@ -109,14 +112,12 @@ public class DamageListener implements Listener, RuneCooldownGate {
             entityDamageEvent(shooter, target, 0);
             return;
         }
-
         if (event.getEntity() instanceof ThrownPotion || event.getEntity() instanceof ThrownExpBottle) {
             return;
         }
         if (event.getHitEntity() == null || !(event.getHitEntity() instanceof LivingEntity target)) {
             return;
         }
-
         if (target instanceof Player targetPlayer) {
             if (!plugin.getCommandHandler().isPvpEnabled(shooter, targetPlayer)) {
                 return;
@@ -125,8 +126,6 @@ public class DamageListener implements Listener, RuneCooldownGate {
         }
 
         combatState.addLetRunesThrough(shooter.getUniqueId());
-        shooter.getWorld().playSound(shooter.getLocation(), Sound.ENTITY_ARROW_HIT_PLAYER, 1.0f, 1.0f);
-
         PlayerRuneData runeData = runeManager.getPlayerRuneData(shooter);
 
         if (runeData != null) {
@@ -137,6 +136,7 @@ public class DamageListener implements Listener, RuneCooldownGate {
                 rune.onProjectileHit(shooter, target);
             }
         }
+
         damageEvent(shooter, target, "Projectile Hit Event", 0);
         combatState.removeLetRunesThrough(shooter.getUniqueId());
     }
@@ -144,45 +144,39 @@ public class DamageListener implements Listener, RuneCooldownGate {
     @EventHandler (priority = EventPriority.HIGHEST)
     public void onAttack(EntityDamageByEntityEvent event) {
 
-        if (!(event.getDamager() instanceof LivingEntity attacker)) {
+        if (!(event.getDamager() instanceof Player attacker)) {
+            LivingEntity attacker = (LivingEntity) event.getDamager();
+            LivingEntity target = (LivingEntity) event.getEntity();
+
+            entityDamageEvent(attacker, target, 0);
             return;
         }
-
         if (!(event.getEntity() instanceof LivingEntity target)) {
             return;
         }
-
-        if (attacker instanceof Player playerAttacker) {
-            if (target instanceof Player targetPlayer) {
-                if (!plugin.getCommandHandler().isPvpEnabled(playerAttacker, targetPlayer)) {
-                    event.setCancelled(true);
-                    return;
-                }
-                recordHit(playerAttacker, targetPlayer);
-            }
-
-            if (isPlayerOnAttackCooldown(playerAttacker)) {
+        if (target instanceof Player targetPlayer) {
+            if (!plugin.getCommandHandler().isPvpEnabled(attacker, targetPlayer)) {
                 event.setCancelled(true);
                 return;
             }
-            if (isAnyHotbarOnCooldown(playerAttacker)) {
-                event.setCancelled(true);
-                return;
-            }
+            recordHit(attacker, targetPlayer);
         }
-        if (target instanceof Creature creature) {
-            creature.setTarget(attacker);
+        if (isPlayerOnAttackCooldown(attacker)) {
+            event.setCancelled(true);
+            return;
+        }
+        if (isAnyHotbarOnCooldown(attacker)) {
+            event.setCancelled(true);
+            return;
         }
 
         combatState.addLetRunesThrough(attacker.getUniqueId());
+        PlayerRuneData runeData = runeManager.getPlayerRuneData(attacker);
 
-        if (attacker instanceof Player playerAttacker) {
-            PlayerRuneData runeData = runeManager.getPlayerRuneData(playerAttacker);
-            if (runeData != null) {
-                for (CooldownHandler rune : runeData.getAllRunes()) {
-                    if (rune != null) {
-                        rune.onAttack(playerAttacker, target);
-                    }
+        if (runeData != null) {
+            for (CooldownHandler rune : runeData.getAllRunes()) {
+                if (rune != null) {
+                    rune.onAttack(attacker, target);
                 }
             }
         }
@@ -197,16 +191,8 @@ public class DamageListener implements Listener, RuneCooldownGate {
             }
         }
 
-        if (attacker instanceof Player playerAttacker) {
-            setAttackCooldown(playerAttacker);
-            if (event.getDamage() > 0) {
-                damageEvent(playerAttacker, target, "Melee Hit Event", event.getDamage());
-            }
-        } else {
-            if (event.getDamage() > 0) {
-                entityDamageEvent(attacker, target, event.getDamage());
-            }
-        }
+        setAttackCooldown(attacker);
+        damageEvent(attacker, target, "Melee Hit Event", event.getDamage());
 
         combatState.removeLetRunesThrough(attacker.getUniqueId());
     }
