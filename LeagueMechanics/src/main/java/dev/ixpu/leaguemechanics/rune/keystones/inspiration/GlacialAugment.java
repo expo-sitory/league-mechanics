@@ -24,12 +24,12 @@ import org.bukkit.inventory.meta.ItemMeta;
 import net.kyori.adventure.text.Component;
 
 public class GlacialAugment extends CooldownHandler {
-    private int BASE_FREEZE_STRENGTH = 60;
+    private int BASE_FREEZE_STRENGTH;
 
-    private double AD_PERCENTAGE_MULTIPLIER = 7.0;
-    private double AP_PERCENTAGE_MULTIPLIER = 6.0;
+    private double AD_PERCENTAGE_MULTIPLIER;
+    private double AP_PERCENTAGE_MULTIPLIER;
 
-    private int COOLDOWN_DURATION_SECONDS = 45;
+    private int COOLDOWN_DURATION_SECONDS;
 
     private static final double DEBUFF_REDUCTION_PERCENT = 15.0;
 

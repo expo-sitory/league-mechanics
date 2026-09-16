@@ -33,15 +33,15 @@ public class AfterShock extends CooldownHandler {
 
     private RuneCooldownGate listener;
 
-    private double baseArmor = 45.0;
-    private double baseMagicResist = 45.0;
-    private double bonusArmorPercent = 75.0;
-    private double bonusMagicResistPercent = 75.0;
-    private double baseShockwaveDamage = 3.5;
-    private double shockwaveBonusHpPercent = 8.0;
+    private double BASE_ARMOR_PERCENTAGE;
+    private double BASE_MAGIC_RESIST_PERCENTAGE;
+    private double BASE_SHOCKWAVE_MAGIC_DAMAGE;
+    private double BONUS_SHOCKWAVE_MAGIC_DAMAGE;
 
+    private int COOLDOWN_DURATION_SECONDS;
 
-    private int COOLDOWN_DURATION_SECONDS = 20;
+    private static final double BASE_ARMOR = 45.0;
+    private static final double BASE_MAGIC_RESIST = 45.0;
 
     private static final double shockwaveRadius = 5.0;
     private static final double triggerThresholdPercent = 30.0;
@@ -59,12 +59,10 @@ public class AfterShock extends CooldownHandler {
 
         ConfigurationSection section = config.getConfigurationSection("runes.keystones.resolve.aftershock");
         if (section != null) {
-            this.baseArmor = section.getDouble("base-armor", this.baseArmor);
-            this.baseMagicResist = section.getDouble("base-magic-resist", this.baseMagicResist);
-            this.bonusArmorPercent = section.getDouble("bonus-armor-percent", this.bonusArmorPercent);
-            this.bonusMagicResistPercent = section.getDouble("bonus-magic-resist-percent", this.bonusMagicResistPercent);
-            this.baseShockwaveDamage = section.getDouble("base-shockwave-damage", this.baseShockwaveDamage);
-            this.shockwaveBonusHpPercent = section.getDouble("shockwave-bonus-hp-percent", this.shockwaveBonusHpPercent);
+            this.BASE_ARMOR_PERCENTAGE = section.getDouble("bonus-armor-percent", this.BASE_ARMOR_PERCENTAGE);
+            this.BASE_MAGIC_RESIST_PERCENTAGE = section.getDouble("bonus-magic-resist-percent", this.BASE_MAGIC_RESIST_PERCENTAGE);
+            this.BASE_SHOCKWAVE_MAGIC_DAMAGE = section.getDouble("base-shockwave-damage", this.BASE_SHOCKWAVE_MAGIC_DAMAGE);
+            this.BONUS_SHOCKWAVE_MAGIC_DAMAGE = section.getDouble("shockwave-bonus-hp-percent", this.BONUS_SHOCKWAVE_MAGIC_DAMAGE);
             this.COOLDOWN_DURATION_SECONDS = section.getInt("cooldown", this.COOLDOWN_DURATION_SECONDS);
         }
 
@@ -148,11 +146,11 @@ public class AfterShock extends CooldownHandler {
         UUID playerUUID = player.getUniqueId();
         clearResistances(player);
         double attributeArmor = player.getAttribute(Attribute.ARMOR).getValue();
-        double bonusArmorBonus = baseArmor + (bonusArmorPercent / 100.0 * Math.max(0, attributeArmor));
+        double bonusArmorBonus = BASE_ARMOR + (BASE_ARMOR_PERCENTAGE / 100.0 * Math.max(0, attributeArmor));
 
         ItemStatsManager itemStatsManager = LeagueMechanics.getInstance().getStatsManager();
         double itemMR = (itemStatsManager != null) ? itemStatsManager.getItemMR(player) : 0.0;
-        double bonusMRBonus = baseMagicResist + (bonusMagicResistPercent / 100.0 * itemMR);
+        double bonusMRBonus = BASE_MAGIC_RESIST + (BASE_MAGIC_RESIST_PERCENTAGE / 100.0 * itemMR);
         lastArmorBonus.put(playerUUID, bonusArmorBonus);
         lastMRBonus.put(playerUUID, bonusMRBonus);
         PlayerStats stats = PlayerStats.getOrCreate(player);
@@ -206,7 +204,7 @@ public class AfterShock extends CooldownHandler {
     private double keystoneDamage(Player player, Entity target) {
         double totalHP = PlayerStats.getOrCreate(player).getPlayerHP(player);
         double bonusHP = Math.max(0, totalHP - 20.0);
-        double baseComponent = baseShockwaveDamage + (shockwaveBonusHpPercent / 100.0 * bonusHP);
+        double baseComponent = BASE_SHOCKWAVE_MAGIC_DAMAGE + (BONUS_SHOCKWAVE_MAGIC_DAMAGE / 100.0 * bonusHP);
 
         double targetMR = getTargetMR(target);
         double mitigatedBase = baseComponent / (1.0 + (targetMR / 100.0));

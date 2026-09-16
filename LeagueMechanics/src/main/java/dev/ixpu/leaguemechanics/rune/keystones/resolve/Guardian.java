@@ -21,10 +21,10 @@ import net.kyori.adventure.text.Component;
 
 public class Guardian extends CooldownHandler {
 
-    private int MAX_PLAYERS = 5;
-    private double ABSORPTION_PERCENTAGE = 100.0;
+    private int MAX_PLAYERS;
+    private double ABSORPTION_PERCENTAGE;
 
-    private int COOLDOWN_SECONDS = 60;
+    private int COOLDOWN_SECONDS;
 
     private static final double DETECTION_RANGE = 10.0;
     private final static int PEACE_DURATION_TICKS = 200;

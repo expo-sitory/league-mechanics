@@ -22,10 +22,10 @@ import org.bukkit.configuration.ConfigurationSection;
 import net.kyori.adventure.text.Component;
 
 public class StormRaiderSurge extends CooldownHandler {
-    private double DAMAGE_THRESHOLD_PERCENTAGE = 30.0;
-    private int MOVEMENT_SPEED_BONUS = 1;
+    private double DAMAGE_THRESHOLD_PERCENTAGE;
+    private int MOVEMENT_SPEED_BONUS;
 
-    int COOLDOWN_SECONDS = 25;
+    int COOLDOWN_SECONDS;
 
     private PlayerEventListener listener;
 

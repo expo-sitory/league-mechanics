@@ -26,9 +26,9 @@ import net.kyori.adventure.text.Component;
 
 public class PressTheAttack extends StacksHandler {
 
-    private double BASE_ADAPTIVE_DAMAGE = 3.5;
+    private double BASE_ADAPTIVE_DAMAGE ;
 
-    int COOLDOWN_DURATION_SECONDS = 6;
+    int COOLDOWN_DURATION_SECONDS;
 
     private PlayerEventListener listener;
 

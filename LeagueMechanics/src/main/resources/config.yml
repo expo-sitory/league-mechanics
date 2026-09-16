@@ -26,12 +26,11 @@ runes:
     domination:
 
       dark-harvest:
-        base-adaptive-damage-per-stack: 0.4 # hardcoded max stack: 20 - default total 8.0 adaptive damage
-        level-cost-per-stack: 5 # if the player does not have 5 levels the stack won't go up
-        cooldown: 60 # seconds
+        base-adaptive-damage-per-stack: 2.5 # hardcoded max stack: 20
+        cooldown: 60 # seconds - Cooldown before next soul reap
 
       electrocute:
-        base-adaptive-damage: 5.5
+        base-adaptive-damage: 24.5
         cooldown: 25 # seconds
 
       hail-of-blades:
@@ -48,23 +47,23 @@ runes:
 
     precision:
       conqueror:
-        base-adaptive-damage-per-stack: 0.5 # hard coded max stack: 12 - default total 6.0 adaptive damage
+        base-adaptive-damage-per-stack: 1.8 # hard coded max stack: 12
 
       fleet-footwork:
-        blocks-per-stack: 10.0
-        projectile-stack-gain: 5
+        blocks-per-stack: 10.0 # blocks to pass to gain 1 stack
+        projectile-stack-gain: 5 # stack to gain when hitting projectiles
         heal-percent: 25.0 # missing health percentage - default: 25%
         ad-percentage-multiplier: 10.0 # bonus healing percentage from total AD percent - default: this is 10%
         ap-percentage-multiplier: 5.0 # bonus healing percentage from total AP percent - default: this is 5%
 
       lethal-tempo:
-        base-adaptive-damage: 2.7
+        base-adaptive-damage: 2.7 # adaptive damage when on max/active state
         attack-speed: 60.0 # when on max stacks/active state - # percentage - default: 60%
         cooldown: 30 # seconds
 
       press-the-attack:
 
-        base-adaptive-damage: 3.5
+        base-adaptive-damage: 9.5
         cooldown: 6 # seconds
 
     # ============================= #
@@ -80,7 +79,7 @@ runes:
         cooldown: 45 # seconds
 
       first-strike:
-        initial-xp: 10.0 # starting xp
+        initial-xp: 24.0 # starting xp
         buff-duration: 3 #seconds
         true-damage-percent: 7.0 # while on active state
         ad-percentage: 20.0 # bonus true damage from total AD percent - default: 20%
@@ -94,12 +93,10 @@ runes:
     resolve:
 
       aftershock:
-        base-armor: 45.0
-        base-magic-resist: 45.0
         bonus-armor-percent: 75.0 # bonus armor percentage
         bonus-magic-resist-percent: 75.0 # bonus magic-resist percentage
-        base-shockwave-damage: 3.5 # base shockwave magic damage
-        shockwave-bonus-hp-percent: 8.0 # bonus magic damage from total hp percentage
+        base-shockwave-damage: 12.5 # base shockwave magic damage
+        shockwave-bonus-hp-percent: 25.0 # bonus magic damage from total hp percentage
         cooldown: 20 # seconds
 
       grasp-of-the-undying:
@@ -119,66 +116,19 @@ runes:
     sorcery:
 
       arcane-comet:
-        base-adaptive-damage: 4.5
+        base-adaptive-damage: 17.5
         ad-percentage-multiplier: 5.0 # bonus adaptive damage from total AD percent - default: 5%
         ap-percentage-multiplier: 15.0 # bonus adaptive damage from total AP percent - default: 15%
         cooldown: 20 # seconds
 
       deathfire-torch:
-        damage-ticks: 20 # 20 ticks apart per damage
+        base-magic-damage: 2.5 # base magic damage per tick
         ad-percentage-multiplier: 3.0 # bonus magic damage from total AD percent - default: 3%
         ap-percentage-multiplier: 6.0 # bonus magic damage from total AP percent - default: 6%
 
       storm-raider-surge:
         damage-percent-threshold: 30.0 # damage threshold to activate - default: 30%
         cooldown: 25 # seconds
-
-
-    slots:
-
-      primary:
-
-        slot-1:
-
-          domination:
-            cheap-shot:
-              bonus-true-damage: 10.0 # bonus true damage on qualifying attacks
-              cooldown: 10 # seconds
-            taste-of-blood:
-              heal-percent: 10.0 # percent of damage dealt as healing
-              cooldown: 10 # seconds
-
-          inspiration:
-            cash-back:
-              refund-percent: 7.5 # percent of XP cost refunded for EPIC items
-            magical-footwear:
-              movement-speed-percent: 10.0 # flat movement speed bonus percent
-
-          precision:
-            absorb-life:
-              missing-health-heal-percent: 0.20 # healing percent from missing health on kill
-            triumph:
-              max-health-heal-percent: 0.025 # flat heal percent on takedown
-              missing-health-heal-percent: 0.05 # additional heal from missing health
-              bonus-xp-levels: 20 # XP granted on takedown
-
-          resolve:
-            demolish:
-              blocks-per-stack: 5 # blocks broken to gain 1 demolish stack
-              stacks-for-activation: 20 # stacks (100 blocks) to trigger Haste I
-              active-duration-ticks: 300 # Haste I duration in ticks (15 seconds)
-              haste-amplifier: 0 # 0 = Haste I, 1 = Haste II, etc.
-            shield-bash:
-              bonus-ad: 15.0 # attack damage bonus on shield block
-              bonus-duration-ticks: 100 # bonus duration in ticks (5 seconds)
-
-          sorcery:
-            axiom-arcanist:
-              bonus-crit-damage: 0.12 # crit damage multiplier bonus on crit
-              cooldown: 60 # seconds
-            nimbus-cloak:
-              movement-speed-percent: 60.0 # flat movement speed bonus on SPEED potion gain
-              decay-ticks: 100 # bonus duration in ticks (5 seconds)
 
 # Mob Statistics Configuration
 mob-stats:
@@ -189,8 +139,8 @@ mob-stats:
     mr: 70.0
     type: UNDEAD
   skeleton:
-    ad: 35.0
-    ap: 65.0
+    ad: 15.0
+    ap: 45.0
     ar: 120.0
     mr: 25.0
     type: UNDEAD

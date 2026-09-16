@@ -28,9 +28,9 @@ import net.kyori.adventure.text.Component;
 
 
 public class GraspOfTheUndying extends StacksHandler {
-    private double HEAL_PERCENT = 15.0;
+    private double HEAL_PERCENT;
 
-    int COOLDOWN_DURATION_SECONDS = 60;
+    int COOLDOWN_DURATION_SECONDS;
 
     private PlayerEventListener listener;
 

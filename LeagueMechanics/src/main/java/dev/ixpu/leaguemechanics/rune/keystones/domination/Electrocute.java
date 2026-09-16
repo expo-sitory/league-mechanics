@@ -28,13 +28,14 @@ import net.kyori.adventure.text.Component;
 
 public class Electrocute extends StacksHandler {
 
-    private double BASE_ADAPTIVE_DAMAGE = 5.5;
+    private double BASE_ADAPTIVE_DAMAGE;
+
+    int COOLDOWN_DURATION_SECONDS;
 
     private static final int MAXIMUM_STACKS = 3;
 
     private PlayerEventListener listener;
 
-    int COOLDOWN_DURATION_SECONDS = 25;
 
     public Electrocute(org.bukkit.configuration.ConfigurationSection config, PlayerEventListener listener) {
         super("electrocute", RunePath.DOMINATION, RuneSlot.KEYSTONE, 3, 60);

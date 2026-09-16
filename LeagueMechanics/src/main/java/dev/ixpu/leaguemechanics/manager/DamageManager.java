@@ -20,7 +20,8 @@ public class DamageManager {
     protected boolean isOnlyAP = false;
 
     private static final double CRIT_DAMAGE_MULTIPLIER = 1.75;
-    private static final double BALANCER = 1.4;
+    private static final double RESISTANCE_BALANCER = 1.4;
+    private static final double DAMAGE_BALANCER = 0.7;
 
     private static final double BASE_BONUS = 1.07;
     private static final double LEVEL_3_BONUS = 1.15;
@@ -28,7 +29,6 @@ public class DamageManager {
     private static final double LEVEL_13_BONUS = 1.5;
     private static final double LEVEL_18_BONUS = 1.7;
 
-    // Adaptive damage threshold
     private static final double ADAPTIVE_DAMAGE_THRESHOLD = 0.7;
 
     public DamageManager(ItemStatsManager itemStatsManager) {
@@ -133,10 +133,8 @@ public class DamageManager {
             boolean preferMagic = itemAP > itemAD;
             baseDamage = applyResistance(adaptive, preferMagic, targetAR, targetMR, apenFlat, apenPercent, mpenFlat, mpenPercent);
         } else {
-
             double physical = applyResistance(attackerAD, false, targetAR, targetMR, apenFlat, apenPercent, mpenFlat, mpenPercent);
-            double magic = applyResistance(attackerAP, true, targetAR, targetMR, apenFlat, apenPercent, mpenFlat, mpenPercent);
-            baseDamage = physical + magic;
+            baseDamage = (physical) / DAMAGE_BALANCER;
         }
 
         int stacks = isPerStack ? currentStacks : 1;
@@ -151,7 +149,7 @@ public class DamageManager {
         double percentPen = isMagic ? mpenPercent : apenPercent;
 
         double effectiveResist = Math.max(0, resist - flatPen);
-        effectiveResist = (effectiveResist * (1.0 - percentPen / 100.0)) * BALANCER;
+        effectiveResist = (effectiveResist * (1.0 - percentPen / 100.0)) * RESISTANCE_BALANCER;
 
         return damage / (1.0 + (effectiveResist / 100.0));
     }

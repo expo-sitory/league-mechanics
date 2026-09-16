@@ -26,13 +26,13 @@ import net.kyori.adventure.text.Component;
 
 
 public class HailOfBlades extends CooldownHandler {
-    private double ATTACK_SPEED = 10.0;
-    private double TRUE_DAMAGE_PERCENT = 7.0;
+    private double ATTACK_SPEED;
+    private double TRUE_DAMAGE_PERCENT;
 
     private double AD_PERCENTAGE_MULTIPLIER = 6.0;
     private double AP_PERCENTAGE_MULTIPLIER = 4.0;
 
-    int COOLDOWN_DURATION_SECONDS = 60;
+    int COOLDOWN_DURATION_SECONDS;
 
     private static final int WINDUP_TICKS = 200;
     private static final int STACK_DURATION_TICKS = 60;

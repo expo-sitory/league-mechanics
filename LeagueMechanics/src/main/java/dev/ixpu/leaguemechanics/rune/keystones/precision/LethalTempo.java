@@ -26,8 +26,8 @@ import net.kyori.adventure.text.Component;
 
 public class LethalTempo extends StacksHandler {
 
-    private double ATTACK_SPEED = 60.0;
-    private double BASE_ADAPTIVE_DAMAGE = 2.7;
+    private double ATTACK_SPEED;
+    private double BASE_ADAPTIVE_DAMAGE;
 
     private PlayerEventListener listener;
 
@@ -35,7 +35,7 @@ public class LethalTempo extends StacksHandler {
     private static final int ACTIVE_DURATION_TICKS = 60;
     private static final int STACK_DURATION_TICKS = 300;
 
-    int COOLDOWN_DURATION_SECONDS = 30;
+    int COOLDOWN_DURATION_SECONDS ;
 
     private final Map<UUID, RuneState> playerState = new HashMap<>();
     private final Map<UUID, Integer> activeState = new HashMap<>();
