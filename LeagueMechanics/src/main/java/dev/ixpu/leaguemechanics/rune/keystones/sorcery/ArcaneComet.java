@@ -30,10 +30,10 @@ import org.bukkit.configuration.ConfigurationSection;
 import net.kyori.adventure.text.Component;
 
 public class ArcaneComet extends CooldownHandler {
-    double BASE_ADAPTIVE_DAMAGE = 4.5;
+    double BASE_ADAPTIVE_DAMAGE;
 
-    private double AD_PERCENTAGE_MULTIPLIER = 5.0;
-    private double AP_PERCENTAGE_MULTIPLIER = 15.0;
+    private double AD_PERCENTAGE_MULTIPLIER;
+    private double AP_PERCENTAGE_MULTIPLIER;
 
     int COOLDOWN_SECONDS = 20;
 

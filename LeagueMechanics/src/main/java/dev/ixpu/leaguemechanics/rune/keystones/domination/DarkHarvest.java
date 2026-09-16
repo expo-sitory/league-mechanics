@@ -24,10 +24,9 @@ import net.kyori.adventure.text.Component;
 
 public class DarkHarvest extends StacksHandler {
 
-    private double BASE_ADAPTIVE_DAMAGE_PER_STACK = 0.2;
-    private int LEVEL_COST_PER_STACK = 5;
+    private double BASE_ADAPTIVE_DAMAGE_PER_STACK;
 
-    int COOLDOWN_DURATION_SECONDS = 60;
+    int COOLDOWN_DURATION_SECONDS;
 
     private static final double HEALTH_THRESHOLD = 50;
     private static final int REAP_DELAY_TICKS = 75;
@@ -41,7 +40,6 @@ public class DarkHarvest extends StacksHandler {
         ConfigurationSection section = config.getConfigurationSection("runes.keystones.domination.dark-harvest");
         if (section != null) {
             this.BASE_ADAPTIVE_DAMAGE_PER_STACK = section.getDouble("adaptive-damage-per-stack", this.BASE_ADAPTIVE_DAMAGE_PER_STACK);
-            this.LEVEL_COST_PER_STACK = section.getInt("level-cost-per-stack", this.LEVEL_COST_PER_STACK);
             this.COOLDOWN_DURATION_SECONDS = section.getInt("cooldown", COOLDOWN_DURATION_SECONDS);
         }
         this.setCooldownSeconds(COOLDOWN_DURATION_SECONDS);

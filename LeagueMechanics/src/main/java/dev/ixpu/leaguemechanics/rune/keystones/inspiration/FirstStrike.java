@@ -29,14 +29,14 @@ import org.bukkit.configuration.ConfigurationSection;
 import net.kyori.adventure.text.Component;
 
 public class FirstStrike extends CooldownHandler {
-    private double INITIAL_XP = 10.0;
-    private double BUFF_DURATION_SECONDS = 7.0;
-    private double TRUE_DAMAGE_PERCENT = 7.0;
+    private double INITIAL_XP;
+    private double BUFF_DURATION_SECONDS;
+    private double TRUE_DAMAGE_PERCENT;
 
-    private int COOLDOWN_SECONDS = 25;
+    private int COOLDOWN_SECONDS;
 
-    private double AD_PERCENTAGE = 20.0;
-    private double AP_PERCENTAGE = 15.0;
+    private double AD_PERCENTAGE;
+    private double AP_PERCENTAGE;
 
     private PlayerEventListener listener;
 

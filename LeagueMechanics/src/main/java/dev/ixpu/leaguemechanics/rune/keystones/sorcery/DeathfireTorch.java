@@ -34,13 +34,15 @@ import org.bukkit.configuration.ConfigurationSection;
 import net.kyori.adventure.text.Component;
 
 public class DeathfireTorch extends CooldownHandler {
-    private double DAMAGE_TICKS = 20;
-    private double BASE_MAGIC_DAMAGE = 3;
 
-    private double AD_PERCENTAGE_MULTIPLIER = 3.0;
-    private double AP_PERCENTAGE_MULTIPLIER = 6.0;
+    private double BASE_MAGIC_DAMAGE;
+
+    private double AD_PERCENTAGE_MULTIPLIER;
+    private double AP_PERCENTAGE_MULTIPLIER;
 
     private PlayerEventListener listener;
+
+    private static final double DAMAGE_TICKS = 20;
 
     private final Map<UUID, Map<UUID, Integer>> burnedPlayers = new HashMap<>();
     private final Map<UUID, Map<UUID, Double>> burnDamage = new HashMap<>();
@@ -52,7 +54,7 @@ public class DeathfireTorch extends CooldownHandler {
         ConfigurationSection section = config.getConfigurationSection("runes.keystones.sorcery.deathfire-torch");
         this.listener = listener;
         if (section != null) {
-            this.DAMAGE_TICKS = section.getDouble("damage-ticks", this.DAMAGE_TICKS);
+            this.BASE_MAGIC_DAMAGE = section.getDouble("base-magic-damage", this.BASE_MAGIC_DAMAGE);
             this.AD_PERCENTAGE_MULTIPLIER = section.getDouble("ad-percentage-multiplier", this.AD_PERCENTAGE_MULTIPLIER);
             this.AP_PERCENTAGE_MULTIPLIER = section.getDouble("ap-percentage-multiplier", this.AP_PERCENTAGE_MULTIPLIER);
         }

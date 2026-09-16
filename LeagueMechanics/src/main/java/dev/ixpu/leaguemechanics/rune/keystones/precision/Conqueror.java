@@ -26,7 +26,7 @@ import net.kyori.adventure.text.Component;
 
 public class Conqueror extends StacksHandler {
 
-    private double BASE_ADAPTIVE_DAMAGE_PER_STACK = 1.7;
+    private double BASE_ADAPTIVE_DAMAGE_PER_STACK;
 
     private static final int MAXIMUM_STACKS = 12;
 
