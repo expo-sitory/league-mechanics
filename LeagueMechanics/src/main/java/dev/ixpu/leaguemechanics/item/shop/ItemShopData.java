@@ -94,7 +94,7 @@ public class ItemShopData {
         addItem("spectres-cowl", 30, 6, 8, ItemRarity.RARE, null, "tank");
         addItem("winged-moonplate", 28, 6, 9, ItemRarity.RARE, null, "tank");
         addItem("wardens-mail", 29, 6, 10, ItemRarity.RARE, null, "tank");
-        addItem("bamis-cinder", 28, 6, 11, ItemRarity.RARE, null, "tank");
+        addItem("bamis-cinder", 28, 1, 11, ItemRarity.RARE, null, "tank");
         addItem("verdant-barrier", 34, 1, 9, ItemRarity.RARE, null, "mage");
         addItem("aether-wisp", 27, 6, 10, ItemRarity.RARE, null, "mage");
         addItem("vampiric-scepter", 24, 6, 8, ItemRarity.RARE, null, "fighter");

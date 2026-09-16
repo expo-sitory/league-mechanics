@@ -96,7 +96,7 @@ public class ItemStatsData {
         addItem("rectrix", "Rectrix", 0.0, 0.0, 15.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 4.0);
         addItem("recurve-bow", "Recurve Bow", 0.0, 0.0, 0.0, 0.0, 0.0, 15.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0,
                 true, "recurve-bow");
-        addItem("scouts-slingshot", "Scouts' Slingshot", 0.0, 0.0, 0.0, 0.0, 0.0, 20.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0);
+        addItem("scouts-slingshot", "Scouts' Slingshot", 0.0, 0.0, 0.0, 0.0, 0.0, 20.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, true, "scouts-slingshot");
         addItem("last-whisper", "Last Whisper", 0.0, 0.0, 20.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0,
                 false, null, 0.0, 18.0, 0.0, 0.0);
         addItem("hearthbound-axe", "Hearthbound Axe", 0.0, 0.0, 20.0, 0.0, 0.0, 20.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0);

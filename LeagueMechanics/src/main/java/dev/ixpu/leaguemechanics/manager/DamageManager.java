@@ -18,10 +18,11 @@ public class DamageManager {
     protected boolean isTrueDamage = false;
     protected boolean isPerStack = false;
     protected boolean isOnlyAP = false;
+    private boolean prefersMagic = false;
 
     private static final double CRIT_DAMAGE_MULTIPLIER = 1.75;
     private static final double RESISTANCE_BALANCER = 1.4;
-    private static final double DAMAGE_BALANCER = 0.7;
+    private static final double DAMAGE_BALANCER = 1.7;
 
     private static final double BASE_BONUS = 1.07;
     private static final double LEVEL_3_BONUS = 1.15;
@@ -50,10 +51,10 @@ public class DamageManager {
     public void enableOnlyAP() {
         this.isOnlyAP = true;
     }
-    public boolean isMagicDamage() {
-        return isOnlyAP;
-    }
 
+    public boolean isMagicDamage() {
+        return isOnlyAP || (isAdaptiveDamage && prefersMagic);
+    }
 
     public double DamageCalculation(Entity source, Entity target, int currentStacks, double runesAdaptive, double runesTrueDamage, double procDamage) {
         ItemStatsManager statsManager = LeagueMechanics.getInstance().getStatsManager();
@@ -128,15 +129,15 @@ public class DamageManager {
         } else if (isAdaptiveDamage) {
             double adaptive = runesAdaptive * levelBasedBonusForLevel(leagueLevel);
             if (isAdaptiveScaling) {
-                adaptive += adaptive * af;
+                adaptive += adaptive + af;
             }
             boolean preferMagic = itemAP > itemAD;
+            this.prefersMagic = preferMagic;
             baseDamage = applyResistance(adaptive, preferMagic, targetAR, targetMR, apenFlat, apenPercent, mpenFlat, mpenPercent);
         } else {
             double physical = applyResistance(attackerAD, false, targetAR, targetMR, apenFlat, apenPercent, mpenFlat, mpenPercent);
-            baseDamage = (physical) / DAMAGE_BALANCER;
+            baseDamage = physical / DAMAGE_BALANCER;
         }
-
         int stacks = isPerStack ? currentStacks : 1;
         return (baseDamage + procDamage) * stacks;
     }

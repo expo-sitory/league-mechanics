@@ -3,6 +3,7 @@ package dev.ixpu.leaguemechanics.entity.mob;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.potion.PotionEffect;
+import org.bukkit.potion.PotionEffectType;
 import org.bukkit.configuration.ConfigurationSection;
 
 import dev.ixpu.leaguemechanics.LeagueMechanics;
@@ -535,10 +536,8 @@ public class MobStats {
             int resistanceAmplifier = 0;
 
             for (PotionEffect effect : livingEntity.getActivePotionEffects()) {
-                switch (effect.getType().getName()) {
-                    case "resistance":
-                        resistanceAmplifier = Math.max(resistanceAmplifier, effect.getAmplifier() + 1);
-                        break;
+                if (effect.getType() == PotionEffectType.RESISTANCE) {
+                    resistanceAmplifier = Math.max(resistanceAmplifier, effect.getAmplifier() + 1);
                 }
             }
 
@@ -577,10 +576,8 @@ public class MobStats {
             int resistanceAmplifier = 0;
 
             for (PotionEffect effect : livingEntity.getActivePotionEffects()) {
-                switch (effect.getType().getName()) {
-                    case "resistance":
-                        resistanceAmplifier = Math.max(resistanceAmplifier, effect.getAmplifier() + 1);
-                        break;
+                if (effect.getType() == PotionEffectType.RESISTANCE) {
+                    resistanceAmplifier = Math.max(resistanceAmplifier, effect.getAmplifier() + 1);
                 }
             }
 

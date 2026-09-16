@@ -475,6 +475,7 @@ public class PlayerStats {
                 dev.ixpu.leaguemechanics.manager.ItemPassivesManager.getInstance();
         if (passiveManager != null) {
             appendPassiveCooldown(sb, passiveManager, player, "hextech-alternator", "§7🕹");
+            appendPassiveCooldown(sb, passiveManager, player, "scouts-slingshot", "§7⌖");
             appendPassiveCooldown(sb, passiveManager, player, "hexdrinker", "§7🛡");
             appendPassiveCooldown(sb, passiveManager, player, "bamis-cinder", "§7🔥");
             appendPassiveCooldown(sb, passiveManager, player, "verdant-barrier", "§7⛨");

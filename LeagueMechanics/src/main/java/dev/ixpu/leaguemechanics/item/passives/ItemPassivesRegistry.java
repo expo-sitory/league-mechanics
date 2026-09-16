@@ -31,6 +31,7 @@ public class ItemPassivesRegistry {
         register(new wardens_mail());
         register(new verdant_barrier());
         register(new bamis_cinder());
+        register(new scouts_slingshot());
     }
 
     public void register(ItemPassive passive) {

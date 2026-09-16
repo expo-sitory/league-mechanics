@@ -19,14 +19,15 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
-import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.entity.EntityShootBowEvent;
 import org.bukkit.event.entity.ProjectileHitEvent;
 
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.entity.*;
+import org.bukkit.Material;
 import org.bukkit.Sound;
 import org.bukkit.Particle;
+import org.bukkit.block.data.BlockData;
 
 import io.papermc.paper.event.player.PlayerArmSwingEvent;
 import com.destroystokyo.paper.event.player.PlayerLaunchProjectileEvent;
@@ -99,23 +100,16 @@ public class DamageListener implements Listener, RuneCooldownGate {
         }
     }
 
-    @EventHandler
-    public void onAttackDamage(EntityDamageByEntityEvent event) {
-        double damage = event.getDamage();
-        event.setDamage(damage / 5);
-    }
-
     @EventHandler (priority = EventPriority.HIGHEST)
     public void onProjectileHit(ProjectileHitEvent event) {
         if (!(event.getEntity().getShooter() instanceof Player shooter)) {
             LivingEntity shooter = (LivingEntity) event.getEntity().getShooter();
             LivingEntity target = (LivingEntity) event.getHitEntity();
-            event.getEntity().remove();
-            if (target != null) {
-                entityDamageEvent(shooter, target, 0);
-            }
+
+            entityDamageEvent(shooter, target, 0);
             return;
         }
+
         if (event.getEntity() instanceof ThrownPotion || event.getEntity() instanceof ThrownExpBottle) {
             return;
         }
@@ -125,11 +119,6 @@ public class DamageListener implements Listener, RuneCooldownGate {
 
         if (target instanceof Player targetPlayer) {
             if (!plugin.getCommandHandler().isPvpEnabled(shooter, targetPlayer)) {
-                return;
-            }
-            if (targetPlayer.isBlocking()) {
-                targetPlayer.getWorld().playSound(targetPlayer.getLocation(), Sound.BLOCK_METAL_PLACE, 1.0f, 1.0f);
-                targetPlayer.getWorld().spawnParticle(Particle.BLOCK, targetPlayer.getLocation().add(0, 1, 0), 5, 0.5, 0.5, 0.5, 0);
                 return;
             }
             recordHit(shooter, targetPlayer);
@@ -154,18 +143,11 @@ public class DamageListener implements Listener, RuneCooldownGate {
 
     @EventHandler (priority = EventPriority.HIGHEST)
     public void onAttack(EntityDamageByEntityEvent event) {
+
         if (!(event.getDamager() instanceof LivingEntity attacker)) {
-            LivingEntity target = (LivingEntity) event.getEntity();
-            if (target != null) {
-                Entity damager = event.getDamager();
-                if (damager instanceof LivingEntity livingDamager) {
-                    if (event.getDamage() > 0) {
-                        entityDamageEvent(livingDamager, target, event.getDamage());
-                    }
-                }
-            }
             return;
         }
+
         if (!(event.getEntity() instanceof LivingEntity target)) {
             return;
         }
@@ -220,7 +202,12 @@ public class DamageListener implements Listener, RuneCooldownGate {
             if (event.getDamage() > 0) {
                 damageEvent(playerAttacker, target, "Melee Hit Event", event.getDamage());
             }
+        } else {
+            if (event.getDamage() > 0) {
+                entityDamageEvent(attacker, target, event.getDamage());
+            }
         }
+
         combatState.removeLetRunesThrough(attacker.getUniqueId());
     }
 
@@ -266,16 +253,6 @@ public class DamageListener implements Listener, RuneCooldownGate {
             if (sourceMob != null && !(sourceMob instanceof Player)) {
                 combatState.setLastMobDamager(player, sourceMob);
             }
-            boolean isMagic = event.getCause() == EntityDamageEvent.DamageCause.MAGIC
-                    || event.getCause() == EntityDamageEvent.DamageCause.POISON
-                    || event.getCause() == EntityDamageEvent.DamageCause.WITHER;
-            for (ItemStack inv : player.getInventory().getContents()) {
-                if (inv == null || inv.getType().isAir()) continue;
-                ItemPassive passive = getEquippedPassive(inv);
-                if (passive != null) {
-                    passive.onTakeDamage(player, attacker, damage, isMagic);
-                }
-            }
         }
     }
 
@@ -287,10 +264,37 @@ public class DamageListener implements Listener, RuneCooldownGate {
         return combatState.hasLetRunesThrough(player.getUniqueId());
     }
 
+    public boolean isBlocking(Player target, double damage) {
+        if (!(target instanceof Player targetPlayer) || !targetPlayer.isBlocking()) {
+            return false;
+        }
+
+        targetPlayer.getWorld().playSound(targetPlayer.getLocation(), Sound.BLOCK_METAL_PLACE, 1.0f, 1.0f);
+        BlockData blockData = Material.IRON_BLOCK.createBlockData();
+        targetPlayer.getWorld().spawnParticle(Particle.BLOCK, targetPlayer.getLocation().add(0, 1, 0), 5, 0.5, 0.5, 0.5, 0, blockData);
+
+        ItemStack shield = targetPlayer.getInventory().getItemInMainHand();
+        if (shield != null && shield.getType() == Material.SHIELD) {
+            int shieldDamage = Math.max(1, (int) Math.ceil(Math.sqrt(damage)));
+            shield.damage((short) shieldDamage, targetPlayer);
+
+            if (shield.getDurability() <= 0) {
+                targetPlayer.getInventory().setItemInMainHand(new ItemStack(Material.AIR));
+                targetPlayer.updateInventory();
+            }
+        }
+
+        return true;
+    }
+
     public void entityDamageEvent(LivingEntity source, LivingEntity target, double vanillaDamage) {
         DamageManager damage = new DamageManager(itemStatsManager);
 
-        double statsDamage = damage.DamageCalculation(source, target, 0, 0, 0, 0) - vanillaDamage;
+        if (target instanceof Player targetPlayer && isBlocking(targetPlayer, vanillaDamage)) {
+            return;
+        }
+
+        double statsDamage = damage.DamageCalculation(source, target, 0, 0, 0, 0);
         double newHealth = target.getHealth();
 
         if (target instanceof Player targetPlayer) {
@@ -321,18 +325,23 @@ public class DamageListener implements Listener, RuneCooldownGate {
     }
 
     public void damageEvent(Player player, LivingEntity target, String type, double vanillaDamage) {
+        DamageManager damage = new DamageManager(itemStatsManager);
+        PlayerStats stats = PlayerStats.getOrCreate(player);
+
+        if (target instanceof Player targetPlayer && isBlocking(targetPlayer, vanillaDamage)) {
+            return;
+        }
+
         if (target instanceof Player targetPlayer) {
             KillSourceTracker.getInstance().setSource(targetPlayer, player);
         }
-        DamageManager damage = new DamageManager(itemStatsManager);
-        PlayerStats stats = PlayerStats.getOrCreate(player);
 
         double attackerAD = stats.getPlayerAD(player);
         double attackerAP = stats.getPlayerAP(player);
         double targetAR = damage.getTargetAR(target);
         double targetMR = damage.getTargetMR(target);
 
-        double statsDamage = damage.DamageCalculation(player, target, 0, 0, 0, 0) - vanillaDamage;
+        double statsDamage = damage.DamageCalculation(player, target, 0, 0, 0, 0);
 
         boolean didCrit = false;
         if (statsDamage > 0) {
