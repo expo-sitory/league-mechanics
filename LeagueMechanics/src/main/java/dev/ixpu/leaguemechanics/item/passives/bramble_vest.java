@@ -5,6 +5,7 @@ import dev.ixpu.leaguemechanics.manager.DamageManager;
 import dev.ixpu.leaguemechanics.manager.DebuffManager;
 import dev.ixpu.leaguemechanics.manager.KillSourceTracker;
 import dev.ixpu.leaguemechanics.rune.DebuffType;
+import dev.ixpu.leaguemechanics.util.ItemModifier;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
@@ -12,6 +13,7 @@ import org.bukkit.inventory.ItemStack;
 public class bramble_vest implements ItemPassive {
     private static final int THORNS_MAGIC_DAMAGE = 10;
     private static final int GRIEVOUS_DURATION_TICKS = 60;
+    private static final ThreadLocal<Boolean> TRIGGERING_PASSIVES = ThreadLocal.withInitial(() -> false);
 
     @Override
     public String getId() {
@@ -20,7 +22,7 @@ public class bramble_vest implements ItemPassive {
 
     @Override
     public String getDescription() {
-        return "§7ᴜɴɪQᴜᴇ – ᴛʜᴏʀɴs: §fWhen struck by an attack, deal §910\n§9magic damage §fto the attacker. If they are a player,\n§finflict them with §cɢʀɪᴇᴠᴏᴜs ᴡᴏᴜɴᴅs §ffor 3 seconds.";
+        return "§7ᴜɴɪQᴜᴇ – ᴛʜᴏʀɴs: §fWhen struck by an attack, deal §9" + THORNS_MAGIC_DAMAGE + "\n§9magic damage §fto the attacker. If they are a player,\n§finflict them with §cɢʀɪᴇᴠᴏᴜs ᴡᴏᴜɴᴅs §ffor 3 seconds.";
     }
 
     @Override
@@ -45,6 +47,20 @@ public class bramble_vest implements ItemPassive {
         double newHealth = Math.clamp(attacker.getHealth() - damageToApply, 0, attacker.getMaxHealth());
 
         KillSourceTracker.getInstance().setSource(attacker, victim);
+
+        if (!TRIGGERING_PASSIVES.get()) {
+            TRIGGERING_PASSIVES.set(true);
+            for (ItemStack inv : attacker.getInventory().getContents()) {
+                if (inv == null || inv.getType().isAir()) continue;
+                String itemId = ItemModifier.getItemId(inv);
+                ItemPassive passive = ItemPassivesRegistry.getInstance().getPassive(itemId);
+                if (passive != null) {
+                    passive.onDealDamage(victim, attacker, damage, false, true);
+                }
+            }
+            TRIGGERING_PASSIVES.set(false);
+        }
+
         attacker.damage(0.00001);
         attacker.setHealth(newHealth);
 

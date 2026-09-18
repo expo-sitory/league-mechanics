@@ -18,7 +18,7 @@ public class fated_ashes implements ItemPassive {
 
     @Override
     public String getDescription() {
-        return "§7ᴜɴɪQᴜᴇ – ɪɴғʟᴀᴍᴇ: §fDamaging a target with a Fire Aspect or Flame\n§fenchanted weapon triggers a §92.5 magic damage §fDoT over 3 seconds.";
+        return "§7ᴜɴɪQᴜᴇ – ɪɴғʟᴀᴍᴇ: §fDamaging a target with a §cFire Aspect §for §cFlame\n§fenchanted weapon triggers a §92.5 magic damage §fDoT over 3 seconds.";
     }
 
     @Override

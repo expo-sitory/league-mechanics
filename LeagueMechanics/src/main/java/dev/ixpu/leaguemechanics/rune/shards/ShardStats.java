@@ -10,6 +10,9 @@ public class ShardStats {
     private RuneShard row3;
 
     public ShardStats() {
+        this.row1 = RuneShard.ROW1_ADAP;
+        this.row2 = RuneShard.ROW2_ADAP;
+        this.row3 = RuneShard.ROW3_HP;
     }
 
     public void selectShards(RuneShard r1, RuneShard r2, RuneShard r3) {
@@ -18,23 +21,20 @@ public class ShardStats {
         this.row3 = r3;
     }
 
-    public RuneShard getRow(int rowNumber) {
-        if (rowNumber == 1) return row1;
-        if (rowNumber == 2) return row2;
-        if (rowNumber == 3) return row3;
-        return null;
-    }
-
     public RuneShard getRow1() { return row1; }
     public RuneShard getRow2() { return row2; }
     public RuneShard getRow3() { return row3; }
 
     public double getAdOrAp(Player player) {
-        if (row1 == RuneShard.ROW1_ADAP || row2 == RuneShard.ROW2_ADAP) {
-            double af = PlayerStats.getOrCreate(player).getPlayerAF(player);
-            return af <= 0.7 ? 15.4 : 19.0;
-        }
-        return 0;
+        int adaptiveCount = 0;
+        if (row1 == RuneShard.ROW1_ADAP) adaptiveCount++;
+        if (row2 == RuneShard.ROW2_ADAP) adaptiveCount++;
+
+        if (adaptiveCount == 0) return 0;
+
+        double af = PlayerStats.getOrCreate(player).getPlayerAF(player);
+        double baseBonus = af <= 0.7 ? 15.4 : 19.0;
+        return baseBonus * adaptiveCount;
     }
 
     public int getAttackSpeed() {

@@ -24,7 +24,7 @@ public class MySQLManager {
 
     private void initialize() {
         try {
-            if (!plugin.getConfig().isConfigurationSection("mysql")) {
+            if (!plugin.getConfig().isConfigurationSection("general-settings.mysql")) {
                 plugin.getLogger().warning("MySQL configuration not found in config.yml. Using default values.");
                 createDefaultMySQLConfig();
             }
@@ -32,17 +32,17 @@ public class MySQLManager {
             HikariConfig config = new HikariConfig();
             config.setJdbcUrl(String.format(
                 "jdbc:mysql://%s:%d/%s?useSSL=false&allowPublicKeyRetrieval=true&autoReconnect=true",
-                plugin.getConfig().getString("mysql.host", "localhost"),
-                plugin.getConfig().getInt("mysql.port", 3306),
-                plugin.getConfig().getString("mysql.database", "leaguemechanics")
+                plugin.getConfig().getString("general-settings.mysql.host", "localhost"),
+                plugin.getConfig().getInt("general-settings.mysql.port", 3306),
+                plugin.getConfig().getString("general-settings.mysql.database", "leaguemechanics")
             ));
-            config.setUsername(plugin.getConfig().getString("mysql.username", "root"));
-            config.setPassword(plugin.getConfig().getString("mysql.password", ""));
+            config.setUsername(plugin.getConfig().getString("general-settings.mysql.username", "root"));
+            config.setPassword(plugin.getConfig().getString("general-settings.mysql.password", ""));
 
-            config.setMaximumPoolSize(plugin.getConfig().getInt("mysql.pool-size", 10));
-            config.setIdleTimeout(plugin.getConfig().getInt("mysql.idle-timeout", 300000));
-            config.setMaxLifetime(plugin.getConfig().getInt("mysql.max-lifetime", 1800000));
-            config.setConnectionTimeout(plugin.getConfig().getInt("mysql.connection-timeout", 30000));
+            config.setMaximumPoolSize(plugin.getConfig().getInt("general-settings.mysql.pool-size", 10));
+            config.setIdleTimeout(plugin.getConfig().getInt("general-settings.mysql.idle-timeout", 300000));
+            config.setMaxLifetime(plugin.getConfig().getInt("general-settings.mysql.max-lifetime", 1800000));
+            config.setConnectionTimeout(plugin.getConfig().getInt("general-settings.mysql.connection-timeout", 30000));
 
             dataSource = new HikariDataSource(config);
 

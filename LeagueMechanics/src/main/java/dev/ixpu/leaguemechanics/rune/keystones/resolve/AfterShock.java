@@ -1,6 +1,8 @@
 package dev.ixpu.leaguemechanics.rune.keystones.resolve;
 
 import dev.ixpu.leaguemechanics.LeagueMechanics;
+import dev.ixpu.leaguemechanics.item.passives.ItemPassive;
+import dev.ixpu.leaguemechanics.item.passives.ItemPassivesRegistry;
 import dev.ixpu.leaguemechanics.util.DebugLogger;
 import dev.ixpu.leaguemechanics.entity.player.PlayerStats;
 
@@ -15,6 +17,7 @@ import dev.ixpu.leaguemechanics.manager.ItemStatsManager;
 
 import dev.ixpu.leaguemechanics.listener.PlayerEventListener;
 
+import dev.ixpu.leaguemechanics.util.ItemModifier;
 import org.bukkit.Sound;
 import org.bukkit.entity.Player;
 import org.bukkit.entity.LivingEntity;
@@ -26,6 +29,7 @@ import org.bukkit.attribute.Attribute;
 import org.bukkit.configuration.ConfigurationSection;
 
 import net.kyori.adventure.text.Component;
+import org.bukkit.inventory.ItemStack;
 
 import java.util.*;
 
@@ -191,7 +195,17 @@ public class AfterShock extends CooldownHandler {
 
             applyMagicDamage(living, damageToApply, player);
 
+            for (ItemStack inv : player.getInventory().getContents()) {
+                if (inv == null || inv.getType().isAir()) continue;
+                String itemId = ItemModifier.getItemId(inv);
+                ItemPassive passive = ItemPassivesRegistry.getInstance().getPassive(itemId);
+                if (passive != null) {
+                    passive.onDealDamage(player, living, damageToApply, false, true);
+                }
+            }
+
             DebugLogger.debug(player, "§7[Debug] §f[§dAttacker§f] §f[§aAfter Shock§f] Keystone Damage = §d" + String.format("%.1f", damageToApply));
+            DebugLogger.debug(player, "§7[Debug] §f[§dAttacker§f] Keystone Damage Type = §dMagic Damage");
 
             hitCount++;
         }

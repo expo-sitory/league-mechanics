@@ -1,19 +1,21 @@
 # LEAGUE MECHANICS CONFIGURATION
 # https://github.com/expo-sitory
 
-debug: true
+general-settings:
+  debug: true
+  damage-divisor-balancer: 2.1 # A value to divide players total damage output
+  resistance-multiplier-balancer: 1.8 # A value to multiply players total damage resistance
 
-# MySQL Configuration - Runes & KDA Multi Server Synchronization
-mysql:
-  host: kupalhost
-  port: 3306
-  database: leaguemechanics
-  username: root
-  password: ""
-  pool-size: 10
-  idle-timeout: 300000
-  max-lifetime: 1800000
-  connection-timeout: 30000
+  mysql: # MySQL Configuration - Runes & KDA Multi Server Synchronization
+    host: kupalhost
+    port: 3306
+    database: leaguemechanics
+    username: root
+    password: ""
+    pool-size: 10
+    idle-timeout: 300000
+    max-lifetime: 1800000
+    connection-timeout: 30000
 
 runes:
 
@@ -62,7 +64,6 @@ runes:
         cooldown: 30 # seconds
 
       press-the-attack:
-
         base-adaptive-damage: 9.5
         cooldown: 6 # seconds
 
@@ -100,12 +101,12 @@ runes:
         cooldown: 20 # seconds
 
       grasp-of-the-undying:
-        heal-percent: 15.0 # missing health percent - default: 15%
+        heal-percent: 60.0 # missing health percent - default: 60%
         cooldown: 45 # seconds
 
       guardian:
         max-players: 5 # max number of players that will get the effect
-        absorption-percentage: 100.0 # default: 100% - one full line
+        absorption-percentage: 300.0 # 100 = One full line (20)
         cooldown: 60 # seconds
 
 
@@ -133,38 +134,38 @@ runes:
 # Mob Statistics Configuration
 mob-stats:
   zombie:
-    ad: 47.0
-    ap: 22.0
-    ar: 500.0
-    mr: 100.0
+    ad: 37.0
+    ap: 12.0
+    ar: 150.0
+    mr: 70.0
     type: UNDEAD
   skeleton:
-    ad: 25.0
-    ap: 45.0
-    ar: 320.0
-    mr: 405.0
+    ad: 15.0
+    ap: 35.0
+    ar: 40.0
+    mr: 175.0
     type: UNDEAD
   spider:
     ad: 38.0
     ap: 22.0
-    ar: 40.0
-    mr: 600.0
+    ar: 30.0
+    mr: 100.0
     type: ARTHROPOD
   cave_spider:
-    ad: 44.0
-    ap: 56.0
+    ad: 34.0
+    ap: 46.0
     ar: 400.0
-    mr: 20.0
+    mr: 60.0
     type: ARTHROPOD
   creeper:
     ad: 0.0
     ap: 0.0
-    ar: 900.0
-    mr: 900.0
+    ar: 399.0
+    mr: 399.0
     type: CRITTER
   enderman:
-    ad: 200.0
-    ap: 200.0
+    ad: 70.0
+    ap: 70.0
     ar: 120.0
     mr: 820.0
     type: ENDERMAN
@@ -172,7 +173,7 @@ mob-stats:
     ad: 0.0
     ap: 485.0
     ar: 55.0
-    mr: 830.0
+    mr: 530.0
     type: WITCH
   slime:
     ad: 70.0
@@ -187,14 +188,14 @@ mob-stats:
     mr: 600.0
     type: SLIME
   blaze:
-    ad: 40.0
-    ap: 320.0
+    ad: 70.0
+    ap: 120.0
     ar: 999.0
     mr: 500.0
     type: BLAZE
   ghast:
     ad: 0.0
-    ap: 390.0
+    ap: 190.0
     ar: 200.0
     mr: 800.0
     type: GHAST
@@ -205,19 +206,19 @@ mob-stats:
     mr: 25.0
     type: UNDEAD
   husk:
-    ad: 192.0
+    ad: 52.0
     ap: 30.0
     ar: 87.0
     mr: 57.0
     type: UNDEAD
   zombie_villager:
-    ad: 162.0
+    ad: 42.0
     ap: 60.0
     ar: 120.0
     mr: 57.0
     type: UNDEAD
   wither_skeleton:
-    ad: 297.0
+    ad: 197.0
     ap: 20.0
     ar: 487.0
     mr: 120.0

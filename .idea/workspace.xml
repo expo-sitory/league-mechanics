@@ -5,8 +5,40 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="cda9b1ea-0c5c-4d4f-b093-41df2f38c092" name="Changes" comment="Balancing Stage">
+      <change beforePath="$PROJECT_DIR$/.gitignore" beforeDir="false" afterPath="$PROJECT_DIR$/.gitignore" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/LeagueMechanics/pom.xml" beforeDir="false" afterPath="$PROJECT_DIR$/LeagueMechanics/pom.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/LeagueMechanics/src/main/java/dev/ixpu/leaguemechanics/LeagueMechanics.java" beforeDir="false" afterPath="$PROJECT_DIR$/LeagueMechanics/src/main/java/dev/ixpu/leaguemechanics/LeagueMechanics.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/LeagueMechanics/src/main/java/dev/ixpu/leaguemechanics/command/CommandHandler.java" beforeDir="false" afterPath="$PROJECT_DIR$/LeagueMechanics/src/main/java/dev/ixpu/leaguemechanics/command/CommandHandler.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/LeagueMechanics/src/main/java/dev/ixpu/leaguemechanics/entity/player/PlayerKDA.java" beforeDir="false" afterPath="$PROJECT_DIR$/LeagueMechanics/src/main/java/dev/ixpu/leaguemechanics/entity/player/PlayerKDA.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/LeagueMechanics/src/main/java/dev/ixpu/leaguemechanics/item/passives/bamis_cinder.java" beforeDir="false" afterPath="$PROJECT_DIR$/LeagueMechanics/src/main/java/dev/ixpu/leaguemechanics/item/passives/bamis_cinder.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/LeagueMechanics/src/main/java/dev/ixpu/leaguemechanics/item/passives/bramble_vest.java" beforeDir="false" afterPath="$PROJECT_DIR$/LeagueMechanics/src/main/java/dev/ixpu/leaguemechanics/item/passives/bramble_vest.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/LeagueMechanics/src/main/java/dev/ixpu/leaguemechanics/item/passives/cull.java" beforeDir="false" afterPath="$PROJECT_DIR$/LeagueMechanics/src/main/java/dev/ixpu/leaguemechanics/item/passives/cull.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/LeagueMechanics/src/main/java/dev/ixpu/leaguemechanics/item/passives/dark_seal.java" beforeDir="false" afterPath="$PROJECT_DIR$/LeagueMechanics/src/main/java/dev/ixpu/leaguemechanics/item/passives/dark_seal.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/LeagueMechanics/src/main/java/dev/ixpu/leaguemechanics/item/passives/dorans_ring.java" beforeDir="false" afterPath="$PROJECT_DIR$/LeagueMechanics/src/main/java/dev/ixpu/leaguemechanics/item/passives/dorans_ring.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/LeagueMechanics/src/main/java/dev/ixpu/leaguemechanics/item/passives/dorans_shield.java" beforeDir="false" afterPath="$PROJECT_DIR$/LeagueMechanics/src/main/java/dev/ixpu/leaguemechanics/item/passives/dorans_shield.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/LeagueMechanics/src/main/java/dev/ixpu/leaguemechanics/item/passives/fated_ashes.java" beforeDir="false" afterPath="$PROJECT_DIR$/LeagueMechanics/src/main/java/dev/ixpu/leaguemechanics/item/passives/fated_ashes.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/LeagueMechanics/src/main/java/dev/ixpu/leaguemechanics/item/passives/hextech_alternator.java" beforeDir="false" afterPath="$PROJECT_DIR$/LeagueMechanics/src/main/java/dev/ixpu/leaguemechanics/item/passives/hextech_alternator.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/LeagueMechanics/src/main/java/dev/ixpu/leaguemechanics/item/passives/scouts_slingshot.java" beforeDir="false" afterPath="$PROJECT_DIR$/LeagueMechanics/src/main/java/dev/ixpu/leaguemechanics/item/passives/scouts_slingshot.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/LeagueMechanics/src/main/java/dev/ixpu/leaguemechanics/listener/DamageListener.java" beforeDir="false" afterPath="$PROJECT_DIR$/LeagueMechanics/src/main/java/dev/ixpu/leaguemechanics/listener/DamageListener.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/LeagueMechanics/src/main/java/dev/ixpu/leaguemechanics/listener/PlayerEventListener.java" beforeDir="false" afterPath="$PROJECT_DIR$/LeagueMechanics/src/main/java/dev/ixpu/leaguemechanics/listener/PlayerEventListener.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/LeagueMechanics/src/main/java/dev/ixpu/leaguemechanics/manager/DamageManager.java" beforeDir="false" afterPath="$PROJECT_DIR$/LeagueMechanics/src/main/java/dev/ixpu/leaguemechanics/manager/DamageManager.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/LeagueMechanics/src/main/java/dev/ixpu/leaguemechanics/manager/MySQLManager.java" beforeDir="false" afterPath="$PROJECT_DIR$/LeagueMechanics/src/main/java/dev/ixpu/leaguemechanics/manager/MySQLManager.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/LeagueMechanics/src/main/java/dev/ixpu/leaguemechanics/rune/DebuffTicker.java" beforeDir="false" afterPath="$PROJECT_DIR$/LeagueMechanics/src/main/java/dev/ixpu/leaguemechanics/rune/DebuffTicker.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/LeagueMechanics/src/main/java/dev/ixpu/leaguemechanics/rune/keystones/domination/DarkHarvest.java" beforeDir="false" afterPath="$PROJECT_DIR$/LeagueMechanics/src/main/java/dev/ixpu/leaguemechanics/rune/keystones/domination/DarkHarvest.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/LeagueMechanics/src/main/java/dev/ixpu/leaguemechanics/rune/keystones/domination/Electrocute.java" beforeDir="false" afterPath="$PROJECT_DIR$/LeagueMechanics/src/main/java/dev/ixpu/leaguemechanics/rune/keystones/domination/Electrocute.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/LeagueMechanics/src/main/java/dev/ixpu/leaguemechanics/rune/keystones/domination/HailOfBlades.java" beforeDir="false" afterPath="$PROJECT_DIR$/LeagueMechanics/src/main/java/dev/ixpu/leaguemechanics/rune/keystones/domination/HailOfBlades.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/LeagueMechanics/src/main/java/dev/ixpu/leaguemechanics/rune/keystones/precision/Conqueror.java" beforeDir="false" afterPath="$PROJECT_DIR$/LeagueMechanics/src/main/java/dev/ixpu/leaguemechanics/rune/keystones/precision/Conqueror.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/LeagueMechanics/src/main/java/dev/ixpu/leaguemechanics/rune/keystones/precision/LethalTempo.java" beforeDir="false" afterPath="$PROJECT_DIR$/LeagueMechanics/src/main/java/dev/ixpu/leaguemechanics/rune/keystones/precision/LethalTempo.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/LeagueMechanics/src/main/java/dev/ixpu/leaguemechanics/rune/keystones/precision/PressTheAttack.java" beforeDir="false" afterPath="$PROJECT_DIR$/LeagueMechanics/src/main/java/dev/ixpu/leaguemechanics/rune/keystones/precision/PressTheAttack.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/LeagueMechanics/src/main/java/dev/ixpu/leaguemechanics/rune/keystones/resolve/AfterShock.java" beforeDir="false" afterPath="$PROJECT_DIR$/LeagueMechanics/src/main/java/dev/ixpu/leaguemechanics/rune/keystones/resolve/AfterShock.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/LeagueMechanics/src/main/java/dev/ixpu/leaguemechanics/rune/keystones/resolve/GraspOfTheUndying.java" beforeDir="false" afterPath="$PROJECT_DIR$/LeagueMechanics/src/main/java/dev/ixpu/leaguemechanics/rune/keystones/resolve/GraspOfTheUndying.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/LeagueMechanics/src/main/java/dev/ixpu/leaguemechanics/rune/keystones/sorcery/ArcaneComet.java" beforeDir="false" afterPath="$PROJECT_DIR$/LeagueMechanics/src/main/java/dev/ixpu/leaguemechanics/rune/keystones/sorcery/ArcaneComet.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/LeagueMechanics/src/main/java/dev/ixpu/leaguemechanics/rune/keystones/sorcery/DeathfireTorch.java" beforeDir="false" afterPath="$PROJECT_DIR$/LeagueMechanics/src/main/java/dev/ixpu/leaguemechanics/rune/keystones/sorcery/DeathfireTorch.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/LeagueMechanics/src/main/java/dev/ixpu/leaguemechanics/rune/shards/ShardStats.java" beforeDir="false" afterPath="$PROJECT_DIR$/LeagueMechanics/src/main/java/dev/ixpu/leaguemechanics/rune/shards/ShardStats.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/LeagueMechanics/src/main/resources/config.yml" beforeDir="false" afterPath="$PROJECT_DIR$/LeagueMechanics/src/main/resources/config.yml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/LeagueMechanics/src/main/resources/plugin.yml" beforeDir="false" afterPath="$PROJECT_DIR$/LeagueMechanics/src/main/resources/plugin.yml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/test-server/plugins/Essentials/config.yml" beforeDir="false" afterPath="$PROJECT_DIR$/test-server/plugins/Essentials/config.yml" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -181,7 +213,7 @@
     &quot;git-widget-placeholder&quot;: &quot;feature-workshop&quot;,
     &quot;junie.onboarding.icon.badge.shown&quot;: &quot;true&quot;,
     &quot;kotlin-language-version-configured&quot;: &quot;true&quot;,
-    &quot;last_opened_file_path&quot;: &quot;/home/exponent/minecraft-projects/league-mechanics&quot;,
+    &quot;last_opened_file_path&quot;: &quot;/home/exponent/minecraft-projects/league-mechanics/test-server/plugins&quot;,
     &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,
     &quot;node.js.detected.package.jshint&quot;: &quot;true&quot;,
     &quot;node.js.detected.package.tslint&quot;: &quot;true&quot;,
@@ -192,12 +224,17 @@
     &quot;project.structure.last.edited&quot;: &quot;Project&quot;,
     &quot;project.structure.proportion&quot;: &quot;0.0&quot;,
     &quot;project.structure.side.proportion&quot;: &quot;0.2&quot;,
-    &quot;settings.editor.selected.configurable&quot;: &quot;preferences.lookFeel&quot;,
+    &quot;settings.editor.selected.configurable&quot;: &quot;preferences.pluginManager&quot;,
     &quot;to.speed.mode.migration.done&quot;: &quot;true&quot;
   }
 }</component>
   <component name="RecentsManager">
+    <key name="CopyFile.RECENT_KEYS">
+      <recent name="$PROJECT_DIR$/test-server/plugins" />
+    </key>
     <key name="MoveFile.RECENT_KEYS">
+      <recent name="$PROJECT_DIR$/test-server/plugins" />
+      <recent name="$PROJECT_DIR$/test-server/plugins/Skript/scripts" />
       <recent name="$PROJECT_DIR$" />
       <recent name="$PROJECT_DIR$/.idea" />
     </key>
@@ -207,8 +244,8 @@
   </component>
   <component name="RunManager">
     <configuration name="Test Server" type="JarApplication">
-      <option name="JAR_PATH" value="$USER_HOME$/test-server/server.jar" />
-      <option name="WORKING_DIRECTORY" value="$USER_HOME$/test-server" />
+      <option name="JAR_PATH" value="$PROJECT_DIR$/../test-server/server.jar" />
+      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/../test-server" />
       <option name="ALTERNATIVE_JRE_PATH_ENABLED" value="true" />
       <option name="ALTERNATIVE_JRE_PATH" value="/usr/lib/jvm/java-26-openjdk" />
       <method v="2" />

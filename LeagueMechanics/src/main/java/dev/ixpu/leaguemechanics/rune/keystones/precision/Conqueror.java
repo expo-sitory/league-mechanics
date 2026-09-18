@@ -3,6 +3,8 @@ package dev.ixpu.leaguemechanics.rune.keystones.precision;
 import dev.ixpu.leaguemechanics.LeagueMechanics;
 import dev.ixpu.leaguemechanics.entity.player.PlayerStats;
 
+import dev.ixpu.leaguemechanics.item.passives.ItemPassive;
+import dev.ixpu.leaguemechanics.item.passives.ItemPassivesRegistry;
 import dev.ixpu.leaguemechanics.rune.RunePath;
 import dev.ixpu.leaguemechanics.rune.RuneSlot;
 import dev.ixpu.leaguemechanics.rune.StacksHandler;
@@ -15,6 +17,7 @@ import dev.ixpu.leaguemechanics.listener.PlayerEventListener;
 import java.util.UUID;
 
 import dev.ixpu.leaguemechanics.util.DebugLogger;
+import dev.ixpu.leaguemechanics.util.ItemModifier;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.entity.Entity;
@@ -22,6 +25,7 @@ import org.bukkit.entity.LivingEntity;
 import org.bukkit.configuration.ConfigurationSection;
 
 import net.kyori.adventure.text.Component;
+import org.bukkit.inventory.ItemStack;
 
 
 public class Conqueror extends StacksHandler {
@@ -31,6 +35,7 @@ public class Conqueror extends StacksHandler {
     private static final int MAXIMUM_STACKS = 12;
 
     private PlayerEventListener listener;
+    private boolean lastDamageWasMagic = false;
 
     public Conqueror(ConfigurationSection config, PlayerEventListener listener) {
         super("conqueror", RunePath.PRECISION, RuneSlot.KEYSTONE, 12, 100);
@@ -88,12 +93,30 @@ public class Conqueror extends StacksHandler {
 
         double newHealth = Math.clamp(livingTarget.getHealth() - damageToApply, 0, livingTarget.getMaxHealth());
 
-        DebugLogger.debug(player, "§7[Debug] §f[§dAttacker§f] [§eConqueror§f] Keystone Damage = §d" + Math.ceil(keystoneDamage(player, target, getStacks(player, targetUUID)) * 100) / 100.0);
-        DebugLogger.debug(player, "§7[Debug] §f[§dTarget§f] Target New HP = §d" + Math.ceil(newHealth * 100) / 100.0);
-
         if (livingTarget instanceof Player livingPlayer) {
             KillSourceTracker.getInstance().setSource(livingPlayer, player);
         }
+        String DamageType;
+        boolean isMagic = lastDamageWasMagic;
+
+        if (isMagic) {
+            DamageType = "Magic Damage";
+            for (ItemStack inv : player.getInventory().getContents()) {
+                if (inv == null || inv.getType().isAir()) continue;
+                String itemId = ItemModifier.getItemId(inv);
+                ItemPassive passive = ItemPassivesRegistry.getInstance().getPassive(itemId);
+                if (passive != null) {
+                    passive.onDealDamage(player, livingTarget, damageToApply, false, true);
+                }
+            }
+        } else {
+            DamageType = "Physical Damage";
+        }
+
+        DebugLogger.debug(player, "§7[Debug] §f[§dAttacker§f] [§eConqueror§f] Keystone Damage = §d" + Math.ceil(keystoneDamage(player, target, getStacks(player, targetUUID)) * 100) / 100.0);
+        DebugLogger.debug(player, "§7[Debug] §f[§dAttacker§f] Keystone Damage Type = §d" + DamageType);
+        DebugLogger.debug(player, "§7[Debug] §f[§dTarget§f] Target New HP = §d" + Math.ceil(newHealth * 100) / 100.0);
+
         livingTarget.setHealth(newHealth);
     }
 
@@ -102,8 +125,9 @@ public class Conqueror extends StacksHandler {
         damageManager.enableAdaptiveDamage();
         damageManager.enableAdaptiveScaling();
         damageManager.enablePerStackScaling();
-        return damageManager.DamageCalculation(player, target, currentStacks, BASE_ADAPTIVE_DAMAGE_PER_STACK, 0, 0);
-    }
+        double damage = damageManager.DamageCalculation(player, target, currentStacks, BASE_ADAPTIVE_DAMAGE_PER_STACK, 0, 0);
+        this.lastDamageWasMagic = damageManager.isMagicDamage();
+        return damage;}
 
     private int trackActiveStacks(Player player) {
         tickStackExpiry(player);

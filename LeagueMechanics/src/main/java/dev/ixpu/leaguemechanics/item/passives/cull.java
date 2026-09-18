@@ -18,7 +18,7 @@ public class cull implements ItemPassive {
 
     @Override
     public String getDescription() {
-        return "§7ᴜɴɪQᴜᴇ – ʀᴇᴀᴘ: §fKilling an §eentity §fgrants an\n§fadditional §a10 xp§f, up to a maximum of §a500§f.\n§fAfter having killed §e100 entities§f, grants an\n§fadditional §a200 xp§f and breaks this item.";
+        return "§7ᴜɴɪQᴜᴇ – ʀᴇᴀᴘ: §fKilling an §eentity §fgrants an\n§fadditional §a" + XP_PER_KILL + " xp§f, up to a maximum of §a" + MAX_XP + "§f.\n§fAfter having killed §e" + UPGRADE_THRESHOLD + " entities§f, grants an\n§fadditional §a" + UPGRADED_XP + " xp§f and breaks this item.";
     }
 
     @Override

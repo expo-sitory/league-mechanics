@@ -1,6 +1,7 @@
 package dev.ixpu.leaguemechanics.listener;
 
 import dev.ixpu.leaguemechanics.LeagueMechanics;
+import dev.ixpu.leaguemechanics.item.passives.ItemPassive;
 import dev.ixpu.leaguemechanics.item.passives.ItemPassivesRegistry;
 import dev.ixpu.leaguemechanics.manager.CombatStateManager;
 import dev.ixpu.leaguemechanics.manager.ItemStatsManager;
@@ -52,6 +53,10 @@ public class PlayerEventListener implements Listener, RuneCooldownGate {
         this.playerStatsListener = playerStatsListener;
         this.playerInventoryListener = new PlayerInventoryListener(plugin, playerStatsListener);
         this.plugin = plugin;
+    }
+
+    public ItemPassive getEquippedPassive(ItemStack item) {
+        return playerStatsListener.getEquippedPassive(item);
     }
 
     public void applyPlayerStats(Player player) {

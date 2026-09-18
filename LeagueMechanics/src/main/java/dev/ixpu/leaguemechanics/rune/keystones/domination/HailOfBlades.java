@@ -141,6 +141,7 @@ public class HailOfBlades extends CooldownHandler {
                 currentStacks.put(playerUUID, currentStacks.getOrDefault(playerUUID, 0) - 1);
 
                 DebugLogger.debug(player, "§7[Debug] §f[§dAttacker§f] §f[§cHail of Blades§f] Keystone Damage = §d" + Math.ceil(keystoneDamage(player, target) * 100) / 100.0);
+                DebugLogger.debug(player, "§7[Debug] §f[§dAttacker§f] Keystone Damage Type = §dTrue Damage");
                 DebugLogger.debug(player, "§7[Debug] §f[§dTarget§f] Target New HP = §d" + Math.ceil(newHealth * 100) / 100.0);
 
                 if (livingTarget instanceof Player livingPlayer) {

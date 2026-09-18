@@ -90,9 +90,7 @@ public class DamageListener implements Listener, RuneCooldownGate {
 
     @EventHandler
     public void onAttackSwing(PlayerArmSwingEvent event) {
-        if (!(event.getPlayer() instanceof Player attacker)) {
-            return;
-        }
+        Player attacker = event.getPlayer();
         if (isPlayerOnAttackCooldown(attacker)) {
             event.setCancelled(true);
             return;
@@ -106,10 +104,10 @@ public class DamageListener implements Listener, RuneCooldownGate {
     public void onProjectileHit(ProjectileHitEvent event) {
 
         if (!(event.getEntity().getShooter() instanceof Player shooter)) {
-            LivingEntity shooter = (LivingEntity) event.getEntity().getShooter();
-            LivingEntity target = (LivingEntity) event.getHitEntity();
-
-            entityDamageEvent(shooter, target, 0);
+            if (event.getEntity().getShooter() instanceof LivingEntity shooterEntity &&
+                    event.getHitEntity() instanceof LivingEntity targetEntity) {
+                entityDamageEvent(shooterEntity, targetEntity, "Projectile", 1);
+            }
             return;
         }
         if (event.getEntity() instanceof ThrownPotion || event.getEntity() instanceof ThrownExpBottle) {
@@ -137,7 +135,7 @@ public class DamageListener implements Listener, RuneCooldownGate {
             }
         }
 
-        damageEvent(shooter, target, "Projectile Hit Event", 0);
+        damageEvent(shooter, target, "Projectile", 1);
         combatState.removeLetRunesThrough(shooter.getUniqueId());
     }
 
@@ -145,10 +143,11 @@ public class DamageListener implements Listener, RuneCooldownGate {
     public void onAttack(EntityDamageByEntityEvent event) {
 
         if (!(event.getDamager() instanceof Player attacker)) {
-            LivingEntity attacker = (LivingEntity) event.getDamager();
-            LivingEntity target = (LivingEntity) event.getEntity();
-
-            entityDamageEvent(attacker, target, 0);
+            if (event.getDamager() instanceof LivingEntity livingAttacker && event.getEntity() instanceof LivingEntity target) {
+                if (event.getDamage() > 0) {
+                    entityDamageEvent(livingAttacker, target, "Melee", event.getDamage());
+                }
+            }
             return;
         }
         if (!(event.getEntity() instanceof LivingEntity target)) {
@@ -192,7 +191,7 @@ public class DamageListener implements Listener, RuneCooldownGate {
         }
 
         setAttackCooldown(attacker);
-        damageEvent(attacker, target, "Melee Hit Event", event.getDamage());
+        damageEvent(attacker, target, "Melee", event.getDamage());
 
         combatState.removeLetRunesThrough(attacker.getUniqueId());
     }
@@ -273,28 +272,32 @@ public class DamageListener implements Listener, RuneCooldownGate {
         return true;
     }
 
-    public void entityDamageEvent(LivingEntity source, LivingEntity target, double vanillaDamage) {
+    public void entityDamageEvent(LivingEntity source, LivingEntity target, String type, double vanillaDamage) {
         DamageManager damage = new DamageManager(itemStatsManager);
 
-        if (target instanceof Player targetPlayer && isBlocking(targetPlayer, vanillaDamage)) {
+        if (target instanceof Player targetPlayer && isBlocking(targetPlayer, vanillaDamage) || vanillaDamage <= 0) {
             return;
         }
 
-        double statsDamage = damage.DamageCalculation(source, target, 0, 0, 0, 0);
+        if (type.equals("Projectile")) {
+            damage.enableProjectileDamage();
+        }
+
+        double physicalDamage = damage.DamageCalculation(source, target, 0, 0, 0, 0);
         double newHealth = target.getHealth();
 
         if (target instanceof Player targetPlayer) {
             double absorption = targetPlayer.getAbsorptionAmount();
-            if (statsDamage > absorption) {
-                statsDamage -= absorption;
+            if (physicalDamage > absorption) {
+                physicalDamage -= absorption;
                 targetPlayer.setAbsorptionAmount(0);
             } else {
-                targetPlayer.setAbsorptionAmount(absorption - statsDamage);
-                statsDamage = 0;
+                targetPlayer.setAbsorptionAmount(absorption - physicalDamage);
+                physicalDamage = 0;
             }
         }
 
-        newHealth = Math.clamp(newHealth - statsDamage, 0, target.getMaxHealth());
+        newHealth = Math.clamp(newHealth - physicalDamage, 0, target.getMaxHealth());
 
         for (ItemStack armor : target.getEquipment().getArmorContents()) {
             if (armor != null && !armor.getType().isAir()) {
@@ -314,7 +317,7 @@ public class DamageListener implements Listener, RuneCooldownGate {
         DamageManager damage = new DamageManager(itemStatsManager);
         PlayerStats stats = PlayerStats.getOrCreate(player);
 
-        if (target instanceof Player targetPlayer && isBlocking(targetPlayer, vanillaDamage)) {
+        if (target instanceof Player targetPlayer && isBlocking(targetPlayer, vanillaDamage) || vanillaDamage <= 0) {
             return;
         }
 
@@ -327,13 +330,23 @@ public class DamageListener implements Listener, RuneCooldownGate {
         double targetAR = damage.getTargetAR(target);
         double targetMR = damage.getTargetMR(target);
 
-        double statsDamage = damage.DamageCalculation(player, target, 0, 0, 0, 0);
+        if (type.equals("Projectile")) {
+            damage.enableProjectileDamage();
+        }
 
+        double totalDamage = damage.DamageCalculation(player, target, 0, 0, 0, 0);
+
+        double magicDamage = damage.getLastBonusMagicDamage();
+        double physicalDamage = totalDamage - magicDamage;
+        
         boolean didCrit = false;
-        if (statsDamage > 0) {
+        String crit = "False";
+
+        if (totalDamage > 0) {
             double critChance = Math.round(damage.getPlayerCritChance(player) * 10.0) / 10.0;
             if (critChance > 0 && DamageManager.criticalChance(player, critChance)) {
-                statsDamage *= DamageManager.getCritDamageMultiplier(player);
+                totalDamage *= DamageManager.getCritDamageMultiplier(player);
+                crit = "True";
                 didCrit = true;
             }
         }
@@ -350,11 +363,12 @@ public class DamageListener implements Listener, RuneCooldownGate {
 
         boolean isMagic = damage.isMagicDamage();
         boolean isPhysical = !isMagic;
+
         for (ItemStack inv : player.getInventory().getContents()) {
             if (inv == null || inv.getType().isAir()) continue;
             ItemPassive passive = getEquippedPassive(inv);
             if (passive != null) {
-                passive.onDealDamage(player, target, statsDamage, isPhysical, isMagic);
+                passive.onDealDamage(player, target, totalDamage, isPhysical, isMagic);
             }
         }
 
@@ -363,16 +377,16 @@ public class DamageListener implements Listener, RuneCooldownGate {
                 if (inv == null || inv.getType().isAir()) continue;
                 ItemPassive passive = getEquippedPassive(inv);
                 if (passive != null) {
-                    passive.onTakeDamage(targetPlayer, player, statsDamage, isMagic);
+                    passive.onTakeDamage(targetPlayer, player, totalDamage, isMagic);
                 }
             }
         }
 
         double baseLifeStealPercent = itemStatsManager.getItemLS(player);
         double effectiveLifeSteal = stats.getEffectiveLifeSteal(player, baseLifeStealPercent);
-        if (effectiveLifeSteal > 0 && statsDamage > 0) {
+        if (effectiveLifeSteal > 0 && totalDamage > 0) {
             double healingMultiplier = stats.getEffectiveHealingMultiplier(player);
-            double healthRestored = statsDamage * (effectiveLifeSteal / 100.0) * healingMultiplier;
+            double healthRestored = totalDamage * (effectiveLifeSteal / 100.0) * healingMultiplier;
             if (healthRestored > 0) {
                 double playerHealth = player.getHealth() + healthRestored;
                 playerHealth = Math.min(playerHealth, player.getMaxHealth());
@@ -383,16 +397,16 @@ public class DamageListener implements Listener, RuneCooldownGate {
         double newHealth = target.getHealth();
         if (target instanceof Player targetPlayer) {
             double absorption = targetPlayer.getAbsorptionAmount();
-            if (statsDamage > absorption) {
-                statsDamage -= absorption;
+            if (totalDamage > absorption) {
+                totalDamage -= absorption;
                 targetPlayer.setAbsorptionAmount(0);
             } else {
-                targetPlayer.setAbsorptionAmount(absorption - statsDamage);
-                statsDamage = 0;
+                targetPlayer.setAbsorptionAmount(absorption - totalDamage);
+                totalDamage = 0;
             }
         }
 
-        newHealth = Math.clamp(newHealth - statsDamage, 0, target.getMaxHealth());
+        newHealth = Math.clamp(newHealth - totalDamage, 0, target.getMaxHealth());
 
         for (ItemStack armor : target.getEquipment().getArmorContents()) {
             if (armor != null && !armor.getType().isAir()) {
@@ -401,16 +415,12 @@ public class DamageListener implements Listener, RuneCooldownGate {
         }
 
         DebugLogger.debug(player, "§7----------- §f[ §dDEBUG MODE §f] §7-----------");
-        DebugLogger.debug(player, "§aTrigger Type: " + type);
-        DebugLogger.debug(player, "§7[Debug] §f[§dAttacker§f] Total AD = §d" + Math.ceil(attackerAD * 100) / 100.0);
-        DebugLogger.debug(player, "§7[Debug] §f[§dAttacker§f] Total AP = §d" + Math.ceil(attackerAP * 100) / 100.0);
-        DebugLogger.debug(player, "§7[Debug] §f[§dAttacker§f] Crit Chance = §d" + Math.ceil(damage.getPlayerCritChance(player) * 100) / 100.0 + "%");
-        DebugLogger.debug(player, "§7[Debug] §f[§dAttacker§f] Crit Streak = §d" + CritManager.getInstance().getCritStreak(player));
-        DebugLogger.debug(player, "§7[Debug] §f[§dTarget§f] Total AR = §d" + Math.ceil(targetAR * 100) / 100.0);
-        DebugLogger.debug(player, "§7[Debug] §f[§dTarget§f] Total MR = §d" + Math.ceil(targetMR * 100) / 100.0);
-
-        DebugLogger.debug(player, "§7[Debug] §f[§dAttacker§f] Stats Damage = §d" + Math.ceil((statsDamage) * 100) / 100.0);
-        DebugLogger.debug(player, "§7[Debug] §f[§dTarget§f] Target New HP = §d" + Math.ceil(newHealth * 100) / 100.0);
+        DebugLogger.debug(player, "§aTrigger Type: " + type + " Hit Event");
+        DebugLogger.debug(player, "§7[Debug] §f[§dSource§f] Total AD = §d" + Math.ceil(attackerAD * 100) / 100.0 + "§f | Total AP = §d" + Math.ceil(attackerAP * 100) / 100.0);
+        DebugLogger.debug(player, "§7[Debug] §f[§dSource§f] Is Critical? = §d" + crit + "§f | Chance: §d" + Math.ceil(damage.getPlayerCritChance(player) * 100) / 100.0 + "% §f| Streak = §d" + CritManager.getInstance().getCritStreak(player));
+        DebugLogger.debug(player, "§7[Debug] §f[§dSource§f] Physical Damage = §d" + Math.ceil((physicalDamage) * 100) / 100.0 + "§f | Magic Damage = §d" + Math.ceil((magicDamage) * 100) / 100.0);
+        DebugLogger.debug(player, "§7[Debug] §f[§dTarget§f] Total Magc Reist = §d" + Math.ceil(targetMR * 100) / 100.0 + "§f | Total Physical Armor = §d" + Math.ceil(targetAR * 100) / 100.0);
+        DebugLogger.debug(player, "§7[Debug] §f[§dTarget§f] Total Damage Received = §d" + Math.ceil(totalDamage * 100) / 100.0 + "§f | New Health = §d" + Math.ceil(newHealth * 100) / 100.0);
 
         target.damage(0.001);
         if (newHealth <= 0) {
