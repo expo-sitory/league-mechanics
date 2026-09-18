@@ -28,9 +28,6 @@ public class PlayerKDA {
         }
     }
 
-    /**
-     * Clears all KDA data from the database.
-     */
     public void clearAllKda() {
         String query = "DELETE FROM player_kda";
 
