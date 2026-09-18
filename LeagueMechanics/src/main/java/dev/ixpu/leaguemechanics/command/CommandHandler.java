@@ -452,7 +452,7 @@ public class CommandHandler implements CommandExecutor {
             return true;
         }
 
-        String optionId = String.valueOf(option);
+        String optionId = "option-" + option;
         RuneShard selectedShard = RuneShard.fromRowAndOption(row, optionId);
         if (selectedShard == null) {
             player.sendMessage(Component.text("§cInvalid combination: row " + row + ", option " + option));
@@ -472,15 +472,12 @@ public class CommandHandler implements CommandExecutor {
                 .findFirst()
                 .orElse(null);
 
-        RuneShard finalRow1 = (row == 1) ? selectedShard : defaultRow1;
-        RuneShard finalRow2 = (row == 2) ? selectedShard : defaultRow2;
-        RuneShard finalRow3 = (row == 3) ? selectedShard : defaultRow3;
-
-        if (finalRow1 == null) finalRow1 = RuneShard.ROW1_ADAP;
-        if (finalRow2 == null) finalRow2 = RuneShard.ROW2_ADAP;
-        if (finalRow3 == null) finalRow3 = RuneShard.ROW3_HP;
-
         ShardStats shards = PlayerStats.getOrCreate(player).getRuneShards(player);
+
+        RuneShard finalRow1 = (row == 1) ? selectedShard : shards.getRow1();
+        RuneShard finalRow2 = (row == 2) ? selectedShard : shards.getRow2();
+        RuneShard finalRow3 = (row == 3) ? selectedShard : shards.getRow3();
+
         shards.selectShards(finalRow1, finalRow2, finalRow3);
 
         runePersistence.saveRuneShards(player.getUniqueId(), finalRow1.name(), finalRow2.name(), finalRow3.name());

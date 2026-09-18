@@ -95,7 +95,7 @@ public class LeagueMechanics extends JavaPlugin {
 
         saveDefaultConfig();
         reloadConfig();
-        debugMode = getConfig().getBoolean("debug", false);
+        debugMode = getConfig().getBoolean("general-settings.debug", false);
 
         // Initialize MobStats with plugin reference to load configuration
         MobStats.initialize(this);
