@@ -15,13 +15,19 @@ import dev.ixpu.leaguemechanics.rune.keystones.domination.HailOfBlades;
 import dev.ixpu.leaguemechanics.rune.keystones.resolve.GraspOfTheUndying;
 import dev.ixpu.leaguemechanics.rune.keystones.resolve.Guardian;
 
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.format.NamedTextColor;
+import net.kyori.adventure.title.TitlePart;
+import org.bukkit.Bukkit;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
+import org.bukkit.event.block.Action;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.entity.EntityShootBowEvent;
 import org.bukkit.event.entity.ProjectileHitEvent;
 
+import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.entity.*;
 import org.bukkit.Material;
@@ -44,6 +50,33 @@ public class DamageListener implements Listener, RuneCooldownGate {
     private final CombatStateManager combatState = CombatStateManager.getInstance();
 
     private final Map<UUID, Long> attackCooldown = new ConcurrentHashMap<>();
+    private static final Map<UUID, Long> parryWindow = new HashMap<>();
+    private static final Map<UUID, Long> parryCooldown = new HashMap<>();
+    private final Set<UUID> justParried = ConcurrentHashMap.newKeySet();
+    private static final long PARRY_WINDOW_MS = 200L;
+    private static final long PARRY_COOLDOWN_MS = 10000L;
+
+    @EventHandler
+    public void onPlayerInteract(PlayerInteractEvent event) {
+        if (event.getAction() == Action.RIGHT_CLICK_AIR || event.getAction() == Action.RIGHT_CLICK_BLOCK) {
+            ItemStack item = event.getPlayer().getInventory().getItemInMainHand();
+            if (item.getType().name().contains("SWORD")) {
+                UUID uuid = event.getPlayer().getUniqueId();
+
+                if (parryCooldown.getOrDefault(uuid, 0L) > System.currentTimeMillis()) {
+                    return;
+                }
+
+                parryWindow.put(uuid, System.currentTimeMillis());
+
+                Bukkit.getScheduler().scheduleSyncDelayedTask(plugin, () -> {
+                    parryWindow.remove(uuid);
+
+                }, 40L);
+
+            }
+        }
+    }
 
     public DamageListener(LeagueMechanics plugin, PlayerStatsListener playerStatsListener) {
         this.plugin = plugin;
@@ -116,6 +149,38 @@ public class DamageListener implements Listener, RuneCooldownGate {
         if (event.getHitEntity() == null || !(event.getHitEntity() instanceof LivingEntity target)) {
             return;
         }
+
+        if (target instanceof Player targetPlayer) {
+            Long parryTime = parryWindow.get(targetPlayer.getUniqueId());
+            if (parryTime != null && (System.currentTimeMillis() - parryTime) <= PARRY_WINDOW_MS) {
+                targetPlayer.sendTitlePart(TitlePart.TITLE, Component.text("ᴘᴀʀʀʏ!!", NamedTextColor.GREEN));
+                shooter.sendTitlePart(TitlePart.TITLE, Component.text("ᴇɴᴇᴍʏ ᴘᴀʀʀɪᴇᴅ!!", NamedTextColor.RED));
+
+                Bukkit.dispatchCommand(Bukkit.getConsoleSender(), "attack-parried-sound " + shooter.getName());
+                Bukkit.dispatchCommand(Bukkit.getConsoleSender(), "attack-parried-sound " + targetPlayer.getName());
+
+                long baseCooldown = PARRY_COOLDOWN_MS;
+                long cooldownMs = baseCooldown;
+
+                LeagueMechanics plugin = LeagueMechanics.getInstance();
+                if (plugin != null) {
+                    ItemStatsManager statsManager = plugin.getStatsManager();
+                    if (statsManager != null) {
+                        double ch = statsManager.getItemCH(targetPlayer);
+                        if (ch > 0) {
+                            cooldownMs = (long)(baseCooldown * (ch / 100.0));
+                        }
+                    }
+                }
+
+                parryCooldown.put(targetPlayer.getUniqueId(), System.currentTimeMillis() + cooldownMs);
+                parryWindow.remove(targetPlayer.getUniqueId());
+
+                event.setCancelled(true);
+                return;
+            }
+        }
+
         if (target instanceof Player targetPlayer) {
             if (!plugin.getCommandHandler().isPvpEnabled(shooter, targetPlayer)) {
                 return;
@@ -135,6 +200,8 @@ public class DamageListener implements Listener, RuneCooldownGate {
             }
         }
 
+        shooter.playSound(shooter.getLocation(), Sound.ENTITY_ARROW_HIT_PLAYER, 1.0f, 1.0f);
+
         damageEvent(shooter, target, "Projectile", 1);
         combatState.removeLetRunesThrough(shooter.getUniqueId());
     }
@@ -142,17 +209,55 @@ public class DamageListener implements Listener, RuneCooldownGate {
     @EventHandler (priority = EventPriority.HIGHEST)
     public void onAttack(EntityDamageByEntityEvent event) {
 
-        if (!(event.getDamager() instanceof Player attacker)) {
-            if (event.getDamager() instanceof LivingEntity livingAttacker && event.getEntity() instanceof LivingEntity target) {
-                if (event.getDamage() > 0) {
-                    entityDamageEvent(livingAttacker, target, "Melee", event.getDamage());
-                }
-            }
-            return;
-        }
         if (!(event.getEntity() instanceof LivingEntity target)) {
             return;
         }
+
+        if (target instanceof Player targetPlayer) {
+            Long parryTime = parryWindow.get(targetPlayer.getUniqueId());
+            if (parryTime != null && (System.currentTimeMillis() - parryTime) <= PARRY_WINDOW_MS) {
+                targetPlayer.sendTitlePart(TitlePart.TITLE, Component.text("ᴘᴀʀʀʏ!!", NamedTextColor.GREEN));
+
+                if (event.getDamager() instanceof Player attacker) {
+                    attacker.sendTitlePart(TitlePart.TITLE, Component.text("ᴇɴᴇᴍʏ ᴘᴀʀʀɪᴇᴅ!!", NamedTextColor.RED));
+                    Bukkit.dispatchCommand(Bukkit.getConsoleSender(), "attack-parried-sound " + attacker.getName());
+                }
+
+                Bukkit.dispatchCommand(Bukkit.getConsoleSender(), "attack-parried-sound " + targetPlayer.getName());
+
+                long baseCooldown = PARRY_COOLDOWN_MS;
+                long cooldownMs = baseCooldown;
+
+                LeagueMechanics plugin = LeagueMechanics.getInstance();
+                if (plugin != null) {
+                    ItemStatsManager statsManager = plugin.getStatsManager();
+                    if (statsManager != null) {
+                        double ch = statsManager.getItemCH(targetPlayer);
+                        if (ch > 0) {
+                            cooldownMs = (long)(baseCooldown * (ch / 100.0));
+                        }
+                    }
+                }
+
+                parryCooldown.put(targetPlayer.getUniqueId(), System.currentTimeMillis() + cooldownMs);
+                parryWindow.remove(targetPlayer.getUniqueId());
+
+                if (event.getDamager() instanceof LivingEntity damager) {
+                    damager.knockback(0.2, Math.cos(damager.getLocation().getYaw() * Math.PI / 180), Math.sin(damager.getLocation().getYaw() * Math.PI / 180));
+                }
+
+                event.setCancelled(true);
+                return;
+            }
+        }
+
+        if (!(event.getDamager() instanceof Player attacker)) {
+            if (event.getDamager() instanceof LivingEntity livingAttacker && event.getEntity() instanceof LivingEntity) {
+                entityDamageEvent(livingAttacker, target, "Melee", event.getDamage());
+            }
+            return;
+        }
+
         if (target instanceof Player targetPlayer) {
             if (!plugin.getCommandHandler().isPvpEnabled(attacker, targetPlayer)) {
                 event.setCancelled(true);
@@ -160,10 +265,12 @@ public class DamageListener implements Listener, RuneCooldownGate {
             }
             recordHit(attacker, targetPlayer);
         }
+
         if (isPlayerOnAttackCooldown(attacker)) {
             event.setCancelled(true);
             return;
         }
+
         if (isAnyHotbarOnCooldown(attacker)) {
             event.setCancelled(true);
             return;
@@ -192,7 +299,6 @@ public class DamageListener implements Listener, RuneCooldownGate {
 
         setAttackCooldown(attacker);
         damageEvent(attacker, target, "Melee", event.getDamage());
-
         combatState.removeLetRunesThrough(attacker.getUniqueId());
     }
 
@@ -305,12 +411,15 @@ public class DamageListener implements Listener, RuneCooldownGate {
             }
         }
 
-        target.damage(0.001);
         if (newHealth <= 0) {
             target.setHealth(0);
         } else {
             target.setHealth(newHealth);
         }
+    }
+
+    public static long getParryCooldown(UUID uuid) {
+        return parryCooldown.getOrDefault(uuid, 0L);
     }
 
     public void damageEvent(Player player, LivingEntity target, String type, double vanillaDamage) {
@@ -416,13 +525,12 @@ public class DamageListener implements Listener, RuneCooldownGate {
 
         DebugLogger.debug(player, "§7----------- §f[ §dDEBUG MODE §f] §7-----------");
         DebugLogger.debug(player, "§aTrigger Type: " + type + " Hit Event");
-        DebugLogger.debug(player, "§7[Debug] §f[§dSource§f] Total AD = §d" + Math.ceil(attackerAD * 100) / 100.0 + "§f | Total AP = §d" + Math.ceil(attackerAP * 100) / 100.0);
-        DebugLogger.debug(player, "§7[Debug] §f[§dSource§f] Is Critical? = §d" + crit + "§f | Chance: §d" + Math.ceil(damage.getPlayerCritChance(player) * 100) / 100.0 + "% §f| Streak = §d" + CritManager.getInstance().getCritStreak(player));
-        DebugLogger.debug(player, "§7[Debug] §f[§dSource§f] Physical Damage = §d" + Math.ceil((physicalDamage) * 100) / 100.0 + "§f | Magic Damage = §d" + Math.ceil((magicDamage) * 100) / 100.0);
-        DebugLogger.debug(player, "§7[Debug] §f[§dTarget§f] Total Magc Reist = §d" + Math.ceil(targetMR * 100) / 100.0 + "§f | Total Physical Armor = §d" + Math.ceil(targetAR * 100) / 100.0);
-        DebugLogger.debug(player, "§7[Debug] §f[§dTarget§f] Total Damage Received = §d" + Math.ceil(totalDamage * 100) / 100.0 + "§f | New Health = §d" + Math.ceil(newHealth * 100) / 100.0);
+        DebugLogger.debug(player, "§f[§dSource§f] Total AD = §d" + Math.ceil(attackerAD * 100) / 100.0 + "§f | Total AP = §d" + Math.ceil(attackerAP * 100) / 100.0);
+        DebugLogger.debug(player, "§f[§dSource§f] Is Critical? = §d" + crit + "§f | Chance: §d" + Math.ceil(damage.getPlayerCritChance(player) * 100) / 100.0 + "% §f| Streak = §d" + CritManager.getInstance().getCritStreak(player));
+        DebugLogger.debug(player, "§f[§dSource§f] Physical Damage = §d" + Math.ceil((physicalDamage) * 100) / 100.0 + "§f | Magic Damage = §d" + Math.ceil((magicDamage) * 100) / 100.0);
+        DebugLogger.debug(player, "§f[§dTarget§f] Total Magc Resist = §d" + Math.ceil(targetMR * 100) / 100.0 + "§f | Total Armor = §d" + Math.ceil(targetAR * 100) / 100.0);
+        DebugLogger.debug(player, "§f[§dTarget§f] Total Damage Received = §d" + Math.ceil(totalDamage * 100) / 100.0 + "§f | New Health = §d" + Math.ceil(newHealth * 100) / 100.0);
 
-        target.damage(0.001);
         if (newHealth <= 0) {
             target.setHealth(0);
         } else {

@@ -133,9 +133,9 @@ public class Electrocute extends StacksHandler {
                 DamageType = "Physical Damage";
             }
 
-            DebugLogger.debug(player, "§7[Debug] §f[§dAttacker§f] §f[§cElectrocute§f] Keystone Damage = §d" + Math.ceil(keystoneDamage(player, target) * 100) / 100.0);
-            DebugLogger.debug(player, "§7[Debug] §f[§dAttacker§f] Keystone Damage Type = §d" + DamageType);
-            DebugLogger.debug(player, "§7[Debug] §f[§dTarget§f] Target New HP = §d" + Math.ceil(newHealth * 100) / 100.0);
+            DebugLogger.debug(player, "§f[§dSource§f] §f[§cElectrocute§f] Keystone Damage = §d" + Math.ceil(keystoneDamage(player, target) * 100) / 100.0);
+            DebugLogger.debug(player, "§f[§dSource§f] Keystone Damage Type = §d" + DamageType);
+            DebugLogger.debug(player, "§f[§dTarget§f] Target New HP = §d" + Math.ceil(newHealth * 100) / 100.0);
 
             livingTarget.setHealth(newHealth);
         }

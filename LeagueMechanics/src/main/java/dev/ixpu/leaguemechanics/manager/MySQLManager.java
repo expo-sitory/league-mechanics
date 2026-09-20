@@ -73,7 +73,7 @@ public class MySQLManager {
 
     private void initializeTables() {
         String[] tableCreationQueries = {
-            "CREATE TABLE IF NOT EXISTS player_runes (" +
+            "CREATE TABLE IF NOT EXISTS leaguemechanics_player_runes (" +
             "uuid VARCHAR(36) PRIMARY KEY," +
             "primary_path VARCHAR(50)," +
             "secondary_path VARCHAR(50)," +
@@ -90,7 +90,7 @@ public class MySQLManager {
             "league_level INT DEFAULT 0" +
             ")",
 
-            "CREATE TABLE IF NOT EXISTS player_kda (" +
+            "CREATE TABLE IF NOT EXISTS leaguemechanics_player_kda (" +
             "uuid VARCHAR(36) PRIMARY KEY," +
             "kills INT DEFAULT 0," +
             "deaths INT DEFAULT 0," +
@@ -106,33 +106,33 @@ public class MySQLManager {
             }
 
             try {
-                statement.execute("ALTER TABLE player_runes ADD COLUMN player_class VARCHAR(50)");
+                statement.execute("ALTER TABLE leaguemechanics_player_runes ADD COLUMN player_class VARCHAR(50)");
             } catch (SQLException e) {
                 //
                 if (e.getErrorCode() == 1060) {
-                    plugin.getLogger().info("player_class column already exists in player_runes table");
+                    plugin.getLogger().info("player_class column already exists in leaguemechanics_player_runes table");
                 } else {
                     plugin.getLogger().warning("Failed to add player_class column: " + e.getMessage());
                 }
             }
 
             try {
-                statement.execute("ALTER TABLE player_runes ADD COLUMN league_level INT DEFAULT 0");
+                statement.execute("ALTER TABLE leaguemechanics_player_runes ADD COLUMN league_level INT DEFAULT 0");
             } catch (SQLException e) {
                 //
                 if (e.getErrorCode() == 1060) {
-                    plugin.getLogger().info("league_level column already exists in player_runes table");
+                    plugin.getLogger().info("league_level column already exists in leaguemechanics_player_runes table");
                 } else {
                     plugin.getLogger().warning("Failed to add league_level column: " + e.getMessage());
                 }
             }
 
             try {
-                statement.execute("ALTER TABLE player_kda ADD COLUMN health_percentage FLOAT DEFAULT 100.0");
+                statement.execute("ALTER TABLE leaguemechanics_player_kda ADD COLUMN health_percentage FLOAT DEFAULT 100.0");
             } catch (SQLException e) {
                 //
                 if (e.getErrorCode() == 1060) {
-                    plugin.getLogger().info("health_percentage column already exists in player_kda table");
+                    plugin.getLogger().info("health_percentage column already exists in leaguemechanics_player_kda table");
                 } else {
                     plugin.getLogger().warning("Failed to add health_percentage column: " + e.getMessage());
                 }
@@ -164,7 +164,7 @@ public class MySQLManager {
                                String primarySlot3, String secondarySlot1, String secondarySlot2,
                                String shardsRow1, String shardsRow2, String shardsRow3,
                                String playerClass, int leagueLevel) {
-        String query = "INSERT INTO player_runes (uuid, primary_path, secondary_path, keystone_rune, " +
+        String query = "INSERT INTO leaguemechanics_player_runes (uuid, primary_path, secondary_path, keystone_rune, " +
                       "primary_slot_1_rune, primary_slot_2_rune, primary_slot_3_rune, " +
                       "secondary_slot_1_rune, secondary_slot_2_rune, rune_shards_row1, " +
                       "rune_shards_row2, rune_shards_row3, player_class, league_level) " +
@@ -215,7 +215,7 @@ public class MySQLManager {
                       "secondary_slot_1_rune, secondary_slot_2_rune, " +
                       "rune_shards_row1, rune_shards_row2, rune_shards_row3, " +
                       "player_class, league_level " +
-                      "FROM player_runes WHERE uuid = ?";
+                      "FROM leaguemechanics_player_runes WHERE uuid = ?";
 
         try (Connection connection = getConnection();
              PreparedStatement statement = connection.prepareStatement(query)) {
@@ -250,7 +250,7 @@ public class MySQLManager {
     }
 
     public void savePlayerKDA(UUID uuid, int kills, int deaths, int assists) {
-        String query = "INSERT INTO player_kda (uuid, kills, deaths, assists) " +
+        String query = "INSERT INTO leaguemechanics_player_kda (uuid, kills, deaths, assists) " +
                       "VALUES (?, ?, ?, ?) " +
                       "ON DUPLICATE KEY UPDATE " +
                       "kills = VALUES(kills), " +
@@ -273,7 +273,7 @@ public class MySQLManager {
     }
 
     public int[] loadPlayerKDA(UUID uuid) {
-        String query = "SELECT kills, deaths, assists FROM player_kda WHERE uuid = ?";
+        String query = "SELECT kills, deaths, assists FROM leaguemechanics_player_kda WHERE uuid = ?";
 
         try (Connection connection = getConnection();
              PreparedStatement statement = connection.prepareStatement(query)) {
@@ -298,7 +298,7 @@ public class MySQLManager {
     }
 
     public void savePlayerHealthPercentage(UUID uuid, float healthPercentage) {
-        String query = "INSERT INTO player_kda (uuid, health_percentage) " +
+        String query = "INSERT INTO leaguemechanics_player_kda (uuid, health_percentage) " +
                       "VALUES (?, ?) " +
                       "ON DUPLICATE KEY UPDATE " +
                       "health_percentage = VALUES(health_percentage)";
@@ -317,7 +317,7 @@ public class MySQLManager {
     }
 
     public float loadPlayerHealthPercentage(UUID uuid) {
-        String query = "SELECT health_percentage FROM player_kda WHERE uuid = ?";
+        String query = "SELECT health_percentage FROM leaguemechanics_player_kda WHERE uuid = ?";
 
         try (Connection connection = getConnection();
              PreparedStatement statement = connection.prepareStatement(query)) {
@@ -334,6 +334,6 @@ public class MySQLManager {
             plugin.getLogger().warning("Failed to load player health percentage for " + uuid + ": " + e.getMessage());
         }
 
-        return 100.0f; // Default to full health
+        return 100.0f;
     }
 }

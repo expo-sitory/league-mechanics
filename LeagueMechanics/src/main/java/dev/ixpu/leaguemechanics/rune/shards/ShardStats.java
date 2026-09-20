@@ -50,10 +50,10 @@ public class ShardStats {
     }
 
     public int getHealthRegen() {
-        int haste = 0;
-        if (row2 == RuneShard.ROW2_HR) haste += 2;
-        if (row3 == RuneShard.ROW3_HR) haste += 2;
-        return haste;
+        int healthRegenCount = 0;
+        if (row2 == RuneShard.ROW2_HR) healthRegenCount += 2;
+        if (row3 == RuneShard.ROW3_HR) healthRegenCount += 2;
+        return healthRegenCount;
     }
 
     public int getHealth() {

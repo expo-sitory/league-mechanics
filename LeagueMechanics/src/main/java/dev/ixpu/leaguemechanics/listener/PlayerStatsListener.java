@@ -125,7 +125,8 @@ public class PlayerStatsListener {
         PlayerStats playerStats = PlayerStats.getOrCreate(player);
         double itemMS = statsManager.getItemMS(player);
         double runeMS = playerStats.getTemporaryMSModification();
-        double bonusMS = itemMS + runeMS;
+        double shardMS = playerStats.getRuneShards(player).getMovementSpeed();
+        double bonusMS = itemMS + runeMS + shardMS;
         UUID playerId = player.getUniqueId();
 
         var attr = player.getAttribute(Attribute.MOVEMENT_SPEED);

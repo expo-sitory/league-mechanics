@@ -256,9 +256,9 @@ public class DeathfireTorch extends CooldownHandler {
                         }
 
                         double newHealth = Math.max(0, target.getHealth() - damagePerTick);
-                        DebugLogger.debug(player, "§7[Debug] §f[§dAttacker§f] §f[§9Deathfire Torch§f] Keystone Damage = §d" + Math.ceil(damagePerTick * 100) / 100.0);
-                        DebugLogger.debug(player, "§7[Debug] §f[§dAttacker§f] Keystone Damage Type = §dMagic Damage");
-                        DebugLogger.debug(player, "§7[Debug] §f[§dTarget§f] Target New HP = §d" + Math.ceil(newHealth * 100) / 100.0);
+                        DebugLogger.debug(player, "§f[§dSource§f] §f[§9Deathfire Torch§f] Keystone Damage = §d" + Math.ceil(damagePerTick * 100) / 100.0);
+                        DebugLogger.debug(player, "§f[§dSource§f] Keystone Damage Type = §dMagic Damage");
+                        DebugLogger.debug(player, "§f[§dTarget§f] Target New HP = §d" + Math.ceil(newHealth * 100) / 100.0);
                         if (target instanceof Player targetPlayer) {
                             KillSourceTracker.getInstance().setSource(targetPlayer, player);
                         }

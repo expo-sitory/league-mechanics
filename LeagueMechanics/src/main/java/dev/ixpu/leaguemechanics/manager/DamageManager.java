@@ -7,8 +7,6 @@ import dev.ixpu.leaguemechanics.item.passives.ItemPassivesRegistry;
 import dev.ixpu.leaguemechanics.rune.shards.ShardStats;
 import dev.ixpu.leaguemechanics.util.ItemModifier;
 
-import org.bukkit.configuration.ConfigurationSection;
-import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.Player;
 import org.bukkit.entity.Entity;
 
@@ -17,8 +15,9 @@ public class DamageManager {
     private final ItemStatsManager itemStatsManager;
     private ItemPassivesRegistry passiveRegistry;
 
-    private double RESISTANCE_BALANCER;
-    private double DAMAGE_BALANCER;
+    private static final double RESISTANCE_BALANCER = 4.5;
+    private static final double DAMAGE_BALANCER = 1.7;
+
     private double lastBonusMagicDamage = 0;
 
     protected boolean isAdaptiveScaling = false;
@@ -42,13 +41,6 @@ public class DamageManager {
     public DamageManager(ItemStatsManager itemStatsManager) {
         this.itemStatsManager = itemStatsManager;
         this.passiveRegistry = ItemPassivesRegistry.getInstance();
-
-        FileConfiguration config = LeagueMechanics.getInstance().getConfig();
-        ConfigurationSection section = config.getConfigurationSection("general-settings");
-        if (section != null) {
-            this.DAMAGE_BALANCER = section.getDouble("damage-divisor-balancer", 0.0);
-            this.RESISTANCE_BALANCER = section.getDouble("resistance-multiplier-balancer", 0.0);
-        }
     }
 
     public void enableAdaptiveScaling() {
@@ -143,7 +135,7 @@ public class DamageManager {
         double baseDamage;
 
         if (isOnlyAP) {
-            baseDamage = applyResistance(procDamage * levelBasedBonusForLevel(leagueLevel), true, targetAR, targetMR, apenFlat, apenPercent, mpenFlat, mpenPercent)/ DAMAGE_BALANCER;
+            baseDamage = applyResistance(procDamage * levelBasedBonusForLevel(leagueLevel), true, targetAR, targetMR, apenFlat, apenPercent, mpenFlat, mpenPercent) / DAMAGE_BALANCER;
         } else if (isTrueDamage) {
             baseDamage = (playerTD
                     + ((sourceAD + sourceAP) * (runesTrueDamage / 100.0))) / DAMAGE_BALANCER;

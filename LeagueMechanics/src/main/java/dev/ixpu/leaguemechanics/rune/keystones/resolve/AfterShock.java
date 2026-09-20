@@ -204,8 +204,8 @@ public class AfterShock extends CooldownHandler {
                 }
             }
 
-            DebugLogger.debug(player, "§7[Debug] §f[§dAttacker§f] §f[§aAfter Shock§f] Keystone Damage = §d" + String.format("%.1f", damageToApply));
-            DebugLogger.debug(player, "§7[Debug] §f[§dAttacker§f] Keystone Damage Type = §dMagic Damage");
+            DebugLogger.debug(player, "§f[§dSource§f] §f[§aAfter Shock§f] Keystone Damage = §d" + String.format("%.1f", damageToApply));
+            DebugLogger.debug(player, "§f[§dSource§f] Keystone Damage Type = §dMagic Damage");
 
             hitCount++;
         }

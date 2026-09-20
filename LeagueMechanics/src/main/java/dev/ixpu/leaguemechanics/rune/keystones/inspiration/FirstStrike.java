@@ -253,8 +253,8 @@ public class FirstStrike extends CooldownHandler {
         double finalXP = DamageCalculation * statScaling;
         int xpToGive = (int) finalXP;
 
-        DebugLogger.debug(player, String.format("§7[DEBUG] §f[§dAttacker§f] [§3First Strike§f] " + "%.2f", finalXP) + " XP (damage: " + String.format("%.2f", DamageCalculation) + ", AD: " + String.format("%.2f", totalAD) + ", AP: " + String.format("%.2f", totalAP) + ")");
-        DebugLogger.debug(player, "§7[DEBUG] §f[§dAttacker§f] [§3First Strike§f] Total XP: " + xpToGive);
+        DebugLogger.debug(player, String.format("§f[§dSource§f] [§3First Strike§f] " + "%.2f", finalXP) + " XP (damage: " + String.format("%.2f", DamageCalculation) + ", AD: " + String.format("%.2f", totalAD) + ", AP: " + String.format("%.2f", totalAP) + ")");
+        DebugLogger.debug(player, "§f[§dSource§f] [§3First Strike§f] Total XP: " + xpToGive);
         player.giveExp(xpToGive);
     }
 

@@ -144,9 +144,9 @@ public class LethalTempo extends StacksHandler {
                 DamageType = "Physical Damage";
             }
 
-            DebugLogger.debug(player, "§7[Debug] §f[§dAttacker§f] §f[§eLethal Tempo§f] Keystone Damage = §d" + Math.ceil(keystoneDamage(player, target, getValidStackCount(player, targetUUID)) * 100) / 100.0);
-            DebugLogger.debug(player, "§7[Debug] §f[§dAttacker§f] Keystone Damage = §d" + DamageType);
-            DebugLogger.debug(player, "§7[Debug] §f[§dTarget§f] Target New HP = §d" + Math.ceil(newHealth * 100) / 100.0);
+            DebugLogger.debug(player, "§f[§dSource§f] §f[§eLethal Tempo§f] Keystone Damage = §d" + Math.ceil(keystoneDamage(player, target, getValidStackCount(player, targetUUID)) * 100) / 100.0);
+            DebugLogger.debug(player, "§f[§dSource§f] Keystone Damage = §d" + DamageType);
+            DebugLogger.debug(player, "§f[§dTarget§f] Target New HP = §d" + Math.ceil(newHealth * 100) / 100.0);
 
             livingTarget.setHealth(newHealth);
             refreshActiveTimer(player);

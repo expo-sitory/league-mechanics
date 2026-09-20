@@ -1,6 +1,8 @@
 package dev.ixpu.leaguemechanics.command;
 
 import dev.ixpu.leaguemechanics.LeagueMechanics;
+import dev.ixpu.leaguemechanics.entity.player.PlayerClass;
+import dev.ixpu.leaguemechanics.entity.player.PlayerClassType;
 import dev.ixpu.leaguemechanics.manager.ItemShopManager;
 import dev.ixpu.leaguemechanics.rune.shards.ShardStats;
 import dev.ixpu.leaguemechanics.util.RunePersistence;
@@ -83,12 +85,36 @@ public class CommandHandler implements CommandExecutor {
     }
 
     private boolean handleClassCommand(CommandSender sender, String[] args) {
-        if (!sender.hasPermission("leaguemechanics.user")) {
+        if (!sender.hasPermission("leaguemechanics.user") && !sender.hasPermission("player.no-class")) {
             sender.sendMessage(Component.text("§cYou don't have permission to use this command."));
             return true;
         }
 
-        if (args.length >= 2 && args[1].equalsIgnoreCase("clear")) {
+        if (args.length < 2) {
+            sender.sendMessage(Component.text("§cUsage: /lm class select <classname> or /lm class clear [player]"));
+            return true;
+        }
+
+        if (args[1].equalsIgnoreCase("select")) {
+            if (!(sender instanceof Player player)) {
+                sender.sendMessage(Component.text("§cOnly players can select a class!"));
+                return true;
+            }
+            if (args.length < 3) {
+                sender.sendMessage(Component.text("§cUsage: /lm class select <fighter|support|assassin|mage|tank|marksman>"));
+                return true;
+            }
+
+            try {
+                PlayerClassType classType = PlayerClassType.valueOf(args[2].toUpperCase());
+                PlayerClass.setPlayerClass(player, classType);
+                player.sendMessage(Component.text("§a✓ Class set to §e" + classType.name().toLowerCase()));
+                return true;
+            } catch (IllegalArgumentException e) {
+                sender.sendMessage(Component.text("§cInvalid class. Use: fighter, support, assassin, mage, tank, or marksman"));
+                return true;
+            }
+        } else if (args[1].equalsIgnoreCase("clear")) {
             if (args.length >= 3) {
                 String targetName = args[2];
                 Player target = Bukkit.getPlayerExact(targetName);
@@ -96,13 +122,12 @@ public class CommandHandler implements CommandExecutor {
                     sender.sendMessage(Component.text("§cPlayer not found: §e" + targetName));
                     return true;
                 }
-
-                dev.ixpu.leaguemechanics.entity.player.PlayerClass.clearPlayerClass(target);
+                PlayerClass.clearPlayerClass(target);
                 sender.sendMessage(Component.text("§a✓ Cleared class for player §e" + target.getName()));
                 return true;
             } else {
                 if (sender instanceof Player player) {
-                    dev.ixpu.leaguemechanics.entity.player.PlayerClass.clearPlayerClass(player);
+                    PlayerClass.clearPlayerClass(player);
                     sender.sendMessage(Component.text("§a✓ Your class has been cleared!"));
                     return true;
                 } else {
@@ -111,7 +136,7 @@ public class CommandHandler implements CommandExecutor {
                 }
             }
         } else {
-            sender.sendMessage(Component.text("§cUsage: /lm class clear <player>"));
+            sender.sendMessage(Component.text("§cUsage: /lm class select <classname> or /lm class clear [player]"));
             return true;
         }
     }
@@ -338,6 +363,10 @@ public class CommandHandler implements CommandExecutor {
     }
 
     private boolean handleRuneSelectPrimary(Player player, String[] args) {
+        if (!player.hasPermission("player.runes-selector")) {
+            player.sendMessage(Component.text("§cYou don't have permission to use this command."));
+            return true;
+        }
         if (args.length < 4 || args.length > 8) {
             player.sendMessage(Component.text("§cUsage: /lm runes select primary <path> [keystone] [slot1] [slot2] [slot3]"));
             return true;
@@ -432,8 +461,21 @@ public class CommandHandler implements CommandExecutor {
     }
 
     private boolean handleRuneSelectShards(Player player, String[] args) {
+        if (args.length < 4) {
+            player.sendMessage(Component.text("§cUsage: /lm runes select shards <row> <option> or /lm runes select shards cycle <row>"));
+            return true;
+        }
+
+        if (args[3].equalsIgnoreCase("cycle")) {
+            if (args.length < 5) {
+                player.sendMessage(Component.text("§cUsage: /lm runes select shards cycle <row>"));
+                return true;
+            }
+            return handleCycleRuneShards(player, args[4]);
+        }
+
         if (args.length != 5) {
-            player.sendMessage(Component.text("§cUsage: /lm runes select shards <row-1|row-2|row-3> <option-1|option-2|option-3>"));
+            player.sendMessage(Component.text("§cUsage: /lm runes select shards <row> <option>"));
             return true;
         }
 
@@ -478,12 +520,75 @@ public class CommandHandler implements CommandExecutor {
         RuneShard finalRow2 = (row == 2) ? selectedShard : shards.getRow2();
         RuneShard finalRow3 = (row == 3) ? selectedShard : shards.getRow3();
 
+        if (finalRow1 == null) finalRow1 = RuneShard.ROW1_ADAP;
+        if (finalRow2 == null) finalRow2 = RuneShard.ROW2_ADAP;
+        if (finalRow3 == null) finalRow3 = RuneShard.ROW3_HP;
+
+
         shards.selectShards(finalRow1, finalRow2, finalRow3);
 
         runePersistence.saveRuneShards(player.getUniqueId(), finalRow1.name(), finalRow2.name(), finalRow3.name());
 
         playerEventListener.applyPlayerStats(player);
         return true;
+    }
+
+    private boolean handleCycleRuneShards(Player player, String rowStr) {
+        int row;
+        try {
+            row = Integer.parseInt(rowStr);
+        } catch (NumberFormatException e) {
+            player.sendMessage(Component.text("§cRow must be a number (1-3)"));
+            return true;
+        }
+
+        if (row < 1 || row > 3) {
+            player.sendMessage(Component.text("§cRow must be between 1 and 3"));
+            return true;
+        }
+
+        ShardStats shards = PlayerStats.getOrCreate(player).getRuneShards(player);
+        RuneShard current = row == 1 ? shards.getRow1() : (row == 2 ? shards.getRow2() : shards.getRow3());
+
+        int nextOption = getNextShardOption(row, current);
+
+        String optionId = "option-" + nextOption;
+        RuneShard selectedShard = RuneShard.fromRowAndOption(row, optionId);
+
+        if (selectedShard == null) {
+            player.sendMessage(Component.text("§cCouldn't cycle shard"));
+            return true;
+        }
+
+        RuneShard finalRow1 = row == 1 ? selectedShard : shards.getRow1();
+        RuneShard finalRow2 = row == 2 ? selectedShard : shards.getRow2();
+        RuneShard finalRow3 = row == 3 ? selectedShard : shards.getRow3();
+
+        if (finalRow1 == null) finalRow1 = RuneShard.ROW1_ADAP;
+        if (finalRow2 == null) finalRow2 = RuneShard.ROW2_ADAP;
+        if (finalRow3 == null) finalRow3 = RuneShard.ROW3_HP;
+
+        shards.selectShards(finalRow1, finalRow2, finalRow3);
+        runePersistence.saveRuneShards(player.getUniqueId(), finalRow1.name(), finalRow2.name(), finalRow3.name());
+        playerEventListener.applyPlayerStats(player);
+
+        return true;
+    }
+
+    private int getNextShardOption(int row, RuneShard current) {
+        if (row == 1) {
+            if (current == RuneShard.ROW1_ADAP) return 2;
+            if (current == RuneShard.ROW1_AS) return 3;
+            return 1;
+        } else if (row == 2) {
+            if (current == RuneShard.ROW2_ADAP) return 2;
+            if (current == RuneShard.ROW2_MS) return 3;
+            return 1;
+        } else {
+            if (current == RuneShard.ROW3_HP) return 2;
+            if (current == RuneShard.ROW3_TN) return 3;
+            return 1;
+        }
     }
 
     private CooldownHandler resolveAndValidateRune(Player player, String runeId, RunePath path, RuneSlot slot) {

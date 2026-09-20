@@ -171,9 +171,9 @@ public class ArcaneComet extends CooldownHandler {
 
                     target.damage(0.00001);
                     target.setHealth(newHealth);
-                    DebugLogger.debug(shooter, "§7[Debug] §f[§dAttacker§f] §f[§9Arcane Comet§f] Keystone Damage = §d" + Math.ceil(keystoneDamage(shooter, target) * 100) / 100.0);
-                    DebugLogger.debug(shooter, "§7[Debug] §f[§dAttacker§f] Keystone Damage Type = §d" + DamageType);
-                    DebugLogger.debug(shooter, "§7[Debug] §f[§dTarget§f] Target New HP = §d" + newHealth);
+                    DebugLogger.debug(shooter, "§f[§dSource§f] §f[§9Arcane Comet§f] Keystone Damage = §d" + Math.ceil(keystoneDamage(shooter, target) * 100) / 100.0);
+                    DebugLogger.debug(shooter, "§f[§dSource§f] Keystone Damage Type = §d" + DamageType);
+                    DebugLogger.debug(shooter, "§f[§dTarget§f] Target New HP = §d" + newHealth);
 
                     targetLoc.getWorld().spawnParticle(
                             Particle.DUST,

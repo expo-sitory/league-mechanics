@@ -118,8 +118,8 @@ public class DarkHarvest extends StacksHandler {
             DamageType = "Physical Damage";
         }
 
-        DebugLogger.debug(player, "§7[Debug] §f[§dSource§f] §f[§cDark Harvest§f] Keystone Damage = §d" + Math.ceil(keystoneDamage(player, target) * 100) / 100.0 + "§f | Type = §d" + DamageType);
-        DebugLogger.debug(player, "§7[Debug] §f[§dTarget§f] New Health = §d" + Math.ceil(newHealth * 100) / 100.0);
+        DebugLogger.debug(player, "§f[§dSource§f] §f[§cDark Harvest§f] Keystone Damage = §d" + Math.ceil(keystoneDamage(player, target) * 100) / 100.0 + "§f | Type = §d" + DamageType);
+        DebugLogger.debug(player, "§f[§dTarget§f] New Health = §d" + Math.ceil(newHealth * 100) / 100.0);
 
         livingTarget.setHealth(newHealth);
 

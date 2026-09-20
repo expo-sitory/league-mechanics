@@ -1,7 +1,7 @@
 package dev.ixpu.leaguemechanics.listener;
 
 import dev.ixpu.leaguemechanics.LeagueMechanics;
-import dev.ixpu.leaguemechanics.item.passives.ItemPassive;
+import dev.ixpu.leaguemechanics.entity.player.PlayerClass;
 import dev.ixpu.leaguemechanics.item.passives.ItemPassivesRegistry;
 import dev.ixpu.leaguemechanics.manager.CombatStateManager;
 import dev.ixpu.leaguemechanics.manager.ItemStatsManager;
@@ -17,6 +17,7 @@ import dev.ixpu.leaguemechanics.rune.RuneRegistry;
 import dev.ixpu.leaguemechanics.rune.RuneShard;
 import dev.ixpu.leaguemechanics.rune.keystones.resolve.GraspOfTheUndying;
 
+import org.bukkit.Bukkit;
 import org.bukkit.entity.*;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
@@ -53,10 +54,6 @@ public class PlayerEventListener implements Listener, RuneCooldownGate {
         this.playerStatsListener = playerStatsListener;
         this.playerInventoryListener = new PlayerInventoryListener(plugin, playerStatsListener);
         this.plugin = plugin;
-    }
-
-    public ItemPassive getEquippedPassive(ItemStack item) {
-        return playerStatsListener.getEquippedPassive(item);
     }
 
     public void applyPlayerStats(Player player) {
@@ -151,7 +148,14 @@ public class PlayerEventListener implements Listener, RuneCooldownGate {
         cancelPendingTasks(uuid);
     }
 
+    @EventHandler(priority = EventPriority.NORMAL)
+    public void onPlayerMove(PlayerMoveEvent event) {
+        Player player = event.getPlayer();
 
+        if (!PlayerClass.hasPlayerSelectedClass(player)) {
+            Bukkit.dispatchCommand(Bukkit.getConsoleSender(), "dialogwindow:dwopen classselect " + player.getName());
+        }
+    }
 
     @EventHandler
     public void onHealthRegen(EntityRegainHealthEvent event) {

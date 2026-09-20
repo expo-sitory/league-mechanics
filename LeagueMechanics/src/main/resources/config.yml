@@ -223,3 +223,111 @@ mob-stats:
     ar: 487.0
     mr: 120.0
     type: UNDEAD
+  iron_golem:
+    ad: 250.0
+    ap: 0.0
+    ar: 700.0
+    mr: 180.0
+    type: IRON_GOLEM
+  drowned:
+    ad: 48.0
+    ap: 18.0
+    ar: 160.0
+    mr: 85.0
+    type: UNDEAD
+  zombified_piglin:
+    ad: 62.0
+    ap: 25.0
+    ar: 180.0
+    mr: 95.0
+    type: UNDEAD
+  piglin:
+    ad: 75.0
+    ap: 35.0
+    ar: 140.0
+    mr: 110.0
+    type: CRITTER
+  piglin_brute:
+    ad: 140.0
+    ap: 45.0
+    ar: 280.0
+    mr: 130.0
+    type: CRITTER
+  breeze:
+    ad: 55.0
+    ap: 280.0
+    ar: 100.0
+    mr: 250.0
+    type: BREEZE
+  creaking:
+    ad: 88.0
+    ap: 32.0
+    ar: 340.0
+    mr: 95.0
+    type: CREAKING
+  warden:
+    ad: 520.0
+    ap: 180.0
+    ar: 820.0
+    mr: 620.0
+    type: WARDEN
+  evoker:
+    ad: 15.0
+    ap: 520.0
+    ar: 90.0
+    mr: 380.0
+    type: EVOKER
+  pillager:
+    ad: 72.0
+    ap: 48.0
+    ar: 110.0
+    mr: 120.0
+    type: PILLAGER
+  ravager:
+    ad: 280.0
+    ap: 55.0
+    ar: 520.0
+    mr: 180.0
+    type: RAVAGER
+  vex:
+    ad: 42.0
+    ap: 72.0
+    ar: 75.0
+    mr: 115.0
+    type: VEX
+  vindicator:
+    ad: 145.0
+    ap: 32.0
+    ar: 125.0
+    mr: 95.0
+    type: VINDICATOR
+  hoglin:
+    ad: 112.0
+    ap: 22.0
+    ar: 200.0
+    mr: 75.0
+    type: CRITTER
+  zoglin:
+    ad: 135.0
+    ap: 28.0
+    ar: 240.0
+    mr: 90.0
+    type: UNDEAD
+  parched:
+    ad: 52.0
+    ap: 28.0
+    ar: 185.0
+    mr: 92.0
+    type: PARCHED
+  phantom:
+    ad: 62.0
+    ap: 42.0
+    ar: 95.0
+    mr: 140.0
+    type: CRITTER
+  ender_dragon:
+    ad: 780.0
+    ap: 650.0
+    ar: 999.0
+    mr: 999.0
+    type: ENDER_DRAGON

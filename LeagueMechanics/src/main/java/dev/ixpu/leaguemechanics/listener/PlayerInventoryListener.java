@@ -5,7 +5,6 @@ import dev.ixpu.leaguemechanics.item.shop.ItemShopData;
 import dev.ixpu.leaguemechanics.util.ItemModifier;
 import dev.ixpu.leaguemechanics.entity.player.PlayerStats;
 
-import dev.ixpu.leaguemechanics.gui.ClassSelectionGUI;
 import dev.ixpu.leaguemechanics.gui.InspectGUI;
 import dev.ixpu.leaguemechanics.gui.ItemShopGUI;
 
@@ -127,17 +126,6 @@ public class PlayerInventoryListener implements Listener {
         if (title.equals(InspectGUI.getInventoryTitle())) {
             event.setCancelled(true);
             return true;
-        }
-
-        if (title.equals(ClassSelectionGUI.getInventoryTitle())) {
-            if (event.getClickedInventory() == event.getView().getTopInventory()) {
-                event.setCancelled(true);
-                int slot = event.getRawSlot();
-                if (slot >= 0 && slot < event.getInventory().getSize()) {
-                    ClassSelectionGUI.getInstance().handleClick(player, slot);
-                }
-                return true;
-            }
         }
 
         return false;

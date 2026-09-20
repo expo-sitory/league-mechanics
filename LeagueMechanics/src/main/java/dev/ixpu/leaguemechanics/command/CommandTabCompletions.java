@@ -38,10 +38,6 @@ public class CommandTabCompletions implements org.bukkit.command.TabCompleter {
             if (player.hasPermission("leaguemechanics.admin")) {
                 completions.add("reload");
                 completions.add("shop");
-                completions.add("class");
-            }
-            if (player.hasPermission("leaguemechanics.user")) {
-                completions.add("runes");
             }
             completions.add("inspect");
             return filter(completions, args[0]);
@@ -52,7 +48,6 @@ public class CommandTabCompletions implements org.bukkit.command.TabCompleter {
         }
 
         if (args.length == 2 && args[0].equalsIgnoreCase("runes")) {
-            completions.add("select");
             completions.add("info");
             return filter(completions, args[1]);
         }
@@ -61,101 +56,11 @@ public class CommandTabCompletions implements org.bukkit.command.TabCompleter {
             return new ArrayList<>();
         }
 
-        if (args.length >= 3 && args[0].equalsIgnoreCase("runes") && args[1].equalsIgnoreCase("info")) {
-            return new ArrayList<>();
-        }
-
-        if (args.length == 3 && args[0].equalsIgnoreCase("runes") && args[1].equalsIgnoreCase("select")) {
-            completions.add("primary");
-            completions.add("shards");
-            //completions.add("secondary");
-            return filter(completions, args[2]);
-        }
-
-        if (args.length >= 4 && args[0].equalsIgnoreCase("runes") && args[1].equalsIgnoreCase("select")) {
-            String location = args[2].toLowerCase();
-            if (location.equals("primary")) {
-                return tabSelectPrimary(player, args);
-            } else if (location.equals("secondary")) {
-                return tabSelectSecondary(player, args);
-            } else if (location.equals("shards")) {
-                return tabSelectShards(args);
-            }
-        }
-
         if (args.length == 2 && args[0].equalsIgnoreCase("inspect")) {
             return org.bukkit.Bukkit.getOnlinePlayers().stream()
                     .map(org.bukkit.entity.Player::getName)
                     .filter(name -> name.toLowerCase().startsWith(args[1].toLowerCase()))
                     .collect(Collectors.toList());
-        }
-
-        return new ArrayList<>();
-    }
-
-    private List<String> tabSelectPrimary(Player player, String[] args) {
-        if (args.length == 4) {
-            return filter(PATHS, args[3]);
-        }
-
-        RunePath path = RunePath.fromId(args[3].toLowerCase());
-        if (path == null) {
-            return new ArrayList<>();
-        }
-
-        if (args.length == 5) {
-            return filter(getRunesByPathAndSlot(path, RuneSlot.KEYSTONE), args[4]);
-        }
-        if (args.length == 6) {
-            return filter(getRunesByPathAndSlot(path, RuneSlot.PRIMARY_SLOT_1), args[5]);
-        }
-        if (args.length == 7) {
-            return filter(getRunesByPathAndSlot(path, RuneSlot.PRIMARY_SLOT_2), args[6]);
-        }
-        if (args.length == 8) {
-            return filter(getRunesByPathAndSlot(path, RuneSlot.PRIMARY_SLOT_3), args[7]);
-        }
-
-        return new ArrayList<>();
-    }
-
-    private List<String> tabSelectSecondary(Player player, String[] args) {
-
-        if (args.length == 4) {
-            return filter(PATHS, args[3]);
-        }
-
-        RunePath path = RunePath.fromId(args[3].toLowerCase());
-        if (path == null) {
-            return new ArrayList<>();
-        }
-
-        if (args.length == 5) {
-            return filter(getRunesByPathAndSlot(path, RuneSlot.SECONDARY_SLOT_1), args[4]);
-        }
-
-        if (args.length == 6) {
-            return filter(getRunesByPathAndSlot(path, RuneSlot.SECONDARY_SLOT_2), args[5]);
-        }
-
-        return new ArrayList<>();
-    }
-
-    private List<String> getRunesByPathAndSlot(RunePath path, RuneSlot slot) {
-        return runeRegistry.getAllRunes().values().stream()
-                .filter(rune -> rune.getPath().equals(path) && rune.getSlot().equals(slot))
-                .map(CooldownHandler::getId)
-                .collect(Collectors.toList());
-    }
-
-    private List<String> tabSelectShards(String[] args) {
-        if (args.length == 4) {
-            List<String> rows = List.of("1", "2", "3");
-            return filter(rows, args[3]);
-        }
-        if (args.length == 5) {
-            List<String> options = List.of("1", "2", "3");
-            return filter(options, args[4]);
         }
 
         return new ArrayList<>();
