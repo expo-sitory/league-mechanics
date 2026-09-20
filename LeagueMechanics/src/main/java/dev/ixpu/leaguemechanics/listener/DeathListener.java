@@ -221,6 +221,11 @@ public class DeathListener implements Listener {
                 ItemModifier.syncItemStats(item);
             }
         }
+        Bukkit.getScheduler().scheduleSyncDelayedTask(plugin, () -> {
+            if (player.isOnline() && player.isDead()) {
+                player.spigot().respawn();
+            }
+        }, 40L);
     }
 
     public void fireTakedowns(Player victim) {

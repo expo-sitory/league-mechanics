@@ -1,19 +1,21 @@
 # LEAGUE MECHANICS CONFIGURATION
 # https://github.com/expo-sitory
 
-debug: true
+general-settings:
+  debug: true
+  damage-divisor-balancer: 2.1 # A value to divide players total damage output
+  resistance-multiplier-balancer: 1.8 # A value to multiply players total damage resistance
 
-# MySQL Configuration - Runes & KDA Multi Server Synchronization
-mysql:
-  host: kupalhost
-  port: 3306
-  database: leaguemechanics
-  username: root
-  password: ""
-  pool-size: 10
-  idle-timeout: 300000
-  max-lifetime: 1800000
-  connection-timeout: 30000
+  mysql: # MySQL Configuration - Runes & KDA Multi Server Synchronization
+    host: kupalhost
+    port: 3306
+    database: leaguemechanics
+    username: root
+    password: ""
+    pool-size: 10
+    idle-timeout: 300000
+    max-lifetime: 1800000
+    connection-timeout: 30000
 
 runes:
 
@@ -62,7 +64,6 @@ runes:
         cooldown: 30 # seconds
 
       press-the-attack:
-
         base-adaptive-damage: 9.5
         cooldown: 6 # seconds
 
@@ -100,12 +101,12 @@ runes:
         cooldown: 20 # seconds
 
       grasp-of-the-undying:
-        heal-percent: 15.0 # missing health percent - default: 15%
+        heal-percent: 60.0 # missing health percent - default: 60%
         cooldown: 45 # seconds
 
       guardian:
         max-players: 5 # max number of players that will get the effect
-        absorption-percentage: 100.0 # default: 100% - one full line
+        absorption-percentage: 300.0 # 100 = One full line (20)
         cooldown: 60 # seconds
 
 
@@ -133,68 +134,68 @@ runes:
 # Mob Statistics Configuration
 mob-stats:
   zombie:
-    ad: 57.0
-    ap: 22.0
-    ar: 200.0
+    ad: 37.0
+    ap: 12.0
+    ar: 150.0
     mr: 70.0
     type: UNDEAD
   skeleton:
     ad: 15.0
-    ap: 45.0
-    ar: 120.0
-    mr: 25.0
+    ap: 35.0
+    ar: 40.0
+    mr: 175.0
     type: UNDEAD
   spider:
-    ad: 28.0
-    ap: 20.0
-    ar: 70.0
-    mr: 20.0
+    ad: 38.0
+    ap: 22.0
+    ar: 30.0
+    mr: 100.0
     type: ARTHROPOD
   cave_spider:
     ad: 34.0
-    ap: 32.0
-    ar: 90.0
-    mr: 40.0
+    ap: 46.0
+    ar: 400.0
+    mr: 60.0
     type: ARTHROPOD
   creeper:
     ad: 0.0
     ap: 0.0
-    ar: 500.0
-    mr: 500.0
+    ar: 399.0
+    mr: 399.0
     type: CRITTER
   enderman:
     ad: 70.0
     ap: 70.0
-    ar: 220.0
-    mr: 220.0
+    ar: 120.0
+    mr: 820.0
     type: ENDERMAN
   witch:
     ad: 0.0
-    ap: 185.0
+    ap: 485.0
     ar: 55.0
     mr: 530.0
     type: WITCH
   slime:
-    ad: 40.0
-    ap: 40.0
-    ar: 850.0
+    ad: 70.0
+    ap: 70.0
+    ar: 999.0
     mr: 10.0
     type: SLIME
   magma_cube:
-    ad: 45.0
-    ap: 35.0
-    ar: 400.0
-    mr: 400.0
+    ad: 85.0
+    ap: 65.0
+    ar: 600.0
+    mr: 600.0
     type: SLIME
   blaze:
-    ad: 40.0
-    ap: 220.0
+    ad: 70.0
+    ap: 120.0
     ar: 999.0
     mr: 500.0
     type: BLAZE
   ghast:
     ad: 0.0
-    ap: 290.0
+    ap: 190.0
     ar: 200.0
     mr: 800.0
     type: GHAST
@@ -205,13 +206,13 @@ mob-stats:
     mr: 25.0
     type: UNDEAD
   husk:
-    ad: 62.0
+    ad: 52.0
     ap: 30.0
     ar: 87.0
     mr: 57.0
     type: UNDEAD
   zombie_villager:
-    ad: 72.0
+    ad: 42.0
     ap: 60.0
     ar: 120.0
     mr: 57.0
@@ -222,3 +223,111 @@ mob-stats:
     ar: 487.0
     mr: 120.0
     type: UNDEAD
+  iron_golem:
+    ad: 250.0
+    ap: 0.0
+    ar: 700.0
+    mr: 180.0
+    type: IRON_GOLEM
+  drowned:
+    ad: 48.0
+    ap: 18.0
+    ar: 160.0
+    mr: 85.0
+    type: UNDEAD
+  zombified_piglin:
+    ad: 62.0
+    ap: 25.0
+    ar: 180.0
+    mr: 95.0
+    type: UNDEAD
+  piglin:
+    ad: 75.0
+    ap: 35.0
+    ar: 140.0
+    mr: 110.0
+    type: CRITTER
+  piglin_brute:
+    ad: 140.0
+    ap: 45.0
+    ar: 280.0
+    mr: 130.0
+    type: CRITTER
+  breeze:
+    ad: 55.0
+    ap: 280.0
+    ar: 100.0
+    mr: 250.0
+    type: BREEZE
+  creaking:
+    ad: 88.0
+    ap: 32.0
+    ar: 340.0
+    mr: 95.0
+    type: CREAKING
+  warden:
+    ad: 520.0
+    ap: 180.0
+    ar: 820.0
+    mr: 620.0
+    type: WARDEN
+  evoker:
+    ad: 15.0
+    ap: 520.0
+    ar: 90.0
+    mr: 380.0
+    type: EVOKER
+  pillager:
+    ad: 72.0
+    ap: 48.0
+    ar: 110.0
+    mr: 120.0
+    type: PILLAGER
+  ravager:
+    ad: 280.0
+    ap: 55.0
+    ar: 520.0
+    mr: 180.0
+    type: RAVAGER
+  vex:
+    ad: 42.0
+    ap: 72.0
+    ar: 75.0
+    mr: 115.0
+    type: VEX
+  vindicator:
+    ad: 145.0
+    ap: 32.0
+    ar: 125.0
+    mr: 95.0
+    type: VINDICATOR
+  hoglin:
+    ad: 112.0
+    ap: 22.0
+    ar: 200.0
+    mr: 75.0
+    type: CRITTER
+  zoglin:
+    ad: 135.0
+    ap: 28.0
+    ar: 240.0
+    mr: 90.0
+    type: UNDEAD
+  parched:
+    ad: 52.0
+    ap: 28.0
+    ar: 185.0
+    mr: 92.0
+    type: PARCHED
+  phantom:
+    ad: 62.0
+    ap: 42.0
+    ar: 95.0
+    mr: 140.0
+    type: CRITTER
+  ender_dragon:
+    ad: 780.0
+    ap: 650.0
+    ar: 999.0
+    mr: 999.0
+    type: ENDER_DRAGON

@@ -2,6 +2,8 @@ package dev.ixpu.leaguemechanics.rune.keystones.domination;
 
 import dev.ixpu.leaguemechanics.LeagueMechanics;
 import dev.ixpu.leaguemechanics.entity.player.PlayerStats;
+import dev.ixpu.leaguemechanics.item.passives.ItemPassive;
+import dev.ixpu.leaguemechanics.item.passives.ItemPassivesRegistry;
 import dev.ixpu.leaguemechanics.util.DebugLogger;
 
 import dev.ixpu.leaguemechanics.rune.RunePath;
@@ -15,6 +17,7 @@ import dev.ixpu.leaguemechanics.listener.PlayerEventListener;
 
 import java.util.UUID;
 
+import dev.ixpu.leaguemechanics.util.ItemModifier;
 import org.bukkit.Sound;
 
 import org.bukkit.entity.Player;
@@ -23,7 +26,7 @@ import org.bukkit.entity.LivingEntity;
 import org.bukkit.configuration.ConfigurationSection;
 
 import net.kyori.adventure.text.Component;
-
+import org.bukkit.inventory.ItemStack;
 
 
 public class Electrocute extends StacksHandler {
@@ -35,6 +38,7 @@ public class Electrocute extends StacksHandler {
     private static final int MAXIMUM_STACKS = 3;
 
     private PlayerEventListener listener;
+    private boolean lastDamageWasMagic = false;
 
 
     public Electrocute(org.bukkit.configuration.ConfigurationSection config, PlayerEventListener listener) {
@@ -112,16 +116,37 @@ public class Electrocute extends StacksHandler {
             if (livingTarget instanceof Player livingTargetPlayer) {
                 KillSourceTracker.getInstance().setSource(livingTargetPlayer, player);
             }
+            String DamageType;
+            boolean isMagic = lastDamageWasMagic;
+
+            if (isMagic) {
+                DamageType = "Magic Damage";
+                for (ItemStack inv : player.getInventory().getContents()) {
+                    if (inv == null || inv.getType().isAir()) continue;
+                    String itemId = ItemModifier.getItemId(inv);
+                    ItemPassive passive = ItemPassivesRegistry.getInstance().getPassive(itemId);
+                    if (passive != null) {
+                        passive.onDealDamage(player, livingTarget, damageToApply, false, true);
+                    }
+                }
+            } else {
+                DamageType = "Physical Damage";
+            }
+
+            DebugLogger.debug(player, "§f[§dSource§f] §f[§cElectrocute§f] Keystone Damage = §d" + Math.ceil(keystoneDamage(player, target) * 100) / 100.0);
+            DebugLogger.debug(player, "§f[§dSource§f] Keystone Damage Type = §d" + DamageType);
+            DebugLogger.debug(player, "§f[§dTarget§f] Target New HP = §d" + Math.ceil(newHealth * 100) / 100.0);
+
             livingTarget.setHealth(newHealth);
-            DebugLogger.debug(player, "§7[Debug] §f[§dAttacker§f] §f[§cElectrocute§f] Keystone Damage = §d" + Math.ceil(keystoneDamage(player, target) * 100) / 100.0);
-            DebugLogger.debug(player, "§7[Debug] §f[§dTarget§f] Target New HP = §d" + Math.ceil(newHealth * 100) / 100.0);
         }
     }
-    
+
     private double keystoneDamage(Player player, Entity target) {
         DamageManager damageManager = new DamageManager(LeagueMechanics.getInstance().getStatsManager());
         damageManager.enableAdaptiveDamage();
-        return damageManager.DamageCalculation(player, target, 0, BASE_ADAPTIVE_DAMAGE, 0, 0);
+        double damage = damageManager.DamageCalculation(player, target, 0, BASE_ADAPTIVE_DAMAGE, 0, 0);
+        this.lastDamageWasMagic = damageManager.isMagicDamage();
+        return damage;
     }
 
     private int trackPerTargetStacks(Player player) {

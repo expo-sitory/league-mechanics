@@ -29,8 +29,8 @@ public class HailOfBlades extends CooldownHandler {
     private double ATTACK_SPEED;
     private double TRUE_DAMAGE_PERCENT;
 
-    private double AD_PERCENTAGE_MULTIPLIER = 6.0;
-    private double AP_PERCENTAGE_MULTIPLIER = 4.0;
+    private double AD_PERCENTAGE_MULTIPLIER;
+    private double AP_PERCENTAGE_MULTIPLIER;
 
     int COOLDOWN_DURATION_SECONDS;
 
@@ -140,8 +140,9 @@ public class HailOfBlades extends CooldownHandler {
                 lastAttackTick.put(playerUUID, 0);
                 currentStacks.put(playerUUID, currentStacks.getOrDefault(playerUUID, 0) - 1);
 
-                DebugLogger.debug(player, "§7[Debug] §f[§dAttacker§f] §f[§cHail of Blades§f] Keystone Damage = §d" + Math.ceil(keystoneDamage(player, target) * 100) / 100.0);
-                DebugLogger.debug(player, "§7[Debug] §f[§dTarget§f] Target New HP = §d" + Math.ceil(newHealth * 100) / 100.0);
+                DebugLogger.debug(player, "§f[§dSource§f] §f[§cHail of Blades§f] Keystone Damage = §d" + Math.ceil(keystoneDamage(player, target) * 100) / 100.0);
+                DebugLogger.debug(player, "§f[§dSource§f] Keystone Damage Type = §dTrue Damage");
+                DebugLogger.debug(player, "§f[§dTarget§f] Target New HP = §d" + Math.ceil(newHealth * 100) / 100.0);
 
                 if (livingTarget instanceof Player livingPlayer) {
                     KillSourceTracker.getInstance().setSource(livingPlayer, player);

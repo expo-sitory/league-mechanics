@@ -4,6 +4,7 @@ import dev.ixpu.leaguemechanics.LeagueMechanics;
 import dev.ixpu.leaguemechanics.manager.DamageManager;
 import dev.ixpu.leaguemechanics.manager.ItemStatsManager;
 import dev.ixpu.leaguemechanics.manager.KillSourceTracker;
+import dev.ixpu.leaguemechanics.util.ItemModifier;
 import org.bukkit.Color;
 import org.bukkit.Location;
 import org.bukkit.Particle;
@@ -17,9 +18,10 @@ public class bamis_cinder implements ItemPassive {
     private static final double IMMOLATE_DAMAGE_PER_TICK = 1.5;
     private static final double IMMOLATE_RADIUS = 5.0;
     private static final int IMMOLATE_DURATION_TICKS = 60;
-    private static final int IMMOLATE_TICK_INTERVAL = 10;
+    private static final int IMMOLATE_TICK_INTERVAL = 20;
 
     private static final Color IMMOLATE_COLOR = Color.fromRGB(255, 110, 0);
+    private static final ThreadLocal<Boolean> TRIGGERING_PASSIVES = ThreadLocal.withInitial(() -> false);
 
     @Override
     public String getId() {
@@ -28,7 +30,7 @@ public class bamis_cinder implements ItemPassive {
 
     @Override
     public String getDescription() {
-        return "§7ᴜɴɪQᴜᴇ – ɪᴍᴍᴏʟᴀᴛᴇ: §fTaking or dealing damage activates this passive,\n§fdealing §915 magic damage §fover §e3 seconds §fto all entities within §65 blocks§f.\n\n§790s Cooldown";
+        return "§7ᴜɴɪQᴜᴇ – ɪᴍᴍᴏʟᴀᴛᴇ: §fTaking or dealing damage activates this passive,\n§fdealing §9" + IMMOLATE_DAMAGE_PER_TICK * 10 + " magic damage §fover §e3 seconds §fto all entities within §65 blocks§f.\n\n§790s Cooldown";
     }
 
     @Override
@@ -123,6 +125,19 @@ public class bamis_cinder implements ItemPassive {
 
         if (target instanceof Player targetPlayer) {
             KillSourceTracker.getInstance().setSource(targetPlayer, source);
+        }
+
+        if (!TRIGGERING_PASSIVES.get()) {
+            TRIGGERING_PASSIVES.set(true);
+            for (ItemStack inv : source.getInventory().getContents()) {
+                if (inv == null || inv.getType().isAir()) continue;
+                String itemId = ItemModifier.getItemId(inv);
+                ItemPassive passive = ItemPassivesRegistry.getInstance().getPassive(itemId);
+                if (passive != null) {
+                    passive.onDealDamage(source, target, damage, false, true);
+                }
+            }
+            TRIGGERING_PASSIVES.set(false);
         }
 
         target.damage(0.00001);

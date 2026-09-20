@@ -13,6 +13,9 @@ import dev.ixpu.leaguemechanics.manager.StatScalingManager;
 import dev.ixpu.leaguemechanics.manager.KillSourceTracker;
 
 import dev.ixpu.leaguemechanics.listener.PlayerEventListener;
+import dev.ixpu.leaguemechanics.item.passives.ItemPassive;
+import dev.ixpu.leaguemechanics.item.passives.ItemPassivesRegistry;
+import dev.ixpu.leaguemechanics.util.ItemModifier;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -26,6 +29,7 @@ import org.bukkit.Location;
 import org.bukkit.Particle;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.configuration.ConfigurationSection;
+import org.bukkit.inventory.ItemStack;
 
 import net.kyori.adventure.text.Component;
 
@@ -38,6 +42,7 @@ public class ArcaneComet extends CooldownHandler {
     int COOLDOWN_SECONDS = 20;
 
     private PlayerEventListener listener;
+    private boolean lastDamageWasMagic = false;
 
     private static final int COMET_FALL_TICKS = 30;
 
@@ -104,7 +109,7 @@ public class ArcaneComet extends CooldownHandler {
 
         double newHealth = Math.clamp(livingTarget.getHealth() - damageToApply, 0, livingTarget.getMaxHealth());
 
-        summonComet(player, livingTarget, newHealth);
+        summonComet(player, livingTarget, damageToApply, newHealth);
         resetCooldown(player);
     }
 
@@ -112,6 +117,7 @@ public class ArcaneComet extends CooldownHandler {
         DamageManager damageManager = new DamageManager(LeagueMechanics.getInstance().getStatsManager());
         damageManager.enableAdaptiveDamage();
         double baseDamage = damageManager.DamageCalculation(player, target, 0, BASE_ADAPTIVE_DAMAGE, 0, 0);
+        this.lastDamageWasMagic = damageManager.isMagicDamage();
         double scaledBonus = getScaledBonusDamage(player);
 
         return baseDamage + scaledBonus;
@@ -127,7 +133,7 @@ public class ArcaneComet extends CooldownHandler {
         );
     }
 
-    private void summonComet(Player shooter, LivingEntity target, double newHealth) {
+    private void summonComet(Player shooter, LivingEntity target, double damageToApply, double newHealth) {
         if (plugin == null) {
             return;
         }
@@ -146,10 +152,28 @@ public class ArcaneComet extends CooldownHandler {
                     if (target instanceof Player targetPlayer) {
                         KillSourceTracker.getInstance().setSource(targetPlayer, shooter);
                     }
+                    String DamageType;
+                    boolean isMagic = lastDamageWasMagic;
+
+                    if (isMagic) {
+                        DamageType = "Magic Damage";
+                        for (ItemStack inv : shooter.getInventory().getContents()) {
+                            if (inv == null || inv.getType().isAir()) continue;
+                            String itemId = ItemModifier.getItemId(inv);
+                            ItemPassive passive = ItemPassivesRegistry.getInstance().getPassive(itemId);
+                            if (passive != null) {
+                                passive.onDealDamage(shooter, target, damageToApply, false, true);
+                            }
+                        }
+                    } else {
+                        DamageType = "Physical Damage";
+                    }
+
                     target.damage(0.00001);
                     target.setHealth(newHealth);
-                    DebugLogger.debug(shooter, "§7[Debug] §f[§dAttacker§f] §f[§9Arcane Comet§f] Keystone Damage = §d" + Math.ceil(keystoneDamage(shooter, target) * 100) / 100.0);
-                    DebugLogger.debug(shooter, "§7[Debug] §f[§dTarget§f] Target New HP = §d" + newHealth);
+                    DebugLogger.debug(shooter, "§f[§dSource§f] §f[§9Arcane Comet§f] Keystone Damage = §d" + Math.ceil(keystoneDamage(shooter, target) * 100) / 100.0);
+                    DebugLogger.debug(shooter, "§f[§dSource§f] Keystone Damage Type = §d" + DamageType);
+                    DebugLogger.debug(shooter, "§f[§dTarget§f] Target New HP = §d" + newHealth);
 
                     targetLoc.getWorld().spawnParticle(
                             Particle.DUST,
@@ -218,5 +242,4 @@ public class ArcaneComet extends CooldownHandler {
         RuneState state = isOnCooldown(player) ? RuneState.COOLDOWN : RuneState.IDLE;
         return getRuneDisplay(state, player);
     }
-
 }

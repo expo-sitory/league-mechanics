@@ -3,6 +3,7 @@ package dev.ixpu.leaguemechanics.manager;
 import dev.ixpu.leaguemechanics.LeagueMechanics;
 import dev.ixpu.leaguemechanics.entity.mob.MobStats;
 import dev.ixpu.leaguemechanics.entity.player.PlayerStats;
+import dev.ixpu.leaguemechanics.item.passives.ItemPassivesRegistry;
 import dev.ixpu.leaguemechanics.rune.shards.ShardStats;
 import dev.ixpu.leaguemechanics.util.ItemModifier;
 
@@ -12,16 +13,22 @@ import org.bukkit.entity.Entity;
 
 public class DamageManager {
     private final ItemStatsManager itemStatsManager;
+    private ItemPassivesRegistry passiveRegistry;
+
+    private static final double RESISTANCE_BALANCER = 4.5;
+    private static final double DAMAGE_BALANCER = 1.7;
+
+    private double lastBonusMagicDamage = 0;
 
     protected boolean isAdaptiveScaling = false;
     protected boolean isAdaptiveDamage = false;
     protected boolean isTrueDamage = false;
     protected boolean isPerStack = false;
     protected boolean isOnlyAP = false;
+    private boolean prefersMagic = false;
+    private boolean isProjectileDamage = false;
 
     private static final double CRIT_DAMAGE_MULTIPLIER = 1.75;
-    private static final double RESISTANCE_BALANCER = 1.4;
-    private static final double DAMAGE_BALANCER = 0.7;
 
     private static final double BASE_BONUS = 1.07;
     private static final double LEVEL_3_BONUS = 1.15;
@@ -33,6 +40,7 @@ public class DamageManager {
 
     public DamageManager(ItemStatsManager itemStatsManager) {
         this.itemStatsManager = itemStatsManager;
+        this.passiveRegistry = ItemPassivesRegistry.getInstance();
     }
 
     public void enableAdaptiveScaling() {
@@ -50,17 +58,23 @@ public class DamageManager {
     public void enableOnlyAP() {
         this.isOnlyAP = true;
     }
-    public boolean isMagicDamage() {
-        return isOnlyAP;
+    public void enableProjectileDamage() {
+        this.isProjectileDamage = true;
+    }
+    public double getLastBonusMagicDamage() {
+        return lastBonusMagicDamage;
     }
 
+    public boolean isMagicDamage() {
+        return isOnlyAP || (isAdaptiveDamage && prefersMagic);
+    }
 
     public double DamageCalculation(Entity source, Entity target, int currentStacks, double runesAdaptive, double runesTrueDamage, double procDamage) {
         ItemStatsManager statsManager = LeagueMechanics.getInstance().getStatsManager();
         boolean isPlayerSource = source instanceof Player;
 
         double itemAP = 0, itemAD = 0, doransBonus = 0, shardsAdOrAp = 0;
-        double af, rawAD, rawAP, attackerAD, attackerAP, playerTD, itemAPen, itemAPenPercent, itemMPen, itemMPenPercent, leagueLevel;
+        double af, rawAD, rawAP, sourceAD, sourceAP, playerTD, itemAPen, itemAPenPercent, itemMPen, itemMPenPercent, leagueLevel;
         PlayerStats stats;
 
         if (isPlayerSource) {
@@ -101,13 +115,13 @@ public class DamageManager {
             leagueLevel = 1.0;
         }
 
-        attackerAD = rawAD + doransBonus;
-        attackerAP = rawAP;
+        sourceAD = rawAD + doransBonus;
+        sourceAP = rawAP;
 
         if (af <= ADAPTIVE_DAMAGE_THRESHOLD) {
-            attackerAD += shardsAdOrAp;
+            sourceAD += shardsAdOrAp;
         } else {
-            attackerAP += shardsAdOrAp;
+            sourceAP += shardsAdOrAp;
         }
 
         double targetAR = getTargetAR(target);
@@ -121,24 +135,34 @@ public class DamageManager {
         double baseDamage;
 
         if (isOnlyAP) {
-            baseDamage = applyResistance(procDamage * levelBasedBonusForLevel(leagueLevel), true, targetAR, targetMR, apenFlat, apenPercent, mpenFlat, mpenPercent);
+            baseDamage = applyResistance(procDamage * levelBasedBonusForLevel(leagueLevel), true, targetAR, targetMR, apenFlat, apenPercent, mpenFlat, mpenPercent) / DAMAGE_BALANCER;
         } else if (isTrueDamage) {
-            baseDamage = playerTD
-                    + ((attackerAD + attackerAP) * (runesTrueDamage / 100.0));
+            baseDamage = (playerTD
+                    + ((sourceAD + sourceAP) * (runesTrueDamage / 100.0))) / DAMAGE_BALANCER;
         } else if (isAdaptiveDamage) {
             double adaptive = runesAdaptive * levelBasedBonusForLevel(leagueLevel);
             if (isAdaptiveScaling) {
-                adaptive += adaptive * af;
+                adaptive += adaptive + af;
             }
             boolean preferMagic = itemAP > itemAD;
-            baseDamage = applyResistance(adaptive, preferMagic, targetAR, targetMR, apenFlat, apenPercent, mpenFlat, mpenPercent);
+            this.prefersMagic = preferMagic;
+            baseDamage = applyResistance(adaptive, preferMagic, targetAR, targetMR, apenFlat, apenPercent, mpenFlat, mpenPercent) / DAMAGE_BALANCER;
         } else {
-            double physical = applyResistance(attackerAD, false, targetAR, targetMR, apenFlat, apenPercent, mpenFlat, mpenPercent);
-            baseDamage = (physical) / DAMAGE_BALANCER;
+            double physical = applyResistance(sourceAD, false, targetAR, targetMR, apenFlat, apenPercent, mpenFlat, mpenPercent);
+            baseDamage = physical / DAMAGE_BALANCER;
         }
 
         int stacks = isPerStack ? currentStacks : 1;
-        return (baseDamage + procDamage) * stacks;
+
+        if (isProjectileDamage && isPlayerSource) {
+            double bonusMagic = applyResistance(sourceAP * 0.6, true, targetAR, targetMR, itemAPen, itemAPenPercent, itemMPen, itemMPenPercent);
+            lastBonusMagicDamage = bonusMagic / DAMAGE_BALANCER;
+            baseDamage += lastBonusMagicDamage;
+        }
+        
+        double finalDamage = (baseDamage + procDamage) * stacks;
+
+        return finalDamage;
     }
 
     private double applyResistance(double damage, boolean isMagic, double targetAR, double targetMR,

@@ -124,8 +124,9 @@ public class GraspOfTheUndying extends StacksHandler {
 
         double newHealth = Math.clamp(livingTarget.getHealth() - damageToApply, 0, livingTarget.getMaxHealth());
 
-        DebugLogger.debug(player, "§7[Debug] §f[§dAttacker§f] §f[§aGrasp Of The Undying§f] Keystone Damage = §d" + (keystoneDamage(player, target) * absorptionHearts * 0.2));
-        DebugLogger.debug(player, "§7[Debug] §f[§dTarget§f] Target New HP = §d" + newHealth);
+        DebugLogger.debug(player, "§f[§dSource§f] §f[§aGrasp Of The Undying§f] Keystone Damage = §d" + (keystoneDamage(player, target) * absorptionHearts * 0.2));
+        DebugLogger.debug(player, "§f[§dSource§f] Keystone Damage Type = §dPhysical Damage");
+        DebugLogger.debug(player, "§f[§dTarget§f] Target New HP = §d" + newHealth);
 
         if (livingTarget instanceof Player livingPlayer) {
             KillSourceTracker.getInstance().setSource(livingPlayer, player);

@@ -1,6 +1,7 @@
 package dev.ixpu.leaguemechanics.entity.player;
 
 import dev.ixpu.leaguemechanics.LeagueMechanics;
+import dev.ixpu.leaguemechanics.listener.DamageListener;
 import dev.ixpu.leaguemechanics.manager.ItemStatsManager;
 import dev.ixpu.leaguemechanics.rune.keystones.precision.LethalTempo;
 import dev.ixpu.leaguemechanics.rune.keystones.domination.HailOfBlades;
@@ -471,10 +472,17 @@ public class PlayerStats {
             sb.append(" §3❄ (").append(String.format("%.1f", remaining)).append("s)");
         }
 
+        long parryCd = DamageListener.getParryCooldown(player.getUniqueId());
+        if (parryCd > System.currentTimeMillis()) {
+            double remaining = (parryCd - System.currentTimeMillis()) / 1000.0;
+            sb.append(" §7⚔ ").append(String.format("%.1f", remaining));
+        }
+
         dev.ixpu.leaguemechanics.manager.ItemPassivesManager passiveManager =
                 dev.ixpu.leaguemechanics.manager.ItemPassivesManager.getInstance();
         if (passiveManager != null) {
             appendPassiveCooldown(sb, passiveManager, player, "hextech-alternator", "§7🕹");
+            appendPassiveCooldown(sb, passiveManager, player, "scouts-slingshot", "§7⌖");
             appendPassiveCooldown(sb, passiveManager, player, "hexdrinker", "§7🛡");
             appendPassiveCooldown(sb, passiveManager, player, "bamis-cinder", "§7🔥");
             appendPassiveCooldown(sb, passiveManager, player, "verdant-barrier", "§7⛨");

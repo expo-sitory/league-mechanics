@@ -2,6 +2,8 @@ package dev.ixpu.leaguemechanics.rune.keystones.domination;
 
 import dev.ixpu.leaguemechanics.LeagueMechanics;
 import dev.ixpu.leaguemechanics.entity.player.PlayerStats;
+import dev.ixpu.leaguemechanics.item.passives.ItemPassive;
+import dev.ixpu.leaguemechanics.item.passives.ItemPassivesRegistry;
 import dev.ixpu.leaguemechanics.util.DebugLogger;
 
 import dev.ixpu.leaguemechanics.rune.RunePath;
@@ -13,6 +15,7 @@ import dev.ixpu.leaguemechanics.manager.KillSourceTracker;
 
 import dev.ixpu.leaguemechanics.listener.PlayerEventListener;
 
+import dev.ixpu.leaguemechanics.util.ItemModifier;
 import org.bukkit.Sound;
 import org.bukkit.entity.Player;
 import org.bukkit.entity.Entity;
@@ -20,6 +23,7 @@ import org.bukkit.entity.LivingEntity;
 import org.bukkit.configuration.ConfigurationSection;
 
 import net.kyori.adventure.text.Component;
+import org.bukkit.inventory.ItemStack;
 
 
 public class DarkHarvest extends StacksHandler {
@@ -33,6 +37,7 @@ public class DarkHarvest extends StacksHandler {
 
     private LeagueMechanics plugin;
     private PlayerEventListener listener;
+    private boolean lastDamageWasMagic = false;
 
     public DarkHarvest(ConfigurationSection config, PlayerEventListener listener) {
         super("dark-harvest", RunePath.DOMINATION, RuneSlot.KEYSTONE, 20);
@@ -92,13 +97,30 @@ public class DarkHarvest extends StacksHandler {
         if (healthPercent >= threshold) {
             return;
         }
-
-        DebugLogger.debug(player, "§7[Debug] §f[§dAttacker Stats§f] §f[§cDark Harvest§f] Keystone Damage = §d" + Math.ceil(keystoneDamage(player, target) * 100) / 100.0);
-        DebugLogger.debug(player, "§7[Debug] §f[§dTarget§f] Target New HP = §d" + Math.ceil(newHealth * 100) / 100.0);
-
         if (livingTarget instanceof Player livingTargetPlayer) {
             KillSourceTracker.getInstance().setSource(livingTargetPlayer, player);
         }
+
+        String DamageType;
+        boolean isMagic = lastDamageWasMagic;
+
+        if (isMagic) {
+            DamageType = "Magic Damage";
+            for (ItemStack inv : player.getInventory().getContents()) {
+                if (inv == null || inv.getType().isAir()) continue;
+                String itemId = ItemModifier.getItemId(inv);
+                ItemPassive passive = ItemPassivesRegistry.getInstance().getPassive(itemId);
+                if (passive != null) {
+                    passive.onDealDamage(player, livingTarget, damageToApply, false, true);
+                }
+            }
+        } else {
+            DamageType = "Physical Damage";
+        }
+
+        DebugLogger.debug(player, "§f[§dSource§f] §f[§cDark Harvest§f] Keystone Damage = §d" + Math.ceil(keystoneDamage(player, target) * 100) / 100.0 + "§f | Type = §d" + DamageType);
+        DebugLogger.debug(player, "§f[§dTarget§f] New Health = §d" + Math.ceil(newHealth * 100) / 100.0);
+
         livingTarget.setHealth(newHealth);
 
         if (isOnCooldown(player)) {
@@ -113,9 +135,10 @@ public class DarkHarvest extends StacksHandler {
         DamageManager damageManager = new DamageManager(LeagueMechanics.getInstance().getStatsManager());
         damageManager.enablePerStackScaling();
         damageManager.enableAdaptiveDamage();
-
         int currentStacks = getStacks(player);
-        return damageManager.DamageCalculation(player, target, currentStacks, BASE_ADAPTIVE_DAMAGE_PER_STACK, 0, 0);
+        double damage = damageManager.DamageCalculation(player, target, currentStacks, BASE_ADAPTIVE_DAMAGE_PER_STACK, 0, 0);
+        this.lastDamageWasMagic = damageManager.isMagicDamage();
+        return damage;
     }
 
     private void scheduleAddStack(Player attacker) {

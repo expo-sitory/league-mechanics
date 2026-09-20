@@ -28,11 +28,8 @@ public class PlayerKDA {
         }
     }
 
-    /**
-     * Clears all KDA data from the database.
-     */
     public void clearAllKda() {
-        String query = "DELETE FROM player_kda";
+        String query = "DELETE FROM leaguemechanics_player_kda";
 
         try (Connection connection = mysqlManager.getConnection();
              PreparedStatement statement = connection.prepareStatement(query)) {
@@ -98,7 +95,7 @@ public class PlayerKDA {
 
     public void loadAllFromDatabase() {
         playerData.clear();
-        String query = "SELECT uuid, kills, deaths, assists FROM player_kda";
+        String query = "SELECT uuid, kills, deaths, assists FROM leaguemechanics_player_kda";
 
         try (Connection connection = mysqlManager.getConnection();
              PreparedStatement statement = connection.prepareStatement(query);

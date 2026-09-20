@@ -34,23 +34,6 @@ public class ItemStatsRegistry {
     public ItemStatsRegistry(String id, String name,
                              double hp, double hr, double ad, double ap, double td, double as,
                              double ar, double mr, double ls, double cc, double sr, double ms,
-                             boolean hasPassive, String passiveId) {
-        this(id, name, hp, hr, ad, ap, td, as, ar, mr, ls, cc, sr, ms, hasPassive, passiveId,
-                0.0, 0.0, 0.0, 0.0, 0.0);
-    }
-
-    public ItemStatsRegistry(String id, String name,
-                             double hp, double hr, double ad, double ap, double td, double as,
-                             double ar, double mr, double ls, double cc, double sr, double ms,
-                             boolean hasPassive, String passiveId,
-                             double apenFlat, double apenPercent, double mpenFlat, double mpenPercent) {
-        this(id, name, hp, hr, ad, ap, td, as, ar, mr, ls, cc, sr, ms, hasPassive, passiveId,
-                apenFlat, apenPercent, mpenFlat, mpenPercent, 0.0);
-    }
-
-    public ItemStatsRegistry(String id, String name,
-                             double hp, double hr, double ad, double ap, double td, double as,
-                             double ar, double mr, double ls, double cc, double sr, double ms,
                              boolean hasPassive, String passiveId,
                              double apenFlat, double apenPercent, double mpenFlat, double mpenPercent,
                              double ch) {

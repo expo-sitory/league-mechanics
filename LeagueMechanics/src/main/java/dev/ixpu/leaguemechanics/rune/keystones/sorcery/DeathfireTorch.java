@@ -2,6 +2,8 @@ package dev.ixpu.leaguemechanics.rune.keystones.sorcery;
 
 import dev.ixpu.leaguemechanics.LeagueMechanics;
 import dev.ixpu.leaguemechanics.entity.player.PlayerStats;
+import dev.ixpu.leaguemechanics.item.passives.ItemPassive;
+import dev.ixpu.leaguemechanics.item.passives.ItemPassivesRegistry;
 import dev.ixpu.leaguemechanics.util.DebugLogger;
 
 import dev.ixpu.leaguemechanics.rune.CooldownHandler;
@@ -19,6 +21,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
 
+import dev.ixpu.leaguemechanics.util.ItemModifier;
 import org.bukkit.Sound;
 import org.bukkit.entity.Player;
 import org.bukkit.entity.Entity;
@@ -141,6 +144,15 @@ public class DeathfireTorch extends CooldownHandler {
         damages.put(victimUUID, burnDamagePerTick);
         targets.put(victimUUID, victim);
 
+        for (ItemStack inv : attacker.getInventory().getContents()) {
+            if (inv == null || inv.getType().isAir()) continue;
+            String itemId = ItemModifier.getItemId(inv);
+            ItemPassive passive = ItemPassivesRegistry.getInstance().getPassive(itemId);
+            if (passive != null) {
+                passive.onDealDamage(attacker, victim, burnDamagePerTick, false, true);
+            }
+        }
+
         attacker.playSound(victim.getLocation(), org.bukkit.Sound.BLOCK_FIRE_AMBIENT, 0.5f, 0.8f);
     }
 
@@ -244,8 +256,9 @@ public class DeathfireTorch extends CooldownHandler {
                         }
 
                         double newHealth = Math.max(0, target.getHealth() - damagePerTick);
-                        DebugLogger.debug(player, "§7[Debug] §f[§dAttacker§f] §f[§9Deathfire Torch§f] Keystone Damage = §d" + Math.ceil(damagePerTick * 100) / 100.0);
-                        DebugLogger.debug(player, "§7[Debug] §f[§dTarget§f] Target New HP = §d" + Math.ceil(newHealth * 100) / 100.0);
+                        DebugLogger.debug(player, "§f[§dSource§f] §f[§9Deathfire Torch§f] Keystone Damage = §d" + Math.ceil(damagePerTick * 100) / 100.0);
+                        DebugLogger.debug(player, "§f[§dSource§f] Keystone Damage Type = §dMagic Damage");
+                        DebugLogger.debug(player, "§f[§dTarget§f] Target New HP = §d" + Math.ceil(newHealth * 100) / 100.0);
                         if (target instanceof Player targetPlayer) {
                             KillSourceTracker.getInstance().setSource(targetPlayer, player);
                         }

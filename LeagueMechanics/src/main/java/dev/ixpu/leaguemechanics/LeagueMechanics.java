@@ -1,7 +1,5 @@
 package dev.ixpu.leaguemechanics;
 
-import dev.ixpu.leaguemechanics.gui.ClassSelectionGUI;
-
 import dev.ixpu.leaguemechanics.placeholder.PlaceholderRegistry;
 import dev.ixpu.leaguemechanics.entity.player.PlayerStats;
 import dev.ixpu.leaguemechanics.util.ItemModifier;
@@ -95,7 +93,7 @@ public class LeagueMechanics extends JavaPlugin {
 
         saveDefaultConfig();
         reloadConfig();
-        debugMode = getConfig().getBoolean("debug", false);
+        debugMode = getConfig().getBoolean("general-settings.debug", false);
 
         // Initialize MobStats with plugin reference to load configuration
         MobStats.initialize(this);
@@ -231,7 +229,7 @@ public class LeagueMechanics extends JavaPlugin {
         Objects.requireNonNull(getCommand("leaguemechanics")).setTabCompleter(tabCompleter);
         getLogger().info("Commands registered!");
     }
-
+    // https://gp.empowerservers.com/server/ca80db5e/console/popup
     public void registerRegenTask() {
         new BukkitRunnable() {
             @Override
@@ -239,6 +237,10 @@ public class LeagueMechanics extends JavaPlugin {
                 ItemStatsManager itemStatsManager = getStatsManager();
 
                 for (Player player : Bukkit.getOnlinePlayers()) {
+                    if (player.isDead() || player.getHealth() <= 0) {
+                        continue;
+                    }
+
                     double healthRegen = itemStatsManager.getItemHR(player) + PlayerStats.getOrCreate(player).getRuneShards(player).getHealthRegen();
                     double saturationRegen = itemStatsManager.getItemSR(player);
 
@@ -278,14 +280,6 @@ public class LeagueMechanics extends JavaPlugin {
             @Override
             public void run() {
                 for (Player player : Bukkit.getOnlinePlayers()) {
-                    if (!ClassSelectionGUI.hasPlayerSelectedClass(player)) {
-                        org.bukkit.inventory.InventoryView view = player.getOpenInventory();
-                        if (view.getType() == org.bukkit.event.inventory.InventoryType.CRAFTING
-                                || view.getType() == org.bukkit.event.inventory.InventoryType.CREATIVE) {
-                            ClassSelectionGUI.openForPlayer(player);
-                        }
-                    }
-
                     ItemStack[] inventoryContents = player.getInventory().getContents();
                     for (int i = 0; i < 9; i++) {
                         ItemStack item = inventoryContents[i];

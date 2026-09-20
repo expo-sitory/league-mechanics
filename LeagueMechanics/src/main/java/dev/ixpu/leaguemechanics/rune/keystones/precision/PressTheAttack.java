@@ -2,6 +2,8 @@ package dev.ixpu.leaguemechanics.rune.keystones.precision;
 
 import dev.ixpu.leaguemechanics.LeagueMechanics;
 import dev.ixpu.leaguemechanics.entity.player.PlayerStats;
+import dev.ixpu.leaguemechanics.item.passives.ItemPassive;
+import dev.ixpu.leaguemechanics.item.passives.ItemPassivesRegistry;
 import dev.ixpu.leaguemechanics.util.DebugLogger;
 
 import dev.ixpu.leaguemechanics.rune.RunePath;
@@ -15,6 +17,7 @@ import dev.ixpu.leaguemechanics.listener.PlayerEventListener;
 
 import java.util.*;
 
+import dev.ixpu.leaguemechanics.util.ItemModifier;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.entity.Entity;
@@ -22,6 +25,7 @@ import org.bukkit.entity.LivingEntity;
 import org.bukkit.configuration.ConfigurationSection;
 
 import net.kyori.adventure.text.Component;
+import org.bukkit.inventory.ItemStack;
 
 
 public class PressTheAttack extends StacksHandler {
@@ -31,6 +35,7 @@ public class PressTheAttack extends StacksHandler {
     int COOLDOWN_DURATION_SECONDS;
 
     private PlayerEventListener listener;
+    private boolean lastDamageWasMagic = false;
 
     private static final int MAX_STACKS = 3;
 
@@ -93,14 +98,31 @@ public class PressTheAttack extends StacksHandler {
 
             double newHealth = Math.clamp(livingTarget.getHealth() - damageToApply, 0, livingTarget.getMaxHealth());
 
-            DebugLogger.debug(player, "§7[Debug] §f[§dAttacker§f] §f[§ePress The Attack§f] Keystone Damage = §d" + Math.ceil(keystoneDamage(player, target) * 100) / 100.0);
-            DebugLogger.debug(player, "§7[Debug] §f[§dTarget§f] Target New HP = §d" + Math.ceil(newHealth * 100) / 100.0);
-
             if (livingTarget instanceof Player livingPlayer) {
                 KillSourceTracker.getInstance().setSource(livingPlayer, player);
             }
-            livingTarget.setHealth(newHealth);
+            String DamageType;
+            boolean isMagic = lastDamageWasMagic;
 
+            if (isMagic) {
+                DamageType = "Magic Damage";
+                for (ItemStack inv : player.getInventory().getContents()) {
+                    if (inv == null || inv.getType().isAir()) continue;
+                    String itemId = ItemModifier.getItemId(inv);
+                    ItemPassive passive = ItemPassivesRegistry.getInstance().getPassive(itemId);
+                    if (passive != null) {
+                        passive.onDealDamage(player, livingTarget, damageToApply, false, true);
+                    }
+                }
+            } else {
+                DamageType = "Physical Damage";
+            }
+
+            DebugLogger.debug(player, "§f[§dSource§f] §f[§ePress The Attack§f] Keystone Damage = §d" + Math.ceil(keystoneDamage(player, target) * 100) / 100.0);
+            DebugLogger.debug(player, "§f[§dSource§f] Keystone Damage Type = §d" + DamageType);
+            DebugLogger.debug(player, "§f[§dTarget§f] Target New HP = §d" + Math.ceil(newHealth * 100) / 100.0);
+
+            livingTarget.setHealth(newHealth);
             resetStacksForTarget(player, targetUUID);
 
             Bukkit.dispatchCommand(Bukkit.getConsoleSender(), "press-the-attack-stack-sound " + player.getName());
@@ -114,7 +136,9 @@ public class PressTheAttack extends StacksHandler {
     private double keystoneDamage(Player player, Entity target) {
         DamageManager damageManager = new DamageManager(LeagueMechanics.getInstance().getStatsManager());
         damageManager.enableAdaptiveDamage();
-        return damageManager.DamageCalculation(player, target, 0, BASE_ADAPTIVE_DAMAGE, 0, 0);
+        double damage = damageManager.DamageCalculation(player, target, 0, BASE_ADAPTIVE_DAMAGE, 0, 0);
+        this.lastDamageWasMagic = damageManager.isMagicDamage();
+        return damage;
     }
 
     private int trackActiveStacks(Player player) {

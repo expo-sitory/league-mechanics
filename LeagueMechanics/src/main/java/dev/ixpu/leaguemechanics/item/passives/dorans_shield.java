@@ -13,7 +13,7 @@ public class dorans_shield implements ItemPassive {
 
     @Override
     public String getDescription() {
-        return "§7ᴜɴɪQᴜᴇ – ʜᴇʟᴘɪɴɢ ʜᴀɴᴅ: §fAttacks deal §610 §lbonus\n§r§6physical damage §eon-hit §fagainst §eentities§r.";
+        return "§7ᴜɴɪQᴜᴇ – ʜᴇʟᴘɪɴɢ ʜᴀɴᴅ: §fAttacks deal §6" + ONHIT_AD_BONUS + " bonus\n§r§6physical damage §eon-hit §fagainst §eentities§r.";
     }
 
     @Override
