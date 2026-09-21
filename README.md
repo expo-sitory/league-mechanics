@@ -5,7 +5,7 @@
 </div>
 
 ### Player Statistics
-When referring to player units a statistic measures the magnitude of an unmodified basic attribute or capability. For example: how durable the unit is; how fast it is able to move; how quickly it is able to perform attacks; etc. An effect (e.g. how much damage an attack deals) that increases in strength by a statistic is said to "scale with" or "scale off of" that statistic. Scaling type can either directly or indirectly influence the player's capabilities, and often slightly correlates to the player's country.
+When referring to player units a statistic measures the magnitude of an unmodified basic attribute or capability. For example: how durable the unit is; how fast it is able to move; how quickly it is able to perform attacks; etc. An effect (e.g. how much damage an attack deals) that increases in strength by a statistic is said to "scale with" or "scale off of" that statistic. Scaling type can either directly or indirectly influence the player's capabilities, and often slightly correlates to the player's class.
 
 Units are typically given a group of non-zero, fundamental base stats by the server rules, while the remaining stats always have a base value of zero. A subset of those non-zero base stats can naturally improve, or grow, by progressing.
 
