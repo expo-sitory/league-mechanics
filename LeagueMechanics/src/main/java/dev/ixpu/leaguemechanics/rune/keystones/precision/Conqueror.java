@@ -80,22 +80,11 @@ public class Conqueror extends StacksHandler {
 
         double damageToApply = keystoneDamage(player, target, getStacks(player, targetUUID));
 
-        if (livingTarget instanceof Player targetPlayer) {
-            double absorption = targetPlayer.getAbsorptionAmount();
-            if (damageToApply > absorption) {
-                damageToApply -= absorption;
-                targetPlayer.setAbsorptionAmount(0);
-            } else {
-                targetPlayer.setAbsorptionAmount(absorption - damageToApply);
-                damageToApply = 0;
-            }
-        }
-
-        double newHealth = Math.clamp(livingTarget.getHealth() - damageToApply, 0, livingTarget.getMaxHealth());
-
         if (livingTarget instanceof Player livingPlayer) {
             KillSourceTracker.getInstance().setSource(livingPlayer, player);
         }
+        livingTarget.damage(damageToApply);
+
         String DamageType;
         boolean isMagic = lastDamageWasMagic;
 
@@ -115,9 +104,6 @@ public class Conqueror extends StacksHandler {
 
         DebugLogger.debug(player, "§f[§dSource§f] [§eConqueror§f] Keystone Damage = §d" + Math.ceil(keystoneDamage(player, target, getStacks(player, targetUUID)) * 100) / 100.0);
         DebugLogger.debug(player, "§f[§dSource§f] Keystone Damage Type = §d" + DamageType);
-        DebugLogger.debug(player, "§f[§dTarget§f] Target New HP = §d" + Math.ceil(newHealth * 100) / 100.0);
-
-        livingTarget.setHealth(newHealth);
     }
 
     private double keystoneDamage(Player player, Entity target, int currentStacks) {

@@ -138,8 +138,10 @@ public class GlacialAugment extends CooldownHandler {
 
         List<org.bukkit.Location> placedThisActivation = new ArrayList<>();
         for (org.bukkit.Location snowLoc : snowLocations) {
+            snowLoc.getChunk().load();
             if (snowLoc.getBlock().getType() == org.bukkit.Material.AIR) {
                 snowLoc.getBlock().setType(org.bukkit.Material.POWDER_SNOW);
+                snowLoc.getBlock().getState().update();
                 placedThisActivation.add(snowLoc.clone());
             }
         }

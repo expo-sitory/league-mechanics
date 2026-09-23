@@ -4,6 +4,8 @@ import dev.ixpu.leaguemechanics.rune.CooldownHandler;
 import dev.ixpu.leaguemechanics.rune.RunePath;
 import dev.ixpu.leaguemechanics.rune.RuneSlot;
 import dev.ixpu.leaguemechanics.entity.player.PlayerStats;
+import dev.ixpu.leaguemechanics.LeagueMechanics;
+import dev.ixpu.leaguemechanics.manager.ItemStatsManager;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -13,8 +15,6 @@ import java.util.UUID;
 
 import org.bukkit.Sound;
 import org.bukkit.entity.Player;
-import org.bukkit.potion.PotionEffect;
-import org.bukkit.potion.PotionEffectType;
 import org.bukkit.configuration.ConfigurationSection;
 
 import net.kyori.adventure.text.Component;
@@ -22,26 +22,35 @@ import net.kyori.adventure.text.Component;
 public class Guardian extends CooldownHandler {
 
     private int MAX_PLAYERS;
-    private double ABSORPTION_PERCENTAGE;
+    private double BASE_ARMOR;
+    private double BASE_MAGIC_RESIST;
+    private double ARMOR_PERCENTAGE;
+    private double MAGIC_RESIST_PERCENTAGE;
 
     private int COOLDOWN_SECONDS;
 
-    private static final double DETECTION_RANGE = 10.0;
+    private static final double DETECTION_RANGE = 3.0;
     private final static int PEACE_DURATION_TICKS = 200;
     private final static int GUARD_RAISE_DURATION_TICKS = 200;
-    private final static int ABSORPTION_DURATION_TICKS = 1000;
+    private final static int BUFF_DURATION_TICKS = 400;
 
     private final Map<UUID, List<UUID>> trackedPlayers = new HashMap<>();
     private final Map<UUID, Integer> windupCounter = new HashMap<>();
     private final Map<UUID, Long> lastShieldTime = new HashMap<>();
     private final Map<UUID, Long> lastCombatTime = new HashMap<>();
+    private final Map<UUID, Integer> buffTaskIds = new HashMap<>();
+    private final Map<UUID, Map<UUID, Double>> appliedArmorBonuses = new HashMap<>();
+    private final Map<UUID, Map<UUID, Double>> appliedMRBonuses = new HashMap<>();
 
     public Guardian(ConfigurationSection config) {
         super("guardian", RunePath.RESOLVE, RuneSlot.KEYSTONE);
         ConfigurationSection section = config.getConfigurationSection("runes.keystones.resolve.guardian");
         if (section != null) {
             this.MAX_PLAYERS = section.getInt("max-players", this.MAX_PLAYERS);
-            this.ABSORPTION_PERCENTAGE = section.getDouble("absorption-percentage", this.ABSORPTION_PERCENTAGE);
+            this.BASE_ARMOR = section.getDouble("base-armor", this.BASE_ARMOR);
+            this.BASE_MAGIC_RESIST = section.getDouble("base-magic-resist", this.BASE_MAGIC_RESIST);
+            this.ARMOR_PERCENTAGE = section.getDouble("armor-percentage", this.ARMOR_PERCENTAGE);
+            this.MAGIC_RESIST_PERCENTAGE = section.getDouble("magic-resist-percentage", this.MAGIC_RESIST_PERCENTAGE);
             this.COOLDOWN_SECONDS = section.getInt("cooldown", this.COOLDOWN_SECONDS);
         }
         this.setCooldownSeconds(COOLDOWN_SECONDS);
@@ -54,16 +63,29 @@ public class Guardian extends CooldownHandler {
         windupCounter.put(uuid, 0);
         lastShieldTime.put(uuid, 0L);
         lastCombatTime.put(uuid, 0L);
+        buffTaskIds.put(uuid, -1);
+        appliedArmorBonuses.put(uuid, new HashMap<>());
+        appliedMRBonuses.put(uuid, new HashMap<>());
     }
 
     @Override
     public void onDisable(Player player) {
         UUID uuid = player.getUniqueId();
         clearPlayerCooldown(player);
+
+        Integer taskId = buffTaskIds.remove(uuid);
+        if (taskId != null && taskId != -1) {
+            LeagueMechanics.getInstance().getServer().getScheduler().cancelTask(taskId);
+        }
+
+        clearAllResistances(player);
+
         trackedPlayers.remove(uuid);
         windupCounter.remove(uuid);
         lastShieldTime.remove(uuid);
         lastCombatTime.remove(uuid);
+        appliedArmorBonuses.remove(uuid);
+        appliedMRBonuses.remove(uuid);
     }
 
     public void onPlayerDamage(Player victim, double damage) {
@@ -188,7 +210,7 @@ public class Guardian extends CooldownHandler {
         UUID playerUUID = player.getUniqueId();
         List<UUID> shields = trackedPlayers.getOrDefault(playerUUID, new ArrayList<>());
 
-        applyShield(player);
+        applyResistances(player);
         player.playSound(player.getLocation(), Sound.ITEM_TRIDENT_RETURN, 1.0f, 1.5f);
 
         int count = 0;
@@ -197,26 +219,96 @@ public class Guardian extends CooldownHandler {
 
             Player trackedPlayer = player.getServer().getPlayer(trackedUUID);
             if (trackedPlayer != null && trackedPlayer.isOnline()) {
-                applyShield(trackedPlayer);
-                trackedPlayer.playSound(trackedPlayer.getLocation(), org.bukkit.Sound.ITEM_TRIDENT_RETURN, 1.0f, 0.5f);
+                applyResistances(trackedPlayer);
+                trackedPlayer.playSound(trackedPlayer.getLocation(), Sound.ITEM_TRIDENT_RETURN, 1.0f, 0.5f);
                 count++;
             }
         }
         resetCooldown(player);
     }
 
-    private void applyShield(Player player) {
+    private void applyResistances(Player player) {
+        UUID playerUUID = player.getUniqueId();
+        ItemStatsManager itemStatsManager = LeagueMechanics.getInstance().getStatsManager();
 
-        int maxHealth = (int) Math.ceil(player.getMaxHealth());
-        int absorbAmount = (int) Math.ceil(maxHealth * (ABSORPTION_PERCENTAGE / 100) / 4.0);
+        double itemAR = (itemStatsManager != null) ? itemStatsManager.getItemAR(player) : 0.0;
+        double bonusArmor = BASE_ARMOR + (ARMOR_PERCENTAGE / 100.0 * Math.max(0, itemAR));
 
-        player.addPotionEffect(new PotionEffect(
-                PotionEffectType.ABSORPTION,
-                ABSORPTION_DURATION_TICKS,
-                Math.min(absorbAmount, 255),
-                false,
-                false
-        ));
+        double itemMR = (itemStatsManager != null) ? itemStatsManager.getItemMR(player) : 0.0;
+        double bonusMR = BASE_MAGIC_RESIST + (MAGIC_RESIST_PERCENTAGE / 100.0 * itemMR);
+
+        PlayerStats stats = PlayerStats.getOrCreate(player);
+        stats.modifyAR(bonusArmor);
+        stats.modifyMR(bonusMR);
+
+        Map<UUID, Double> armorMap = appliedArmorBonuses.getOrDefault(playerUUID, new HashMap<>());
+        Map<UUID, Double> mrMap = appliedMRBonuses.getOrDefault(playerUUID, new HashMap<>());
+        armorMap.put(playerUUID, bonusArmor);
+        mrMap.put(playerUUID, bonusMR);
+        appliedArmorBonuses.put(playerUUID, armorMap);
+        appliedMRBonuses.put(playerUUID, mrMap);
+
+        Integer existingTaskId = buffTaskIds.getOrDefault(playerUUID, -1);
+        if (existingTaskId != -1) {
+            LeagueMechanics.getInstance().getServer().getScheduler().cancelTask(existingTaskId);
+        }
+
+        int[] taskId = { -1 };
+        taskId[0] = LeagueMechanics.getInstance().getServer().getScheduler().scheduleSyncDelayedTask(
+                LeagueMechanics.getInstance(),
+                () -> clearResistance(player, playerUUID),
+                BUFF_DURATION_TICKS
+        );
+        buffTaskIds.put(playerUUID, taskId[0]);
+    }
+
+    private void clearResistance(Player player, UUID playerUUID) {
+        if (!player.isOnline()) {
+            appliedArmorBonuses.remove(playerUUID);
+            appliedMRBonuses.remove(playerUUID);
+            buffTaskIds.remove(playerUUID);
+            return;
+        }
+
+        PlayerStats stats = PlayerStats.getOrCreate(player);
+        Double armorBonus = appliedArmorBonuses.getOrDefault(playerUUID, new HashMap<>()).remove(playerUUID);
+        Double mrBonus = appliedMRBonuses.getOrDefault(playerUUID, new HashMap<>()).remove(playerUUID);
+
+        if (armorBonus != null) {
+            stats.modifyAR(-armorBonus);
+        }
+        if (mrBonus != null) {
+            stats.modifyMR(-mrBonus);
+        }
+
+        buffTaskIds.put(playerUUID, -1);
+    }
+
+    private void clearAllResistances(Player player) {
+        UUID playerUUID = player.getUniqueId();
+        if (!player.isOnline()) {
+            appliedArmorBonuses.remove(playerUUID);
+            appliedMRBonuses.remove(playerUUID);
+            return;
+        }
+
+        PlayerStats stats = PlayerStats.getOrCreate(player);
+        Map<UUID, Double> armorMap = appliedArmorBonuses.getOrDefault(playerUUID, new HashMap<>());
+        Map<UUID, Double> mrMap = appliedMRBonuses.getOrDefault(playerUUID, new HashMap<>());
+
+        for (Double bonus : armorMap.values()) {
+            if (bonus != null) {
+                stats.modifyAR(-bonus);
+            }
+        }
+        for (Double bonus : mrMap.values()) {
+            if (bonus != null) {
+                stats.modifyMR(-bonus);
+            }
+        }
+
+        armorMap.clear();
+        mrMap.clear();
     }
 
     private void setPlayerDisplay(Player player, String runeDisplay) {

@@ -62,13 +62,15 @@ public class PlaceholderRegistry extends PlaceholderExpansion {
             case "primary_path_id_inactive-2" -> getInactivePrimaryPath(player, 2);
             case "primary_path_id_inactive-3" -> getInactivePrimaryPath(player, 3);
             case "primary_path_id_inactive-4" -> getInactivePrimaryPath(player, 4);
+            case "primary_path_id_inactive-5" -> getInactivePrimaryPath(player, 5);
             
             case "primary_path_mm" -> getPrimaryPathMM(player);
             case "primary_path_mm_inactive-1" -> getInactivePrimaryPathMM(player, 1);
             case "primary_path_mm_inactive-2" -> getInactivePrimaryPathMM(player, 2);
             case "primary_path_mm_inactive-3" -> getInactivePrimaryPathMM(player, 3);
             case "primary_path_mm_inactive-4" -> getInactivePrimaryPathMM(player, 4);
-            
+            case "primary_path_mm_inactive-5" -> getInactivePrimaryPathMM(player, 5);
+
             case "secondary_path" -> getSecondaryPath(player);
             case "secondary_path_mm" -> getSecondaryPathMM(player);
             
@@ -537,14 +539,14 @@ public class PlaceholderRegistry extends PlaceholderExpansion {
 
 
     private String getLine1(Player player, PlayerStats stats) {
-        double ad = stats.getPlayerAD(player);
-        double ap = stats.getPlayerAP(player);
+        double ad = stats.getPlayerAD(player) * stats.getDamageBalancer();
+        double ap = stats.getPlayerAP(player) * stats.getDamageBalancer();
         return "§6🗡 §7" + String.format("%-4.0f", ad) + "  §9☄ §7" + String.format("%-4.0f", ap);
     }
 
     private String getLine2(Player player, PlayerStats stats) {
-        double ar = stats.getPlayerAR(player);
-        double mr = stats.getPlayerMR(player);
+        double ar = stats.getPlayerAR(player) / stats.getResistanceBalancer();
+        double mr = stats.getPlayerMR(player) / stats.getResistanceBalancer();
         return "§e🛡 §7" + String.format("%-4.0f", ar) + "  §b⦿ §7" + String.format("%-4.0f", mr);
     }
 

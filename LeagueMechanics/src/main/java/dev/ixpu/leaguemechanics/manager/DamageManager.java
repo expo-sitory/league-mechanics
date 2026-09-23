@@ -15,9 +15,6 @@ public class DamageManager {
     private final ItemStatsManager itemStatsManager;
     private ItemPassivesRegistry passiveRegistry;
 
-    private static final double RESISTANCE_BALANCER = 4.5;
-    private static final double DAMAGE_BALANCER = 1.7;
-
     private double lastBonusMagicDamage = 0;
 
     protected boolean isAdaptiveScaling = false;
@@ -25,6 +22,7 @@ public class DamageManager {
     protected boolean isTrueDamage = false;
     protected boolean isPerStack = false;
     protected boolean isOnlyAP = false;
+    protected boolean isItemProc = false;
     private boolean prefersMagic = false;
     private boolean isProjectileDamage = false;
 
@@ -32,11 +30,11 @@ public class DamageManager {
 
     private static final double BASE_BONUS = 1.07;
     private static final double LEVEL_3_BONUS = 1.15;
-    private static final double LEVEL_8_BONUS = 1.3;
-    private static final double LEVEL_13_BONUS = 1.5;
-    private static final double LEVEL_18_BONUS = 1.7;
+    private static final double LEVEL_8_BONUS = 1.37;
+    private static final double LEVEL_13_BONUS = 1.85;
+    private static final double LEVEL_18_BONUS = 2.75;
 
-    private static final double ADAPTIVE_DAMAGE_THRESHOLD = 0.7;
+    private static final double ADAPTIVE_THRESHOLD = 0.7;
 
     public DamageManager(ItemStatsManager itemStatsManager) {
         this.itemStatsManager = itemStatsManager;
@@ -57,6 +55,9 @@ public class DamageManager {
     }
     public void enableOnlyAP() {
         this.isOnlyAP = true;
+    }
+    public void enableItemProc() {
+        this.isItemProc = true;
     }
     public void enableProjectileDamage() {
         this.isProjectileDamage = true;
@@ -91,6 +92,12 @@ public class DamageManager {
 
             itemAP = statsManager.getItemAP(player);
             itemAD = statsManager.getItemAD(player);
+            
+            if (af <= ADAPTIVE_THRESHOLD) {
+                itemAD += (itemAD * af) / stats.getDamageBalancer();
+            } else {
+                itemAP += (itemAP * af) / stats.getDamageBalancer();
+            }
 
             rawAD = stats.getPlayerAD(player);
             rawAP = stats.getPlayerAP(player);
@@ -118,7 +125,7 @@ public class DamageManager {
         sourceAD = rawAD + doransBonus;
         sourceAP = rawAP;
 
-        if (af <= ADAPTIVE_DAMAGE_THRESHOLD) {
+        if (af <= ADAPTIVE_THRESHOLD) {
             sourceAD += shardsAdOrAp;
         } else {
             sourceAP += shardsAdOrAp;
@@ -135,10 +142,16 @@ public class DamageManager {
         double baseDamage;
 
         if (isOnlyAP) {
-            baseDamage = applyResistance(procDamage * levelBasedBonusForLevel(leagueLevel), true, targetAR, targetMR, apenFlat, apenPercent, mpenFlat, mpenPercent) / DAMAGE_BALANCER;
+            double magicDamage;
+            if (isItemProc) {
+                magicDamage = procDamage;
+            } else {
+                magicDamage = procDamage * levelBasedBonusForLevel(leagueLevel);
+            }
+            baseDamage = applyResistance(magicDamage, true, targetAR, targetMR, apenFlat, apenPercent, mpenFlat, mpenPercent);
         } else if (isTrueDamage) {
             baseDamage = (playerTD
-                    + ((sourceAD + sourceAP) * (runesTrueDamage / 100.0))) / DAMAGE_BALANCER;
+                    + (sourceAD + sourceAP) * (runesTrueDamage / 100.0));
         } else if (isAdaptiveDamage) {
             double adaptive = runesAdaptive * levelBasedBonusForLevel(leagueLevel);
             if (isAdaptiveScaling) {
@@ -146,17 +159,17 @@ public class DamageManager {
             }
             boolean preferMagic = itemAP > itemAD;
             this.prefersMagic = preferMagic;
-            baseDamage = applyResistance(adaptive, preferMagic, targetAR, targetMR, apenFlat, apenPercent, mpenFlat, mpenPercent) / DAMAGE_BALANCER;
+            baseDamage = applyResistance(adaptive, preferMagic, targetAR, targetMR, apenFlat, apenPercent, mpenFlat, mpenPercent);
         } else {
             double physical = applyResistance(sourceAD, false, targetAR, targetMR, apenFlat, apenPercent, mpenFlat, mpenPercent);
-            baseDamage = physical / DAMAGE_BALANCER;
+            baseDamage = physical;
         }
 
         int stacks = isPerStack ? currentStacks : 1;
 
         if (isProjectileDamage && isPlayerSource) {
             double bonusMagic = applyResistance(sourceAP * 0.6, true, targetAR, targetMR, itemAPen, itemAPenPercent, itemMPen, itemMPenPercent);
-            lastBonusMagicDamage = bonusMagic / DAMAGE_BALANCER;
+            lastBonusMagicDamage = bonusMagic;
             baseDamage += lastBonusMagicDamage;
         }
         
@@ -173,7 +186,7 @@ public class DamageManager {
         double percentPen = isMagic ? mpenPercent : apenPercent;
 
         double effectiveResist = Math.max(0, resist - flatPen);
-        effectiveResist = (effectiveResist * (1.0 - percentPen / 100.0)) * RESISTANCE_BALANCER;
+        effectiveResist = effectiveResist * (1.0 - percentPen / 100.0);
 
         return damage / (1.0 + (effectiveResist / 100.0));
     }

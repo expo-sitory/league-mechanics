@@ -280,55 +280,55 @@ public class ItemShopGUI {
             }
 
             if (shopItem.getStats().getAd() > 0) {
-                lore.add("§6🗡 " + formatStat(shopItem.getStats().getAd()) + " §fAttack Damage");
+                lore.add("§6🗡 §f" + formatStat(shopItem.getStats().getAd()) + " §7Attack Damage");
             }
             if (shopItem.getStats().getAp() > 0) {
-                lore.add("§9☄ " + formatStat(shopItem.getStats().getAp()) + " §fAbility Power");
+                lore.add("§9☄ §f" + formatStat(shopItem.getStats().getAp()) + " §7Ability Power");
             }
             if (shopItem.getStats().getAr() > 0) {
-                lore.add("§e🛡 " + formatStat(shopItem.getStats().getAr()) + " §fArmor");
+                lore.add("§e🛡 §f" + formatStat(shopItem.getStats().getAr()) + " §7Armor");
             }
             if (shopItem.getStats().getMr() > 0) {
-                lore.add("§b⦿ " + formatStat(shopItem.getStats().getMr()) + " §fMagic Resist");
+                lore.add("§b⦿ §f" + formatStat(shopItem.getStats().getMr()) + " §7Magic Resist");
             }
             if (shopItem.getStats().getHp() > 0) {
-                lore.add("§a❤ " + formatStat(shopItem.getStats().getHp()) + " §fHealth");
+                lore.add("§a❤ §f" + formatStat(shopItem.getStats().getHp()) + " §7Health");
             }
             if (shopItem.getStats().getHr() > 0) {
-                lore.add("§2❣ " + formatStat(shopItem.getStats().getHr()) + " §fHealth Regen per 5 sec.");
+                lore.add("§2❣ §f" + formatStat(shopItem.getStats().getHr()) + " §7Health Regen per 5 sec.");
             }
             if (shopItem.getStats().getSr() > 0) {
-                lore.add("§6🍖 " + formatStat(shopItem.getStats().getSr()) + " §fSaturation Regen per 5 sec.");
+                lore.add("§6🍖 §f" + formatStat(shopItem.getStats().getSr()) + " §7Saturation Regen per 5 sec.");
             }
             if (shopItem.getStats().getAs() > 0) {
-                lore.add("§c➺ " + formatStat(shopItem.getStats().getAs()) + "% §fAttack Speed");
+                lore.add("§c➺ §f" + formatStat(shopItem.getStats().getAs()) + "% §7Attack Speed");
             }
             if (shopItem.getStats().getLs() > 0) {
-                lore.add("§4✚ " + formatStat(shopItem.getStats().getLs()) + "% §fLife Steal");
+                lore.add("§4✚ §f" + formatStat(shopItem.getStats().getLs()) + "% §7Life Steal");
             }
             if (shopItem.getStats().getCc() > 0) {
-                lore.add("§4➷ " + formatStat(shopItem.getStats().getCc()) + "% §fCritical Chance");
+                lore.add("§4➷ §f" + formatStat(shopItem.getStats().getCc()) + "% §7Critical Chance");
             }
             if (shopItem.getStats().getApenFlat() > 0) {
-                lore.add("§6🔰 " + formatStat(shopItem.getStats().getApenFlat()) + " §fLethality");
+                lore.add("§6🔰 §f" + formatStat(shopItem.getStats().getApenFlat()) + " §7Lethality");
             }
             if (shopItem.getStats().getApenPercent() > 0) {
-                lore.add("§6⛨ " + formatStat(shopItem.getStats().getApenPercent()) + "% §fArmor Penetration");
+                lore.add("§6⛨ §f" + formatStat(shopItem.getStats().getApenPercent()) + "% §7Armor Penetration");
             }
             if (shopItem.getStats().getMpenFlat() > 0) {
-                lore.add("§d🔘 " + formatStat(shopItem.getStats().getMpenFlat()) + " §fMagic Penetration");
+                lore.add("§d🔘 §f" + formatStat(shopItem.getStats().getMpenFlat()) + " §7Magic Penetration");
             }
             if (shopItem.getStats().getMpenPercent() > 0) {
-                lore.add("§d🔘 " + formatStat(shopItem.getStats().getMpenPercent()) + "% §fMagic Penetration");
+                lore.add("§d🔘 §f" + formatStat(shopItem.getStats().getMpenPercent()) + "% §7Magic Penetration");
             }
             if (shopItem.getStats().getCh() > 0) {
-                lore.add("§7⌛ " + formatStat(shopItem.getStats().getCh()) + " §fCooldown Haste");
+                lore.add("§7⌛ §f" + formatStat(shopItem.getStats().getCh()) + " §7Cooldown Haste");
             }
             if (shopItem.getStats().getTn() > 0) {
-                lore.add("§3⏩ " + formatStat(shopItem.getStats().getTn()) + " §fTenacity");
+                lore.add("§3⏩ §f" + formatStat(shopItem.getStats().getTn()) + " §7Tenacity");
             }
             if (shopItem.getStats().getMs() > 0) {
-                lore.add("§7👣 " + formatStat(shopItem.getStats().getMs()) + "% §fMovement Speed");
+                lore.add("§f👣 §f" + formatStat(shopItem.getStats().getMs()) + "% §7Movement Speed");
             }
 
             if (shopItem.getStats().hasPassive()) {

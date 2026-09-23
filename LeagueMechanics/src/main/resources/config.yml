@@ -106,7 +106,8 @@ runes:
 
       guardian:
         max-players: 5 # max number of players that will get the effect
-        absorption-percentage: 300.0 # 100 = One full line (20)
+        armor-percentage: 80
+        magic-resist-percentage: 80
         cooldown: 60 # seconds
 
 

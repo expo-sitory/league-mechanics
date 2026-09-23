@@ -25,7 +25,6 @@ import org.bukkit.entity.Entity;
 import org.bukkit.Color;
 import org.bukkit.Location;
 import org.bukkit.Particle;
-import org.bukkit.attribute.Attribute;
 import org.bukkit.configuration.ConfigurationSection;
 
 import net.kyori.adventure.text.Component;
@@ -48,7 +47,7 @@ public class AfterShock extends CooldownHandler {
     private static final double BASE_MAGIC_RESIST = 45.0;
 
     private static final double shockwaveRadius = 5.0;
-    private static final double triggerThresholdPercent = 30.0;
+    private static final double triggerThresholdPercent = 50.0;
     private static final int buffDurationTicks = 50;
 
 
@@ -56,6 +55,7 @@ public class AfterShock extends CooldownHandler {
     private final Map<UUID, Integer> effectRemainingTicks = new HashMap<>();
     private final Map<UUID, Double> lastArmorBonus = new HashMap<>();
     private final Map<UUID, Double> lastMRBonus = new HashMap<>();
+    private final Map<UUID, Double> triggerHealthThreshold = new HashMap<>();
 
     public AfterShock(ConfigurationSection config, PlayerEventListener listener) {
         super("after-shock", RunePath.RESOLVE, RuneSlot.KEYSTONE);
@@ -87,7 +87,20 @@ public class AfterShock extends CooldownHandler {
 
     @Override
     public void onPlayerDamage(Player player, double damage) {
-        activateAfterShock(player);
+        UUID playerUUID = player.getUniqueId();
+
+        if (isOnCooldown(player)) {
+            activateAfterShock(player);
+            return;
+        }
+
+        Double threshold = triggerHealthThreshold.getOrDefault(playerUUID, -1.0);
+        if (threshold > 0 && player.getHealth() < threshold) {
+            releaseShockwave(player);
+            triggerHealthThreshold.remove(playerUUID);
+            effectRemainingTicks.put(playerUUID, 0);
+            resetCooldown(player);
+        }
     }
 
     private void activateAfterShock(Player player) {
@@ -111,31 +124,34 @@ public class AfterShock extends CooldownHandler {
 
     private void doActivateAfterShock(Player player) {
         UUID playerUUID = player.getUniqueId();
-        double maxHealth = player.getAttribute(Attribute.MAX_HEALTH).getValue();
         double currentHealth = player.getHealth();
-        double healthPercent = (currentHealth / maxHealth) * 100.0;
+        double thresholdHealth = currentHealth * 0.5;
 
-        if (healthPercent > triggerThresholdPercent) {
-            return;
-        }
+        triggerHealthThreshold.put(playerUUID, thresholdHealth);
         applyResistances(player);
         LeagueMechanics plugin = LeagueMechanics.getInstance();
-        effectRemainingTicks.put(playerUUID, buffDurationTicks);
+        effectRemainingTicks.put(playerUUID, 1);
 
         int[] taskId = { -1 };
         taskId[0] = plugin.getServer().getScheduler().scheduleSyncRepeatingTask(plugin, new Runnable() {
-            int tick = buffDurationTicks;
-
             @Override
             public void run() {
-                tick--;
-                effectRemainingTicks.put(playerUUID, tick);
+                if (player.isDead()) {
+                    plugin.getServer().getScheduler().cancelTask(taskId[0]);
+                    effectTaskIds.remove(playerUUID);
+                    effectRemainingTicks.remove(playerUUID);
+                    triggerHealthThreshold.remove(playerUUID);
+                    clearResistances(player);
+                    return;
+                }
 
-                if (tick <= 0) {
+                Double threshold = triggerHealthThreshold.getOrDefault(playerUUID, -1.0);
+                if (threshold > 0 && player.getHealth() < threshold) {
                     releaseShockwave(player);
                     plugin.getServer().getScheduler().cancelTask(taskId[0]);
                     effectTaskIds.remove(playerUUID);
                     effectRemainingTicks.remove(playerUUID);
+                    triggerHealthThreshold.remove(playerUUID);
                     resetCooldown(player);
                 }
             }
@@ -149,10 +165,11 @@ public class AfterShock extends CooldownHandler {
     private void applyResistances(Player player) {
         UUID playerUUID = player.getUniqueId();
         clearResistances(player);
-        double attributeArmor = player.getAttribute(Attribute.ARMOR).getValue();
-        double bonusArmorBonus = BASE_ARMOR + (BASE_ARMOR_PERCENTAGE / 100.0 * Math.max(0, attributeArmor));
-
         ItemStatsManager itemStatsManager = LeagueMechanics.getInstance().getStatsManager();
+
+        double itemAR = (itemStatsManager != null) ? itemStatsManager.getItemAR(player) : 0.0;
+        double bonusArmorBonus = BASE_ARMOR + (BASE_ARMOR_PERCENTAGE / 100.0 * Math.max(0, itemAR));
+
         double itemMR = (itemStatsManager != null) ? itemStatsManager.getItemMR(player) : 0.0;
         double bonusMRBonus = BASE_MAGIC_RESIST + (BASE_MAGIC_RESIST_PERCENTAGE / 100.0 * itemMR);
         lastArmorBonus.put(playerUUID, bonusArmorBonus);
@@ -232,26 +249,10 @@ public class AfterShock extends CooldownHandler {
 
     private void applyMagicDamage(LivingEntity target, double damage, Player source) {
         if (target.isDead() || target.getHealth() <= 0) return;
-
-        if (target instanceof Player targetPlayer) {
-            double absorption = targetPlayer.getAbsorptionAmount();
-            if (damage > absorption) {
-                damage -= absorption;
-                targetPlayer.setAbsorptionAmount(0);
-            } else {
-                targetPlayer.setAbsorptionAmount(absorption - damage);
-                damage = 0;
-            }
-        }
-
-        double newHealth = Math.clamp(target.getHealth() - damage, 0, target.getMaxHealth());
-
         if (target instanceof Player targetPlayer) {
             KillSourceTracker.getInstance().setSource(targetPlayer, source);
         }
-
-        target.damage(0.00001);
-        target.setHealth(newHealth);
+        target.damage(damage);
     }
 
     private double getTargetMR(Entity target) {

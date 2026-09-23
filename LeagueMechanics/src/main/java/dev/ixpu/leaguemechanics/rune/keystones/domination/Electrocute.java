@@ -137,7 +137,11 @@ public class Electrocute extends StacksHandler {
             DebugLogger.debug(player, "§f[§dSource§f] Keystone Damage Type = §d" + DamageType);
             DebugLogger.debug(player, "§f[§dTarget§f] Target New HP = §d" + Math.ceil(newHealth * 100) / 100.0);
 
-            livingTarget.setHealth(newHealth);
+            if (newHealth <= 0) {
+                livingTarget.damage(livingTarget.getHealth());
+            } else {
+                livingTarget.setHealth(newHealth);
+            }
         }
     }
 

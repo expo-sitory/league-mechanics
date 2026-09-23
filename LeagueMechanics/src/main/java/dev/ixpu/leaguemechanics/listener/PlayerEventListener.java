@@ -15,7 +15,6 @@ import dev.ixpu.leaguemechanics.rune.CooldownHandler;
 import dev.ixpu.leaguemechanics.rune.RuneCooldownGate;
 import dev.ixpu.leaguemechanics.rune.RuneRegistry;
 import dev.ixpu.leaguemechanics.rune.RuneShard;
-import dev.ixpu.leaguemechanics.rune.keystones.resolve.GraspOfTheUndying;
 
 import org.bukkit.Bukkit;
 import org.bukkit.entity.*;
@@ -27,10 +26,8 @@ import org.bukkit.event.player.*;
 import org.bukkit.attribute.Attribute;
 import org.bukkit.inventory.ItemStack;
 
-
 import dev.ixpu.leaguemechanics.util.RunePersistence;
 import java.util.UUID;
-
 
 
 public class PlayerEventListener implements Listener, RuneCooldownGate {
@@ -129,9 +126,6 @@ public class PlayerEventListener implements Listener, RuneCooldownGate {
         float healthPercentage = (float) ((currentHealth / maxHealth) * 100.0);
         plugin.getMySQLManager().savePlayerHealthPercentage(uuid, healthPercentage);
 
-        if (runeRegistry.getRune("grasp-of-the-undying") instanceof GraspOfTheUndying grasp) {
-            grasp.resetAbsorption(player);
-        }
         runeManager.unloadPlayerRunes(player);
         dev.ixpu.leaguemechanics.entity.player.PlayerClass.unloadPlayer(uuid);
         combatState.clearPlayer(uuid);
@@ -146,15 +140,7 @@ public class PlayerEventListener implements Listener, RuneCooldownGate {
         CritManager.getInstance().removePlayer(player);
         removeAllAttributeModifiers(player);
         cancelPendingTasks(uuid);
-    }
-
-    @EventHandler(priority = EventPriority.NORMAL)
-    public void onPlayerMove(PlayerMoveEvent event) {
-        Player player = event.getPlayer();
-
-        if (!PlayerClass.hasPlayerSelectedClass(player)) {
-            Bukkit.dispatchCommand(Bukkit.getConsoleSender(), "dialogwindow:dwopen classselect " + player.getName());
-        }
+        DamageListener.parryCooldown.cleanup(player);
     }
 
     @EventHandler
@@ -188,5 +174,9 @@ public class PlayerEventListener implements Listener, RuneCooldownGate {
             }
             rune.onPotionEffectGain(player, event.getNewEffect());
         }
+    }
+
+    public void applyHealthModifier(Player player) {
+        playerStatsListener.applyHealthModifier(player);
     }
 }

@@ -47,62 +47,62 @@ public class ItemShopData {
 
         // --------------------------------- BASIC ITEMS ---------------------------------
 
-        addItem("ruby-crystal", 17, 6, 8, ItemRarity.UNCOMMON, null, "main");
-        addItem("dagger", 13, 6, 11, ItemRarity.UNCOMMON, null, "main");
-        addItem("amplifying-tome", 17, 6, 0, ItemRarity.UNCOMMON, null, "mage");
-        addItem("blasting-wand", 24, 6, 1, ItemRarity.UNCOMMON, null, "mage");
-        addItem("needlessly-large-rod", 28, 6, 2, ItemRarity.UNCOMMON, null, "mage");
-        addItem("long-sword", 15, 6, 0, ItemRarity.UNCOMMON, null, "fighter");
-        addItem("pickaxe", 24, 6, 1, ItemRarity.UNCOMMON, null, "fighter");
-        addItem("b.f-sword", 29, 6, 2, ItemRarity.UNCOMMON, null, "fighter");
-        addItem("cloth-armor", 14, 6, 0, ItemRarity.UNCOMMON, null, "tank");
-        addItem("rejuvenation-bead", 14, 6, 9, ItemRarity.UNCOMMON, null, "support");
-        addItem("faeri-charm", 11, 6, 10, ItemRarity.UNCOMMON, null, "support");
-        addItem("glowing-mote", 13, 6, 0, ItemRarity.UNCOMMON, null, "support");
+        addItem("ruby-crystal", 17, 3, 8, ItemRarity.UNCOMMON, null, "main");
+        addItem("dagger", 13, 3, 11, ItemRarity.UNCOMMON, null, "main");
+        addItem("amplifying-tome", 17, 3, 0, ItemRarity.UNCOMMON, null, "mage");
+        addItem("blasting-wand", 24, 3, 1, ItemRarity.UNCOMMON, null, "mage");
+        addItem("needlessly-large-rod", 28, 3, 2, ItemRarity.UNCOMMON, null, "mage");
+        addItem("long-sword", 15, 3, 0, ItemRarity.UNCOMMON, null, "fighter");
+        addItem("pickaxe", 24, 3, 1, ItemRarity.UNCOMMON, null, "fighter");
+        addItem("b.f-sword", 29, 3, 2, ItemRarity.UNCOMMON, null, "fighter");
+        addItem("cloth-armor", 14, 3, 0, ItemRarity.UNCOMMON, null, "tank");
+        addItem("rejuvenation-bead", 14, 3, 9, ItemRarity.UNCOMMON, null, "support");
+        addItem("faeri-charm", 11, 3, 10, ItemRarity.UNCOMMON, null, "support");
+        addItem("glowing-mote", 13, 3, 0, ItemRarity.UNCOMMON, null, "support");
 
         // --------------------------------- EPIC ITEMS ---------------------------------
 
-        addItem("null-magic-mantle", 17, 6, 1, ItemRarity.UNCOMMON, null, "tank");
-        addItem("chain-vest", 29, 6, 2, ItemRarity.RARE, null, "tank");
-        addItem("negatron-cloak", 29, 6, 3, ItemRarity.RARE, null, "tank");
+        addItem("null-magic-mantle", 17, 3, 1, ItemRarity.UNCOMMON, null, "tank");
+        addItem("chain-vest", 29, 3, 2, ItemRarity.RARE, null, "tank");
+        addItem("negatron-cloak", 29, 3, 3, ItemRarity.RARE, null, "tank");
         addItem("blightting-jewel", 33, 1, 3, ItemRarity.RARE, null, "mage");
-        addItem("flendish-codex", 26, 6, 4, ItemRarity.RARE, null, "mage");
-        addItem("lost-chapter", 30, 6, 5, ItemRarity.RARE, null, "mage");
-        addItem("fated-ashes", 30, 6, 6, ItemRarity.RARE, null, "mage");
-        addItem("hextech-alternator", 30, 6, 7, ItemRarity.RARE, null, "mage");
-        addItem("oblivion-orb", 28, 6, 8, ItemRarity.RARE, null, "mage");
-        addItem("caulfields-warhammer", 27, 6, 3, ItemRarity.RARE, null, "fighter");
-        addItem("hexdrinker", 35, 6, 4, ItemRarity.RARE, null, "fighter");
+        addItem("flendish-codex", 26, 3, 4, ItemRarity.RARE, null, "mage");
+        addItem("lost-chapter", 30, 3, 5, ItemRarity.RARE, null, "mage");
+        addItem("fated-ashes", 30, 1, 3, ItemRarity.RARE, null, "mage");
+        addItem("hextech-alternator", 30, 1, 7, ItemRarity.RARE, null, "mage");
+        addItem("oblivion-orb", 28, 3, 8, ItemRarity.RARE, null, "mage");
+        addItem("caulfields-warhammer", 27, 3, 3, ItemRarity.RARE, null, "fighter");
+        addItem("hexdrinker", 35, 3, 4, ItemRarity.RARE, null, "fighter");
         addItem("serrated-dirk", 25, 1, 5, ItemRarity.RARE, null, "fighter");
-        addItem("phage", 30, 6, 6, ItemRarity.RARE, null, "fighter");
+        addItem("phage", 30, 3, 6, ItemRarity.RARE, null, "fighter");
         addItem("executioners-calling", 25, 1, 7, ItemRarity.RARE, null, "fighter");
-        addItem("crystalline-bracer", 24, 6, 4, ItemRarity.RARE, null, "tank");
-        addItem("giants-belt", 30, 6, 5, ItemRarity.RARE, null, "tank");
-        addItem("bramble-vest", 26, 6, 7, ItemRarity.RARE, null, "tank");
-        addItem("cloak-of-agility", 20, 6, 0, ItemRarity.UNCOMMON, null, "marksman");
-        addItem("noonquiver", 35, 6, 1, ItemRarity.RARE, null, "marksman");
-        addItem("rectrix", 25, 6, 2, ItemRarity.RARE, null, "marksman");
-        addItem("recurve-bow", 30, 6, 3, ItemRarity.RARE, null, "marksman");
-        addItem("scouts-slingshot", 25, 6, 4, ItemRarity.RARE, null, "marksman");
+        addItem("crystalline-bracer", 24, 3, 4, ItemRarity.RARE, null, "tank");
+        addItem("giants-belt", 30, 3, 5, ItemRarity.RARE, null, "tank");
+        addItem("bramble-vest", 26, 1, 7, ItemRarity.RARE, null, "tank");
+        addItem("cloak-of-agility", 20, 3, 0, ItemRarity.UNCOMMON, null, "marksman");
+        addItem("noonquiver", 35, 3, 1, ItemRarity.RARE, null, "marksman");
+        addItem("rectrix", 25, 3, 2, ItemRarity.RARE, null, "marksman");
+        addItem("recurve-bow", 30, 3, 3, ItemRarity.RARE, null, "marksman");
+        addItem("scouts-slingshot", 25, 1, 4, ItemRarity.RARE, null, "marksman");
         addItem("last-whisper", 35, 1, 5, ItemRarity.RARE, null, "marksman");
-        addItem("hearthbound-axe", 30, 6, 6, ItemRarity.RARE, null, "marksman");
-        addItem("zeal", 30, 6, 7, ItemRarity.RARE, null, "marksman");
+        addItem("hearthbound-axe", 30, 3, 6, ItemRarity.RARE, null, "marksman");
+        addItem("zeal", 30, 3, 7, ItemRarity.RARE, null, "marksman");
         addItem("berserkers-greaves", 30, 1, 12, ItemRarity.RARE, "boots", "main");
         addItem("mercurys-treads", 33, 1, 13, ItemRarity.RARE, "boots", "main");
         addItem("plated-steelcaps", 35, 1, 14, ItemRarity.RARE, "boots", "main");
         addItem("sorcerers-shoes", 33, 1, 15, ItemRarity.RARE, "boots", "main");
-        addItem("spectres-cowl", 30, 6, 8, ItemRarity.RARE, null, "tank");
-        addItem("winged-moonplate", 28, 6, 9, ItemRarity.RARE, null, "tank");
-        addItem("wardens-mail", 29, 6, 10, ItemRarity.RARE, null, "tank");
+        addItem("spectres-cowl", 30, 3, 8, ItemRarity.RARE, null, "tank");
+        addItem("winged-moonplate", 28, 3, 9, ItemRarity.RARE, null, "tank");
+        addItem("wardens-mail", 29, 1, 10, ItemRarity.RARE, null, "tank");
         addItem("bamis-cinder", 28, 1, 11, ItemRarity.RARE, null, "tank");
         addItem("verdant-barrier", 34, 1, 9, ItemRarity.RARE, null, "mage");
-        addItem("aether-wisp", 27, 6, 10, ItemRarity.RARE, null, "mage");
-        addItem("vampiric-scepter", 24, 6, 8, ItemRarity.RARE, null, "fighter");
-        addItem("tunneler", 32, 6, 9, ItemRarity.RARE, null, "fighter");
-        addItem("the-brutalizer", 31, 6, 10, ItemRarity.RARE, null, "fighter");
-        addItem("steel-sigil", 27, 6, 11, ItemRarity.RARE, null, "fighter");
-        addItem("bandleglass-mirror", 25, 6, 11, ItemRarity.RARE, null, "support");
-        addItem("kindlegem", 25, 6, 6, ItemRarity.RARE, null, "support");
+        addItem("aether-wisp", 27, 3, 10, ItemRarity.RARE, null, "mage");
+        addItem("vampiric-scepter", 24, 3, 8, ItemRarity.RARE, null, "fighter");
+        addItem("tunneler", 32, 3, 9, ItemRarity.RARE, null, "fighter");
+        addItem("the-brutalizer", 31, 3, 10, ItemRarity.RARE, null, "fighter");
+        addItem("steel-sigil", 27, 3, 11, ItemRarity.RARE, null, "fighter");
+        addItem("bandleglass-mirror", 25, 3, 11, ItemRarity.RARE, null, "support");
+        addItem("kindlegem", 25, 3, 6, ItemRarity.RARE, null, "support");
     }
 
     private void loadDefaultRequiredItems() {

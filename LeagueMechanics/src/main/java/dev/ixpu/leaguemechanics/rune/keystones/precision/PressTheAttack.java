@@ -85,22 +85,11 @@ public class PressTheAttack extends StacksHandler {
         if (currentStacks == 2) {
             double damageToApply = keystoneDamage(player, target);
 
-            if (livingTarget instanceof Player targetPlayer) {
-                double absorption = targetPlayer.getAbsorptionAmount();
-                if (damageToApply > absorption) {
-                    damageToApply -= absorption;
-                    targetPlayer.setAbsorptionAmount(0);
-                } else {
-                    targetPlayer.setAbsorptionAmount(absorption - damageToApply);
-                    damageToApply = 0;
-                }
-            }
-
-            double newHealth = Math.clamp(livingTarget.getHealth() - damageToApply, 0, livingTarget.getMaxHealth());
-
             if (livingTarget instanceof Player livingPlayer) {
                 KillSourceTracker.getInstance().setSource(livingPlayer, player);
             }
+            livingTarget.damage(damageToApply);
+
             String DamageType;
             boolean isMagic = lastDamageWasMagic;
 
@@ -120,9 +109,7 @@ public class PressTheAttack extends StacksHandler {
 
             DebugLogger.debug(player, "§f[§dSource§f] §f[§ePress The Attack§f] Keystone Damage = §d" + Math.ceil(keystoneDamage(player, target) * 100) / 100.0);
             DebugLogger.debug(player, "§f[§dSource§f] Keystone Damage Type = §d" + DamageType);
-            DebugLogger.debug(player, "§f[§dTarget§f] Target New HP = §d" + Math.ceil(newHealth * 100) / 100.0);
 
-            livingTarget.setHealth(newHealth);
             resetStacksForTarget(player, targetUUID);
 
             Bukkit.dispatchCommand(Bukkit.getConsoleSender(), "press-the-attack-stack-sound " + player.getName());

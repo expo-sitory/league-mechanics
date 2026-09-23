@@ -2,7 +2,6 @@ package dev.ixpu.leaguemechanics.rune.keystones.sorcery;
 
 import dev.ixpu.leaguemechanics.LeagueMechanics;
 import dev.ixpu.leaguemechanics.listener.PlayerEventListener;
-import dev.ixpu.leaguemechanics.manager.DamageManager;
 import dev.ixpu.leaguemechanics.rune.CooldownHandler;
 import dev.ixpu.leaguemechanics.rune.RunePath;
 import dev.ixpu.leaguemechanics.rune.RuneSlot;
@@ -35,6 +34,7 @@ public class StormRaiderSurge extends CooldownHandler {
     private final Map<UUID, Double> damageTracker = new HashMap<>();
     private final Map<UUID, Integer> windowTickCounter = new HashMap<>();
     private final Map<UUID, Integer> speedActiveDuration = new HashMap<>();
+    private final Map<UUID, Double> targetMaxHealth = new HashMap<>();
     private LeagueMechanics plugin;
 
     public StormRaiderSurge(ConfigurationSection config, PlayerEventListener listener) {
@@ -55,6 +55,7 @@ public class StormRaiderSurge extends CooldownHandler {
         damageTracker.put(uuid, 0.0);
         windowTickCounter.put(uuid, 0);
         speedActiveDuration.put(uuid, 0);
+        targetMaxHealth.put(uuid, 0.0);
     }
 
     @Override
@@ -64,13 +65,14 @@ public class StormRaiderSurge extends CooldownHandler {
         damageTracker.remove(uuid);
         windowTickCounter.remove(uuid);
         speedActiveDuration.remove(uuid);
+        targetMaxHealth.remove(uuid);
     }
 
-    public void onAttack(Player attacker, Entity target) {
-        activateStormRaiderSurge(attacker, target);
+    public void onAttack(Player attacker, Entity target, double damageDealt) {
+        activateStormRaiderSurge(attacker, target, damageDealt);
     }
 
-    private void activateStormRaiderSurge(Player player, Entity target) {
+    private void activateStormRaiderSurge(Player player, Entity target, double damageDealt) {
         UUID attackerUUID = player.getUniqueId();
 
         if (!(target instanceof LivingEntity livingTarget)) {
@@ -82,20 +84,12 @@ public class StormRaiderSurge extends CooldownHandler {
         if (isOnCooldown(player)) {
             return;
         }
-        if (listener.isAnyHotbarOnCooldown(player)) {
-            return;
-        }
 
-        double estimatedDamage = playerDamage(player, target);
         double currentDamage = damageTracker.getOrDefault(attackerUUID, 0.0);
-        damageTracker.put(attackerUUID, currentDamage + estimatedDamage);
+        damageTracker.put(attackerUUID, currentDamage + damageDealt);
+        targetMaxHealth.put(attackerUUID, livingTarget.getMaxHealth());
 
         windowTickCounter.put(attackerUUID, 0);
-    }
-
-    private double playerDamage(Player player, Entity target) {
-        DamageManager damageManager = new DamageManager(LeagueMechanics.getInstance().getStatsManager());
-        return damageManager.DamageCalculation(player, target, 0, 0, 0, 0);
     }
 
     private void enterActiveState(Player player) {
@@ -141,6 +135,7 @@ public class StormRaiderSurge extends CooldownHandler {
         windowTicks++;
         if (windowTicks >= TRACKING_WINDOW_TICKS) {
             damageTracker.put(playerUUID, 0.0);
+            targetMaxHealth.put(playerUUID, 0.0);
             windowTicks = 0;
         }
         windowTickCounter.put(playerUUID, windowTicks);
@@ -163,12 +158,18 @@ public class StormRaiderSurge extends CooldownHandler {
             return;
         }
 
-        double maxHp = player.getMaxHealth();
-        double damageThreshold = maxHp * (DAMAGE_THRESHOLD_PERCENTAGE / 100);
+        double targetHp = targetMaxHealth.getOrDefault(playerUUID, 0.0);
+        double damageThreshold = targetHp * (DAMAGE_THRESHOLD_PERCENTAGE / 100);
         double currentDamage = damageTracker.getOrDefault(playerUUID, 0.0);
 
-        if (currentDamage >= damageThreshold) {
+        if (currentDamage >= damageThreshold && damageThreshold > 0) {
             enterActiveState(player);
+            return;
+        }
+
+        if (currentDamage > 0 && damageThreshold > 0) {
+            String runeDisplay = getRuneDisplay(RuneState.STACKING, player, 0);
+            setPlayerDisplay(player, runeDisplay);
             return;
         }
 
@@ -185,7 +186,7 @@ public class StormRaiderSurge extends CooldownHandler {
     }
 
     enum RuneState {
-        ACTIVE, COOLDOWN, IDLE
+        ACTIVE, COOLDOWN, STACKING, IDLE
     }
 
     private String getRuneDisplay(RuneState state, Player player, int remainingTicks) {
@@ -194,6 +195,16 @@ public class StormRaiderSurge extends CooldownHandler {
             case ACTIVE -> {
                 double remainingSeconds = remainingTicks / 20.0;
                 yield String.format("§9👾 (%.1fs)", remainingSeconds);
+            }
+            case STACKING -> {
+                UUID playerUUID = player.getUniqueId();
+                double targetHp = targetMaxHealth.getOrDefault(playerUUID, 0.0);
+                double damageThreshold = targetHp * (DAMAGE_THRESHOLD_PERCENTAGE / 100);
+                double currentDamage = damageTracker.getOrDefault(playerUUID, 0.0);
+
+                int damagePercent = (int) ((currentDamage / Math.max(1, damageThreshold)) * 100) ;
+                damagePercent /= 3.3;
+                yield String.format("§1👾 - %d%%/%d%%", damagePercent, (int) DAMAGE_THRESHOLD_PERCENTAGE);
             }
             case IDLE -> "§1👾";
         };
@@ -209,6 +220,15 @@ public class StormRaiderSurge extends CooldownHandler {
         if (isOnCooldown(player)) {
             return getRuneDisplay(RuneState.COOLDOWN, player, 0);
         }
+
+        double targetHp = targetMaxHealth.getOrDefault(playerUUID, 0.0);
+        double damageThreshold = targetHp * (DAMAGE_THRESHOLD_PERCENTAGE / 100);
+        double currentDamage = damageTracker.getOrDefault(playerUUID, 0.0);
+
+        if (currentDamage > 0 && damageThreshold > 0) {
+            return getRuneDisplay(RuneState.STACKING, player, 0);
+        }
+
         return getRuneDisplay(RuneState.IDLE, player, 0);
     }
 

@@ -112,55 +112,55 @@ public class ItemModifier {
         }
 
         if (statData.getAd() > 0) {
-            lore.add("§6🗡 " + formatStat(statData.getAd()) + " §fAttack Damage");
+            lore.add("§6🗡 §f" + formatStat(statData.getAd()) + " §7Attack Damage");
         }
         if (statData.getAp() > 0) {
-            lore.add("§9☄ " + formatStat(statData.getAp()) + " §fAbility Power");
+            lore.add("§9☄ §f" + formatStat(statData.getAp()) + " §7Ability Power");
         }
         if (statData.getAr() > 0) {
-            lore.add("§e🛡 " + formatStat(statData.getAr()) + " §fArmor");
+            lore.add("§e🛡 §f" + formatStat(statData.getAr()) + " §7Armor");
         }
         if (statData.getMr() > 0) {
-            lore.add("§b⦿ " + formatStat(statData.getMr()) + " §fMagic Resist");
+            lore.add("§b⦿ §f" + formatStat(statData.getMr()) + " §7Magic Resist");
         }
         if (statData.getHp() > 0) {
-            lore.add("§a❤ " + formatStat(statData.getHp()) + " §fHealth");
+            lore.add("§a❤ §f" + formatStat(statData.getHp()) + " §7Health");
         }
         if (statData.getHr() > 0) {
-            lore.add("§2❣ " + formatStat(statData.getHr()) + " §fHealth Regen per 5 sec.");
+            lore.add("§2❣ §f" + formatStat(statData.getHr()) + " §7Health Regen per 5 sec.");
         }
         if (statData.getSr() > 0) {
-            lore.add("§6🍖 " + formatStat(statData.getSr()) + " §fSaturation Regen per 5 sec.");
+            lore.add("§6🍖 §f" + formatStat(statData.getSr()) + " §7Saturation Regen per 5 sec.");
         }
         if (statData.getAs() > 0) {
-            lore.add("§c➺ " + formatStat(statData.getAs()) + "% §fAttack Speed");
+            lore.add("§c➺ §f" + formatStat(statData.getAs()) + "% §7Attack Speed");
         }
         if (statData.getLs() > 0) {
-            lore.add("§4✚ " + formatStat(statData.getLs()) + "% §fLife Steal");
+            lore.add("§4✚ §f" + formatStat(statData.getLs()) + "% §7Life Steal");
         }
         if (statData.getCc() > 0) {
-            lore.add("§4➷ " + formatStat(statData.getCc()) + "% §fCritical Chance");
+            lore.add("§4➷ §f" + formatStat(statData.getCc()) + "% §7Critical Chance");
         }
         if (statData.getApenFlat() > 0) {
-            lore.add("§6🔰 " + formatStat(statData.getApenFlat()) + " §fLethality");
+            lore.add("§6🔰 §f" + formatStat(statData.getApenFlat()) + " §7Lethality");
         }
         if (statData.getApenPercent() > 0) {
-            lore.add("§6⛨ " + formatStat(statData.getApenPercent()) + "% §fArmor Penetration");
+            lore.add("§6⛨ §f" + formatStat(statData.getApenPercent()) + "% §7Armor Penetration");
         }
         if (statData.getMpenFlat() > 0) {
-            lore.add("§d🔘 " + formatStat(statData.getMpenFlat()) + " §fMagic Penetration");
+            lore.add("§d🔘 §f" + formatStat(statData.getMpenFlat()) + " §7Magic Penetration");
         }
         if (statData.getMpenPercent() > 0) {
-            lore.add("§d🔘 " + formatStat(statData.getMpenPercent()) + "% §fMagic Penetration");
+            lore.add("§d🔘 §f" + formatStat(statData.getMpenPercent()) + "% §7Magic Penetration");
         }
         if (statData.getCh() > 0) {
-            lore.add("§7⌛ " + formatStat(statData.getCh()) + " §fCooldown Haste");
+            lore.add("§7⌛ §f" + formatStat(statData.getCh()) + " §7Cooldown Haste");
         }
         if (statData.getTn() > 0) {
-            lore.add("§3⏩ " + formatStat(statData.getTn()) + " §fTenacity");
+            lore.add("§3⏩ §f" + formatStat(statData.getTn()) + " §7Tenacity");
         }
         if (statData.getMs() > 0) {
-            lore.add("§7👣 " + formatStat(statData.getMs()) + "% §fMovement Speed");
+            lore.add("§f👣 §f" + formatStat(statData.getMs()) + "% §7Movement Speed");
         }
 
         if (statData.hasPassive()) {

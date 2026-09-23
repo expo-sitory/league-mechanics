@@ -62,7 +62,7 @@ public class verdant_barrier implements ItemPassive {
     }
 
     public void grantAbsorptionHeart(Player player) {
-        if (player == null) return;
+        if (player == null || player.isDead()) return;
         ItemPassivesManager mgr = ItemPassivesManager.getInstance();
         if (mgr != null && mgr.isOnCooldown(player, PASSIVE_ID)) {
             return;

@@ -95,7 +95,6 @@ public class LeagueMechanics extends JavaPlugin {
         reloadConfig();
         debugMode = getConfig().getBoolean("general-settings.debug", false);
 
-        // Initialize MobStats with plugin reference to load configuration
         MobStats.initialize(this);
 
         ItemModifier.initialize(this);
@@ -229,7 +228,7 @@ public class LeagueMechanics extends JavaPlugin {
         Objects.requireNonNull(getCommand("leaguemechanics")).setTabCompleter(tabCompleter);
         getLogger().info("Commands registered!");
     }
-    // https://gp.empowerservers.com/server/ca80db5e/console/popup
+
     public void registerRegenTask() {
         new BukkitRunnable() {
             @Override
@@ -241,7 +240,7 @@ public class LeagueMechanics extends JavaPlugin {
                         continue;
                     }
 
-                    double healthRegen = itemStatsManager.getItemHR(player) + PlayerStats.getOrCreate(player).getRuneShards(player).getHealthRegen();
+                    double healthRegen = PlayerStats.getOrCreate(player).getPlayerHR(player);
                     double saturationRegen = itemStatsManager.getItemSR(player);
 
                     dev.ixpu.leaguemechanics.entity.player.PlayerStats ps = dev.ixpu.leaguemechanics.entity.player.PlayerStats.getOrCreate(player);

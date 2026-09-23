@@ -4,7 +4,7 @@ import dev.ixpu.leaguemechanics.LeagueMechanics;
 import dev.ixpu.leaguemechanics.manager.DamageManager;
 import dev.ixpu.leaguemechanics.manager.ItemStatsManager;
 import dev.ixpu.leaguemechanics.manager.KillSourceTracker;
-import dev.ixpu.leaguemechanics.util.ItemModifier;
+import dev.ixpu.leaguemechanics.util.DebugLogger;
 import org.bukkit.Color;
 import org.bukkit.Location;
 import org.bukkit.Particle;
@@ -21,8 +21,6 @@ public class bamis_cinder implements ItemPassive {
     private static final int IMMOLATE_TICK_INTERVAL = 20;
 
     private static final Color IMMOLATE_COLOR = Color.fromRGB(255, 110, 0);
-    private static final ThreadLocal<Boolean> TRIGGERING_PASSIVES = ThreadLocal.withInitial(() -> false);
-
     @Override
     public String getId() {
         return "bamis-cinder";
@@ -104,6 +102,7 @@ public class bamis_cinder implements ItemPassive {
         ItemStatsManager statsManager = LeagueMechanics.getInstance().getStatsManager();
         DamageManager damageManager = new DamageManager(statsManager);
         damageManager.enableOnlyAP();
+        damageManager.enableItemProc();
         return damageManager.DamageCalculation(source, target, 0, 0, 0, IMMOLATE_DAMAGE_PER_TICK);
     }
 
@@ -111,37 +110,10 @@ public class bamis_cinder implements ItemPassive {
         if (target.isDead() || target.getHealth() <= 0) return;
 
         if (target instanceof Player targetPlayer) {
-            double absorption = targetPlayer.getAbsorptionAmount();
-            if (damage > absorption) {
-                damage -= absorption;
-                targetPlayer.setAbsorptionAmount(0);
-            } else {
-                targetPlayer.setAbsorptionAmount(absorption - damage);
-                damage = 0;
-            }
-        }
-
-        double newHealth = Math.clamp(target.getHealth() - damage, 0, target.getMaxHealth());
-
-        if (target instanceof Player targetPlayer) {
             KillSourceTracker.getInstance().setSource(targetPlayer, source);
         }
-
-        if (!TRIGGERING_PASSIVES.get()) {
-            TRIGGERING_PASSIVES.set(true);
-            for (ItemStack inv : source.getInventory().getContents()) {
-                if (inv == null || inv.getType().isAir()) continue;
-                String itemId = ItemModifier.getItemId(inv);
-                ItemPassive passive = ItemPassivesRegistry.getInstance().getPassive(itemId);
-                if (passive != null) {
-                    passive.onDealDamage(source, target, damage, false, true);
-                }
-            }
-            TRIGGERING_PASSIVES.set(false);
-        }
-
-        target.damage(0.00001);
-        target.setHealth(newHealth);
+        target.damage(damage);
+        DebugLogger.debug(source, "§f[§dSource§f] §f[§6Bamis Cinder§f] Proc Damage = §d" + Math.ceil(damage * 100) / 100.0 + "§f | Type = §dMagic Damage");
     }
 
     private void spawnImmolateRing(Location center, int elapsed) {

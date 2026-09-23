@@ -28,6 +28,9 @@ import static dev.ixpu.leaguemechanics.entity.player.PlayerClass.*;
 public class PlayerStats {
     private static final Map<UUID, PlayerStats> INSTANCE_CACHE = new ConcurrentHashMap<>();
 
+    private static final double PLAYER_RESISTANCE_BALANCER = 8.5;
+    private static final double PLAYER_DAMAGE_BALANCER = 2.5;
+
     private double temporaryADModification = 0.0;
     private double temporaryAPModification = 0.0;
 
@@ -39,6 +42,8 @@ public class PlayerStats {
     private double temporaryCritDamageModification = 0.0;
     private double temporaryHealingMultiplier = 1.0;
 
+    private int graspHearts = 0;
+
     private ShardStats shardStats;
     private int leagueLevel;
 
@@ -46,15 +51,29 @@ public class PlayerStats {
         UUID uuid = player.getUniqueId();
         return INSTANCE_CACHE.computeIfAbsent(uuid, k -> {
             PlayerStats stats = new PlayerStats();
-            // Load league level from persistence
             int leagueLevel = LeagueMechanics.getInstance().getRunePersistence().loadLeagueLevel(uuid);
             stats.setLeagueLevel(leagueLevel);
             return stats;
         });
     }
 
+    public double getDamageBalancer() {
+        return PLAYER_DAMAGE_BALANCER;
+    }
+    public double getResistanceBalancer() {
+        return PLAYER_RESISTANCE_BALANCER;
+    }
+
     public static void invalidateCache(UUID uuid) {
-        INSTANCE_CACHE.remove(uuid);
+        PlayerStats current = INSTANCE_CACHE.remove(uuid);
+        int graspHearts = (current != null) ? current.getGraspHearts() : 0;
+        if (graspHearts > 0) {
+            PlayerStats restored = new PlayerStats();
+            int leagueLevel = LeagueMechanics.getInstance().getRunePersistence().loadLeagueLevel(uuid);
+            restored.setLeagueLevel(leagueLevel);
+            restored.setGraspHearts(graspHearts);
+            INSTANCE_CACHE.put(uuid, restored);
+        }
     }
 
     public int getLeagueLevel() {
@@ -63,8 +82,6 @@ public class PlayerStats {
 
     public void setLeagueLevel(int level) {
         this.leagueLevel = level;
-        // Save to persistence when level changes
-        // Note: We don't have the player reference here, so saving will need to be done elsewhere
     }
 
     public void saveLeagueLevel(Player player) {
@@ -80,14 +97,13 @@ public class PlayerStats {
             itemHP += itemStatsManager.getItemHP(player);
         }
         double shardsHP = getRuneShards(player).getHealth();
-        double leagueLevelHP = getLeagueLevel() * 4.0;
+        double leagueLevelHP = getLeagueLevel() * 8.0;
         return baseHP + itemHP + shardsHP + leagueLevelHP;
     }
 
     public double getPlayerHR(Player player) {
         ItemStatsManager itemStatsManager = LeagueMechanics.getInstance().getStatsManager();
-        double shardsHR = getRuneShards(player).getHealthRegen();
-        return itemStatsManager.getItemHR(player) + shardsHR;
+        return itemStatsManager.getItemHR(player) + getRuneShards(player).getHealthRegen();
     }
 
 
@@ -111,7 +127,7 @@ public class PlayerStats {
             totalAD = Math.max(0, totalAD * multiplier);
         }
 
-        return totalAD;
+        return totalAD / PLAYER_DAMAGE_BALANCER;
     }
 
     public double getPlayerAP(Player player) {
@@ -135,7 +151,7 @@ public class PlayerStats {
             totalAP = Math.max(0, totalAP * multiplier);
         }
 
-        return totalAP;
+        return totalAP / PLAYER_DAMAGE_BALANCER;
     }
 
     public double getPlayerAF(Player player) {
@@ -208,7 +224,7 @@ public class PlayerStats {
             totalAR = totalAR * multiplier;
         }
 
-        return Math.max(0, totalAR);
+        return Math.max(0, totalAR) * PLAYER_RESISTANCE_BALANCER;
     }
 
     public double getPlayerMR(Player player) {
@@ -226,7 +242,7 @@ public class PlayerStats {
             totalMR = totalMR * multiplier;
         }
 
-        return Math.max(0, totalMR);
+        return Math.max(0, totalMR) * PLAYER_RESISTANCE_BALANCER;
     }
 
     public double getPlayerMS(Player player) {
@@ -321,7 +337,7 @@ public class PlayerStats {
         if (sharpnessLevel == 0) {
             return 0;
         }
-        return 0.5 + (sharpnessLevel * 0.5);
+        return 0.5 + (sharpnessLevel * 0.5) * 7;
     }
 
     public double getArmorEnchant(Player player) {
@@ -362,14 +378,6 @@ public class PlayerStats {
 
     public void modifyMR(double amount) {
         this.temporaryMRModification += amount;
-    }
-
-    public void modifyTD(double amount) {
-        this.temporaryTDModification += amount;
-    }
-
-    public void modifyMS(double amount) {
-        this.temporaryMSModification += amount;
     }
 
     public void setTemporaryMSModification(double value) {
@@ -427,30 +435,8 @@ public class PlayerStats {
         return baseRegen;
     }
 
-    public double getTemporaryTDModification() {
-        return temporaryTDModification;
-    }
-
     public double getCritDamageBonus(Player player) {
         return temporaryCritDamageModification;
-    }
-
-    public void resetTemporaryModifications() {
-        this.temporaryADModification = 0.0;
-        this.temporaryAPModification = 0.0;
-        this.temporaryARModification = 0.0;
-        this.temporaryMRModification = 0.0;
-        this.temporaryTDModification = 0.0;
-        this.temporaryMSModification = 0.0;
-        this.temporaryASModification = 0.0;
-        this.temporaryCritDamageModification = 0.0;
-        this.temporaryHealingMultiplier = 1.0;
-    }
-
-    public void clearDebuffs(Player player) {
-        if (player != null) {
-            DebuffManager.getInstance().clearDebuffs(player);
-        }
     }
 
     public String getActionBarSections(Player player) {
@@ -470,12 +456,6 @@ public class PlayerStats {
         if (debuffs.hasDebuff(player, DebuffType.SLOW)) {
             double remaining = debuffs.getRemainingSeconds(player, DebuffType.SLOW);
             sb.append(" §3❄ (").append(String.format("%.1f", remaining)).append("s)");
-        }
-
-        long parryCd = DamageListener.getParryCooldown(player.getUniqueId());
-        if (parryCd > System.currentTimeMillis()) {
-            double remaining = (parryCd - System.currentTimeMillis()) / 1000.0;
-            sb.append(" §7⚔ ").append(String.format("%.1f", remaining));
         }
 
         dev.ixpu.leaguemechanics.manager.ItemPassivesManager passiveManager =
@@ -520,5 +500,17 @@ public class PlayerStats {
             }
         }
         return shardStats;
+    }
+
+    public int getGraspHearts() {
+        return graspHearts;
+    }
+
+    public void addGraspHearts(int amount) {
+        this.graspHearts += amount;
+    }
+
+    public void setGraspHearts(int amount) {
+        this.graspHearts = amount;
     }
 }

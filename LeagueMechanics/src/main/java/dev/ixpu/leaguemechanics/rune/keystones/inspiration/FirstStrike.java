@@ -125,22 +125,11 @@ public class FirstStrike extends CooldownHandler {
         if (isActive && System.currentTimeMillis() < buffEndTime.getOrDefault(attackerUUID, 0L)) {
             double damageToApply = keystoneDamage(player, target);
 
-            if (livingTarget instanceof Player targetPlayer) {
-                double absorption = targetPlayer.getAbsorptionAmount();
-                if (damageToApply > absorption) {
-                    damageToApply -= absorption;
-                    targetPlayer.setAbsorptionAmount(0);
-                } else {
-                    targetPlayer.setAbsorptionAmount(absorption - damageToApply);
-                    damageToApply = 0;
-                }
-            }
-
-            double newHealth = Math.clamp(livingTarget.getHealth() - damageToApply, 0, livingTarget.getMaxHealth());
             if (livingTarget instanceof Player livingPlayer) {
                 KillSourceTracker.getInstance().setSource(livingPlayer, player);
             }
-            livingTarget.setHealth(newHealth);
+            livingTarget.damage(damageToApply);
+
             bonusDamageTracked.put(attackerUUID, tracked + damageToApply);
             spawnXPOrbs(player, livingTarget);
         }

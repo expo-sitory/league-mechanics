@@ -2,7 +2,6 @@ package dev.ixpu.leaguemechanics.item.passives;
 
 import dev.ixpu.leaguemechanics.manager.DebuffManager;
 import dev.ixpu.leaguemechanics.rune.DebuffType;
-import org.bukkit.Material;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
@@ -18,7 +17,7 @@ public class fated_ashes implements ItemPassive {
 
     @Override
     public String getDescription() {
-        return "§7ᴜɴɪQᴜᴇ – ɪɴғʟᴀᴍᴇ: §fDamaging a target with a §cFire Aspect §for §cFlame\n§fenchanted weapon triggers a §92.5 magic damage §fDoT over 3 seconds.";
+        return "§7ᴜɴɪQᴜᴇ – ɪɴғʟᴀᴍᴇ: §fDamaging a player with a §cFire Aspect §for §cFlame\n§fenchanted weapon triggers a §91.7 magic damage §fDoT for 3 seconds.";
     }
 
     @Override

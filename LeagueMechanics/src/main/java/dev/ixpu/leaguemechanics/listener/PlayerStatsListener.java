@@ -93,7 +93,8 @@ public class PlayerStatsListener {
         double itemBonusHP = statsManager.getItemHP(player);
         double runeBonusHP = PlayerStats.getOrCreate(player).getRuneShards(player).getHealth();
         double leagueLevelHP = PlayerStats.getOrCreate(player).getLeagueLevel() * 4.0;
-        double bonusHP = classBaseHP + itemBonusHP + runeBonusHP + leagueLevelHP;
+        double graspHeartsHP = PlayerStats.getOrCreate(player).getGraspHearts() * 2.0;
+        double bonusHP = classBaseHP + itemBonusHP + runeBonusHP + leagueLevelHP + graspHeartsHP;
         UUID playerId = player.getUniqueId();
         var attr = player.getAttribute(Attribute.MAX_HEALTH);
         if (attr != null) {

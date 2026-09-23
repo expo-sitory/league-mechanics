@@ -37,7 +37,7 @@ public class HailOfBlades extends CooldownHandler {
     private static final int WINDUP_TICKS = 200;
     private static final int STACK_DURATION_TICKS = 60;
     private static final int INACTIVITY_TIMEOUT_TICKS = 60;
-    private static final int INITIAL_STACKS = 4;
+    private static final int INITIAL_STACKS = 2;
 
     private PlayerEventListener listener;
 
@@ -91,10 +91,6 @@ public class HailOfBlades extends CooldownHandler {
         currentStacks.remove(uuid);
     }
 
-    public void onProjectileHit(Player shooter, Entity target) {
-        activateHailofBlades(shooter, target);
-    }
-
     public void onAttack(Player attacker, Entity target) {
         activateHailofBlades(attacker, target);
     }
@@ -140,14 +136,13 @@ public class HailOfBlades extends CooldownHandler {
                 lastAttackTick.put(playerUUID, 0);
                 currentStacks.put(playerUUID, currentStacks.getOrDefault(playerUUID, 0) - 1);
 
-                DebugLogger.debug(player, "§f[§dSource§f] §f[§cHail of Blades§f] Keystone Damage = §d" + Math.ceil(keystoneDamage(player, target) * 100) / 100.0);
-                DebugLogger.debug(player, "§f[§dSource§f] Keystone Damage Type = §dTrue Damage");
-                DebugLogger.debug(player, "§f[§dTarget§f] Target New HP = §d" + Math.ceil(newHealth * 100) / 100.0);
-
                 if (livingTarget instanceof Player livingPlayer) {
                     KillSourceTracker.getInstance().setSource(livingPlayer, player);
                 }
-                livingTarget.setHealth(newHealth);
+                livingTarget.damage(damageToApply);
+
+                DebugLogger.debug(player, "§f[§dSource§f] §f[§cHail of Blades§f] Keystone Damage = §d" + Math.ceil(keystoneDamage(player, target) * 100) / 100.0);
+                DebugLogger.debug(player, "§f[§dSource§f] Keystone Damage Type = §dTrue Damage");
 
                 return;
             }

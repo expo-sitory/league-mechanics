@@ -281,7 +281,7 @@ public class CommandHandler implements CommandExecutor {
             return true;
         }
 
-        double requiredXP = 100 * Math.pow(1.4, currentLevel);
+        double requiredXP = 100 * Math.pow(1.1, currentLevel);
         int xp = player.getLevel();
 
         if (xp < requiredXP) {

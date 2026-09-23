@@ -1,45 +1,32 @@
 package dev.ixpu.leaguemechanics.rune.keystones.resolve;
 
-import dev.ixpu.leaguemechanics.LeagueMechanics;
 import dev.ixpu.leaguemechanics.entity.player.PlayerStats;
-import dev.ixpu.leaguemechanics.util.DebugLogger;
 
 import dev.ixpu.leaguemechanics.rune.RunePath;
 import dev.ixpu.leaguemechanics.rune.RuneSlot;
 import dev.ixpu.leaguemechanics.rune.StacksHandler;
-
-import dev.ixpu.leaguemechanics.manager.DamageManager;
-import dev.ixpu.leaguemechanics.manager.KillSourceTracker;
 
 import dev.ixpu.leaguemechanics.listener.PlayerEventListener;
 
 
 import java.util.*;
 
-import org.bukkit.attribute.Attribute;
 import org.bukkit.entity.Player;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.LivingEntity;
-import org.bukkit.potion.PotionEffect;
-import org.bukkit.potion.PotionEffectType;
 import org.bukkit.configuration.ConfigurationSection;
 
 import net.kyori.adventure.text.Component;
 
 
 public class GraspOfTheUndying extends StacksHandler {
-    private double HEAL_PERCENT;
-
     int COOLDOWN_DURATION_SECONDS;
 
     private PlayerEventListener listener;
 
     private static final int ATTACK_WINDOW_TICKS = 100;
-    private static final int ABSORPTION_DURATION_TICKS = Integer.MAX_VALUE;
 
     private final Map<UUID, Integer> activationState = new HashMap<>();
-    private final Map<UUID, Integer> totalAbsorptionHearts = new HashMap<>();
-    private final Map<UUID, Boolean> activeStateActive = new HashMap<>();
 
     public GraspOfTheUndying(org.bukkit.configuration.ConfigurationSection config, PlayerEventListener listener) {
         super("grasp-of-the-undying", RunePath.RESOLVE, RuneSlot.KEYSTONE, 4, 60);
@@ -47,7 +34,6 @@ public class GraspOfTheUndying extends StacksHandler {
         ConfigurationSection section = config.getConfigurationSection("runes.keystones.resolve.grasp-of-the-undying");
 
         if (section != null) {
-            this.HEAL_PERCENT = section.getDouble("heal-percent", this.HEAL_PERCENT);
             this.COOLDOWN_DURATION_SECONDS = section.getInt("cooldown", COOLDOWN_DURATION_SECONDS);
         }
         this.setCooldownSeconds(COOLDOWN_DURATION_SECONDS);
@@ -57,17 +43,14 @@ public class GraspOfTheUndying extends StacksHandler {
     public void onEnable(Player player) {
         UUID uuid = player.getUniqueId();
         activationState.put(uuid, 0);
-        totalAbsorptionHearts.put(uuid, 0);
-        activeStateActive.put(uuid, false);
     }
 
     @Override
     public void onDisable(Player player) {
         UUID uuid = player.getUniqueId();
         super.onDisable(player);
+        PlayerStats.getOrCreate(player).setGraspHearts(0);
         activationState.remove(uuid);
-        totalAbsorptionHearts.remove(uuid);
-        activeStateActive.remove(uuid);
     }
 
     public void onProjectileHit(Player shooter, Entity target) {
@@ -94,7 +77,7 @@ public class GraspOfTheUndying extends StacksHandler {
         }
         addStack(player);
 
-        if (stacks >= maxStacks && attackWindow > 0 && !activeStateActive.getOrDefault(playerUUID, false)) {
+        if (stacks >= maxStacks && attackWindow > 0) {
             enterActiveState(player, target);
             resetStacks(player);
             activationState.put(playerUUID, 0);
@@ -103,74 +86,16 @@ public class GraspOfTheUndying extends StacksHandler {
     }
 
     private void enterActiveState(Player player, Entity target) {
-        UUID playerUUID = player.getUniqueId();
-        if (!(target instanceof LivingEntity livingTarget)) {
+        if (!(target instanceof LivingEntity)) {
             return;
         }
 
-        int absorptionHearts = totalAbsorptionHearts.getOrDefault(playerUUID, 0) / 2;
-        double damageToApply = keystoneDamage(player, target) * absorptionHearts * 0.2;
-
-        if (livingTarget instanceof Player targetPlayer) {
-            double absorption = targetPlayer.getAbsorptionAmount();
-            if (damageToApply > absorption) {
-                damageToApply -= absorption;
-                targetPlayer.setAbsorptionAmount(0);
-            } else {
-                targetPlayer.setAbsorptionAmount(absorption - damageToApply);
-                damageToApply = 0;
-            }
+        PlayerStats stats = PlayerStats.getOrCreate(player);
+        if (stats.getGraspHearts() < 30) {
+            stats.addGraspHearts(1);
+            listener.applyHealthModifier(player);
         }
-
-        double newHealth = Math.clamp(livingTarget.getHealth() - damageToApply, 0, livingTarget.getMaxHealth());
-
-        DebugLogger.debug(player, "§f[§dSource§f] §f[§aGrasp Of The Undying§f] Keystone Damage = §d" + (keystoneDamage(player, target) * absorptionHearts * 0.2));
-        DebugLogger.debug(player, "§f[§dSource§f] Keystone Damage Type = §dPhysical Damage");
-        DebugLogger.debug(player, "§f[§dTarget§f] Target New HP = §d" + newHealth);
-
-        if (livingTarget instanceof Player livingPlayer) {
-            KillSourceTracker.getInstance().setSource(livingPlayer, player);
-        }
-        livingTarget.setHealth(newHealth);
-
-        var maxHealthAttr = player.getAttribute(Attribute.MAX_HEALTH);
-        if (maxHealthAttr != null) {
-            double healPercent = HEAL_PERCENT / 100;
-            double maxHealth = maxHealthAttr.getValue();
-            double healAmount = maxHealth * healPercent;
-            double currentHealth = player.getHealth();
-            player.setHealth(Math.min(maxHealth, currentHealth + healAmount));
-        }
-
-        activateEffects(player);
-
         player.playSound(player.getLocation(), org.bukkit.Sound.ENTITY_WITHER_AMBIENT, 1.0f, 1.0f);
-    }
-
-    private double keystoneDamage(Player player, Entity target) {
-        DamageManager damageManager = new DamageManager(LeagueMechanics.getInstance().getStatsManager());
-        return damageManager.DamageCalculation(player, target, 0, 0, 0, 0);
-    }
-
-    private void activateEffects(Player player) {
-        UUID playerUUID = player.getUniqueId();
-        int currentAbsorptionHearts = totalAbsorptionHearts.getOrDefault(playerUUID, 0);
-        currentAbsorptionHearts++;
-        totalAbsorptionHearts.put(playerUUID, currentAbsorptionHearts);
-
-        player.addPotionEffect(new PotionEffect(
-                PotionEffectType.ABSORPTION,
-                ABSORPTION_DURATION_TICKS,
-                currentAbsorptionHearts - 1,
-                false,
-                false
-        ));
-    }
-
-    public void resetAbsorption(Player player) {
-        UUID playerUUID = player.getUniqueId();
-        totalAbsorptionHearts.put(playerUUID, 0);
-        player.removePotionEffect(PotionEffectType.ABSORPTION);
     }
 
     @Override
@@ -185,10 +110,6 @@ public class GraspOfTheUndying extends StacksHandler {
 
         tickStackExpiry(player);
 
-        if (player.getAbsorptionAmount() <= 0 && totalAbsorptionHearts.getOrDefault(playerUUID, 0) > 0) {
-            resetAbsorption(player);
-        }
-
         int attackWindow = activationState.getOrDefault(playerUUID, 0);
         if (attackWindow > 0) {
             attackWindow--;
@@ -196,7 +117,6 @@ public class GraspOfTheUndying extends StacksHandler {
 
             if (attackWindow == 0) {
                 resetStacks(player);
-                activeStateActive.put(playerUUID, false);
             }
         }
 
@@ -229,14 +149,18 @@ public class GraspOfTheUndying extends StacksHandler {
 
     private String getRuneDisplay(RuneState state, Player player, int stacks, int attackWindow) {
         return switch (state) {
-            case COOLDOWN -> "§7🥊 " + getCooldownDisplay(player);
+            case COOLDOWN -> "§7🥊 " + getCooldownDisplay(player) + " [" + getCurrentGraspHearts(player) + "/30]";
             case ACTIVE -> {
                 double remainingSeconds = attackWindow / 20.0;
-                yield String.format("§a🥊 (%.1fs)", remainingSeconds);
+                yield String.format("§a🥊 (%.1fs)", remainingSeconds) + " [" + getCurrentGraspHearts(player) + "/30]";
             }
-            case STACKING -> "§2🥊 " + stacks + "/" + maxStacks;
-            case IDLE -> "§2🥊";
+            case STACKING -> "§2🥊 " + stacks + "/" + maxStacks + " [" + getCurrentGraspHearts(player) + "/30]";
+            case IDLE -> "§2🥊 [" + getCurrentGraspHearts(player) + "/30]";
         };
+    }
+
+    public int getCurrentGraspHearts(Player player) {
+        return PlayerStats.getOrCreate(player).getGraspHearts();
     }
 
     @Override
