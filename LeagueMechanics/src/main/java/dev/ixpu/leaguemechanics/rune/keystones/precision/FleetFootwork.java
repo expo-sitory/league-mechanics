@@ -163,8 +163,7 @@ public class FleetFootwork extends StacksHandler {
         }
 
         speedBuffTicks.put(playerUUID, SPEED_BUFF_DURATION_TICKS);
-        player.playSound(player.getLocation(), org.bukkit.Sound.ENTITY_BREEZE_IDLE_AIR, 1.0f, 1.2f);
-    }
+        player.getWorld().playSound(player.getLocation(), org.bukkit.Sound.ENTITY_BREEZE_IDLE_AIR, 1.0f, 1.2f);}
 
     private void refreshSpeedBuff(Player player) {
         UUID playerUUID = player.getUniqueId();
@@ -177,7 +176,7 @@ public class FleetFootwork extends StacksHandler {
         for (AttributeModifier mod : mods) {
             try {
                 Objects.requireNonNull(player.getAttribute(Attribute.MOVEMENT_SPEED)).removeModifier(mod);
-                player.playSound(player.getLocation(), org.bukkit.Sound.ENTITY_BREEZE_LAND, 1.0f, 1.2f);
+                player.getWorld().playSound(player.getLocation(), org.bukkit.Sound.ENTITY_BREEZE_LAND, 1.0f, 1.2f);
             } catch (Exception e) {
                 //
             }

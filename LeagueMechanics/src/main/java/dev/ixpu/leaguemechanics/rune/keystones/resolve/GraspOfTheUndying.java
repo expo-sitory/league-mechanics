@@ -11,6 +11,7 @@ import dev.ixpu.leaguemechanics.listener.PlayerEventListener;
 
 import java.util.*;
 
+import org.bukkit.attribute.Attribute;
 import org.bukkit.entity.Player;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.LivingEntity;
@@ -21,6 +22,7 @@ import net.kyori.adventure.text.Component;
 
 public class GraspOfTheUndying extends StacksHandler {
     int COOLDOWN_DURATION_SECONDS;
+    double HEAL_PERCENT;
 
     private PlayerEventListener listener;
 
@@ -35,6 +37,7 @@ public class GraspOfTheUndying extends StacksHandler {
 
         if (section != null) {
             this.COOLDOWN_DURATION_SECONDS = section.getInt("cooldown", COOLDOWN_DURATION_SECONDS);
+            this.HEAL_PERCENT = section.getDouble("heal-percent", HEAL_PERCENT);
         }
         this.setCooldownSeconds(COOLDOWN_DURATION_SECONDS);
     }
@@ -80,7 +83,6 @@ public class GraspOfTheUndying extends StacksHandler {
         if (stacks >= maxStacks && attackWindow > 0) {
             enterActiveState(player, target);
             resetStacks(player);
-            activationState.put(playerUUID, 0);
             resetCooldown(player);
         }
     }
@@ -95,6 +97,13 @@ public class GraspOfTheUndying extends StacksHandler {
             stats.addGraspHearts(1);
             listener.applyHealthModifier(player);
         }
+
+        double maxHealth = Objects.requireNonNull(player.getAttribute(Attribute.MAX_HEALTH)).getValue();
+        double currentHealth = player.getHealth();
+        double missingHealth = maxHealth - currentHealth;
+        double healAmount = missingHealth * (HEAL_PERCENT / 100.0);
+        player.setHealth(Math.min(maxHealth, currentHealth + healAmount));
+
         player.playSound(player.getLocation(), org.bukkit.Sound.ENTITY_WITHER_AMBIENT, 1.0f, 1.0f);
     }
 

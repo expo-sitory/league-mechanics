@@ -15,6 +15,7 @@ import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.inventory.InventoryDragEvent;
+import org.bukkit.event.player.PlayerResourcePackStatusEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import java.util.List;
@@ -149,7 +150,7 @@ public class ItemShopManager implements Listener {
 
         player.playSound(player.getLocation(), Sound.ENTITY_EXPERIENCE_ORB_PICKUP, 1.0f, 1.5f);
         player.setLevel(playerLevel - price);
-        ItemStack purchasedItem = createPurchaseItem(shopItem);
+        ItemStack purchasedItem = createPurchaseItem(player, shopItem);
         consumeRequiredItems(player, required);
         addItemToInventory(player, purchasedItem);
 
@@ -246,7 +247,16 @@ public class ItemShopManager implements Listener {
         return sb.toString();
     }
 
-    private ItemStack createPurchaseItem(ItemShopRegistry.ShopItem shopItem) {
+    private String resolveModelForPlayer(Player player, String itemId) {
+        ItemShopData shopData = ItemShopData.getInstance();
+        if (!shopData.hasCustomModel(itemId)) {
+            return null;
+        }
+        boolean hasPack = player.getResourcePackStatus() == PlayerResourcePackStatusEvent.Status.SUCCESSFULLY_LOADED;
+        return hasPack ? shopData.getModel(itemId) : shopData.getFallbackModel(itemId);
+    }
+
+    private ItemStack createPurchaseItem(Player player, ItemShopRegistry.ShopItem shopItem) {
         ItemStack item = new ItemStack(Material.NETHERITE_INGOT);
         ItemMeta meta = item.getItemMeta();
 
@@ -261,12 +271,42 @@ public class ItemShopManager implements Listener {
         ItemModifier.setItemId(item, shopItem.getId());
         ItemModifier.syncItemStats(item);
 
-        ItemShopData shopData = ItemShopData.getInstance();
-        if (shopData.hasCustomModel(shopItem.getId())) {
-            ItemModifier.setItemModel(item, shopData.getModel(shopItem.getId()));
+        String model = resolveModelForPlayer(player, shopItem.getId());
+        if (model != null) {
+            ItemModifier.setItemModel(item, model);
         }
 
         return item;
+    }
+
+    public void refreshLeagueItemModels(Player player) {
+        for (ItemStack stack : player.getInventory().getContents()) {
+            if (stack == null || stack.getType().isAir()) {
+                continue;
+            }
+            String itemId = ItemModifier.getItemId(stack);
+            if (itemId == null) {
+                continue;
+            }
+            String model = resolveModelForPlayer(player, itemId);
+            if (model != null) {
+                ItemModifier.setItemModel(stack, model);
+            }
+        }
+    }
+
+    @EventHandler
+    public void onResourcePackStatus(PlayerResourcePackStatusEvent event) {
+        PlayerResourcePackStatusEvent.Status status = event.getStatus();
+        boolean isFinalOutcome = status == PlayerResourcePackStatusEvent.Status.SUCCESSFULLY_LOADED
+                || status == PlayerResourcePackStatusEvent.Status.DECLINED
+                || status == PlayerResourcePackStatusEvent.Status.FAILED_DOWNLOAD
+                || status == PlayerResourcePackStatusEvent.Status.DISCARDED
+                || status == PlayerResourcePackStatusEvent.Status.INVALID_URL;
+        if (!isFinalOutcome) {
+            return;
+        }
+        refreshLeagueItemModels(event.getPlayer());
     }
 
     private boolean hasInventorySpace(Player player, List<String> requiredIds) {

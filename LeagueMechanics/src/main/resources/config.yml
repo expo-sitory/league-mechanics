@@ -3,8 +3,16 @@
 
 general-settings:
   debug: true
-  damage-divisor-balancer: 2.1 # A value to divide players total damage output
-  resistance-multiplier-balancer: 1.8 # A value to multiply players total damage resistance
+  debug-disabled-worlds:
+    - world_nether
+    - world_the_end
+  disabled-commands-by-world:
+    world_nether:
+      - shop
+      - runes
+    world_the_end:
+      - shop
+      - runes
 
   mysql: # MySQL Configuration - Runes & KDA Multi Server Synchronization
     host: kupalhost
@@ -326,6 +334,18 @@ mob-stats:
     ar: 95.0
     mr: 140.0
     type: CRITTER
+  axolotl:
+    ad: 45.0
+    ap: 25.0
+    ar: 120.0
+    mr: 80.0
+    type: CRITTER
+  wither:
+    ad: 500.0
+    ap: 300.0
+    ar: 750.0
+    mr: 550.0
+    type: UNDEAD
   ender_dragon:
     ad: 780.0
     ap: 650.0

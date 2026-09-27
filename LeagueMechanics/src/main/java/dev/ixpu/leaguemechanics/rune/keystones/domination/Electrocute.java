@@ -110,7 +110,6 @@ public class Electrocute extends StacksHandler {
             resetStacksForTarget(player, targetUUID);
             resetCooldown(player);
 
-            player.playSound(player.getLocation(), Sound.ITEM_TRIDENT_THUNDER, 1.0f, 1.2f);
             target.getWorld().playSound(target.getLocation(), Sound.ITEM_TRIDENT_THUNDER, 1.0f, 1.0f);
 
             if (livingTarget instanceof Player livingTargetPlayer) {

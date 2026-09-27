@@ -15,7 +15,7 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.scheduler.BukkitRunnable;
 
 public class bamis_cinder implements ItemPassive {
-    private static final double IMMOLATE_DAMAGE_PER_TICK = 1.5;
+    private static final double IMMOLATE_DAMAGE_PER_TICK = 5.0;
     private static final double IMMOLATE_RADIUS = 5.0;
     private static final int IMMOLATE_DURATION_TICKS = 60;
     private static final int IMMOLATE_TICK_INTERVAL = 20;
@@ -28,7 +28,7 @@ public class bamis_cinder implements ItemPassive {
 
     @Override
     public String getDescription() {
-        return "§7ᴜɴɪQᴜᴇ – ɪᴍᴍᴏʟᴀᴛᴇ: §fTaking or dealing damage activates this passive,\n§fdealing §9" + IMMOLATE_DAMAGE_PER_TICK * 10 + " magic damage §fover §e3 seconds §fto all entities within §65 blocks§f.\n\n§790s Cooldown";
+        return "§7ᴜɴɪQᴜᴇ – ɪᴍᴍᴏʟᴀᴛᴇ: §fTaking or dealing damage activates this passive,\n§fdealing §915 magic damage §fover §e3 seconds §fto all entities within §65 blocks§f.\n\n§790s Cooldown";
     }
 
     @Override

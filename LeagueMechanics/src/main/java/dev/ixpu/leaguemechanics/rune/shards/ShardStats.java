@@ -11,8 +11,8 @@ public class ShardStats {
 
     public ShardStats() {
         this.row1 = RuneShard.ROW1_ADAP;
-        this.row2 = RuneShard.ROW2_ADAP;
-        this.row3 = RuneShard.ROW3_HP;
+        this.row2 = RuneShard.ROW2_MS;
+        this.row3 = RuneShard.ROW3_HR;
     }
 
     public void selectShards(RuneShard r1, RuneShard r2, RuneShard r3) {

@@ -26,6 +26,7 @@ import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.Action;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
+import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.entity.EntityShootBowEvent;
 import org.bukkit.event.entity.ProjectileHitEvent;
 
@@ -57,7 +58,7 @@ public class DamageListener implements Listener, RuneCooldownGate {
     private static final Map<UUID, Long> parryWindow = new HashMap<>();
     private static final Map<UUID, Integer> parryWindowTasks = new HashMap<>();
     private final Set<Entity> parriedProjectiles = ConcurrentHashMap.newKeySet();
-    private static final long PARRY_WINDOW_MS = 200L;
+    private static final long PARRY_WINDOW_MS = 700L;
 
     public static final Parry parryCooldown = new Parry();
 
@@ -76,13 +77,29 @@ public class DamageListener implements Listener, RuneCooldownGate {
                 parryWindow.put(uuid, System.currentTimeMillis());
                 parryCooldown.showParryWindowBar(player);
 
-                int taskId = Bukkit.getScheduler().scheduleSyncDelayedTask(plugin, () -> {
-                    parryWindow.remove(uuid);
-                    parryCooldown.hideParryWindowBar(player);
-                    parryCooldown.startMissedCooldown(player);
-                    parryWindowTasks.remove(uuid);
+                Bukkit.getScheduler().runTaskTimer(plugin, task -> {
+                    if (!parryWindow.containsKey(uuid)) {
+                        task.cancel();
+                        return;
+                    }
+
+                    if (!player.isBlocking() && !isHandRaised(player)) {
+                        parryWindow.remove(uuid);
+                        parryCooldown.hideParryWindowBar(player);
+                        parryWindowTasks.remove(uuid);
+                        task.cancel();
+                    }
+                }, 0L, 1L);
+
+                int timeoutTaskId = Bukkit.getScheduler().scheduleSyncDelayedTask(plugin, () -> {
+                    if (parryWindow.containsKey(uuid)) {
+                        parryWindow.remove(uuid);
+                        parryCooldown.hideParryWindowBar(player);
+                        parryCooldown.startMissedCooldown(player);
+                        parryWindowTasks.remove(uuid);
+                    }
                 }, 4L);
-                parryWindowTasks.put(uuid, taskId);
+                parryWindowTasks.put(uuid, timeoutTaskId);
             }
         }
     }
@@ -104,9 +121,6 @@ public class DamageListener implements Listener, RuneCooldownGate {
         if (event.getProjectile() instanceof ThrownPotion || event.getProjectile() instanceof ThrownExpBottle) {
             return;
         }
-        if (isAnyHotbarOnCooldown(shooter)) {
-            event.setCancelled(true);
-        }
         if (isPlayerOnAttackCooldown(shooter)) {
             event.setCancelled(true);
             return;
@@ -123,9 +137,6 @@ public class DamageListener implements Listener, RuneCooldownGate {
             event.setCancelled(true);
             return;
         }
-        if (isAnyHotbarOnCooldown(shooter)) {
-            event.setCancelled(true);
-        }
         combatState.removeLetRunesThrough(shooter.getUniqueId());
         setAttackCooldown(shooter);
     }
@@ -134,10 +145,6 @@ public class DamageListener implements Listener, RuneCooldownGate {
     public void onAttackSwing(PlayerArmSwingEvent event) {
         Player attacker = event.getPlayer();
         if (isPlayerOnAttackCooldown(attacker)) {
-            event.setCancelled(true);
-            return;
-        }
-        if (isAnyHotbarOnCooldown(attacker)) {
             event.setCancelled(true);
         }
     }
@@ -204,6 +211,7 @@ public class DamageListener implements Listener, RuneCooldownGate {
         }
 
         shooter.playSound(shooter.getLocation(), Sound.ENTITY_ARROW_HIT_PLAYER, 1.0f, 1.0f);
+        event.getEntity().remove();
 
         damageEvent(shooter, target, "Projectile", 1);
         combatState.removeLetRunesThrough(shooter.getUniqueId());
@@ -241,6 +249,10 @@ public class DamageListener implements Listener, RuneCooldownGate {
 
                 Bukkit.dispatchCommand(Bukkit.getConsoleSender(), "attack-parried-sound " + targetPlayer.getName());
 
+                Integer taskId = parryWindowTasks.remove(targetPlayer.getUniqueId());
+                if (taskId != null) {
+                    Bukkit.getScheduler().cancelTask(taskId);
+                }
                 parryWindow.remove(targetPlayer.getUniqueId());
                 parryCooldown.resetCooldown(targetPlayer);
 
@@ -279,12 +291,8 @@ public class DamageListener implements Listener, RuneCooldownGate {
             return;
         }
 
-        if (isAnyHotbarOnCooldown(attacker)) {
-            event.setCancelled(true);
-            return;
-        }
-
         setAttackCooldown(attacker);
+        event.setDamage(1);
         damageEvent(attacker, target, "Melee", event.getDamage());
         combatState.removeLetRunesThrough(attacker.getUniqueId());
 
@@ -303,6 +311,11 @@ public class DamageListener implements Listener, RuneCooldownGate {
     @EventHandler
     public void onPlayerDamaged(EntityDamageByEntityEvent event) {
         if (!(event.getEntity() instanceof Player player)) {
+            return;
+        }
+
+        if (event.getDamage() == 0) {
+            event.setCancelled(true);
             return;
         }
 
@@ -362,54 +375,85 @@ public class DamageListener implements Listener, RuneCooldownGate {
     }
 
     public boolean isBlocking(Player target, double damage) {
-        if (!(target instanceof Player targetPlayer) || !targetPlayer.isBlocking()) {
+        if (!(target instanceof Player targetPlayer)) {
             return false;
         }
 
-        targetPlayer.getWorld().playSound(targetPlayer.getLocation(), Sound.BLOCK_METAL_PLACE, 1.0f, 1.0f);
+        ItemStack offhand = targetPlayer.getInventory().getItemInOffHand();
+        ItemStack mainhand = targetPlayer.getInventory().getItemInMainHand();
+
+        boolean hasShield = offhand != null && offhand.getType() == Material.SHIELD || mainhand != null && mainhand.getType() == Material.SHIELD;
+        boolean hasSword = mainhand != null && mainhand.getType().name().contains("SWORD");
+
+        if (!hasShield && !hasSword) {
+            return false;
+        }
+
+        if (!targetPlayer.isBlocking() && !isHandRaised(targetPlayer)) {
+            return false;
+        }
+
+        Bukkit.dispatchCommand(Bukkit.getConsoleSender(), "sword-blocking-sound " + targetPlayer.getName());
         BlockData blockData = Material.IRON_BLOCK.createBlockData();
         targetPlayer.getWorld().spawnParticle(Particle.BLOCK, targetPlayer.getLocation().add(0, 1, 0), 5, 0.5, 0.5, 0.5, 0, blockData);
 
-        ItemStack shield = targetPlayer.getInventory().getItemInMainHand();
-        if (shield != null && shield.getType() == Material.SHIELD) {
-            int shieldDamage = Math.max(1, (int) Math.ceil(Math.sqrt(damage)));
-            shield.damage((short) shieldDamage, targetPlayer);
+        int toolDamage = Math.max(1, (int) Math.ceil(Math.sqrt(damage)));
 
-            if (shield.getDurability() <= 0) {
+        if (hasSword && mainhand != null) {
+            mainhand.damage((short) toolDamage, targetPlayer);
+            if (mainhand.getDurability() <= 0) {
                 targetPlayer.getInventory().setItemInMainHand(new ItemStack(Material.AIR));
-                targetPlayer.updateInventory();
             }
         }
 
+        if (hasShield && offhand != null) {
+            offhand.damage((short) toolDamage, targetPlayer);
+            if (offhand.getDurability() <= 0) {
+                targetPlayer.getInventory().setItemInOffHand(new ItemStack(Material.AIR));
+            }
+        }
+
+        targetPlayer.updateInventory();
         return true;
+    }
+
+    private boolean isHandRaised(Player player) {
+        if (player == null) return false;
+        try {
+            return player.isHandRaised();
+        } catch (NoSuchMethodError | AbstractMethodError ignored) {
+            return false;
+        }
+    }
+
+    private double getMitigationPercent(Player player) {
+        ItemStack offhand = player.getInventory().getItemInOffHand();
+        if (offhand != null && offhand.getType() == Material.SHIELD) {
+            return getMitigationPercent(offhand.getType());
+        }
+        ItemStack mainhand = player.getInventory().getItemInMainHand();
+        return getMitigationPercent(mainhand.getType());
+    }
+
+    private double getMitigationPercent(Material weapon) {
+        switch(weapon) {
+            case WOODEN_SWORD -> {return 10.0;}
+            case STONE_SWORD -> {return 20.0;}
+            case IRON_SWORD, GOLDEN_SWORD -> {return 28.0;}
+            case DIAMOND_SWORD, NETHERITE_SWORD -> {return 40.0;}
+            case SHIELD -> {return 50.0;}
+            default -> {return 0.0;}
+        }
     }
 
     public void entityDamageEvent(LivingEntity source, LivingEntity target, String type, double vanillaDamage) {
         DamageManager damage = new DamageManager(itemStatsManager);
 
-        if (target instanceof Player targetPlayer && isBlocking(targetPlayer, vanillaDamage) || vanillaDamage <= 0) {
-            return;
-        }
-
         if (type.equals("Projectile")) {
             damage.enableProjectileDamage();
         }
 
-        double physicalDamage = damage.DamageCalculation(source, target, 0, 0, 0, 0);
-        double newHealth = target.getHealth();
-
-        if (target instanceof Player targetPlayer) {
-            double absorption = targetPlayer.getAbsorptionAmount();
-            if (physicalDamage > absorption) {
-                physicalDamage -= absorption;
-                targetPlayer.setAbsorptionAmount(0);
-            } else {
-                targetPlayer.setAbsorptionAmount(absorption - physicalDamage);
-                physicalDamage = 0;
-            }
-        }
-
-        newHealth = Math.clamp(newHealth - physicalDamage, 0, target.getMaxHealth());
+        double totalDamage = damage.DamageCalculation(source, target, 0, 0, 0, 0);
 
         for (ItemStack armor : target.getEquipment().getArmorContents()) {
             if (armor != null && !armor.getType().isAir()) {
@@ -417,10 +461,21 @@ public class DamageListener implements Listener, RuneCooldownGate {
             }
         }
 
-        if (newHealth <= 0) {
-            target.damage(target.getHealth());
-        } else {
-            target.setHealth(newHealth);
+        if (target instanceof Player targetPlayer && isBlocking(targetPlayer, vanillaDamage)) {
+            double mitigationPercent = getMitigationPercent(targetPlayer);
+            totalDamage *= (1.0 - (mitigationPercent / 100.0));
+        }
+        target.damage(totalDamage);
+
+        if (target instanceof Player targetPlayer) {
+            for (ItemStack inv : targetPlayer.getInventory().getContents()) {
+                if (inv == null || inv.getType().isAir()) continue;
+                ItemPassive passive = getEquippedPassive(inv);
+                if (passive != null) {
+                    boolean isMagic = damage.isMagicDamage();
+                    passive.onTakeDamage(targetPlayer, source instanceof Player ? (Player) source : null, totalDamage, isMagic);
+                }
+            }
         }
     }
 
@@ -429,10 +484,6 @@ public class DamageListener implements Listener, RuneCooldownGate {
         PlayerRuneData runeData = runeManager.getPlayerRuneData(player);
         PlayerRuneData critRuneData = runeManager.getPlayerRuneData(player);
         PlayerStats stats = PlayerStats.getOrCreate(player);
-
-        if (target instanceof Player targetPlayer && isBlocking(targetPlayer, vanillaDamage) || vanillaDamage <= 0) {
-            return;
-        }
 
         double attackerAD = (stats.getPlayerAD(player) * stats.getDamageBalancer());
         double attackerAP = stats.getPlayerAP(player) * stats.getDamageBalancer();
@@ -470,6 +521,7 @@ public class DamageListener implements Listener, RuneCooldownGate {
             }
         }
         if (didCrit) {
+            player.getWorld().playSound(player.getLocation(), Sound.ITEM_MACE_SMASH_GROUND_HEAVY, 1.0f, 1.2f);
             if (critRuneData != null) {
                 for (CooldownHandler rune : critRuneData.getAllRunes()) {
                     if (rune != null) {
@@ -495,6 +547,12 @@ public class DamageListener implements Listener, RuneCooldownGate {
             targetAR /= stats.getResistanceBalancer();
             targetMR /= stats.getResistanceBalancer();
         }
+
+        if (target instanceof Player targetPlayer && isBlocking(targetPlayer, vanillaDamage) && vanillaDamage > 0 && !didCrit) {
+            double mitigationPercent = getMitigationPercent(targetPlayer);
+            totalDamage *= (1.0 - (mitigationPercent / 100.0));
+        }
+
         target.damage(totalDamage);
 
         DebugLogger.debug(player, "§7----------- §f[ §dDEBUG MODE §f] §7-----------");
@@ -538,7 +596,9 @@ public class DamageListener implements Listener, RuneCooldownGate {
         for (int i = 0; i < 9; i++) {
             ItemStack item = player.getInventory().getItem(i);
             if (item != null && !item.getType().isAir() && isWeapon(item)) {
-                player.setCooldown(item.getType(), cooldownInt);
+                if (player.getCooldown(item.getType()) == 0) {
+                    player.setCooldown(item.getType(), cooldownInt);
+                }
             }
         }
     }

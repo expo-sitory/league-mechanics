@@ -64,7 +64,7 @@ public class Parry {
     private void startParryWindowAnimation(Player player) {
         UUID uuid = player.getUniqueId();
         long startTime = System.currentTimeMillis();
-        long windowDurationMs = 200L;
+        long windowDurationMs = 700L;
 
         Bukkit.getScheduler().runTaskTimer(LeagueMechanics.getInstance(), task -> {
             BossBar bar = parryBars.get(uuid);

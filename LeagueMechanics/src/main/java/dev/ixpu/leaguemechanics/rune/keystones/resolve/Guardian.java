@@ -194,7 +194,7 @@ public class Guardian extends CooldownHandler {
         trackedPlayers.put(playerUUID, nearbyPlayers);
         windupCounter.put(playerUUID, GUARD_RAISE_DURATION_TICKS);
         lastShieldTime.put(playerUUID, System.currentTimeMillis());
-        player.playSound(player.getLocation(), org.bukkit.Sound.BLOCK_BEACON_ACTIVATE, 1.0f, 1.2f);
+        player.getWorld().playSound(player.getLocation(), org.bukkit.Sound.BLOCK_BEACON_ACTIVATE, 1.0f, 1.2f);
     }
 
     public void onTakeDamage(Player player) {
@@ -211,7 +211,7 @@ public class Guardian extends CooldownHandler {
         List<UUID> shields = trackedPlayers.getOrDefault(playerUUID, new ArrayList<>());
 
         applyResistances(player);
-        player.playSound(player.getLocation(), Sound.ITEM_TRIDENT_RETURN, 1.0f, 1.5f);
+        player.getWorld().playSound(player.getLocation(), Sound.ITEM_TRIDENT_RETURN, 1.0f, 1.5f);
 
         int count = 0;
         for (UUID trackedUUID : shields) {
@@ -220,7 +220,7 @@ public class Guardian extends CooldownHandler {
             Player trackedPlayer = player.getServer().getPlayer(trackedUUID);
             if (trackedPlayer != null && trackedPlayer.isOnline()) {
                 applyResistances(trackedPlayer);
-                trackedPlayer.playSound(trackedPlayer.getLocation(), Sound.ITEM_TRIDENT_RETURN, 1.0f, 0.5f);
+                trackedPlayer.getWorld().playSound(trackedPlayer.getLocation(), Sound.ITEM_TRIDENT_RETURN, 1.0f, 0.5f);
                 count++;
             }
         }

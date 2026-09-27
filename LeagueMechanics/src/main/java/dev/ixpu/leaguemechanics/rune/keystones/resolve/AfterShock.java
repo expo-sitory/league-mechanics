@@ -90,16 +90,28 @@ public class AfterShock extends CooldownHandler {
         UUID playerUUID = player.getUniqueId();
 
         if (isOnCooldown(player)) {
-            activateAfterShock(player);
             return;
         }
 
         Double threshold = triggerHealthThreshold.getOrDefault(playerUUID, -1.0);
         if (threshold > 0 && player.getHealth() < threshold) {
-            releaseShockwave(player);
-            triggerHealthThreshold.remove(playerUUID);
-            effectRemainingTicks.put(playerUUID, 0);
-            resetCooldown(player);
+            triggerShockwaveRelease(player);
+            return;
+        }
+
+        activateAfterShock(player);
+    }
+
+    private void triggerShockwaveRelease(Player player) {
+        UUID playerUUID = player.getUniqueId();
+        releaseShockwave(player);
+        triggerHealthThreshold.remove(playerUUID);
+        effectRemainingTicks.remove(playerUUID);
+        resetCooldown(player);
+
+        Integer taskId = effectTaskIds.remove(playerUUID);
+        if (taskId != null && taskId != -1) {
+            LeagueMechanics.getInstance().getServer().getScheduler().cancelTask(taskId);
         }
     }
 
@@ -147,19 +159,14 @@ public class AfterShock extends CooldownHandler {
 
                 Double threshold = triggerHealthThreshold.getOrDefault(playerUUID, -1.0);
                 if (threshold > 0 && player.getHealth() < threshold) {
-                    releaseShockwave(player);
-                    plugin.getServer().getScheduler().cancelTask(taskId[0]);
-                    effectTaskIds.remove(playerUUID);
-                    effectRemainingTicks.remove(playerUUID);
-                    triggerHealthThreshold.remove(playerUUID);
-                    resetCooldown(player);
+                    triggerShockwaveRelease(player);
                 }
             }
         }, 0L, 1L);
 
         effectTaskIds.put(playerUUID, taskId[0]);
 
-        player.playSound(player.getLocation(), Sound.ENTITY_WARDEN_HEARTBEAT, 1.0f, 0.5f);
+        player.getWorld().playSound(player.getLocation(), Sound.ENTITY_WARDEN_HEARTBEAT, 1.0f, 0.5f);
     }
 
     private void applyResistances(Player player) {
@@ -317,18 +324,18 @@ public class AfterShock extends CooldownHandler {
         int remainingTicks = effectRemainingTicks.getOrDefault(playerUUID, 0);
 
         if (remainingTicks > 0) {
-            String runeDisplay = getRuneDisplay(RuneState.ACTIVE, player, remainingTicks);
+            String runeDisplay = getRuneDisplay(RuneState.ACTIVE, player);
             setPlayerDisplay(player, runeDisplay);
             return;
         }
 
         if (isOnCooldown(player)) {
-            String runeDisplay = getRuneDisplay(RuneState.COOLDOWN, player, 0);
+            String runeDisplay = getRuneDisplay(RuneState.COOLDOWN, player);
             setPlayerDisplay(player, runeDisplay);
             return;
         }
 
-        String runeDisplay = getRuneDisplay(RuneState.IDLE, player, 0);
+        String runeDisplay = getRuneDisplay(RuneState.IDLE, player);
         setPlayerDisplay(player, runeDisplay);
     }
 
@@ -344,12 +351,9 @@ public class AfterShock extends CooldownHandler {
         ACTIVE, COOLDOWN, IDLE
     }
 
-    private String getRuneDisplay(RuneState state, Player player, int remainingTicks) {
+    private String getRuneDisplay(RuneState state, Player player) {
         return switch (state) {
-            case ACTIVE -> {
-                double remainingSeconds = remainingTicks / 20.0;
-                yield String.format("§a🌀 (%.1fs)", remainingSeconds);
-            }
+            case ACTIVE -> "§a§k|| §r§a🌀 §k||§r";
             case COOLDOWN -> "§7🌀 " + getCooldownDisplay(player);
             case IDLE -> "§2🌀 ";
         };
@@ -360,11 +364,11 @@ public class AfterShock extends CooldownHandler {
         UUID playerUUID = player.getUniqueId();
         int remainingTicks = effectRemainingTicks.getOrDefault(playerUUID, 0);
         if (remainingTicks > 0) {
-            return getRuneDisplay(RuneState.ACTIVE, player, remainingTicks);
+            return getRuneDisplay(RuneState.ACTIVE, player);
         }
         if (isOnCooldown(player)) {
-            return getRuneDisplay(RuneState.COOLDOWN, player, 0);
+            return getRuneDisplay(RuneState.COOLDOWN, player);
         }
-        return getRuneDisplay(RuneState.IDLE, player, 0);
+        return getRuneDisplay(RuneState.IDLE, player);
     }
 }

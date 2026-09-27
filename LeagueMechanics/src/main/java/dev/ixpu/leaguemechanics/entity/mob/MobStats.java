@@ -38,6 +38,8 @@ public class MobStats {
         PARCHED,
         PHANTOM,
         ENDER_DRAGON,
+        AXOLOTL,
+        WITHER,
         OTHER
     }
 
@@ -234,6 +236,18 @@ public class MobStats {
     private static double PHANTOM_AR;
     private static double PHANTOM_MR;
     private static MobType PHANTOM_TYPE;
+
+    private static double AXOLOTL_AD;
+    private static double AXOLOTL_AP;
+    private static double AXOLOTL_AR;
+    private static double AXOLOTL_MR;
+    private static MobType AXOLOTL_TYPE;
+
+    private static double WITHER_AD;
+    private static double WITHER_AP;
+    private static double WITHER_AR;
+    private static double WITHER_MR;
+    private static MobType WITHER_TYPE;
 
     private static double ENDER_DRAGON_AD;
     private static double ENDER_DRAGON_AP;
@@ -610,6 +624,28 @@ public class MobStats {
             loadDefaultPhantom();
         }
 
+        ConfigurationSection axolotl = mobStatsSection.getConfigurationSection("axolotl");
+        if (axolotl != null) {
+            AXOLOTL_AD = axolotl.getDouble("ad", 45.0);
+            AXOLOTL_AP = axolotl.getDouble("ap", 25.0);
+            AXOLOTL_AR = axolotl.getDouble("ar", 120.0);
+            AXOLOTL_MR = axolotl.getDouble("mr", 80.0);
+            AXOLOTL_TYPE = MobType.valueOf(axolotl.getString("type", "CRITTER"));
+        } else {
+            loadDefaultAxolotl();
+        }
+
+        ConfigurationSection wither = mobStatsSection.getConfigurationSection("wither");
+        if (wither != null) {
+            WITHER_AD = wither.getDouble("ad", 500.0);
+            WITHER_AP = wither.getDouble("ap", 300.0);
+            WITHER_AR = wither.getDouble("ar", 750.0);
+            WITHER_MR = wither.getDouble("mr", 550.0);
+            WITHER_TYPE = MobType.valueOf(wither.getString("type", "UNDEAD"));
+        } else {
+            loadDefaultWither();
+        }
+
         ConfigurationSection enderDragon = mobStatsSection.getConfigurationSection("ender_dragon");
         if (enderDragon != null) {
             ENDER_DRAGON_AD = enderDragon.getDouble("ad", 800.0);
@@ -656,6 +692,8 @@ public class MobStats {
         loadDefaultZoglin();
         loadDefaultParched();
         loadDefaultPhantom();
+        loadDefaultAxolotl();
+        loadDefaultWither();
         loadDefaultEnderDragon();
     }
 
@@ -915,6 +953,22 @@ public class MobStats {
         PHANTOM_TYPE = MobType.CRITTER;
     }
 
+    private static void loadDefaultAxolotl() {
+        AXOLOTL_AD = 45.0;
+        AXOLOTL_AP = 25.0;
+        AXOLOTL_AR = 120.0;
+        AXOLOTL_MR = 80.0;
+        AXOLOTL_TYPE = MobType.CRITTER;
+    }
+
+    private static void loadDefaultWither() {
+        WITHER_AD = 500.0;
+        WITHER_AP = 300.0;
+        WITHER_AR = 750.0;
+        WITHER_MR = 550.0;
+        WITHER_TYPE = MobType.UNDEAD;
+    }
+
     private static void loadDefaultEnderDragon() {
         ENDER_DRAGON_AD = 800.0;
         ENDER_DRAGON_AP = 600.0;
@@ -961,7 +1015,8 @@ public class MobStats {
             case "minecraft:parched" -> PARCHED_AD;
             case "minecraft:phantom" -> PHANTOM_AD;
             case "minecraft:ender_dragon" -> ENDER_DRAGON_AD;
-
+            case "minecraft:axolotl" -> AXOLOTL_AD;
+            case "minecraft:wither" -> WITHER_AD;
             default -> 0;
         };
 
@@ -1029,6 +1084,8 @@ public class MobStats {
             case "minecraft:parched" -> PARCHED_AP;
             case "minecraft:phantom" -> PHANTOM_AP;
             case "minecraft:ender_dragon" -> ENDER_DRAGON_AP;
+            case "minecraft:axolotl" -> AXOLOTL_AP;
+            case "minecraft:wither" -> WITHER_AP;
             default -> 0;
         };
     }
@@ -1070,6 +1127,8 @@ public class MobStats {
             case "minecraft:zoglin" -> ZOGLIN_AR;
             case "minecraft:parched" -> PARCHED_AR;
             case "minecraft:phantom" -> PHANTOM_AR;
+            case "minecraft:axolotl" -> AXOLOTL_AR;
+            case "minecraft:wither" -> WITHER_AR;
             case "minecraft:ender_dragon" -> ENDER_DRAGON_AR;
             default -> 0;
         };
@@ -1128,6 +1187,8 @@ public class MobStats {
             case "minecraft:zoglin" -> ZOGLIN_MR;
             case "minecraft:parched" -> PARCHED_MR;
             case "minecraft:phantom" -> PHANTOM_MR;
+            case "minecraft:axolotl" -> AXOLOTL_MR;
+            case "minecraft:wither" -> WITHER_MR;
             case "minecraft:ender_dragon" -> ENDER_DRAGON_MR;
             default -> 0;
         };
@@ -1147,48 +1208,6 @@ public class MobStats {
         }
 
         return baseMr;
-    }
-
-    public static MobType getMobType(Entity entity) {
-        if (entity == null) return MobType.OTHER;
-
-        String entityType = entity.getType().getKey().toString();
-        return switch (entityType) {
-            case "minecraft:zombie" -> ZOMBIE_TYPE;
-            case "minecraft:skeleton" -> SKELETON_TYPE;
-            case "minecraft:spider" -> SPIDER_TYPE;
-            case "minecraft:cave_spider" -> CAVE_SPIDER_TYPE;
-            case "minecraft:creeper" -> CREEPER_TYPE;
-            case "minecraft:enderman" -> ENDERMAN_TYPE;
-            case "minecraft:witch" -> WITCH_TYPE;
-            case "minecraft:slime" -> SLIME_TYPE;
-            case "minecraft:magma_cube" -> MAGMA_CUBE_TYPE;
-            case "minecraft:blaze" -> BLAZE_TYPE;
-            case "minecraft:ghast" -> GHAST_TYPE;
-            case "minecraft:stray" -> STRAY_TYPE;
-            case "minecraft:husk" -> HUSK_TYPE;
-            case "minecraft:zombie_villager" -> ZOMBIE_VILLAGER_TYPE;
-            case "minecraft:wither_skeleton" -> WITHER_SKELETON_TYPE;
-            case "minecraft:iron_golem" -> IRON_GOLEM_TYPE;
-            case "minecraft:drowned" -> DROWNED_TYPE;
-            case "minecraft:zombified_piglin" -> ZOMBIFIED_PIGLIN_TYPE;
-            case "minecraft:piglin" -> PIGLIN_TYPE;
-            case "minecraft:piglin_brute" -> PIGLIN_BRUTE_TYPE;
-            case "minecraft:breeze" -> BREEZE_TYPE;
-            case "minecraft:creaking" -> CREAKING_TYPE;
-            case "minecraft:warden" -> WARDEN_TYPE;
-            case "minecraft:evoker" -> EVOKER_TYPE;
-            case "minecraft:pillager" -> PILLAGER_TYPE;
-            case "minecraft:ravager" -> RAVAGER_TYPE;
-            case "minecraft:vex" -> VEX_TYPE;
-            case "minecraft:vindicator" -> VINDICATOR_TYPE;
-            case "minecraft:hoglin" -> HOGLIN_TYPE;
-            case "minecraft:zoglin" -> ZOGLIN_TYPE;
-            case "minecraft:parched" -> PARCHED_TYPE;
-            case "minecraft:phantom" -> PHANTOM_TYPE;
-            case "minecraft:ender_dragon" -> ENDER_DRAGON_TYPE;
-            default -> MobType.OTHER;
-        };
     }
 
     public static boolean isSupportedMob(Entity entity) {
@@ -1227,6 +1246,8 @@ public class MobStats {
                 entityType.equals("minecraft:zoglin") ||
                 entityType.equals("minecraft:parched") ||
                 entityType.equals("minecraft:phantom") ||
+                entityType.equals("minecraft:axolotl") ||
+                entityType.equals("minecraft:wither") ||
                 entityType.equals("minecraft:ender_dragon");
 
     }

@@ -8,9 +8,13 @@ import dev.ixpu.leaguemechanics.rune.RunePath;
 import dev.ixpu.leaguemechanics.rune.RuneShard;
 import dev.ixpu.leaguemechanics.rune.shards.ShardStats;
 import me.clip.placeholderapi.expansion.PlaceholderExpansion;
+import org.bukkit.attribute.Attribute;
 import org.bukkit.entity.Player;
 
 import java.util.Arrays;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.UUID;
 import java.util.stream.Collectors;
 
 public class PlaceholderRegistry extends PlaceholderExpansion {
@@ -41,6 +45,10 @@ public class PlaceholderRegistry extends PlaceholderExpansion {
         return true;
     }
 
+
+    private final Map<UUID, Integer> lastHealthBars = new HashMap<>();
+    private final Map<UUID, Long> healthBlinkStartTime = new HashMap<>();
+
     @Override
     public String onPlaceholderRequest(Player player, String params) {
         if (player == null) {
@@ -56,14 +64,14 @@ public class PlaceholderRegistry extends PlaceholderExpansion {
         return switch (params.toLowerCase()) {
 
             case "primary_path" -> getPrimaryPath(player);
-            
+
             case "primary_path_id" -> getPrimaryPathID(player);
             case "primary_path_id_inactive-1" -> getInactivePrimaryPath(player, 1);
             case "primary_path_id_inactive-2" -> getInactivePrimaryPath(player, 2);
             case "primary_path_id_inactive-3" -> getInactivePrimaryPath(player, 3);
             case "primary_path_id_inactive-4" -> getInactivePrimaryPath(player, 4);
             case "primary_path_id_inactive-5" -> getInactivePrimaryPath(player, 5);
-            
+
             case "primary_path_mm" -> getPrimaryPathMM(player);
             case "primary_path_mm_inactive-1" -> getInactivePrimaryPathMM(player, 1);
             case "primary_path_mm_inactive-2" -> getInactivePrimaryPathMM(player, 2);
@@ -73,14 +81,14 @@ public class PlaceholderRegistry extends PlaceholderExpansion {
 
             case "secondary_path" -> getSecondaryPath(player);
             case "secondary_path_mm" -> getSecondaryPathMM(player);
-            
+
             case "keystone" -> getKeystone(player);
             case "keystone_mm" -> getKeystoneMM(player);
 
             case "primary_slot-1" -> getPrimarySlot1(player);
             case "primary_slot-2" -> getPrimarySlot2(player);
             case "primary_slot-3" -> getPrimarySlot3(player);
-            
+
             case "primary_slot-1_mm" -> getPrimarySlot1MM(player);
             case "primary_slot-2_mm" -> getPrimarySlot2MM(player);
             case "primary_slot-3_mm" -> getPrimarySlot3MM(player);
@@ -115,15 +123,61 @@ public class PlaceholderRegistry extends PlaceholderExpansion {
 
             case "class" -> getClass(player);
             case "class_mm" -> getClassMM(player);
-            
+
             case "level" -> String.valueOf(stats.getLeagueLevel());
+            case "item_count" -> String.valueOf(plugin.getStatsManager().countLeagueItems(player));
             case "kda" -> dev.ixpu.leaguemechanics.entity.player.PlayerKDA.getInstance().getFormattedKDA(player.getUniqueId());
-            
+
             case "line1" -> getLine1(player, stats);
             case "line2" -> getLine2(player, stats);
             case "line3" -> getLine3(player, stats);
             case "line4" -> getLine4(player, stats);
-            
+
+            case "health_absorption_bar" -> {
+                UUID uuid = player.getUniqueId();
+                int maxHealth = (int) player.getAttribute(Attribute.MAX_HEALTH).getValue();
+                int currentHealth = (int) player.getHealth();
+                double absorption = player.getAbsorptionAmount();
+
+                int barLength = 10;
+                int absorptionHearts = (int) Math.ceil((absorption / (double) maxHealth) * barLength);
+                int maxHealthBars = barLength - absorptionHearts;
+                int currentHealthBars = Math.max(1, Math.min(maxHealthBars, (int) ((currentHealth / (double) maxHealth) * barLength)));
+
+                Integer prevHealthBars = lastHealthBars.getOrDefault(uuid, currentHealthBars);
+                if (currentHealthBars < prevHealthBars) {
+                    healthBlinkStartTime.put(uuid, System.currentTimeMillis());
+                }
+                lastHealthBars.put(uuid, currentHealthBars);
+
+                boolean isBlinking = false;
+                long now = System.currentTimeMillis();
+                Long blinkStart = healthBlinkStartTime.get(uuid);
+
+                if (blinkStart != null) {
+                    if (now - blinkStart < 700) {
+                        isBlinking = true;
+                    } else {
+                        healthBlinkStartTime.remove(uuid);
+                    }
+                }
+
+                int lostBars = Math.max(0, prevHealthBars - currentHealthBars);
+                lostBars = Math.min(lostBars, barLength - currentHealthBars - absorptionHearts);
+                int emptyBars = Math.max(0, barLength - currentHealthBars - absorptionHearts - lostBars);
+
+                StringBuilder bar = new StringBuilder();
+                for (int i = 0; i < currentHealthBars; i++) bar.append("&c█");
+                if (isBlinking) {
+                    for (int i = 0; i < lostBars; i++) bar.append("&4█");
+                } else {
+                    for (int i = 0; i < lostBars; i++) bar.append("&8█");
+                }
+                for (int i = 0; i < absorptionHearts; i++) bar.append("&f█");
+                for (int i = 0; i < emptyBars; i++) bar.append("&8█");
+
+                yield bar.toString();
+            }
             default -> null;
         };
     }
@@ -211,7 +265,7 @@ public class PlaceholderRegistry extends PlaceholderExpansion {
         return PATH_DISPLAY_MINIMESSAGE.getOrDefault(pathId, "None");
     }
 
-    
+
     private String getSecondaryPath(Player player) {
         LeagueMechanics lm = LeagueMechanics.getInstance();
         if (lm == null || lm.getRuneManager() == null) return "§7Under Development";

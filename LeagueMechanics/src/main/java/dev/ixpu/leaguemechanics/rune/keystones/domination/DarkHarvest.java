@@ -140,7 +140,7 @@ public class DarkHarvest extends StacksHandler {
             return;
         }
         addStack(player);
-        player.playSound(player.getLocation(), Sound.ENTITY_WITHER_HURT, 1.0f, 1.0f);
+        player.getWorld().playSound(player.getLocation(), Sound.ENTITY_WITHER_HURT, 1.0f, 1.0f);
     }
 
     @Override

@@ -51,6 +51,11 @@ public class CommandHandler implements CommandExecutor {
         this.playerEventListener = playerEventListener;
     }
 
+    private boolean isCommandDisabledInWorld(Player player, String subcommand) {
+        java.util.List<String> disabledCommands = plugin.getConfig().getStringList("general-settings.disabled-commands-by-world." + player.getWorld().getName());
+        return disabledCommands != null && disabledCommands.contains(subcommand);
+    }
+
     @Override
     public boolean onCommand(@NotNull CommandSender sender, @NotNull Command command, @NotNull String label, String[] args) {
         if (args.length == 0) {
@@ -58,6 +63,11 @@ public class CommandHandler implements CommandExecutor {
         }
 
         String subcommand = args[0].toLowerCase();
+
+        if (sender instanceof Player player && isCommandDisabledInWorld(player, subcommand)) {
+            sender.sendMessage(Component.text("§cThis command is disabled in this world."));
+            return true;
+        }
 
         return switch (subcommand) {
             case "shop" -> handleShop(sender, args);

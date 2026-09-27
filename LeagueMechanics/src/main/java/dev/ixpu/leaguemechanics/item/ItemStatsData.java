@@ -48,7 +48,7 @@ public class ItemStatsData {
         addItem("dagger", "Dagger", 0.0, 0.0, 0.0, 0.0, 0.0, 10.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0);
         addItem("aether-wisp", "Aether Wisp", 0.0, 0.0, 0.0, 30.0, 0.0 ,0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 4.0);
         addItem("zeal", "Zeal", 0.0, 0.0, 0.0, 0.0, 0.0, 15.0, 0.0, 0.0, 0.0, 15.0, 0.0, 4.0);
-        addItem("vampire-scepter", "Vampire Scepter", 0.0, 0.0, 15.0, 0.0, 0.0, 0.0, 0.0, 0.0, 7.0, 0.0, 0.0, 0.0);
+        addItem("vampiric-scepter", "Vampiric Scepter", 0.0, 0.0, 15.0, 0.0, 0.0, 0.0, 0.0, 0.0, 7.0, 0.0, 0.0, 0.0);
         addItem("tunneler", "Tunneler", 25.0, 0.0, 15.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0);
         addItem("cloak-of-agility", "Cloak of Agility", 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 15.0, 0.0, 0.0);
 

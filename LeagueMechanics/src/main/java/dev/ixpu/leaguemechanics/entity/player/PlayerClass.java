@@ -26,12 +26,12 @@ public class PlayerClass {
     }
 
     static {
-        CLASS_STATS.put(PlayerClassType.FIGHTER,   new ClassStats(12.0,  4.0, 0.0, 10.0,  15.0, 1.30, 1.30));
-        CLASS_STATS.put(PlayerClassType.SUPPORT,   new ClassStats( 3.0,  5.0, 4.0,  5.0, 5.0, 1.10, 1.10));
-        CLASS_STATS.put(PlayerClassType.ASSASSIN,  new ClassStats( 7.0,  4.0, 0.0,  4.0,  20.0, 1.45, 1.45));
-        CLASS_STATS.put(PlayerClassType.MAGE,      new ClassStats( 1.0, 18.0, 0.0,  5.0,  7.0, 1.20, 1.20));
-        CLASS_STATS.put(PlayerClassType.TANK,      new ClassStats( 1.0,  2.0, 6.0, 25.0, 15.0, 0.70, 0.70));
-        CLASS_STATS.put(PlayerClassType.MARKSMAN,  new ClassStats( 4.0,  2.0, 0.0,  5.0,  8.0, 1.60, 1.60));
+        CLASS_STATS.put(PlayerClassType.FIGHTER,   new ClassStats(12.0,  4.0, 0.0, 10.0,  15.0, 0.60, 0.60));
+        CLASS_STATS.put(PlayerClassType.SUPPORT,   new ClassStats( 3.0,  5.0, 4.0,  5.0, 5.0, 0.20, 0.20));
+        CLASS_STATS.put(PlayerClassType.ASSASSIN,  new ClassStats( 7.0,  4.0, 0.0,  4.0,  20.0, 0.75, 0.75));
+        CLASS_STATS.put(PlayerClassType.MAGE,      new ClassStats( 1.0, 18.0, 0.0,  5.0,  7.0, 0.55, 0.55));
+        CLASS_STATS.put(PlayerClassType.TANK,      new ClassStats( 1.0,  2.0, 10.0, 25.0, 15.0, 0.15, 0.15));
+        CLASS_STATS.put(PlayerClassType.MARKSMAN,  new ClassStats( 4.0,  2.0, 0.0,  5.0,  8.0, 0.85, 0.85));
     }
 
     public static void setPlayerClass(Player player, PlayerClassType classType) {

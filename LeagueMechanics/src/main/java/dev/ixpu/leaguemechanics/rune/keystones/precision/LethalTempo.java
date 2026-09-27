@@ -210,7 +210,7 @@ public class LethalTempo extends StacksHandler {
         playerState.put(playerUUID, RuneState.ACTIVE);
         activeState.put(playerUUID, ACTIVE_DURATION_TICKS);
         activeASBonus.put(playerUUID, ATTACK_SPEED);
-        player.playSound(player.getLocation(), Sound.ENTITY_ILLUSIONER_PREPARE_BLINDNESS, 1.0f, 1.2f);
+        player.getWorld().playSound(player.getLocation(), Sound.ENTITY_ILLUSIONER_PREPARE_BLINDNESS, 1.0f, 1.2f);
     }
 
     private void refreshActiveTimer(Player player) {
@@ -256,7 +256,7 @@ public class LethalTempo extends StacksHandler {
                 playerState.put(playerUUID, RuneState.STACKING);
                 activeASBonus.put(playerUUID, 0.0);
                 clearPlayerTimestamps(player);
-                player.playSound(player.getLocation(), Sound.ENTITY_ILLUSIONER_PREPARE_MIRROR, 1.0f, 1.2f);
+                player.getWorld().playSound(player.getLocation(), Sound.ENTITY_ILLUSIONER_PREPARE_MIRROR, 1.0f, 1.2f);
             }
         }
     }

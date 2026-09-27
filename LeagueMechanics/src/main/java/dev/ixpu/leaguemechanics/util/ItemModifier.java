@@ -178,8 +178,28 @@ public class ItemModifier {
     }
 
     private static void updateItemModel(ItemStack item, ItemStatsRegistry statData) {
-        int modelData = (int) (statData.getAd() + statData.getAp() + statData.getHp());
-        setCustomModelData(item, modelData);
+        ItemMeta meta = item.getItemMeta();
+        if (meta == null) return;
+
+        try {
+            Class<?> cmdComponentClass = Class.forName("org.bukkit.inventory.meta.components.CustomModelDataComponent");
+
+            Method getCmdMethod = ItemMeta.class.getMethod("getCustomModelDataComponent");
+            Object cmd = getCmdMethod.invoke(meta);
+
+            Method setStringsMethod = cmdComponentClass.getMethod("setStrings", List.class);
+            setStringsMethod.invoke(cmd, List.of(statData.getId()));
+
+            Method setComponentMethod = ItemMeta.class.getMethod("setCustomModelDataComponent", cmdComponentClass);
+            setComponentMethod.invoke(meta, cmd);
+
+            item.setItemMeta(meta);
+            return;
+        } catch (ClassNotFoundException | NoSuchMethodException | SecurityException | IllegalArgumentException
+                 | IllegalAccessException | java.lang.reflect.InvocationTargetException e) {
+        }
+
+        setCustomModelData(item, Math.abs(statData.getId().hashCode()));
     }
 
     private static String formatStat(double value) {

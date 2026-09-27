@@ -29,7 +29,7 @@ public class PlayerStats {
     private static final Map<UUID, PlayerStats> INSTANCE_CACHE = new ConcurrentHashMap<>();
 
     private static final double PLAYER_RESISTANCE_BALANCER = 8.5;
-    private static final double PLAYER_DAMAGE_BALANCER = 2.5;
+    private static final double PLAYER_DAMAGE_BALANCER = 3.0;
 
     private double temporaryADModification = 0.0;
     private double temporaryAPModification = 0.0;
@@ -202,9 +202,10 @@ public class PlayerStats {
                 }
             }
         }
+        double weaponAS = getWeaponAS(player);
         double shardsAS = getRuneShards(player).getAttackSpeed();
         double asRatio = getPlayerClassAttackSpeedRatio(player);
-        double bonusASMultiplier = (itemAS + runeAS + shardsAS) / 100.0;
+        double bonusASMultiplier = (itemAS + weaponAS + asRatio + shardsAS) / 100.0;
         return asRatio * bonusASMultiplier + baseAS;
     }
 
@@ -338,6 +339,14 @@ public class PlayerStats {
             return 0;
         }
         return 0.5 + (sharpnessLevel * 0.5) * 7;
+    }
+
+    public double getWeaponAS(Player player) {
+        ItemStack weapon = player.getInventory().getItemInMainHand();
+        if (weapon == null || weapon.getType().isAir()) {
+            return 0;
+        }
+        return player.getAttribute(Attribute.ATTACK_SPEED).getValue();
     }
 
     public double getArmorEnchant(Player player) {
