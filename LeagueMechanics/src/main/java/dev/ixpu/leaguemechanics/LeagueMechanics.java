@@ -9,12 +9,13 @@ import dev.ixpu.leaguemechanics.command.CommandHandler;
 import dev.ixpu.leaguemechanics.command.CommandTabCompletions;
 
 import dev.ixpu.leaguemechanics.manager.DebuffManager;
-    import dev.ixpu.leaguemechanics.manager.MySQLManager;
+import dev.ixpu.leaguemechanics.manager.MySQLManager;
 import dev.ixpu.leaguemechanics.manager.RuneManager;
 import dev.ixpu.leaguemechanics.manager.ItemStatsManager;
 import dev.ixpu.leaguemechanics.manager.ItemShopManager;
 
 import dev.ixpu.leaguemechanics.listener.DamageListener;
+import dev.ixpu.leaguemechanics.listener.DashListener;
 import dev.ixpu.leaguemechanics.listener.DeathListener;
 import dev.ixpu.leaguemechanics.listener.PlayerEventListener;
 import dev.ixpu.leaguemechanics.listener.PlayerStatsListener;
@@ -68,6 +69,7 @@ public class LeagueMechanics extends JavaPlugin {
     private PlayerEventListener playerEventListener;
     private PlayerInventoryListener playerInventoryListener;
     private DamageListener damageListener;
+    private DashListener dashListener;
     private DeathListener deathListener;
     private RuneListener runeListener;
     private CommandHandler commandHandler;
@@ -87,6 +89,7 @@ public class LeagueMechanics extends JavaPlugin {
         playerInventoryListener = new PlayerInventoryListener(this, playerStatsListener);
         deathListener = new DeathListener(this, playerStatsListener);
         runeListener = new RuneListener(this);
+        dashListener = new DashListener(this);
 
 
         getLogger().info("League Mechanics is starting...");
@@ -109,6 +112,7 @@ public class LeagueMechanics extends JavaPlugin {
         Bukkit.getPluginManager().registerEvents(playerEventListener, this);
         Bukkit.getPluginManager().registerEvents(playerInventoryListener, this);
         Bukkit.getPluginManager().registerEvents(runeListener, this);
+        Bukkit.getPluginManager().registerEvents(dashListener, this);
         Bukkit.getPluginManager().registerEvents(ItemShopManager.getInstance(), this);
 
         startRuneTicker();

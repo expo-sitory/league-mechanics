@@ -18,6 +18,7 @@ public class CombatStateManager {
     private final Set<UUID> processedDeaths = ConcurrentHashMap.newKeySet();
     private final Set<UUID> letRunesThroughMap = ConcurrentHashMap.newKeySet();
     private final Set<UUID> fallExecutedDeaths = ConcurrentHashMap.newKeySet();
+    private final Map<UUID, Long> dashFallImmunityExpiry = new ConcurrentHashMap<>();
 
     private CombatStateManager() {}
 
@@ -110,6 +111,15 @@ public class CombatStateManager {
         return fallExecutedDeaths.remove(playerId);
     }
 
+    public void markDashFallImmunity(UUID playerId, long durationMs) {
+        dashFallImmunityExpiry.put(playerId, System.currentTimeMillis() + durationMs);
+    }
+
+    public boolean consumeDashFallImmunity(UUID playerId) {
+        Long expiry = dashFallImmunityExpiry.remove(playerId);
+        return expiry != null && System.currentTimeMillis() <= expiry;
+    }
+
     public void removeLetRunesThrough(UUID playerId) {
         letRunesThroughMap.remove(playerId);
     }
@@ -127,6 +137,7 @@ public class CombatStateManager {
         processedDeaths.remove(playerId);
         letRunesThroughMap.remove(playerId);
         fallExecutedDeaths.remove(playerId);
+        dashFallImmunityExpiry.remove(playerId);
     }
 
     public void clearAll() {
@@ -138,5 +149,6 @@ public class CombatStateManager {
         processedDeaths.clear();
         letRunesThroughMap.clear();
         fallExecutedDeaths.clear();
+        dashFallImmunityExpiry.clear();
     }
 }

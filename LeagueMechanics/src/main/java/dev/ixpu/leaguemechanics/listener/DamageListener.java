@@ -20,6 +20,7 @@ import dev.ixpu.leaguemechanics.rune.keystones.resolve.Guardian;
 
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
+import net.kyori.adventure.title.Title;
 import net.kyori.adventure.title.TitlePart;
 import org.bukkit.Bukkit;
 import org.bukkit.event.EventHandler;
@@ -46,6 +47,7 @@ import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
 
 import java.util.*;
+import java.time.Duration;
 import java.util.concurrent.ConcurrentHashMap;
 
 public class DamageListener implements Listener, RuneCooldownGate {
@@ -57,6 +59,7 @@ public class DamageListener implements Listener, RuneCooldownGate {
     private final CombatStateManager combatState = CombatStateManager.getInstance();
 
     private final Map<UUID, Long> attackCooldown = new ConcurrentHashMap<>();
+    private final Map<UUID, Integer> attackCooldownBarTasks = new ConcurrentHashMap<>();
     private static final Map<UUID, Long> parryWindow = new HashMap<>();
     private static final Map<UUID, Integer> parryWindowTasks = new HashMap<>();
     private final Set<Entity> parriedProjectiles = ConcurrentHashMap.newKeySet();
@@ -158,7 +161,7 @@ public class DamageListener implements Listener, RuneCooldownGate {
         }
 
         double damage = (fallBlocks - FALL_DAMAGE_THRESHOLD_BLOCKS) * FALL_DAMAGE_PER_BLOCK;
-        if (damage > 0) {
+        if (damage > 0 && !combatState.consumeDashFallImmunity(player.getUniqueId())) {
             combatState.markFallDeath(player.getUniqueId());
             player.damage(damage);
             if (!player.isDead()) {
@@ -663,6 +666,8 @@ public class DamageListener implements Listener, RuneCooldownGate {
         long cooldownMs = (long) (cooldownTicks * 50);
         attackCooldown.put(uuid, System.currentTimeMillis() + cooldownMs);
 
+        showAttackCooldownBar(player, cooldownTicks);
+
         for (int i = 0; i < 9; i++) {
             ItemStack item = player.getInventory().getItem(i);
             if (item != null && !item.getType().isAir() && isWeapon(item)) {
@@ -671,6 +676,57 @@ public class DamageListener implements Listener, RuneCooldownGate {
                 }
             }
         }
+    }
+
+    private static final String ATTACK_SPEED_PIP = ".";
+    private static final int ATTACK_SPEED_PIP_COUNT = 11;
+
+    private void showAttackCooldownBar(Player player, double cooldownTicks) {
+        UUID uuid = player.getUniqueId();
+
+        Integer existingTask = attackCooldownBarTasks.remove(uuid);
+        if (existingTask != null) {
+            Bukkit.getScheduler().cancelTask(existingTask);
+        }
+
+        int totalTicks = (int) Math.max(1, Math.round(cooldownTicks));
+        int[] taskId = { -1 };
+
+        taskId[0] = Bukkit.getScheduler().scheduleSyncRepeatingTask(plugin, new Runnable() {
+            int elapsed = 0;
+
+            @Override
+            public void run() {
+                if (!player.isOnline()) {
+                    Bukkit.getScheduler().cancelTask(taskId[0]);
+                    attackCooldownBarTasks.remove(uuid);
+                    return;
+                }
+
+                elapsed++;
+                boolean finished = elapsed >= totalTicks;
+                double progress = Math.min(1.0, (double) elapsed / totalTicks);
+                int filled = (int) Math.round(progress * ATTACK_SPEED_PIP_COUNT);
+
+                Component bar = Component.empty();
+                for (int i = 0; i < ATTACK_SPEED_PIP_COUNT; i++) {
+                    bar = bar.append(Component.text(ATTACK_SPEED_PIP,
+                            i < filled ? NamedTextColor.WHITE : NamedTextColor.DARK_GRAY));
+                }
+
+                Title.Times times = finished
+                        ? Title.Times.times(Duration.ZERO, Duration.ofMillis(200), Duration.ofMillis(300))
+                        : Title.Times.times(Duration.ZERO, Duration.ofMillis(100), Duration.ZERO);
+                player.showTitle(Title.title(Component.empty(), bar, times));
+
+                if (finished) {
+                    Bukkit.getScheduler().cancelTask(taskId[0]);
+                    attackCooldownBarTasks.remove(uuid);
+                }
+            }
+        }, 0L, 1L);
+
+        attackCooldownBarTasks.put(uuid, taskId[0]);
     }
 
     private boolean isWeapon(ItemStack item) {

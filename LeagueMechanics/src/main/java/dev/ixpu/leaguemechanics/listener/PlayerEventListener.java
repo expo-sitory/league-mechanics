@@ -141,6 +141,7 @@ public class PlayerEventListener implements Listener, RuneCooldownGate {
         removeAllAttributeModifiers(player);
         cancelPendingTasks(uuid);
         DamageListener.parryCooldown.cleanup(player);
+        DashListener.dashCooldown.cleanup(player);
     }
 
     @EventHandler
