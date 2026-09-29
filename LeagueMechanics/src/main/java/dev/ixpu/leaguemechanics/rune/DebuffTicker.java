@@ -5,7 +5,6 @@ import dev.ixpu.leaguemechanics.manager.DamageManager;
 import dev.ixpu.leaguemechanics.manager.DebuffManager;
 import dev.ixpu.leaguemechanics.manager.ItemStatsManager;
 import dev.ixpu.leaguemechanics.manager.KillSourceTracker;
-import dev.ixpu.leaguemechanics.entity.player.PlayerStats;
 import dev.ixpu.leaguemechanics.util.DebugLogger;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
@@ -19,7 +18,6 @@ public class DebuffTicker {
     public void tick(Player target, Player attacker) {
         if (target == null) return;
         DebuffManager debuffManager = DebuffManager.getInstance();
-        LeagueMechanics plugin = LeagueMechanics.getInstance();
 
         if (debuffManager.hasDebuff(target, DebuffType.INFLAME)) {
             int counter = inflameTickCounters.getOrDefault(target.getUniqueId(), 0) + 1;
@@ -39,26 +37,6 @@ public class DebuffTicker {
             }
         } else {
             inflameTickCounters.remove(target.getUniqueId());
-        }
-
-        if (plugin != null) {
-            ItemStatsManager statsManager = plugin.getStatsManager();
-            PlayerStats stats = PlayerStats.getOrCreate(target);
-            if (statsManager != null && stats != null) {
-                boolean hasSlow = debuffManager.hasDebuff(target, DebuffType.SLOW);
-                double slowPercent = 0.0;
-                if (hasSlow) {
-                    slowPercent = debuffManager.getDebuffStrength(target, DebuffType.SLOW);
-                    if (slowPercent > 0) {
-                        double currentMS = stats.getPlayerMS(target);
-                        double reduction = currentMS * (slowPercent / 100.0);
-                        stats.setTemporaryMSModification(-reduction);
-                    }
-                }
-                if (!hasSlow || slowPercent <= 0) {
-                    stats.setTemporaryMSModification(0.0);
-                }
-            }
         }
     }
 

@@ -462,9 +462,9 @@ public class PlayerStats {
             double remaining = debuffs.getRemainingSeconds(player, DebuffType.INFLAME);
             sb.append(" §6🔥 (").append(String.format("%.1f", remaining)).append("s)");
         }
-        if (debuffs.hasDebuff(player, DebuffType.SLOW)) {
-            double remaining = debuffs.getRemainingSeconds(player, DebuffType.SLOW);
-            sb.append(" §3❄ (").append(String.format("%.1f", remaining)).append("s)");
+        org.bukkit.potion.PotionEffect slow = player.getPotionEffect(PotionEffectType.SLOWNESS);
+        if (slow != null && slow.getDuration() > 0) {
+            sb.append(" §3🥀 (").append(String.format("%.1f", slow.getDuration() / 20.0)).append("s)");
         }
 
         dev.ixpu.leaguemechanics.manager.ItemPassivesManager passiveManager =

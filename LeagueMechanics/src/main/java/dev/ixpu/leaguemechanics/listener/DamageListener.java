@@ -13,6 +13,7 @@ import dev.ixpu.leaguemechanics.manager.*;
 import dev.ixpu.leaguemechanics.rune.CooldownHandler;
 import dev.ixpu.leaguemechanics.entity.player.skills.Parry;
 import dev.ixpu.leaguemechanics.rune.RuneCooldownGate;
+import dev.ixpu.leaguemechanics.rune.DebuffType;
 import dev.ixpu.leaguemechanics.rune.keystones.domination.HailOfBlades;
 import dev.ixpu.leaguemechanics.rune.keystones.resolve.GraspOfTheUndying;
 import dev.ixpu.leaguemechanics.rune.keystones.resolve.Guardian;
@@ -33,6 +34,7 @@ import org.bukkit.event.entity.ProjectileHitEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.entity.*;
+import org.bukkit.GameMode;
 import org.bukkit.Material;
 import org.bukkit.Sound;
 import org.bukkit.Particle;
@@ -59,6 +61,15 @@ public class DamageListener implements Listener, RuneCooldownGate {
     private static final Map<UUID, Integer> parryWindowTasks = new HashMap<>();
     private final Set<Entity> parriedProjectiles = ConcurrentHashMap.newKeySet();
     private static final long PARRY_WINDOW_MS = 700L;
+
+    private final Map<UUID, Double> fallPeakY = new ConcurrentHashMap<>();
+    private static final double FALL_DAMAGE_THRESHOLD_BLOCKS = 4.0;
+    private static final double FALL_DAMAGE_PER_BLOCK = 1.0;
+    private static final double FALL_SLOW_TIER_BLOCKS = 10.0;
+    private static final double FALL_SLOW_BASE_STRENGTH = 20.0;
+    private static final int FALL_SLOW_BASE_DURATION_TICKS = 60;
+    private static final double FALL_SLOW_STRENGTH_GROWTH = 0.20;
+    private static final double FALL_SLOW_DURATION_GROWTH = 0.10;
 
     public static final Parry parryCooldown = new Parry();
 
@@ -109,6 +120,65 @@ public class DamageListener implements Listener, RuneCooldownGate {
         this.runeManager = plugin.getRuneManager();
         this.itemStatsManager = plugin.getStatsManager();
         this.playerStatsListener = playerStatsListener;
+        Bukkit.getScheduler().runTaskTimer(plugin, this::tickFallTracking, 0L, 1L);
+    }
+
+    private void tickFallTracking() {
+        for (Player player : Bukkit.getOnlinePlayers()) {
+            UUID uuid = player.getUniqueId();
+            double currentY = player.getLocation().getY();
+
+            if (player.isOnGround()) {
+                Double peak = fallPeakY.remove(uuid);
+                if (peak != null) {
+                    double fallBlocks = peak - currentY;
+                    if (fallBlocks > 0) {
+                        handleFallLanding(player, fallBlocks);
+                    }
+                }
+                continue;
+            }
+
+            if (player.isInWater() || player.isClimbing() || player.isGliding() || player.isFlying()
+                    || player.getGameMode() == GameMode.CREATIVE || player.getGameMode() == GameMode.SPECTATOR) {
+                fallPeakY.remove(uuid);
+                continue;
+            }
+
+            Double peak = fallPeakY.get(uuid);
+            if (peak == null || currentY > peak) {
+                fallPeakY.put(uuid, currentY);
+            }
+        }
+    }
+
+    private void handleFallLanding(Player player, double fallBlocks) {
+        if (fallBlocks < FALL_DAMAGE_THRESHOLD_BLOCKS) {
+            return;
+        }
+
+        double damage = (fallBlocks - FALL_DAMAGE_THRESHOLD_BLOCKS) * FALL_DAMAGE_PER_BLOCK;
+        if (damage > 0) {
+            combatState.markFallDeath(player.getUniqueId());
+            player.damage(damage);
+            if (!player.isDead()) {
+                combatState.clearFallDeath(player.getUniqueId());
+            }
+        }
+
+        int tier = (int) Math.floor(fallBlocks / FALL_SLOW_TIER_BLOCKS);
+        if (tier >= 1) {
+            double strength = Math.min(100.0, FALL_SLOW_BASE_STRENGTH * Math.pow(1.0 + FALL_SLOW_STRENGTH_GROWTH, tier - 1));
+            int durationTicks = (int) Math.round(FALL_SLOW_BASE_DURATION_TICKS * Math.pow(1.0 + FALL_SLOW_DURATION_GROWTH, tier - 1));
+            DebuffManager.getInstance().applyDebuff(player, DebuffType.SLOW, durationTicks, strength);
+        }
+    }
+
+    @EventHandler
+    public void onVanillaFallDamage(EntityDamageEvent event) {
+        if (event.getCause() == EntityDamageEvent.DamageCause.FALL && event.getEntity() instanceof Player) {
+            event.setCancelled(true);
+        }
     }
 
     public ItemPassive getEquippedPassive(ItemStack item) {

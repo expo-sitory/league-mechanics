@@ -140,7 +140,7 @@ public class PlaceholderRegistry extends PlaceholderExpansion {
                 double absorption = player.getAbsorptionAmount();
 
                 int barLength = 10;
-                int absorptionHearts = (int) Math.ceil((absorption / (double) maxHealth) * barLength);
+                int absorptionHearts = Math.min(barLength - 1, (int) Math.ceil((absorption / (double) maxHealth) * barLength));
                 int maxHealthBars = barLength - absorptionHearts;
                 int currentHealthBars = Math.max(1, Math.min(maxHealthBars, (int) ((currentHealth / (double) maxHealth) * barLength)));
 
