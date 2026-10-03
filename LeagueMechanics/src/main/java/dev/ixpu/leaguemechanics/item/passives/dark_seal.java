@@ -1,6 +1,7 @@
 package dev.ixpu.leaguemechanics.item.passives;
 
 import dev.ixpu.leaguemechanics.manager.ItemPassivesManager;
+import dev.ixpu.leaguemechanics.util.Icons;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
@@ -16,7 +17,8 @@ public class dark_seal implements ItemPassive {
 
     @Override
     public String getDescription() {
-        return "§7ᴜɴɪQᴜᴇ – ɢʟᴏʀʏ: §fGain §e" + STACKS_PER_KILL + " stacks §ffor each\n§fplayer kill, up to a maximum of §e" + MAX_STACKS + " stacks§f. \n§fFor every stack, gain §9" + AP_PER_STACK + " bonus §9ability power§f, up to §930\n§fat maximum stacks. Lose 2 stacks on death, Lose all on disconnect";
+        return "§7ᴜɴɪQᴜᴇ – ɢʟᴏʀʏ: §fGain " + STACKS_PER_KILL + " stacks §ffor each player kill,\n§fup to a maximum of " + MAX_STACKS + " stacks§f. §fFor every stack, gain\n§f" +
+        Icons.get("stats.ap") + " §9" + AP_PER_STACK + " bonus ability power§f, up to §930 §fat maximum stacks.\n§fLose 2 stacks on death, Lose all stacks on disconnect";
     }
 
     @Override

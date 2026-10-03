@@ -15,6 +15,7 @@ import dev.ixpu.leaguemechanics.manager.KillSourceTracker;
 
 import dev.ixpu.leaguemechanics.listener.PlayerEventListener;
 
+import dev.ixpu.leaguemechanics.util.Icons;
 import dev.ixpu.leaguemechanics.util.ItemModifier;
 import org.bukkit.Sound;
 import org.bukkit.entity.Player;
@@ -175,9 +176,9 @@ public class DarkHarvest extends StacksHandler {
 
     private String getRuneDisplay(Player player, RuneState state, int currentStacks) {
         return switch (state) {
-            case COOLDOWN -> "§7👻 " + currentStacks + "/" + maxStacks + " | " + getCooldownDisplay(player);
-            case STACKING -> "§c👻 " + currentStacks + "/" + maxStacks;
-            case IDLE -> "§4👻";
+            case COOLDOWN -> "§7" + Icons.get("keystones.dark-harvest") + " §7" + currentStacks + "/" + maxStacks + " | " + getCooldownDisplay(player);
+            case STACKING -> "§f" + Icons.get("keystones.dark-harvest") + " §4" + currentStacks + "/" + maxStacks;
+            case IDLE -> "§f" + Icons.get("keystones.dark-harvest");
         };
     }
 

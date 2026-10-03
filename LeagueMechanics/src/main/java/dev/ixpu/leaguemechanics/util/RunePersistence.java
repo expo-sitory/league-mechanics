@@ -24,12 +24,13 @@ public class RunePersistence {
     public int loadLeagueLevel(UUID playerUUID) {
         String[] data = loadPlayerRunes(playerUUID);
         if (data == null || data.length <= 12) {
-            return 0;
+            return 1;
         }
         try {
-            return Integer.parseInt(data[12]);
+            // stored 0 from before the default changed counts as level 1
+            return Math.max(1, Integer.parseInt(data[12]));
         } catch (NumberFormatException e) {
-            return 0;
+            return 1;
         }
     }
 
@@ -49,20 +50,20 @@ public class RunePersistence {
         String playerClass = existingData != null ? existingData[11] : null;
 
         mysqlManager.savePlayerRunes(
-            playerUUID,
-            primaryPath,
-            secondaryPath,
-            keystoneRune,
-            primarySlot1,
-            primarySlot2,
-            primarySlot3,
-            secondarySlot1,
-            secondarySlot2,
-            shardsRow1,
-            shardsRow2,
-            shardsRow3,
-            playerClass,
-            level
+                playerUUID,
+                primaryPath,
+                secondaryPath,
+                keystoneRune,
+                primarySlot1,
+                primarySlot2,
+                primarySlot3,
+                secondarySlot1,
+                secondarySlot2,
+                shardsRow1,
+                shardsRow2,
+                shardsRow3,
+                playerClass,
+                level
         );
     }
 
@@ -80,30 +81,30 @@ public class RunePersistence {
         String shardsRow2 = existingData != null ? existingData[9] : null;
         String shardsRow3 = existingData != null ? existingData[10] : null;
         String playerClass = existingData != null ? existingData[11] : null;
-        int leagueLevel = 0;
+        int leagueLevel = 1;
         if (existingData != null && existingData.length > 12) {
             try {
                 leagueLevel = Integer.parseInt(existingData[12]);
             } catch (NumberFormatException e) {
-                leagueLevel = 0;
+                leagueLevel = 1;
             }
         }
 
         mysqlManager.savePlayerRunes(
-            playerUUID,
-            primaryPathId,
-            secondaryPath,
-            keystoneRune,
-            primarySlot1,
-            primarySlot2,
-            primarySlot3,
-            secondarySlot1,
-            secondarySlot2,
-            shardsRow1,
-            shardsRow2,
-            shardsRow3,
-            playerClass,
-            leagueLevel
+                playerUUID,
+                primaryPathId,
+                secondaryPath,
+                keystoneRune,
+                primarySlot1,
+                primarySlot2,
+                primarySlot3,
+                secondarySlot1,
+                secondarySlot2,
+                shardsRow1,
+                shardsRow2,
+                shardsRow3,
+                playerClass,
+                leagueLevel
         );
     }
 
@@ -133,30 +134,30 @@ public class RunePersistence {
         String shardsRow2 = existingData != null ? existingData[9] : null;
         String shardsRow3 = existingData != null ? existingData[10] : null;
         String playerClass = existingData != null ? existingData[11] : null;
-        int leagueLevel = 0;
+        int leagueLevel = 1;
         if (existingData != null && existingData.length > 12) {
             try {
                 leagueLevel = Integer.parseInt(existingData[12]);
             } catch (NumberFormatException e) {
-                leagueLevel = 0;
+                leagueLevel = 1;
             }
         }
 
         mysqlManager.savePlayerRunes(
-            playerUUID,
-            primaryPath,
-            secondaryPathId,
-            keystoneRune,
-            primarySlot1,
-            primarySlot2,
-            primarySlot3,
-            secondarySlot1,
-            secondarySlot2,
-            shardsRow1,
-            shardsRow2,
-            shardsRow3,
-            playerClass,
-            leagueLevel
+                playerUUID,
+                primaryPath,
+                secondaryPathId,
+                keystoneRune,
+                primarySlot1,
+                primarySlot2,
+                primarySlot3,
+                secondarySlot1,
+                secondarySlot2,
+                shardsRow1,
+                shardsRow2,
+                shardsRow3,
+                playerClass,
+                leagueLevel
         );
     }
 
@@ -186,30 +187,30 @@ public class RunePersistence {
         String shardsRow2 = existingData != null ? existingData[9] : null;
         String shardsRow3 = existingData != null ? existingData[10] : null;
         String playerClass = existingData != null ? existingData[11] : null;
-        int leagueLevel = 0;
+        int leagueLevel = 1;
         if (existingData != null && existingData.length > 12) {
             try {
                 leagueLevel = Integer.parseInt(existingData[12]);
             } catch (NumberFormatException e) {
-                leagueLevel = 0;
+                leagueLevel = 1;
             }
         }
 
         mysqlManager.savePlayerRunes(
-            playerUUID,
-            primaryPath,
-            secondaryPath,
-            runeId,
-            primarySlot1,
-            primarySlot2,
-            primarySlot3,
-            secondarySlot1,
-            secondarySlot2,
-            shardsRow1,
-            shardsRow2,
-            shardsRow3,
-            playerClass,
-            leagueLevel
+                playerUUID,
+                primaryPath,
+                secondaryPath,
+                runeId,
+                primarySlot1,
+                primarySlot2,
+                primarySlot3,
+                secondarySlot1,
+                secondarySlot2,
+                shardsRow1,
+                shardsRow2,
+                shardsRow3,
+                playerClass,
+                leagueLevel
         );
     }
 
@@ -235,30 +236,30 @@ public class RunePersistence {
         String shardsRow2 = existingData != null ? existingData[9] : null;
         String shardsRow3 = existingData != null ? existingData[10] : null;
         String playerClass = classType != null ? classType.getId() : null;
-        int leagueLevel = 0;
+        int leagueLevel = 1;
         if (existingData != null && existingData.length > 12) {
             try {
                 leagueLevel = Integer.parseInt(existingData[12]);
             } catch (NumberFormatException e) {
-                leagueLevel = 0;
+                leagueLevel = 1;
             }
         }
 
         mysqlManager.savePlayerRunes(
-            playerUUID,
-            primaryPath,
-            secondaryPath,
-            keystoneRune,
-            primarySlot1,
-            primarySlot2,
-            primarySlot3,
-            secondarySlot1,
-            secondarySlot2,
-            shardsRow1,
-            shardsRow2,
-            shardsRow3,
-            playerClass,
-            leagueLevel
+                playerUUID,
+                primaryPath,
+                secondaryPath,
+                keystoneRune,
+                primarySlot1,
+                primarySlot2,
+                primarySlot3,
+                secondarySlot1,
+                secondarySlot2,
+                shardsRow1,
+                shardsRow2,
+                shardsRow3,
+                playerClass,
+                leagueLevel
         );
     }
 
@@ -288,12 +289,12 @@ public class RunePersistence {
         String shardsRow2 = existingData != null ? existingData[9] : null;
         String shardsRow3 = existingData != null ? existingData[10] : null;
         String playerClass = existingData != null ? existingData[11] : null;
-        int leagueLevel = 0;
+        int leagueLevel = 1;
         if (existingData != null && existingData.length > 12) {
             try {
                 leagueLevel = Integer.parseInt(existingData[12]);
             } catch (NumberFormatException e) {
-                leagueLevel = 0;
+                leagueLevel = 1;
             }
         }
 
@@ -318,20 +319,20 @@ public class RunePersistence {
         }
 
         mysqlManager.savePlayerRunes(
-            playerUUID,
-            primaryPath,
-            secondaryPath,
-            keystoneRune,
-            primarySlot1,
-            primarySlot2,
-            primarySlot3,
-            secondarySlot1,
-            secondarySlot2,
-            shardsRow1,
-            shardsRow2,
-            shardsRow3,
-            playerClass,
-            leagueLevel
+                playerUUID,
+                primaryPath,
+                secondaryPath,
+                keystoneRune,
+                primarySlot1,
+                primarySlot2,
+                primarySlot3,
+                secondarySlot1,
+                secondarySlot2,
+                shardsRow1,
+                shardsRow2,
+                shardsRow3,
+                playerClass,
+                leagueLevel
         );
     }
 
@@ -423,30 +424,30 @@ public class RunePersistence {
         String shardsRow2 = existingData != null ? existingData[9] : null;
         String shardsRow3 = existingData != null ? existingData[10] : null;
         String playerClass = existingData != null ? existingData[11] : null;
-        int leagueLevel = 0;
+        int leagueLevel = 1;
         if (existingData != null && existingData.length > 12) {
             try {
                 leagueLevel = Integer.parseInt(existingData[12]);
             } catch (NumberFormatException e) {
-                leagueLevel = 0;
+                leagueLevel = 1;
             }
         }
 
         mysqlManager.savePlayerRunes(
-            playerUUID,
-            primaryPath,
-            secondaryPath,
-            keystoneRune,
-            primarySlot1,
-            primarySlot2,
-            primarySlot3,
-            secondarySlot1,
-            secondarySlot2,
-            row1,
-            row2,
-            row3,
-            playerClass,
-            leagueLevel
+                playerUUID,
+                primaryPath,
+                secondaryPath,
+                keystoneRune,
+                primarySlot1,
+                primarySlot2,
+                primarySlot3,
+                secondarySlot1,
+                secondarySlot2,
+                row1,
+                row2,
+                row3,
+                playerClass,
+                leagueLevel
         );
     }
 
@@ -460,30 +461,30 @@ public class RunePersistence {
 
     public void clearAllRunes(UUID playerUUID) {
         String[] existingData = loadPlayerRunes(playerUUID);
-        int leagueLevel = 0;
+        int leagueLevel = 1;
         if (existingData != null && existingData.length > 12) {
             try {
                 leagueLevel = Integer.parseInt(existingData[12]);
             } catch (NumberFormatException e) {
-                leagueLevel = 0;
+                leagueLevel = 1;
             }
         }
 
         mysqlManager.savePlayerRunes(
-            playerUUID,
-            null, // primary-path
-            null, // secondary-path
-            null, // keystone-rune
-            null, // primary-slot-1-rune
-            null, // primary-slot-2-rune
-            null, // primary-slot-3-rune
-            null, // secondary-slot-1-rune
-            null, // secondary-slot-2-rune
-            null, // rune-shards-row1
-            null, // rune-shards-row2
-            null, // rune-shards-row3
-            null,  // player-class
-            leagueLevel
+                playerUUID,
+                null, // primary-path
+                null, // secondary-path
+                null, // keystone-rune
+                null, // primary-slot-1-rune
+                null, // primary-slot-2-rune
+                null, // primary-slot-3-rune
+                null, // secondary-slot-1-rune
+                null, // secondary-slot-2-rune
+                null, // rune-shards-row1
+                null, // rune-shards-row2
+                null, // rune-shards-row3
+                null,  // player-class
+                leagueLevel
         );
     }
 }

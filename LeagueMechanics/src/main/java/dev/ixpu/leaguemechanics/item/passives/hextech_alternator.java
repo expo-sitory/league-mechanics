@@ -5,6 +5,7 @@ import dev.ixpu.leaguemechanics.manager.DamageManager;
 import dev.ixpu.leaguemechanics.manager.ItemPassivesManager;
 import dev.ixpu.leaguemechanics.manager.KillSourceTracker;
 import dev.ixpu.leaguemechanics.util.DebugLogger;
+import dev.ixpu.leaguemechanics.util.Icons;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
@@ -19,7 +20,7 @@ public class hextech_alternator implements ItemPassive {
 
     @Override
     public String getDescription() {
-        return "§7ᴜɴɪQᴜᴇ – ʀᴇᴠᴠᴇᴅ: §fDamaging a target deals §9" + REVVED_BONUS_MAGIC_DAMAGE + " bonus magic damage\n\n§740s Cooldown";
+        return "§7ᴜɴɪQᴜᴇ – ʀᴇᴠᴠᴇᴅ: §fDamaging a target deals " + Icons.get("stats.magic-damage") + " §b" + REVVED_BONUS_MAGIC_DAMAGE + " bonus magic damage\n\n§740s Cooldown";
     }
 
     @Override

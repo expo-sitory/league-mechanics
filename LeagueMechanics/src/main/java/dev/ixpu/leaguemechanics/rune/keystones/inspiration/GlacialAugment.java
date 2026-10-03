@@ -12,6 +12,7 @@ import dev.ixpu.leaguemechanics.manager.StatScalingManager;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 
+import dev.ixpu.leaguemechanics.util.Icons;
 import org.bukkit.Bukkit;
 import org.bukkit.Sound;
 import org.bukkit.configuration.ConfigurationSection;
@@ -353,8 +354,8 @@ public class GlacialAugment extends CooldownHandler {
 
     private String getRuneDisplay(Player player, RuneState state) {
         return switch (state) {
-            case COOLDOWN -> "§7❄ " + getCooldownDisplay(player);
-            case IDLE -> "§3❄";
+            case COOLDOWN -> "§7" + Icons.get("keystones.glacial-augment") + " §7" + getCooldownDisplay(player);
+            case IDLE -> "§f" + Icons.get("keystones.glacial-augment");
         };
     }
 

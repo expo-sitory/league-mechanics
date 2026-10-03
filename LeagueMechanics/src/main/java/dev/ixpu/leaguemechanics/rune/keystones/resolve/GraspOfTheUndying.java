@@ -11,6 +11,7 @@ import dev.ixpu.leaguemechanics.listener.PlayerEventListener;
 
 import java.util.*;
 
+import dev.ixpu.leaguemechanics.util.Icons;
 import org.bukkit.attribute.Attribute;
 import org.bukkit.entity.Player;
 import org.bukkit.entity.Entity;
@@ -158,13 +159,11 @@ public class GraspOfTheUndying extends StacksHandler {
 
     private String getRuneDisplay(RuneState state, Player player, int stacks, int attackWindow) {
         return switch (state) {
-            case COOLDOWN -> "§7🥊 " + getCooldownDisplay(player) + " [" + getCurrentGraspHearts(player) + "/30]";
-            case ACTIVE -> {
+            case COOLDOWN -> "§7" + Icons.get("keystones.grasp-of-the-undying") + " §7" + getCooldownDisplay(player) + " [" + getCurrentGraspHearts(player) + "/30]";case ACTIVE -> {
                 double remainingSeconds = attackWindow / 20.0;
-                yield String.format("§a🥊 (%.1fs)", remainingSeconds) + " [" + getCurrentGraspHearts(player) + "/30]";
-            }
-            case STACKING -> "§2🥊 " + stacks + "/" + maxStacks + " [" + getCurrentGraspHearts(player) + "/30]";
-            case IDLE -> "§2🥊 [" + getCurrentGraspHearts(player) + "/30]";
+                yield Icons.get("keystones.grasp-of-the-undying") + " §2" + String.format("(%.1fs)", remainingSeconds) + " [" + getCurrentGraspHearts(player) + "/30]";            }
+            case STACKING -> Icons.get("keystones.grasp-of-the-undying") + " §2" + stacks + "/" + maxStacks + " [" + getCurrentGraspHearts(player) + "/30]";
+            case IDLE -> Icons.get("keystones.grasp-of-the-undying") + " §2[" + getCurrentGraspHearts(player) + "/30]";
         };
     }
 

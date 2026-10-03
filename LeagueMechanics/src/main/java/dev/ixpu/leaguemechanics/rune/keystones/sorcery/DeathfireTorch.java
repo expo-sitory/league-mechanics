@@ -21,6 +21,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
 
+import dev.ixpu.leaguemechanics.util.Icons;
 import dev.ixpu.leaguemechanics.util.ItemModifier;
 import org.bukkit.Sound;
 import org.bukkit.entity.Player;
@@ -249,7 +250,7 @@ public class DeathfireTorch extends CooldownHandler {
                         }
                         target.damage(damagePerTick);
 
-                        DebugLogger.debug(player, "§f[§dSource§f] §f[§9Deathfire Torch§f] Keystone Damage = §d" + Math.ceil(damagePerTick * 100) / 100.0);
+                        DebugLogger.debug(player, "§f[§dSource§f] §f[§9Deathfire Touch§f] Keystone Damage = §d" + Math.ceil(damagePerTick * 100) / 100.0);
                         DebugLogger.debug(player, "§f[§dSource§f] Keystone Damage Type = §dMagic Damage");
 
                         spawnBurnParticles(target);
@@ -293,8 +294,8 @@ public class DeathfireTorch extends CooldownHandler {
 
     private String getRuneDisplay(RuneState state, int victimCount) {
         return switch (state) {
-            case ACTIVE -> "§9🔥 (" + victimCount + ")";
-            case IDLE -> "§1🔥";
+            case ACTIVE -> Icons.get("keystones.deathfire-touch") + " §1(" + victimCount + ")";
+            case IDLE -> Icons.get("keystones.deathfire-touch");
         };
     }
 

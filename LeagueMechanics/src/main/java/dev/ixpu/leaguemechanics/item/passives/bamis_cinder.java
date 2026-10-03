@@ -5,6 +5,7 @@ import dev.ixpu.leaguemechanics.manager.DamageManager;
 import dev.ixpu.leaguemechanics.manager.ItemStatsManager;
 import dev.ixpu.leaguemechanics.manager.KillSourceTracker;
 import dev.ixpu.leaguemechanics.util.DebugLogger;
+import dev.ixpu.leaguemechanics.util.Icons;
 import org.bukkit.Color;
 import org.bukkit.Location;
 import org.bukkit.Particle;
@@ -28,7 +29,7 @@ public class bamis_cinder implements ItemPassive {
 
     @Override
     public String getDescription() {
-        return "§7ᴜɴɪQᴜᴇ – ɪᴍᴍᴏʟᴀᴛᴇ: §fTaking or dealing damage activates this passive,\n§fdealing §915 magic damage §fover §e3 seconds §fto all entities within §65 blocks§f.\n\n§790s Cooldown";
+        return "§7ᴜɴɪQᴜᴇ – ɪᴍᴍᴏʟᴀᴛᴇ: §fTaking or dealing damage activates this passive,\n§fdealing " + Icons.get("stats.magic-damage") + " §b15 magic damage §fover 3 seconds §fto all entities within 5 blocks§f.\n\n§790s Cooldown";
     }
 
     @Override

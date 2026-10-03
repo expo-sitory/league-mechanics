@@ -13,6 +13,7 @@ import dev.ixpu.leaguemechanics.item.passives.dark_seal;
 import dev.ixpu.leaguemechanics.rune.shards.ShardStats;
 import dev.ixpu.leaguemechanics.rune.RuneShard;
 
+import dev.ixpu.leaguemechanics.util.Icons;
 import org.bukkit.entity.Player;
 import org.bukkit.Material;
 import org.bukkit.attribute.Attribute;
@@ -29,7 +30,7 @@ public class PlayerStats {
     private static final Map<UUID, PlayerStats> INSTANCE_CACHE = new ConcurrentHashMap<>();
 
     private static final double PLAYER_RESISTANCE_BALANCER = 8.5;
-    private static final double PLAYER_DAMAGE_BALANCER = 3.0;
+    private static final double PLAYER_DAMAGE_BALANCER = 4.0;
 
     private double temporaryADModification = 0.0;
     private double temporaryAPModification = 0.0;
@@ -45,7 +46,7 @@ public class PlayerStats {
     private int graspHearts = 0;
 
     private ShardStats shardStats;
-    private int leagueLevel;
+    private int leagueLevel = 1;
 
     public static PlayerStats getOrCreate(Player player) {
         UUID uuid = player.getUniqueId();
@@ -236,6 +237,7 @@ public class PlayerStats {
             itemMR += itemStatsManager.getItemMR(player);
         }
         double totalMR = baseMR + itemMR + temporaryMRModification;
+        totalMR *= 1.0 + getProtectionMRBonus(player);
 
         if (player.hasPotionEffect(PotionEffectType.RESISTANCE)) {
             int amplifier = player.getPotionEffect(PotionEffectType.RESISTANCE).getAmplifier();
@@ -349,6 +351,16 @@ public class PlayerStats {
         return player.getAttribute(Attribute.ATTACK_SPEED).getValue();
     }
 
+    public double getProtectionMRBonus(Player player) {
+        int totalProtectionLevel = 0;
+        for (ItemStack armor : player.getInventory().getArmorContents()) {
+            if (armor != null && armor.getType() != Material.AIR) {
+                totalProtectionLevel += armor.getEnchantmentLevel(Enchantment.PROTECTION);
+            }
+        }
+        return totalProtectionLevel * 0.3;
+    }
+
     public double getArmorEnchant(Player player) {
         ItemStack helmet = player.getInventory().getHelmet();
         ItemStack chestplate = player.getInventory().getChestplate();
@@ -456,25 +468,25 @@ public class PlayerStats {
         DebuffManager debuffs = DebuffManager.getInstance();
         if (debuffs.hasDebuff(player, DebuffType.GRIEVOUS_WOUNDS)) {
             double remaining = debuffs.getRemainingSeconds(player, DebuffType.GRIEVOUS_WOUNDS);
-            sb.append(" §2🍀 (").append(String.format("%.1f", remaining)).append("s)");
+            sb.append(Icons.get("status.grievous-wounds") + " §4(").append(String.format("%.1f", remaining)).append("s)");
         }
         if (debuffs.hasDebuff(player, DebuffType.INFLAME)) {
             double remaining = debuffs.getRemainingSeconds(player, DebuffType.INFLAME);
-            sb.append(" §6🔥 (").append(String.format("%.1f", remaining)).append("s)");
+            sb.append(Icons.get("status.burned") + " §6(").append(String.format("%.1f", remaining)).append("s)");
         }
         org.bukkit.potion.PotionEffect slow = player.getPotionEffect(PotionEffectType.SLOWNESS);
         if (slow != null && slow.getDuration() > 0) {
-            sb.append(" §3🥀 (").append(String.format("%.1f", slow.getDuration() / 20.0)).append("s)");
+            sb.append(Icons.get("status.slowed") + " §b(").append(String.format("%.1f", slow.getDuration() / 20.0)).append("s)");
         }
 
         dev.ixpu.leaguemechanics.manager.ItemPassivesManager passiveManager =
                 dev.ixpu.leaguemechanics.manager.ItemPassivesManager.getInstance();
         if (passiveManager != null) {
-            appendPassiveCooldown(sb, passiveManager, player, "hextech-alternator", "§7🕹");
-            appendPassiveCooldown(sb, passiveManager, player, "scouts-slingshot", "§7⌖");
-            appendPassiveCooldown(sb, passiveManager, player, "hexdrinker", "§7🛡");
-            appendPassiveCooldown(sb, passiveManager, player, "bamis-cinder", "§7🔥");
-            appendPassiveCooldown(sb, passiveManager, player, "verdant-barrier", "§7⛨");
+            appendPassiveCooldown(sb, passiveManager, player, "hextech-alternator", "§7" + Icons.get("items.hextech-alternator"));
+            appendPassiveCooldown(sb, passiveManager, player, "scouts-slingshot", "§7" + Icons.get("items.scouts-slingshot"));
+            appendPassiveCooldown(sb, passiveManager, player, "hexdrinker", "§7" + Icons.get("items.hexdrinker"));
+            appendPassiveCooldown(sb, passiveManager, player, "bamis-cinder", "§7" + Icons.get("items.bamis-cinder"));
+            appendPassiveCooldown(sb, passiveManager, player, "verdant-barrier", "§7" + Icons.get("items.verdant-barrier"));
         }
 
         return sb.toString();

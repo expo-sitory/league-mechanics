@@ -17,6 +17,7 @@ import dev.ixpu.leaguemechanics.listener.PlayerEventListener;
 
 import java.util.*;
 
+import dev.ixpu.leaguemechanics.util.Icons;
 import dev.ixpu.leaguemechanics.util.ItemModifier;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
@@ -166,9 +167,9 @@ public class PressTheAttack extends StacksHandler {
 
     private String getRuneDisplay(RuneState state, int stacks, String cooldown) {
         return switch (state) {
-            case COOLDOWN -> "§7✳ " + cooldown;
-            case ACTIVE -> "§e✳ " + stacks + "/" + MAX_STACKS;
-            case IDLE -> "§6✳";
+            case COOLDOWN -> Icons.get("keystones.press-the-attack") + " §7" + cooldown;
+            case ACTIVE -> Icons.get("keystones.press-the-attack") + " §6" + stacks + "/" + MAX_STACKS;
+            case IDLE -> Icons.get("keystones.press-the-attack");
         };
     }
 

@@ -1,6 +1,7 @@
 package dev.ixpu.leaguemechanics.item.passives;
 
 import dev.ixpu.leaguemechanics.entity.player.PlayerStats;
+import dev.ixpu.leaguemechanics.util.Icons;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
@@ -18,7 +19,7 @@ public class wardens_mail implements ItemPassive {
 
     @Override
     public String getDescription() {
-        return "§7ᴜɴɪQᴜᴇ – ʀᴏᴄᴋ sᴏʟɪᴅ: §fReduces incoming critical strike damage by §a20%§f.";
+        return "§7ᴜɴɪQᴜᴇ – ʀᴏᴄᴋ sᴏʟɪᴅ: §fReduces incoming " + Icons.get("stats.critical-damage") + " §6Critical strike damage §fby 20%.";
     }
 
     @Override

@@ -17,6 +17,7 @@ import dev.ixpu.leaguemechanics.manager.ItemStatsManager;
 
 import dev.ixpu.leaguemechanics.listener.PlayerEventListener;
 
+import dev.ixpu.leaguemechanics.util.Icons;
 import dev.ixpu.leaguemechanics.util.ItemModifier;
 import org.bukkit.Sound;
 import org.bukkit.entity.Player;
@@ -353,9 +354,9 @@ public class AfterShock extends CooldownHandler {
 
     private String getRuneDisplay(RuneState state, Player player) {
         return switch (state) {
-            case ACTIVE -> "§a§k|| §r§a🌀 §k||§r";
-            case COOLDOWN -> "§7🌀 " + getCooldownDisplay(player);
-            case IDLE -> "§2🌀 ";
+            case ACTIVE -> "§2§k|| §r" + Icons.get("keystones.after-shock") + " §2§k||§r";
+            case COOLDOWN -> "§7" + Icons.get("keystones.after-shock") + " §7" + getCooldownDisplay(player);
+            case IDLE -> Icons.get("keystones.after-shock");
         };
     }
 

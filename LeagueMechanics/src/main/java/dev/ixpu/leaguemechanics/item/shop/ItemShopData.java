@@ -105,6 +105,10 @@ public class ItemShopData {
         addItem("steel-sigil", 27, 3, 11, ItemRarity.RARE, null, "fighter");
         addItem("bandleglass-mirror", 25, 3, 11, ItemRarity.RARE, null, "support");
         addItem("kindlegem", 25, 3, 6, ItemRarity.RARE, null, "support");
+
+        // --------------------------------- LEGENDARY ITEMS ---------------------------------
+
+
     }
 
     private void loadDefaultRequiredItems() {

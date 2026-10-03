@@ -27,7 +27,7 @@ public class verdant_barrier implements ItemPassive {
 
     @Override
     public String getDescription() {
-        return "§7ᴜɴɪQᴜᴇ – ᴀɴɴᴜʟ: §fOnce equipped, grants §e+2 absorption hearts\n§fevery §b5 seconds§f, up to a maximum of §e20§f.\n\n§790s Cooldown (If all absorption hearts are lost.)";
+        return "§7ᴜɴɪQᴜᴇ – ᴀɴɴᴜʟ: §fOnce equipped, grants +2 absorption hearts\n§fevery 5 seconds, up to a maximum of 20.\n\n§790s Cooldown (If all absorption hearts are lost.)";
     }
 
     @Override

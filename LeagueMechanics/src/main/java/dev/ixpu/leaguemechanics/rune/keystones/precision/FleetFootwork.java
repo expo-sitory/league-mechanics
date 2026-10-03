@@ -8,6 +8,7 @@ import dev.ixpu.leaguemechanics.manager.StatScalingManager;
 
 import java.util.*;
 
+import dev.ixpu.leaguemechanics.util.Icons;
 import org.bukkit.attribute.Attribute;
 import org.bukkit.attribute.AttributeModifier;
 import org.bukkit.entity.Player;
@@ -223,10 +224,10 @@ public class FleetFootwork extends StacksHandler {
         return switch (state) {
             case ACTIVE -> {
                 double remainingSeconds = buffTicks / 20.0;
-                yield String.format("§e👣 (%.1fs)", remainingSeconds);
+                yield "§f" + Icons.get("keystones.fleet-footwork") + " §6" + String.format("(%.1fs)", remainingSeconds);
             }
-            case STACKING -> "§6👣 " + stacks + "/" + MAXIMUM_STACKS;
-            case IDLE -> "§6👣";
+            case STACKING -> "§f" + Icons.get("keystones.fleet-footwork") + " §6" + stacks + "/" + MAXIMUM_STACKS;
+            case IDLE -> "§f" + Icons.get("keystones.fleet-footwork");
         };
     }
 

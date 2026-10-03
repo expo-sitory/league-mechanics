@@ -6,6 +6,7 @@ import dev.ixpu.leaguemechanics.manager.DebuffManager;
 import dev.ixpu.leaguemechanics.manager.KillSourceTracker;
 import dev.ixpu.leaguemechanics.rune.DebuffType;
 import dev.ixpu.leaguemechanics.util.DebugLogger;
+import dev.ixpu.leaguemechanics.util.Icons;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
@@ -22,7 +23,7 @@ public class bramble_vest implements ItemPassive {
 
     @Override
     public String getDescription() {
-        return "§7ᴜɴɪQᴜᴇ – ᴛʜᴏʀɴs: §fWhen struck by an attack, deal §9" + THORNS_MAGIC_DAMAGE + "\n§9magic damage §fto the source. If they are a player,\n§finflict them with §cɢʀɪᴇᴠᴏᴜs ᴡᴏᴜɴᴅs §ffor §e3 seconds§f.";
+        return "§7ᴜɴɪQᴜᴇ – ᴛʜᴏʀɴs: §fWhen struck by an attack, deal \n§b" + Icons.get("stats.magic-damage") + " " + THORNS_MAGIC_DAMAGE + " §bmagic damage §fto the source. If they are a player,\n§finflict them with " + Icons.get("status.grievous-wounds") + " §4ɢʀɪᴇᴠᴏᴜs ᴡᴏᴜɴᴅs §ffor 3 seconds§f.";
     }
 
     @Override

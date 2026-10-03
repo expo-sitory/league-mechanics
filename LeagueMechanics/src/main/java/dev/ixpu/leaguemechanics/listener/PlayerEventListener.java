@@ -1,7 +1,6 @@
 package dev.ixpu.leaguemechanics.listener;
 
 import dev.ixpu.leaguemechanics.LeagueMechanics;
-import dev.ixpu.leaguemechanics.entity.player.PlayerClass;
 import dev.ixpu.leaguemechanics.item.passives.ItemPassivesRegistry;
 import dev.ixpu.leaguemechanics.manager.CombatStateManager;
 import dev.ixpu.leaguemechanics.manager.ItemStatsManager;
@@ -16,7 +15,6 @@ import dev.ixpu.leaguemechanics.rune.RuneCooldownGate;
 import dev.ixpu.leaguemechanics.rune.RuneRegistry;
 import dev.ixpu.leaguemechanics.rune.RuneShard;
 
-import org.bukkit.Bukkit;
 import org.bukkit.entity.*;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
@@ -141,7 +139,8 @@ public class PlayerEventListener implements Listener, RuneCooldownGate {
         removeAllAttributeModifiers(player);
         cancelPendingTasks(uuid);
         DamageListener.parryCooldown.cleanup(player);
-        DashListener.dashCooldown.cleanup(player);
+        PlayerSkillListener.dashCooldown.cleanup(player);
+        PlayerSkillListener.doubleJumpCooldown.cleanup(player);
     }
 
     @EventHandler

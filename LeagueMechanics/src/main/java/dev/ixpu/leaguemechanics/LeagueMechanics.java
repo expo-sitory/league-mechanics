@@ -15,7 +15,7 @@ import dev.ixpu.leaguemechanics.manager.ItemStatsManager;
 import dev.ixpu.leaguemechanics.manager.ItemShopManager;
 
 import dev.ixpu.leaguemechanics.listener.DamageListener;
-import dev.ixpu.leaguemechanics.listener.DashListener;
+import dev.ixpu.leaguemechanics.listener.PlayerSkillListener;
 import dev.ixpu.leaguemechanics.listener.DeathListener;
 import dev.ixpu.leaguemechanics.listener.PlayerEventListener;
 import dev.ixpu.leaguemechanics.listener.PlayerStatsListener;
@@ -69,7 +69,7 @@ public class LeagueMechanics extends JavaPlugin {
     private PlayerEventListener playerEventListener;
     private PlayerInventoryListener playerInventoryListener;
     private DamageListener damageListener;
-    private DashListener dashListener;
+    private PlayerSkillListener dashListener;
     private DeathListener deathListener;
     private RuneListener runeListener;
     private CommandHandler commandHandler;
@@ -89,7 +89,7 @@ public class LeagueMechanics extends JavaPlugin {
         playerInventoryListener = new PlayerInventoryListener(this, playerStatsListener);
         deathListener = new DeathListener(this, playerStatsListener);
         runeListener = new RuneListener(this);
-        dashListener = new DashListener(this);
+        dashListener = new PlayerSkillListener(this);
 
 
         getLogger().info("League Mechanics is starting...");

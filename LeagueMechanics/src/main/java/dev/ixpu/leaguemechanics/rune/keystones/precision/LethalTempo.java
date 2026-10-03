@@ -17,6 +17,7 @@ import dev.ixpu.leaguemechanics.listener.PlayerEventListener;
 
 import java.util.*;
 
+import dev.ixpu.leaguemechanics.util.Icons;
 import dev.ixpu.leaguemechanics.util.ItemModifier;
 import org.bukkit.Sound;
 import org.bukkit.entity.Player;
@@ -279,16 +280,16 @@ public class LethalTempo extends StacksHandler {
 
     private String getRuneDisplay(RuneState state, Player player, int value) {
         return switch (state) {
-            case COOLDOWN -> "§7⚚ " + getCooldownDisplay(player);
+            case COOLDOWN -> "§7" + Icons.get("keystones.lethal-tempo") + getCooldownDisplay(player);
             case ACTIVE -> {
                 double remainingSeconds = value / 20.0;
-                yield String.format("§e⚚ (%.1fs)", remainingSeconds);
+                yield "§f" + Icons.get("keystones.lethal-tempo") + " §6" + String.format("(%.1fs)", remainingSeconds);
             }
             case STACKING -> {
                 if (value == 0) {
-                    yield "§6⚚";
+                    yield "§f" + Icons.get("keystones.lethal-tempo");
                 } else {
-                    yield "§6⚚ " + value + "/6";
+                    yield "§f" + Icons.get("keystones.lethal-tempo") + " §6" + value + "/6";
                 }
             }
         };

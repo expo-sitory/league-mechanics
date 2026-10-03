@@ -17,6 +17,7 @@ import dev.ixpu.leaguemechanics.listener.PlayerEventListener;
 import java.util.UUID;
 
 import dev.ixpu.leaguemechanics.util.DebugLogger;
+import dev.ixpu.leaguemechanics.util.Icons;
 import dev.ixpu.leaguemechanics.util.ItemModifier;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
@@ -169,8 +170,8 @@ public class Conqueror extends StacksHandler {
 
     private String getRuneDisplay(RuneState state, int currentStacks) {
         return switch (state) {
-            case STACKING -> "§e🪓 " + currentStacks + "/" + MAXIMUM_STACKS;
-            case IDLE -> "§6🪓";
+            case STACKING -> "§f" + Icons.get("keystones.conqueror") + " §6" + currentStacks + "/" + MAXIMUM_STACKS;
+            case IDLE -> Icons.get("keystones.conqueror");
         };
     }
 

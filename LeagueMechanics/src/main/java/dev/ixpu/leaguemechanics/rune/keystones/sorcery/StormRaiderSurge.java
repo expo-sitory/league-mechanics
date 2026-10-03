@@ -11,6 +11,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
 
+import dev.ixpu.leaguemechanics.util.Icons;
 import org.bukkit.entity.Player;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.LivingEntity;
@@ -191,10 +192,10 @@ public class StormRaiderSurge extends CooldownHandler {
 
     private String getRuneDisplay(RuneState state, Player player, int remainingTicks) {
         return switch (state) {
-            case COOLDOWN -> "§7👾 " + getCooldownDisplay(player);
+            case COOLDOWN -> " §7" + Icons.get("keystones.storm-raider-surge") + " §7" + getCooldownDisplay(player);
             case ACTIVE -> {
                 double remainingSeconds = remainingTicks / 20.0;
-                yield String.format("§9👾 (%.1fs)", remainingSeconds);
+                yield Icons.get("keystones.storm-raider-surge") + String.format(" §1(%.1fs)", remainingSeconds);
             }
             case STACKING -> {
                 UUID playerUUID = player.getUniqueId();
@@ -203,10 +204,10 @@ public class StormRaiderSurge extends CooldownHandler {
                 double currentDamage = damageTracker.getOrDefault(playerUUID, 0.0);
 
                 int damagePercent = (int) ((currentDamage / Math.max(1, damageThreshold)) * 100) ;
-                damagePercent /= 3.3;
-                yield String.format("§1👾 - %d%%/%d%%", damagePercent, (int) DAMAGE_THRESHOLD_PERCENTAGE);
+                damagePercent /= 5;
+                yield Icons.get("keystones.storm-raider-surge") + String.format(" §1- %d%%/%d%%", damagePercent, (int) DAMAGE_THRESHOLD_PERCENTAGE);
             }
-            case IDLE -> "§1👾";
+            case IDLE -> Icons.get("keystones.storm-raider-surge");
         };
     }
 

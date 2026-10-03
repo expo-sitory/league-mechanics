@@ -119,6 +119,10 @@ public class ItemStatsData {
 
         addItem("glowing-mote", "Glowing Mote", 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0,
                 false, null, 0.0, 0.0, 0.0, 0.0, 7.0);
+
+        // LEGENDARY ITEMS
+
+
     }
 
     private void addItem(String id, String name, double hp, double hr, double ad, double ap, double td,

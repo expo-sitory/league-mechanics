@@ -19,6 +19,8 @@ import java.util.Set;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 
+import dev.ixpu.leaguemechanics.util.Icons;
+import org.bukkit.entity.ArmorStand;
 import org.bukkit.entity.Player;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.LivingEntity;
@@ -97,6 +99,9 @@ public class FirstStrike extends CooldownHandler {
         if (!(target instanceof LivingEntity livingTarget)) {
             return;
         }
+        if (livingTarget instanceof Player || livingTarget instanceof ArmorStand) {
+            return;
+        }
         if (livingTarget.getMaxHealth() < 20) {
             return;
         }
@@ -125,9 +130,6 @@ public class FirstStrike extends CooldownHandler {
         if (isActive && System.currentTimeMillis() < buffEndTime.getOrDefault(attackerUUID, 0L)) {
             double damageToApply = keystoneDamage(player, target);
 
-            if (livingTarget instanceof Player livingPlayer) {
-                KillSourceTracker.getInstance().setSource(livingPlayer, player);
-            }
             livingTarget.damage(damageToApply);
 
             bonusDamageTracked.put(attackerUUID, tracked + damageToApply);
@@ -242,8 +244,6 @@ public class FirstStrike extends CooldownHandler {
         double finalXP = DamageCalculation * statScaling;
         int xpToGive = (int) finalXP;
 
-        DebugLogger.debug(player, String.format("§f[§dSource§f] [§3First Strike§f] " + "%.2f", finalXP) + " XP (damage: " + String.format("%.2f", DamageCalculation) + ", AD: " + String.format("%.2f", totalAD) + ", AP: " + String.format("%.2f", totalAP) + ")");
-        DebugLogger.debug(player, "§f[§dSource§f] [§3First Strike§f] Total XP: " + xpToGive);
         player.giveExp(xpToGive);
     }
 
@@ -260,14 +260,14 @@ public class FirstStrike extends CooldownHandler {
         return switch (state) {
             case ACTIVE -> {
                 long buffEnd = buffEndTime.getOrDefault(uuid, 0L);
-                long remaining = Math.max(0, (buffEnd - System.currentTimeMillis()) / 1000);
-                yield "§b✎ " + remaining + "s";
+                double remaining = Math.max(0, (buffEnd - System.currentTimeMillis()) / 1000.0);
+                yield "§f" + Icons.get("keystones.first-strike") + " §3" + String.format("(%.1fs)", remaining);
             }
             case COOLDOWN -> {
                 double cooldownRemaining = getRemainingCooldown(player);
-                yield "§7✎ " + String.format("%.1f", cooldownRemaining) + "s";
+                yield "§7" + Icons.get("keystones.first-strike") + " §7" + String.format("%.1f", cooldownRemaining) + "s";
             }
-            case IDLE -> "§3✎";
+            case IDLE -> "§f" + Icons.get("keystones.first-strike");
         };
     }
 

@@ -5,6 +5,7 @@ import dev.ixpu.leaguemechanics.manager.DamageManager;
 import dev.ixpu.leaguemechanics.manager.ItemPassivesManager;
 import dev.ixpu.leaguemechanics.manager.KillSourceTracker;
 import dev.ixpu.leaguemechanics.util.DebugLogger;
+import dev.ixpu.leaguemechanics.util.Icons;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
@@ -20,7 +21,7 @@ public class scouts_slingshot implements ItemPassive {
 
     @Override
     public String getDescription() {
-        return "§7ᴜɴɪQᴜᴇ – ʙᴜʟʟꜱᴇʏᴇ: §fDamaging a target deals §9" + BULLSYE_BONUS_MAGIC_DAMAGE + " bonus magic damage\n\n§740s Cooldown";
+        return "§7ᴜɴɪQᴜᴇ – ʙᴜʟʟꜱᴇʏᴇ: §fDamaging a target deals §b" + Icons.get("stats.magic-damage") + " " + BULLSYE_BONUS_MAGIC_DAMAGE + " bonus magic damage\n\n§740s Cooldown";
     }
 
     @Override

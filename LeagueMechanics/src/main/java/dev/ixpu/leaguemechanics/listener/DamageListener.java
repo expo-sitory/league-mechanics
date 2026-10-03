@@ -277,14 +277,23 @@ public class DamageListener implements Listener, RuneCooldownGate {
                 event.setCancelled(true);
                 return;
             }
-            if (!plugin.getCommandHandler().isPvpEnabled(shooter, targetPlayer)) {
+            if (!plugin.getCommandHandler().isPvpEnabled(shooter, targetPlayer) || !isWithinLevelGap(shooter, targetPlayer)) {
+                event.setCancelled(true);
                 return;
             }
+//            if (!isWithinLevelGap(shooter, targetPlayer)) {
+//                event.setCancelled(true);
+//                shooter.sendTitlePart(TitlePart.TITLE, Component.text("ʟᴇᴠᴇʟ ᴅɪꜰꜰ ᴛᴏᴏ ʜɪɢʜ", NamedTextColor.RED));
+//                return;
+//            }
             recordHit(shooter, targetPlayer);
         }
 
         shooter.playSound(shooter.getLocation(), Sound.ENTITY_ARROW_HIT_PLAYER, 1.0f, 1.0f);
-        event.getEntity().remove();
+
+        if (!(event.getEntity() instanceof Trident)) {
+            event.getEntity().remove();
+        }
 
         damageEvent(shooter, target, "Projectile", 1);
         combatState.removeLetRunesThrough(shooter.getUniqueId());
@@ -352,10 +361,15 @@ public class DamageListener implements Listener, RuneCooldownGate {
                 event.setCancelled(true);
                 return;
             }
-            if (!plugin.getCommandHandler().isPvpEnabled(attacker, targetPlayer)) {
+            if (!plugin.getCommandHandler().isPvpEnabled(attacker, targetPlayer) || !isWithinLevelGap(attacker, targetPlayer)) {
                 event.setCancelled(true);
                 return;
             }
+//            if (!isWithinLevelGap(attacker, targetPlayer)) {
+//                event.setCancelled(true);
+//                attacker.sendTitlePart(TitlePart.TITLE, Component.text("ʟᴇᴠᴇʟ ᴅɪꜰꜰ ᴛᴏᴏ ʜɪɢʜ", NamedTextColor.RED));
+//                return;
+//            }
             recordHit(attacker, targetPlayer);
         }
 
@@ -552,6 +566,13 @@ public class DamageListener implements Listener, RuneCooldownGate {
         }
     }
 
+    private static final int MAX_LEVEL_GAP = 3;
+
+    private boolean isWithinLevelGap(Player attacker, Player target) {
+        int gap = Math.abs(PlayerStats.getOrCreate(attacker).getLeagueLevel() - PlayerStats.getOrCreate(target).getLeagueLevel());
+        return gap <= MAX_LEVEL_GAP;
+    }
+
     public void damageEvent(Player player, LivingEntity target, String type, double vanillaDamage) {
         DamageManager damage = new DamageManager(itemStatsManager);
         PlayerRuneData runeData = runeManager.getPlayerRuneData(player);
@@ -594,7 +615,7 @@ public class DamageListener implements Listener, RuneCooldownGate {
             }
         }
         if (didCrit) {
-            player.getWorld().playSound(player.getLocation(), Sound.ITEM_MACE_SMASH_GROUND_HEAVY, 1.0f, 1.2f);
+            player.getWorld().playSound(player.getLocation(), Sound.ITEM_MACE_SMASH_GROUND_HEAVY, 1.0f, 1.5f);
             if (critRuneData != null) {
                 for (CooldownHandler rune : critRuneData.getAllRunes()) {
                     if (rune != null) {
@@ -626,6 +647,9 @@ public class DamageListener implements Listener, RuneCooldownGate {
             totalDamage *= (1.0 - (mitigationPercent / 100.0));
         }
 
+        if (!(target instanceof Player)) {
+            target.setKiller(player);
+        }
         target.damage(totalDamage);
 
         DebugLogger.debug(player, "§7----------- §f[ §dDEBUG MODE §f] §7-----------");
@@ -669,11 +693,15 @@ public class DamageListener implements Listener, RuneCooldownGate {
         showAttackCooldownBar(player, cooldownTicks);
 
         for (int i = 0; i < 9; i++) {
-            ItemStack item = player.getInventory().getItem(i);
-            if (item != null && !item.getType().isAir() && isWeapon(item)) {
-                if (player.getCooldown(item.getType()) == 0) {
-                    player.setCooldown(item.getType(), cooldownInt);
-                }
+            applyWeaponCooldown(player, player.getInventory().getItem(i), cooldownInt);
+        }
+        applyWeaponCooldown(player, player.getInventory().getItemInOffHand(), cooldownInt);
+    }
+
+    private void applyWeaponCooldown(Player player, ItemStack item, int cooldownTicks) {
+        if (item != null && !item.getType().isAir() && isWeapon(item)) {
+            if (player.getCooldown(item.getType()) == 0) {
+                player.setCooldown(item.getType(), cooldownTicks);
             }
         }
     }
@@ -758,16 +786,5 @@ public class DamageListener implements Listener, RuneCooldownGate {
             return false;
         }
         return true;
-    }
-
-    public long getAttackCooldownRemaining(Player player) {
-        UUID uuid = player.getUniqueId();
-        if (!attackCooldown.containsKey(uuid)) {
-            return 0;
-        }
-
-        long cooldownEnd = attackCooldown.get(uuid);
-        long remaining = cooldownEnd - System.currentTimeMillis();
-        return remaining > 0 ? remaining : 0;
     }
 }

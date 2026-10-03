@@ -17,6 +17,7 @@ import dev.ixpu.leaguemechanics.listener.PlayerEventListener;
 
 import java.util.UUID;
 
+import dev.ixpu.leaguemechanics.util.Icons;
 import dev.ixpu.leaguemechanics.util.ItemModifier;
 import org.bukkit.Sound;
 
@@ -211,9 +212,9 @@ public class Electrocute extends StacksHandler {
 
     private String getRuneDisplay(Player player, RuneState state, int currentStacks) {
         return switch (state) {
-            case COOLDOWN -> "§7⚡ " + getCooldownDisplay(player);
-            case STACKING -> "§c⚡ " + currentStacks + "/" + MAXIMUM_STACKS;
-            case IDLE -> "§4⚡";
+            case COOLDOWN -> "§7" + Icons.get("keystones.electrocute") + " §7" + getCooldownDisplay(player);
+            case STACKING -> "§f" + Icons.get("keystones.electrocute") + " §4" + currentStacks + "/" + MAXIMUM_STACKS;
+            case IDLE -> "§f" + Icons.get("keystones.electrocute");
         };
     }
 }

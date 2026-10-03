@@ -17,6 +17,7 @@ import dev.ixpu.leaguemechanics.listener.PlayerEventListener;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 
+import dev.ixpu.leaguemechanics.util.Icons;
 import org.bukkit.entity.Player;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.LivingEntity;
@@ -282,10 +283,10 @@ public class HailOfBlades extends CooldownHandler {
 
     private String getRuneDisplay(Player player, RuneState state, int value) {
         return switch (state) {
-            case COOLDOWN -> "§7❛❟❛ " + getCooldownDisplay(player);
-            case ACTIVE -> "§c❛❟❛ " + value + "/" + INITIAL_STACKS;
+            case COOLDOWN -> "§7" + Icons.get("keystones.hail-of-blades") + " §7" + getCooldownDisplay(player);
+            case ACTIVE -> "§f" + Icons.get("keystones.hail-of-blades") + " §4" + value + "/" + INITIAL_STACKS;
             case WINDUP -> getWindupDisplay(player, value);
-            case IDLE -> "§4❛❟❛";
+            case IDLE -> "§f" + Icons.get("keystones.hail-of-blades");
         };
     }
 
@@ -308,19 +309,7 @@ public class HailOfBlades extends CooldownHandler {
     private String getWindupDisplay(Player player, int remainingTicks) {
         UUID playerUUID = player.getUniqueId();
 
-        int currentStage;
-        String message;
-
-        if (remainingTicks > (WINDUP_TICKS * 2 / 3)) {
-            currentStage = 1;
-            message = "§c❛§4❟❛";
-        } else if (remainingTicks > (WINDUP_TICKS / 3)) {
-            currentStage = 2;
-            message = "§c❛❟§4❛";
-        } else {
-            currentStage = 3;
-            message = "§c❛❟❛";
-        }
+        int currentStage = remainingTicks > WINDUP_TICKS * 2 / 3 ? 1 : remainingTicks > WINDUP_TICKS / 3 ? 2 : 3;
 
         int lastStage = lastWindupStage.getOrDefault(playerUUID, 0);
         if (currentStage != lastStage) {
@@ -328,6 +317,6 @@ public class HailOfBlades extends CooldownHandler {
             lastWindupStage.put(playerUUID, currentStage);
         }
 
-        return message;
+        return "§f" + Icons.get("keystones.hail-of-blades") + " §4" + String.format("(%.1f)", remainingTicks / 20.0);
     }
 }

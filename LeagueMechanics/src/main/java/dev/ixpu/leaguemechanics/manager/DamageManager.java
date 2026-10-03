@@ -31,8 +31,8 @@ public class DamageManager {
     private static final double BASE_BONUS = 1.07;
     private static final double LEVEL_3_BONUS = 1.15;
     private static final double LEVEL_8_BONUS = 1.37;
-    private static final double LEVEL_13_BONUS = 1.85;
-    private static final double LEVEL_18_BONUS = 2.75;
+    private static final double LEVEL_13_BONUS = 1.75;
+    private static final double LEVEL_18_BONUS = 1.90;
 
     private static final double ADAPTIVE_THRESHOLD = 0.7;
 

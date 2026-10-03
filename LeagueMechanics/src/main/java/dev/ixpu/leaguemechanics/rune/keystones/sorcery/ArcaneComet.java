@@ -15,6 +15,7 @@ import dev.ixpu.leaguemechanics.manager.KillSourceTracker;
 import dev.ixpu.leaguemechanics.listener.PlayerEventListener;
 import dev.ixpu.leaguemechanics.item.passives.ItemPassive;
 import dev.ixpu.leaguemechanics.item.passives.ItemPassivesRegistry;
+import dev.ixpu.leaguemechanics.util.Icons;
 import dev.ixpu.leaguemechanics.util.ItemModifier;
 
 import java.util.HashMap;
@@ -231,8 +232,8 @@ public class ArcaneComet extends CooldownHandler {
 
     private String getRuneDisplay(RuneState state, Player player) {
         return switch (state) {
-            case COOLDOWN -> "§7🌠 " + getCooldownDisplay(player);
-            case IDLE -> "§1🌠";
+            case COOLDOWN -> "§7" + Icons.get("keystones.arcane-comet") + " §7" + getCooldownDisplay(player);
+            case IDLE -> Icons.get("keystones.arcane-comet");
         };
     }
 
