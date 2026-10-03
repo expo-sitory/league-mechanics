@@ -630,8 +630,8 @@ public class PlaceholderRegistry extends PlaceholderExpansion {
     }
 
     private String getLine2(Player player, PlayerStats stats) {
-        double ar = stats.getPlayerAR(player) / stats.getResistanceBalancer();
-        double mr = stats.getPlayerMR(player) / stats.getResistanceBalancer();
+        double ar = stats.getPlayerAR(player);
+        double mr = stats.getPlayerMR(player);
         return "§f" + Icons.get("stats.ar") + " §7" + String.format("%-4.0f", ar) + "  §f" + Icons.get("stats.mr") + " §7" + String.format("%-4.0f", mr);
     }
 

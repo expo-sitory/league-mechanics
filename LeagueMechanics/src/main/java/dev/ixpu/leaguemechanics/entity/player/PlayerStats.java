@@ -1,7 +1,6 @@
 package dev.ixpu.leaguemechanics.entity.player;
 
 import dev.ixpu.leaguemechanics.LeagueMechanics;
-import dev.ixpu.leaguemechanics.listener.DamageListener;
 import dev.ixpu.leaguemechanics.manager.ItemStatsManager;
 import dev.ixpu.leaguemechanics.rune.keystones.precision.LethalTempo;
 import dev.ixpu.leaguemechanics.rune.keystones.domination.HailOfBlades;
@@ -29,8 +28,9 @@ import static dev.ixpu.leaguemechanics.entity.player.PlayerClass.*;
 public class PlayerStats {
     private static final Map<UUID, PlayerStats> INSTANCE_CACHE = new ConcurrentHashMap<>();
 
-    private static final double PLAYER_RESISTANCE_BALANCER = 8.5;
-    private static final double PLAYER_DAMAGE_BALANCER = 4.0;
+    private static final double PLAYER_DAMAGE_BALANCER = 7.0;
+
+    private static final double BASE_HEALING_MULTIPLIER = 1.0;
 
     private double temporaryADModification = 0.0;
     private double temporaryAPModification = 0.0;
@@ -41,7 +41,6 @@ public class PlayerStats {
     private double temporaryMSModification = 0.0;
     private double temporaryASModification = 0.0;
     private double temporaryCritDamageModification = 0.0;
-    private double temporaryHealingMultiplier = 1.0;
 
     private int graspHearts = 0;
 
@@ -60,9 +59,6 @@ public class PlayerStats {
 
     public double getDamageBalancer() {
         return PLAYER_DAMAGE_BALANCER;
-    }
-    public double getResistanceBalancer() {
-        return PLAYER_RESISTANCE_BALANCER;
     }
 
     public static void invalidateCache(UUID uuid) {
@@ -213,20 +209,20 @@ public class PlayerStats {
     public double getPlayerAR(Player player) {
         ItemStatsManager itemStatsManager = LeagueMechanics.getInstance().getStatsManager();
         double itemAR = 0;
-        double baseAR = getPlayerClassBaseAR(player) + player.getAttribute(Attribute.ARMOR).getValue() * 7;
-        double enchantAR = getArmorEnchant(player);
+        double baseAR = getPlayerClassBaseAR(player) + player.getAttribute(Attribute.ARMOR).getValue();
         if (itemStatsManager != null) {
             itemAR += itemStatsManager.getItemAR(player);
         }
-        double totalAR = baseAR + itemAR + enchantAR + temporaryARModification;
+        double totalAR = baseAR + itemAR + temporaryARModification;
+        totalAR = totalAR * getProtectionARBonus(player);
 
         if (player.hasPotionEffect(PotionEffectType.RESISTANCE)) {
             int amplifier = player.getPotionEffect(PotionEffectType.RESISTANCE).getAmplifier();
             double multiplier = 1 + (0.2 * (amplifier + 1));
-            totalAR = totalAR * multiplier;
+            totalAR *= multiplier;
         }
 
-        return Math.max(0, totalAR) * PLAYER_RESISTANCE_BALANCER;
+        return Math.max(0, totalAR);
     }
 
     public double getPlayerMR(Player player) {
@@ -237,15 +233,15 @@ public class PlayerStats {
             itemMR += itemStatsManager.getItemMR(player);
         }
         double totalMR = baseMR + itemMR + temporaryMRModification;
-        totalMR *= 1.0 + getProtectionMRBonus(player);
+        totalMR = totalMR * getProtectionMRBonus(player);
 
         if (player.hasPotionEffect(PotionEffectType.RESISTANCE)) {
             int amplifier = player.getPotionEffect(PotionEffectType.RESISTANCE).getAmplifier();
             double multiplier = 1 + (0.2 * (amplifier + 1));
-            totalMR = totalMR * multiplier;
+            totalMR *= multiplier;
         }
 
-        return Math.max(0, totalMR) * PLAYER_RESISTANCE_BALANCER;
+        return Math.max(0, totalMR);
     }
 
     public double getPlayerMS(Player player) {
@@ -358,31 +354,17 @@ public class PlayerStats {
                 totalProtectionLevel += armor.getEnchantmentLevel(Enchantment.PROTECTION);
             }
         }
-        return totalProtectionLevel * 0.3;
+        return 1.0 + (totalProtectionLevel * 0.05);
     }
 
-    public double getArmorEnchant(Player player) {
-        ItemStack helmet = player.getInventory().getHelmet();
-        ItemStack chestplate = player.getInventory().getChestplate();
-        ItemStack leggings = player.getInventory().getLeggings();
-        ItemStack boots = player.getInventory().getBoots();
-
-        int totalBonusProtectionLevel = 0;
-
-        if (helmet != null && helmet.getType() != Material.AIR) {
-            totalBonusProtectionLevel += helmet.getEnchantmentLevel(Enchantment.PROTECTION);
+    public double getProtectionARBonus(Player player) {
+        int totalProtectionLevel = 0;
+        for (ItemStack armor : player.getInventory().getArmorContents()) {
+            if (armor != null && armor.getType() != Material.AIR) {
+                totalProtectionLevel += armor.getEnchantmentLevel(Enchantment.PROTECTION);
+            }
         }
-        if (chestplate != null && chestplate.getType() != Material.AIR) {
-            totalBonusProtectionLevel += chestplate.getEnchantmentLevel(Enchantment.PROTECTION);
-        }
-        if (leggings != null && leggings.getType() != Material.AIR) {
-            totalBonusProtectionLevel += leggings.getEnchantmentLevel(Enchantment.PROTECTION);
-        }
-        if (boots != null && boots.getType() != Material.AIR) {
-            totalBonusProtectionLevel += boots.getEnchantmentLevel(Enchantment.PROTECTION);
-        }
-
-        return totalBonusProtectionLevel * 0.4;
+        return 1.0 + (totalProtectionLevel * 0.05);
     }
 
     public void modifyAD(double amount) {
@@ -421,12 +403,10 @@ public class PlayerStats {
         this.temporaryCritDamageModification += amount;
     }
 
-    public void modifyHealingMultiplier(double multiplier) {
-        this.temporaryHealingMultiplier = Math.max(0.0, this.temporaryHealingMultiplier + multiplier);
-    }
-
-    public double getHealingMultiplier() {
-        return temporaryHealingMultiplier;
+    public double getHealingMultiplier(Player player) {
+        ItemStatsManager itemStatsManager = LeagueMechanics.getInstance().getStatsManager();
+        double itemHM = itemStatsManager != null ? itemStatsManager.getItemHM(player) : 0;
+        return BASE_HEALING_MULTIPLIER * (1.0 + itemHM / 100.0);
     }
 
     public boolean hasGrievousWounds(Player player) {
@@ -435,7 +415,7 @@ public class PlayerStats {
     }
 
     public double getEffectiveHealingMultiplier(Player player) {
-        double base = getHealingMultiplier();
+        double base = getHealingMultiplier(player);
         if (hasGrievousWounds(player)) {
             base *= 0.6;
         }
@@ -454,6 +434,12 @@ public class PlayerStats {
             return baseRegen * 0.6;
         }
         return baseRegen;
+    }
+
+    public double getPlayerCSD(Player player) {
+        ItemStatsManager itemStatsManager = LeagueMechanics.getInstance().getStatsManager();
+        if (itemStatsManager == null) return 0;
+        return itemStatsManager.getItemCSD(player);
     }
 
     public double getCritDamageBonus(Player player) {

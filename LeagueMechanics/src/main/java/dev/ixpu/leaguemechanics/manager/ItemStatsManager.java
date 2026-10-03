@@ -12,7 +12,7 @@ public class ItemStatsManager {
     private static final long CACHE_TTL_MS = 100;
     private static final String[] STAT_TYPES = {
             "HP", "HR", "AD", "AP", "TD", "AS", "AR", "MR", "SR", "LS", "CC", "MS", "CH", "TN",
-            "APEN", "APEN_PERCENT", "MPEN", "MPEN_PERCENT"
+            "APEN", "APEN_PERCENT", "MPEN", "MPEN_PERCENT", "CSD", "HM"
     };
 
     private final Map<UUID, Map<String, Double>> statsCache = new ConcurrentHashMap<>();
@@ -150,5 +150,13 @@ public class ItemStatsManager {
 
     public double getItemTN(Player player) {
         return getStatWithLimit(player, "TN");
+    }
+
+    public double getItemCSD(Player player) {
+        return getStatWithLimit(player, "CSD");
+    }
+
+    public double getItemHM(Player player) {
+        return getStatWithLimit(player, "HM");
     }
 }

@@ -122,13 +122,16 @@ public class ItemStatsData {
 
         // LEGENDARY ITEMS
 
-
+        addItem("infinity-edge", "Infinity Edge", 0.0, 0.0, 75.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 25.0, 0.0, 0.0,
+                false, null, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 30.0, 0.0);
+        addItem("ardent-censer", "Ardent Censer", 0.0, 0.0, 0.0, 45.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 4.0, 4.0,
+                false, null, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 10.0);
     }
 
     private void addItem(String id, String name, double hp, double hr, double ad, double ap, double td,
                          double as, double ar, double mr, double ls, double cc, double sr, double ms) {
         addItem(id, name, hp, hr, ad, ap, td, as, ar, mr, ls, cc, sr, ms, false, null);
-    } 
+    }
 
     private void addItem(String id, String name, double hp, double hr, double ad, double ap, double td,
                          double as, double ar, double mr, double ls, double cc, double sr, double ms,
@@ -161,6 +164,15 @@ public class ItemStatsData {
                          double ch, double tn) {
         items.put(id, new ItemStatsRegistry(id, name, hp, hr, ad, ap, td, as, ar, mr, ls, cc, sr, ms,
                 hasPassive, passiveId, apenFlat, apenPercent, mpenFlat, mpenPercent, ch, tn));
+    }
+
+    private void addItem(String id, String name, double hp, double hr, double ad, double ap, double td,
+                         double as, double ar, double mr, double ls, double cc, double sr, double ms,
+                         boolean hasPassive, String passiveId,
+                         double apenFlat, double apenPercent, double mpenFlat, double mpenPercent,
+                         double ch, double tn, double csd, double hm) {
+        items.put(id, new ItemStatsRegistry(id, name, hp, hr, ad, ap, td, as, ar, mr, ls, cc, sr, ms,
+                hasPassive, passiveId, apenFlat, apenPercent, mpenFlat, mpenPercent, ch, tn, csd, hm));
     }
 
     public ItemStatsRegistry getItem(String id) {

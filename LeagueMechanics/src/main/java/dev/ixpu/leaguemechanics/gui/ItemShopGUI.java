@@ -322,6 +322,12 @@ public class ItemShopGUI {
             if (shopItem.getStats().getMpenPercent() > 0) {
                 lore.add("§f" + Icons.get("stats.mpen") + " " + formatStat(shopItem.getStats().getMpenPercent()) + "% §7Magic Penetration");
             }
+            if (shopItem.getStats().getCsd() > 0) {
+                lore.add("§f" + Icons.get("stats.critical-damage") + " " + formatStat(shopItem.getStats().getCsd()) + "% §7Critical Damage");
+            }
+            if (shopItem.getStats().getHm() > 0) {
+                lore.add("§f" + Icons.get("spells.heal") + " " + formatStat(shopItem.getStats().getHm()) + "% §7Healing Multiplier");
+            }
             if (shopItem.getStats().getCh() > 0) {
                 lore.add("§f" + Icons.get("stats.ch") + " " + formatStat(shopItem.getStats().getCh()) + " §7Cooldown Haste");
             }

@@ -638,8 +638,6 @@ public class DamageListener implements Listener, RuneCooldownGate {
         }
         if (target instanceof Player targetPlayer) {
             KillSourceTracker.getInstance().setSource(targetPlayer, player);
-            targetAR /= stats.getResistanceBalancer();
-            targetMR /= stats.getResistanceBalancer();
         }
 
         if (target instanceof Player targetPlayer && isBlocking(targetPlayer, vanillaDamage) && vanillaDamage > 0 && !didCrit) {

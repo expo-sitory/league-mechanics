@@ -92,7 +92,7 @@ public class DamageManager {
 
             itemAP = statsManager.getItemAP(player);
             itemAD = statsManager.getItemAD(player);
-            
+
             if (af <= ADAPTIVE_THRESHOLD) {
                 itemAD += (itemAD * af) / stats.getDamageBalancer();
             } else {
@@ -172,7 +172,7 @@ public class DamageManager {
             lastBonusMagicDamage = bonusMagic;
             baseDamage += lastBonusMagicDamage;
         }
-        
+
         double finalDamage = (baseDamage + procDamage) * stacks;
 
         return finalDamage;
@@ -203,8 +203,9 @@ public class DamageManager {
     }
 
     public static double getCritDamageMultiplier(Player player) {
-        double bonus = PlayerStats.getOrCreate(player).getCritDamageBonus(player);
-        return CRIT_DAMAGE_MULTIPLIER + bonus;
+        PlayerStats stats = PlayerStats.getOrCreate(player);
+        double scaled = CRIT_DAMAGE_MULTIPLIER * (1.0 + stats.getPlayerCSD(player) / 100.0);
+        return scaled + stats.getCritDamageBonus(player);
     }
 
     public static double levelBasedBonusForLevel(double leagueLevel) {

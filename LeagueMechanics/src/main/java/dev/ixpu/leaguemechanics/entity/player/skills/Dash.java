@@ -8,6 +8,7 @@ import org.bukkit.entity.Player;
 import dev.ixpu.leaguemechanics.LeagueMechanics;
 
 import java.util.HashMap;
+import java.util.Locale;
 import java.util.Map;
 import java.util.UUID;
 
@@ -33,11 +34,15 @@ public class Dash {
         showCooldownBar(player);
     }
 
+    private static String formatSeconds(long remainingMs) {
+        return String.format(Locale.ROOT, "(%.1fs)", Math.max(0L, remainingMs) / 1000.0);
+    }
+
     private void showCooldownBar(Player player) {
         UUID uuid = player.getUniqueId();
         BossBar bar = dashBars.get(uuid);
         if (bar == null) {
-            bar = Bukkit.createBossBar("§bDash", BarColor.BLUE, BarStyle.SOLID);
+            bar = Bukkit.createBossBar("§bDash §f" + formatSeconds(COOLDOWN_MS), BarColor.BLUE, BarStyle.SOLID);
             bar.addPlayer(player);
             dashBars.put(uuid, bar);
         }
@@ -67,6 +72,7 @@ public class Dash {
             long elapsed = System.currentTimeMillis() - startTime;
             double progress = Math.min(1.0, (double) elapsed / COOLDOWN_MS);
             bar.setProgress(progress);
+            bar.setTitle("§bDash §f" + formatSeconds(COOLDOWN_MS - elapsed));
 
             if (elapsed >= COOLDOWN_MS) {
                 task.cancel();

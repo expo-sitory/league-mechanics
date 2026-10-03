@@ -317,6 +317,6 @@ public class HailOfBlades extends CooldownHandler {
             lastWindupStage.put(playerUUID, currentStage);
         }
 
-        return "§f" + Icons.get("keystones.hail-of-blades") + " §4" + String.format("(%.1f)", remainingTicks / 20.0);
+        return "§f" + Icons.get("keystones.hail-of-blades") + " §4" + String.format("(%.1f)", remainingTicks / 20.0) + "s";
     }
 }

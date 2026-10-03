@@ -17,7 +17,7 @@ public class oblivion_orb implements ItemPassive {
 
     @Override
     public String getDescription() {
-        return "§7ᴜɴɪQᴜᴇ – ɢʀɪᴇᴠᴏᴜs ᴡᴏᴜɴᴅs: §fDealing " + Icons.get("stats.magic-damage") + " &bmagic damage to a\n§fplayer inflicts them with " + Icons.get("status.grievous-wounds") + " §4ɢʀɪᴇᴠᴏᴜs ᴡᴏᴜɴᴅs §ffor 3 seconds.";
+        return "§7ᴜɴɪQᴜᴇ – ɢʀɪᴇᴠᴏᴜs ᴡᴏᴜɴᴅs: §fDealing " + Icons.get("stats.magic-damage") + " §bmagic damage §fto a\n§fplayer inflicts them with " + Icons.get("status.grievous-wounds") + " §4ɢʀɪᴇᴠᴏᴜs ᴡᴏᴜɴᴅs §ffor 3 seconds.";
     }
 
     @Override

@@ -153,6 +153,12 @@ public class ItemModifier {
         if (statData.getMpenPercent() > 0) {
             lore.add("§f" + Icons.get("stats.mpen") + " §f" + formatStat(statData.getMpenPercent()) + "% §7Magic Penetration");
         }
+        if (statData.getCsd() > 0) {
+            lore.add("§f" + Icons.get("stats.critical-damage") + " §f" + formatStat(statData.getCsd()) + "% §7Critical Damage");
+        }
+        if (statData.getHm() > 0) {
+            lore.add("§f" + Icons.get("spells.heal") + " §f" + formatStat(statData.getHm()) + "% §7Healing Power");
+        }
         if (statData.getCh() > 0) {
             lore.add("§f" + Icons.get("stats.ch") + " §f" + formatStat(statData.getCh()) + " §7Cooldown Haste");
         }
@@ -240,6 +246,8 @@ public class ItemModifier {
             case "MPEN_PERCENT" -> statData.getMpenPercent();
             case "CH" -> statData.getCh();
             case "TN" -> statData.getTn();
+            case "CSD" -> statData.getCsd();
+            case "HM" -> statData.getHm();
 
             default -> 0;
         };

@@ -31,6 +31,9 @@ public class ItemStatsRegistry {
 
     private double tn;
 
+    private double csd;
+    private double hm;
+
     public ItemStatsRegistry(String id, String name,
                              double hp, double hr, double ad, double ap, double td, double as,
                              double ar, double mr, double ls, double cc, double sr, double ms,
@@ -75,6 +78,18 @@ public class ItemStatsRegistry {
 
         this.ch = ch;
         this.tn = tn;
+    }
+
+    public ItemStatsRegistry(String id, String name,
+                             double hp, double hr, double ad, double ap, double td, double as,
+                             double ar, double mr, double ls, double cc, double sr, double ms,
+                             boolean hasPassive, String passiveId,
+                             double apenFlat, double apenPercent, double mpenFlat, double mpenPercent,
+                             double ch, double tn, double csd, double hm) {
+        this(id, name, hp, hr, ad, ap, td, as, ar, mr, ls, cc, sr, ms, hasPassive, passiveId,
+                apenFlat, apenPercent, mpenFlat, mpenPercent, ch, tn);
+        this.csd = csd;
+        this.hm = hm;
     }
     public String getId() {
         return id;
@@ -181,5 +196,13 @@ public class ItemStatsRegistry {
 
     public void setTn(double tn) {
         this.tn = tn;
+    }
+
+    public double getCsd() {
+        return csd;
+    }
+
+    public double getHm() {
+        return hm;
     }
 }
