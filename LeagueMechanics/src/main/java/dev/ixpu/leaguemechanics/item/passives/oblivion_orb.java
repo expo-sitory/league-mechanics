@@ -2,6 +2,7 @@ package dev.ixpu.leaguemechanics.item.passives;
 
 import dev.ixpu.leaguemechanics.manager.DebuffManager;
 import dev.ixpu.leaguemechanics.rune.DebuffType;
+import dev.ixpu.leaguemechanics.util.Icons;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
@@ -16,7 +17,7 @@ public class oblivion_orb implements ItemPassive {
 
     @Override
     public String getDescription() {
-        return "§7ᴜɴɪQᴜᴇ – ɢʀɪᴇᴠᴏᴜs ᴡᴏᴜɴᴅs: §fDealing magic damage to a target\n§finflicts them with §cɢʀɪᴇᴠᴏᴜs ᴡᴏᴜɴᴅs §ffor 3 seconds.";
+        return "§7ᴜɴɪQᴜᴇ – ɢʀɪᴇᴠᴏᴜs ᴡᴏᴜɴᴅs: §fDealing " + Icons.get("stats.magic-damage") + " §bmagic damage §fto a\n§fplayer inflicts them with " + Icons.get("status.grievous-wounds") + " §4ɢʀɪᴇᴠᴏᴜs ᴡᴏᴜɴᴅs §ffor 3 seconds.";
     }
 
     @Override

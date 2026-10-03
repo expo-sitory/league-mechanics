@@ -126,7 +126,16 @@ public class DeathListener implements Listener {
         fireTakedowns(player);
         CritManager.getInstance().resetFailureStreak(player);
 
-        if (killer != null) {
+        if (combatState.consumeFallDeath(player.getUniqueId())) {
+            combatState.clearLastMobDamager(player.getUniqueId());
+            String message = "§c[Executed] §c" + player.getName() + " §cexecuted";
+            Component component = legacyMessage(message);
+            for (Player online : Bukkit.getOnlinePlayers()) {
+                online.sendMessage(component);
+                online.playSound(online.getLocation(), Sound.ENTITY_PLAYER_DEATH, 1.0f, 1.0f);
+            }
+        }
+        else if (killer != null) {
             combatState.clearLastMobDamager(player.getUniqueId());
             broadcastKillMessage(killer, player);
         }

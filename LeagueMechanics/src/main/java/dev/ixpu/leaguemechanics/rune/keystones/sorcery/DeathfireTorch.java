@@ -21,6 +21,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
 
+import dev.ixpu.leaguemechanics.util.Icons;
 import dev.ixpu.leaguemechanics.util.ItemModifier;
 import org.bukkit.Sound;
 import org.bukkit.entity.Player;
@@ -245,24 +246,13 @@ public class DeathfireTorch extends CooldownHandler {
                         double damagePerTick = damages.getOrDefault(targetUUID, 0.0);
 
                         if (target instanceof Player targetPlayer) {
-                            double absorption = targetPlayer.getAbsorptionAmount();
-                            if (damagePerTick > absorption) {
-                                damagePerTick -= absorption;
-                                targetPlayer.setAbsorptionAmount(0);
-                            } else {
-                                targetPlayer.setAbsorptionAmount(absorption - damagePerTick);
-                                damagePerTick = 0;
-                            }
-                        }
-
-                        double newHealth = Math.max(0, target.getHealth() - damagePerTick);
-                        DebugLogger.debug(player, "§f[§dSource§f] §f[§9Deathfire Torch§f] Keystone Damage = §d" + Math.ceil(damagePerTick * 100) / 100.0);
-                        DebugLogger.debug(player, "§f[§dSource§f] Keystone Damage Type = §dMagic Damage");
-                        DebugLogger.debug(player, "§f[§dTarget§f] Target New HP = §d" + Math.ceil(newHealth * 100) / 100.0);
-                        if (target instanceof Player targetPlayer) {
                             KillSourceTracker.getInstance().setSource(targetPlayer, player);
                         }
-                        target.setHealth(newHealth);
+                        target.damage(damagePerTick);
+
+                        DebugLogger.debug(player, "§f[§dSource§f] §f[§9Deathfire Touch§f] Keystone Damage = §d" + Math.ceil(damagePerTick * 100) / 100.0);
+                        DebugLogger.debug(player, "§f[§dSource§f] Keystone Damage Type = §dMagic Damage");
+
                         spawnBurnParticles(target);
                         target.getWorld().playSound(target.getLocation(), Sound.ENTITY_ENDER_DRAGON_SHOOT, 1.0f, 2.0f);
                         target.getWorld().playSound(target.getLocation(), Sound.ENTITY_PLAYER_HURT_ON_FIRE, 1.0f, 0.7f);
@@ -304,8 +294,8 @@ public class DeathfireTorch extends CooldownHandler {
 
     private String getRuneDisplay(RuneState state, int victimCount) {
         return switch (state) {
-            case ACTIVE -> "§9🔥 (" + victimCount + ")";
-            case IDLE -> "§1🔥";
+            case ACTIVE -> Icons.get("keystones.deathfire-touch") + " §1(" + victimCount + ")";
+            case IDLE -> Icons.get("keystones.deathfire-touch");
         };
     }
 

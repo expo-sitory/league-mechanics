@@ -21,6 +21,7 @@ import dev.ixpu.leaguemechanics.manager.ItemStatsManager;
 import dev.ixpu.leaguemechanics.manager.RuneManager;
 
 import dev.ixpu.leaguemechanics.listener.PlayerEventListener;
+import dev.ixpu.leaguemechanics.listener.PlayerSkillListener;
 import dev.ixpu.leaguemechanics.entity.player.PlayerStats;
 import dev.ixpu.leaguemechanics.item.shop.ItemShopRegistry;
 
@@ -51,6 +52,11 @@ public class CommandHandler implements CommandExecutor {
         this.playerEventListener = playerEventListener;
     }
 
+    private boolean isCommandDisabledInWorld(Player player, String subcommand) {
+        java.util.List<String> disabledCommands = plugin.getConfig().getStringList("general-settings.disabled-commands-by-world." + player.getWorld().getName());
+        return disabledCommands != null && disabledCommands.contains(subcommand);
+    }
+
     @Override
     public boolean onCommand(@NotNull CommandSender sender, @NotNull Command command, @NotNull String label, String[] args) {
         if (args.length == 0) {
@@ -58,6 +64,11 @@ public class CommandHandler implements CommandExecutor {
         }
 
         String subcommand = args[0].toLowerCase();
+
+        if (sender instanceof Player player && isCommandDisabledInWorld(player, subcommand)) {
+            sender.sendMessage(Component.text("§cThis command is disabled in this world."));
+            return true;
+        }
 
         return switch (subcommand) {
             case "shop" -> handleShop(sender, args);
@@ -77,6 +88,8 @@ public class CommandHandler implements CommandExecutor {
             case "pvp" -> handlePvpCommand(sender, args);
             case "clearkda" -> handleClearKda(sender);
             case "levelup" -> handleLevelUpCommand(sender, args);
+            case "setlevel" -> handleSetLevelCommand(sender, args);
+            case "dash" -> handleDashCommand(sender, args);
             default -> {
                 sender.sendMessage(Component.text("§cUnknown subcommand."));
                 yield false;
@@ -175,6 +188,33 @@ public class CommandHandler implements CommandExecutor {
         return true;
     }
 
+    private boolean handleDashCommand(CommandSender sender, String[] args) {
+        if (!(sender instanceof Player player)) {
+            sender.sendMessage(Component.text("§cOnly players can use this command."));
+            return true;
+        }
+        if (!sender.hasPermission("leaguemechanics.user")) {
+            sender.sendMessage(Component.text("§cYou don't have permission to use this command."));
+            return true;
+        }
+
+        boolean enable;
+        if (args.length < 2) {
+            enable = !PlayerSkillListener.isDashEnabled(player);
+        } else if (args[1].equalsIgnoreCase("on")) {
+            enable = true;
+        } else if (args[1].equalsIgnoreCase("off")) {
+            enable = false;
+        } else {
+            sender.sendMessage(Component.text("§cUsage: /lm dash [on|off]"));
+            return true;
+        }
+
+        PlayerSkillListener.setDashEnabled(player, enable);
+        sender.sendMessage(Component.text(enable ? "§a✓ Dash enabled" : "§c✗ Dash disabled"));
+        return true;
+    }
+
     private boolean handlePvpCommand(CommandSender sender, String[] args) {
         if (!sender.hasPermission("leaguemechanics.user")) {
             sender.sendMessage(Component.text("§cYou don't have permission to use this command."));
@@ -266,6 +306,58 @@ public class CommandHandler implements CommandExecutor {
         return true;
     }
 
+    private boolean handleSetLevelCommand(CommandSender sender, String[] args) {
+        if (!sender.hasPermission("leaguemechanics.admin")) {
+            sender.sendMessage(Component.text("§cYou don't have permission to use this command."));
+            return true;
+        }
+
+        if (args.length < 2) {
+            sender.sendMessage(Component.text("§cUsage: /lm setlevel <level> [player]"));
+            return true;
+        }
+
+        int minLevel = 1;
+        int maxLevel = 18;
+        int newLevel;
+        try {
+            newLevel = Integer.parseInt(args[1]);
+        } catch (NumberFormatException e) {
+            sender.sendMessage(Component.text("§cInvalid level: §e" + args[1]));
+            return true;
+        }
+
+        if (newLevel < minLevel || newLevel > maxLevel) {
+            sender.sendMessage(Component.text("§cLevel must be between §e" + minLevel + " §cand §e" + maxLevel + "§c."));
+            return true;
+        }
+
+        Player target;
+        if (args.length >= 3) {
+            target = Bukkit.getPlayerExact(args[2]);
+            if (target == null) {
+                sender.sendMessage(Component.text("§cPlayer not found: §e" + args[2]));
+                return true;
+            }
+        } else if (sender instanceof Player self) {
+            target = self;
+        } else {
+            sender.sendMessage(Component.text("§cUsage: /lm setlevel <level> <player>"));
+            return true;
+        }
+
+        PlayerStats stats = PlayerStats.getOrCreate(target);
+        stats.setLeagueLevel(newLevel);
+        stats.saveLeagueLevel(target);
+        playerEventListener.applyPlayerStats(target);
+
+        sender.sendMessage(Component.text("§a✓ Set level of §e" + target.getName() + " §ato §e" + newLevel));
+        if (target != sender) {
+            target.sendMessage(Component.text("§aYour level was set to §e" + newLevel));
+        }
+        return true;
+    }
+
     private boolean handleLevelUpCommand(CommandSender sender, String[] args) {
         if (!(sender instanceof Player player)) {
             sender.sendMessage(Component.text("§cOnly players can level up!"));
@@ -281,7 +373,7 @@ public class CommandHandler implements CommandExecutor {
             return true;
         }
 
-        double requiredXP = 100 * Math.pow(1.4, currentLevel);
+        double requiredXP = 100 * Math.pow(1.1, currentLevel);
         int xp = player.getLevel();
 
         if (xp < requiredXP) {
@@ -304,7 +396,7 @@ public class CommandHandler implements CommandExecutor {
 
     public boolean isPvpEnabled(Player attacker, Player target) {
         return pvpEnabledPlayers.contains(attacker.getUniqueId()) &&
-               pvpEnabledPlayers.contains(target.getUniqueId());
+                pvpEnabledPlayers.contains(target.getUniqueId());
     }
 
     private boolean handleRunesCommand(CommandSender sender, String[] args) {

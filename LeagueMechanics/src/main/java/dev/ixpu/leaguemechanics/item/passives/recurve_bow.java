@@ -2,6 +2,7 @@ package dev.ixpu.leaguemechanics.item.passives;
 
 import dev.ixpu.leaguemechanics.LeagueMechanics;
 import dev.ixpu.leaguemechanics.entity.player.PlayerStats;
+import dev.ixpu.leaguemechanics.util.Icons;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
@@ -25,7 +26,7 @@ public class recurve_bow implements ItemPassive {
 
     @Override
     public String getDescription() {
-        return "§7ᴜɴɪQᴜᴇ – sᴛɪɴɢ: §fAttacks grant §6+15 bonus attack\n§6damage §ffor §e1.5 seconds§f, refreshed on each hit.";
+        return "§7ᴜɴɪQᴜᴇ – sᴛɪɴɢ: §fDealing damage to a target temporary grants\n§f" + Icons.get("stats.ad") + " §6+15 bonus attack damage §ffor 1.5 seconds, refreshed on each hit.";
     }
 
     @Override

@@ -9,7 +9,12 @@ public class DebugLogger {
 
     public static void debug(Player player, String message) {
         if (plugin.isDebugMode()) {
-            player.sendMessage(Component.text(message));
+            String worldName = player.getWorld().getName();
+            java.util.List<String> disabledWorlds = plugin.getConfig().getStringList("general-settings.debug-disabled-worlds");
+
+            if (!disabledWorlds.contains(worldName)) {
+                player.sendMessage(Component.text(message));
+            }
         }
     }
 }

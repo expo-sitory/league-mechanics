@@ -3,12 +3,16 @@ package dev.ixpu.leaguemechanics.manager;
 import dev.ixpu.leaguemechanics.LeagueMechanics;
 import dev.ixpu.leaguemechanics.rune.DebuffType;
 import org.bukkit.entity.Player;
+import org.bukkit.potion.PotionEffect;
+import org.bukkit.potion.PotionEffectType;
 
 import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
 
 public class DebuffManager {
+    private static final double SLOW_PERCENT_PER_LEVEL = 20.0;
+
     private static DebuffManager instance;
 
     private final Map<UUID, Map<DebuffType, Long>> playerDebuffs = new HashMap<>();
@@ -34,6 +38,15 @@ public class DebuffManager {
         playerDebuffs.computeIfAbsent(uuid, k -> new HashMap<>()).put(type, expiry);
         debuffDurationsMs.computeIfAbsent(uuid, k -> new HashMap<>()).put(type, durationMs);
         debuffStrengths.computeIfAbsent(uuid, k -> new HashMap<>()).put(type, Math.max(0.0, strength));
+
+        if (type == DebuffType.SLOW && strength > 0) {
+            double tenacity = Math.min(100.0, getTenacityPercent(target, type));
+            int effectiveTicks = (int) (durationTicks * (1.0 - tenacity / 100.0));
+            int amplifier = Math.max(1, (int) Math.round(strength / SLOW_PERCENT_PER_LEVEL)) - 1;
+            if (effectiveTicks > 0) {
+                target.addPotionEffect(new PotionEffect(PotionEffectType.SLOWNESS, effectiveTicks, amplifier, false, false));
+            }
+        }
     }
 
 

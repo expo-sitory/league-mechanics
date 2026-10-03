@@ -27,7 +27,7 @@ public class verdant_barrier implements ItemPassive {
 
     @Override
     public String getDescription() {
-        return "§7ᴜɴɪQᴜᴇ – ᴀɴɴᴜʟ: §fOnce equipped, grants §e+2 absorption hearts\n§fevery 5 seconds, up to a maximum of §e20 absorption hearts§f.\n\n§790s Cooldown (If all absorption hearts are lost.)";
+        return "§7ᴜɴɪQᴜᴇ – ᴀɴɴᴜʟ: §fOnce equipped, grants +2 absorption hearts\n§fevery 5 seconds, up to a maximum of 20.\n\n§790s Cooldown (If all absorption hearts are lost.)";
     }
 
     @Override
@@ -62,7 +62,7 @@ public class verdant_barrier implements ItemPassive {
     }
 
     public void grantAbsorptionHeart(Player player) {
-        if (player == null) return;
+        if (player == null || player.isDead()) return;
         ItemPassivesManager mgr = ItemPassivesManager.getInstance();
         if (mgr != null && mgr.isOnCooldown(player, PASSIVE_ID)) {
             return;
@@ -93,19 +93,23 @@ public class verdant_barrier implements ItemPassive {
         }
         player.removePotionEffect(PotionEffectType.ABSORPTION);
     }
-
     private void reapplyAbsorption(Player player, int hearts) {
         if (hearts <= 0) {
             player.removePotionEffect(PotionEffectType.ABSORPTION);
             return;
         }
-        player.removePotionEffect(PotionEffectType.ABSORPTION);
-        player.addPotionEffect(new PotionEffect(
-                PotionEffectType.ABSORPTION,
-                ABSORPTION_DURATION_TICKS,
-                hearts - 1,
-                false,
-                false
-        ));
+        double currentAbsorption = player.getAbsorptionAmount();
+        double verdantHearts = hearts * 2.0;
+
+        if (currentAbsorption <= verdantHearts) {
+            player.removePotionEffect(PotionEffectType.ABSORPTION);
+            player.addPotionEffect(new PotionEffect(
+                    PotionEffectType.ABSORPTION,
+                    ABSORPTION_DURATION_TICKS,
+                    hearts - 1,
+                    false,
+                    false
+            ));
+        }
     }
 }

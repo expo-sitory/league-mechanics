@@ -17,6 +17,7 @@ import dev.ixpu.leaguemechanics.listener.PlayerEventListener;
 
 import java.util.*;
 
+import dev.ixpu.leaguemechanics.util.Icons;
 import dev.ixpu.leaguemechanics.util.ItemModifier;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
@@ -85,22 +86,11 @@ public class PressTheAttack extends StacksHandler {
         if (currentStacks == 2) {
             double damageToApply = keystoneDamage(player, target);
 
-            if (livingTarget instanceof Player targetPlayer) {
-                double absorption = targetPlayer.getAbsorptionAmount();
-                if (damageToApply > absorption) {
-                    damageToApply -= absorption;
-                    targetPlayer.setAbsorptionAmount(0);
-                } else {
-                    targetPlayer.setAbsorptionAmount(absorption - damageToApply);
-                    damageToApply = 0;
-                }
-            }
-
-            double newHealth = Math.clamp(livingTarget.getHealth() - damageToApply, 0, livingTarget.getMaxHealth());
-
             if (livingTarget instanceof Player livingPlayer) {
                 KillSourceTracker.getInstance().setSource(livingPlayer, player);
             }
+            livingTarget.damage(damageToApply);
+
             String DamageType;
             boolean isMagic = lastDamageWasMagic;
 
@@ -120,13 +110,11 @@ public class PressTheAttack extends StacksHandler {
 
             DebugLogger.debug(player, "§f[§dSource§f] §f[§ePress The Attack§f] Keystone Damage = §d" + Math.ceil(keystoneDamage(player, target) * 100) / 100.0);
             DebugLogger.debug(player, "§f[§dSource§f] Keystone Damage Type = §d" + DamageType);
-            DebugLogger.debug(player, "§f[§dTarget§f] Target New HP = §d" + Math.ceil(newHealth * 100) / 100.0);
 
-            livingTarget.setHealth(newHealth);
             resetStacksForTarget(player, targetUUID);
 
             Bukkit.dispatchCommand(Bukkit.getConsoleSender(), "press-the-attack-stack-sound " + player.getName());
-            player.playSound(player.getLocation(), org.bukkit.Sound.BLOCK_NOTE_BLOCK_CHIME, 1.0f, 0.5f);
+            player.getWorld().playSound(player.getLocation(), org.bukkit.Sound.BLOCK_NOTE_BLOCK_CHIME, 1.0f, 0.5f);
             resetCooldown(player);
         } else {
             addStack(player, targetUUID);
@@ -179,9 +167,9 @@ public class PressTheAttack extends StacksHandler {
 
     private String getRuneDisplay(RuneState state, int stacks, String cooldown) {
         return switch (state) {
-            case COOLDOWN -> "§7✳ " + cooldown;
-            case ACTIVE -> "§e✳ " + stacks + "/" + MAX_STACKS;
-            case IDLE -> "§6✳";
+            case COOLDOWN -> Icons.get("keystones.press-the-attack") + " §7" + cooldown;
+            case ACTIVE -> Icons.get("keystones.press-the-attack") + " §6" + stacks + "/" + MAX_STACKS;
+            case IDLE -> Icons.get("keystones.press-the-attack");
         };
     }
 

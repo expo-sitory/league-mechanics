@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="SshConfigs">
+    <configs>
+      <sshConfig authType="PASSWORD" connectionConfig="{&quot;serverAliveInterval&quot;:300}" host="as02.empowerservers.network" id="d0476e71-2615-4718-ba60-9c3fdb12f1e4" port="2022" customName="KUPAL MC" nameFormat="CUSTOM" username="expomeco90183.51eda0ea" useOpenSSHConfig="true">
+        <option name="customName" value="KUPAL MC" />
+      </sshConfig>
+    </configs>
+  </component>
+</project>

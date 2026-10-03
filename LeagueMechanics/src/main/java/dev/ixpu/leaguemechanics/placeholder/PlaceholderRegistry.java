@@ -7,10 +7,16 @@ import dev.ixpu.leaguemechanics.entity.player.PlayerStats;
 import dev.ixpu.leaguemechanics.rune.RunePath;
 import dev.ixpu.leaguemechanics.rune.RuneShard;
 import dev.ixpu.leaguemechanics.rune.shards.ShardStats;
+import dev.ixpu.leaguemechanics.util.Icons;
+import dev.ixpu.leaguemechanics.util.ItemModifier;
 import me.clip.placeholderapi.expansion.PlaceholderExpansion;
+import org.bukkit.attribute.Attribute;
 import org.bukkit.entity.Player;
 
 import java.util.Arrays;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.UUID;
 import java.util.stream.Collectors;
 
 public class PlaceholderRegistry extends PlaceholderExpansion {
@@ -41,6 +47,10 @@ public class PlaceholderRegistry extends PlaceholderExpansion {
         return true;
     }
 
+
+    private final Map<UUID, Integer> lastHealthBars = new HashMap<>();
+    private final Map<UUID, Long> healthBlinkStartTime = new HashMap<>();
+
     @Override
     public String onPlaceholderRequest(Player player, String params) {
         if (player == null) {
@@ -56,29 +66,31 @@ public class PlaceholderRegistry extends PlaceholderExpansion {
         return switch (params.toLowerCase()) {
 
             case "primary_path" -> getPrimaryPath(player);
-            
+
             case "primary_path_id" -> getPrimaryPathID(player);
             case "primary_path_id_inactive-1" -> getInactivePrimaryPath(player, 1);
             case "primary_path_id_inactive-2" -> getInactivePrimaryPath(player, 2);
             case "primary_path_id_inactive-3" -> getInactivePrimaryPath(player, 3);
             case "primary_path_id_inactive-4" -> getInactivePrimaryPath(player, 4);
-            
+            case "primary_path_id_inactive-5" -> getInactivePrimaryPath(player, 5);
+
             case "primary_path_mm" -> getPrimaryPathMM(player);
             case "primary_path_mm_inactive-1" -> getInactivePrimaryPathMM(player, 1);
             case "primary_path_mm_inactive-2" -> getInactivePrimaryPathMM(player, 2);
             case "primary_path_mm_inactive-3" -> getInactivePrimaryPathMM(player, 3);
             case "primary_path_mm_inactive-4" -> getInactivePrimaryPathMM(player, 4);
-            
+            case "primary_path_mm_inactive-5" -> getInactivePrimaryPathMM(player, 5);
+
             case "secondary_path" -> getSecondaryPath(player);
             case "secondary_path_mm" -> getSecondaryPathMM(player);
-            
+
             case "keystone" -> getKeystone(player);
             case "keystone_mm" -> getKeystoneMM(player);
 
             case "primary_slot-1" -> getPrimarySlot1(player);
             case "primary_slot-2" -> getPrimarySlot2(player);
             case "primary_slot-3" -> getPrimarySlot3(player);
-            
+
             case "primary_slot-1_mm" -> getPrimarySlot1MM(player);
             case "primary_slot-2_mm" -> getPrimarySlot2MM(player);
             case "primary_slot-3_mm" -> getPrimarySlot3MM(player);
@@ -113,17 +125,98 @@ public class PlaceholderRegistry extends PlaceholderExpansion {
 
             case "class" -> getClass(player);
             case "class_mm" -> getClassMM(player);
-            
+
             case "level" -> String.valueOf(stats.getLeagueLevel());
+            case "item_count" -> String.valueOf(plugin.getStatsManager().countLeagueItems(player));
             case "kda" -> dev.ixpu.leaguemechanics.entity.player.PlayerKDA.getInstance().getFormattedKDA(player.getUniqueId());
-            
+
             case "line1" -> getLine1(player, stats);
             case "line2" -> getLine2(player, stats);
             case "line3" -> getLine3(player, stats);
             case "line4" -> getLine4(player, stats);
-            
-            default -> null;
+
+            case "league_item_1" -> getLeagueItemIcon(player, 1);
+            case "league_item_2" -> getLeagueItemIcon(player, 2);
+            case "league_item_3" -> getLeagueItemIcon(player, 3);
+            case "league_item_4" -> getLeagueItemIcon(player, 4);
+            case "league_item_5" -> getLeagueItemIcon(player, 5);
+            case "league_item_6" -> getLeagueItemIcon(player, 6);
+            case "league_items" -> String.join("", collectLeagueItemIcons(player));
+
+            case "health_absorption_bar" -> {
+                UUID uuid = player.getUniqueId();
+                int maxHealth = (int) player.getAttribute(Attribute.MAX_HEALTH).getValue();
+                int currentHealth = (int) player.getHealth();
+                double absorption = player.getAbsorptionAmount();
+
+                int barLength = 10;
+                int absorptionHearts = Math.min(barLength - 1, (int) Math.ceil((absorption / (double) maxHealth) * barLength));
+                int maxHealthBars = barLength - absorptionHearts;
+                int currentHealthBars = Math.max(1, Math.min(maxHealthBars, (int) ((currentHealth / (double) maxHealth) * barLength)));
+
+                Integer prevHealthBars = lastHealthBars.getOrDefault(uuid, currentHealthBars);
+                if (currentHealthBars < prevHealthBars) {
+                    healthBlinkStartTime.put(uuid, System.currentTimeMillis());
+                }
+                lastHealthBars.put(uuid, currentHealthBars);
+
+                boolean isBlinking = false;
+                long now = System.currentTimeMillis();
+                Long blinkStart = healthBlinkStartTime.get(uuid);
+
+                if (blinkStart != null) {
+                    if (now - blinkStart < 700) {
+                        isBlinking = true;
+                    } else {
+                        healthBlinkStartTime.remove(uuid);
+                    }
+                }
+
+                int lostBars = Math.max(0, prevHealthBars - currentHealthBars);
+                lostBars = Math.min(lostBars, barLength - currentHealthBars - absorptionHearts);
+                int emptyBars = Math.max(0, barLength - currentHealthBars - absorptionHearts - lostBars);
+
+                StringBuilder bar = new StringBuilder();
+                for (int i = 0; i < currentHealthBars; i++) bar.append("&c█");
+                if (isBlinking) {
+                    for (int i = 0; i < lostBars; i++) bar.append("&4█");
+                } else {
+                    for (int i = 0; i < lostBars; i++) bar.append("&8█");
+                }
+                for (int i = 0; i < absorptionHearts; i++) bar.append("&f█");
+                for (int i = 0; i < emptyBars; i++) bar.append("&8█");
+
+                yield bar.toString();
+            }
+            default -> getRegionIcon(params);
         };
+    }
+
+    private java.util.List<String> collectLeagueItemIcons(Player player) {
+        java.util.List<String> icons = new java.util.ArrayList<>();
+        for (org.bukkit.inventory.ItemStack item : player.getInventory().getContents()) {
+            if (icons.size() >= 6) break;
+            if (item == null || item.getType().isAir()) continue;
+            String itemId = ItemModifier.getItemId(item);
+            if (itemId == null) continue;
+            icons.add(Icons.get("items." + itemId.replace(".", "-")));
+        }
+        return icons;
+    }
+
+    private String getLeagueItemIcon(Player player, int slot) {
+        java.util.List<String> icons = collectLeagueItemIcons(player);
+        return slot <= icons.size() ? icons.get(slot - 1) : "";
+    }
+
+
+    private String getRegionIcon(String params) {
+        String name = params.toLowerCase();
+        String icon = Icons.get("regions." + name.replace("-", "_"));
+        if (icon.isEmpty()) {
+            icon = Icons.get("items." + name.replace(".", "-").replace("_", "-"));
+        }
+        return icon.isEmpty() ? null : icon;
     }
 
     private String getPrimaryPath(Player player) {
@@ -133,7 +226,7 @@ public class PlaceholderRegistry extends PlaceholderExpansion {
         var runeData = lm.getRuneManager().getPlayerRuneData(player);
         RunePath path = runeData != null ? runeData.getPrimaryPath() : null;
         if (path == null) return "§7☯ No Primary Rune";
-        return PATH_DISPLAY.getOrDefault(path.getId(), "§☯ No Primary Rune");
+        return display(PATH_DISPLAY, "paths", path.getId(), "§☯ No Primary Rune");
     }
 
     private String getPrimaryPathID(Player player) {
@@ -179,7 +272,7 @@ public class PlaceholderRegistry extends PlaceholderExpansion {
         var runeData = lm.getRuneManager().getPlayerRuneData(player);
         RunePath path = runeData != null ? runeData.getPrimaryPath() : null;
         if (path == null) return "☯ No Primary Rune";
-        return PATH_DISPLAY_MINIMESSAGE.getOrDefault(path.getId(), "☯ No Primary Rune");
+        return display(PATH_DISPLAY_MINIMESSAGE, "paths", path.getId(), "☯ No Primary Rune");
     }
 
     private String getInactivePrimaryPathMM(Player player, int index) {
@@ -206,10 +299,10 @@ public class PlaceholderRegistry extends PlaceholderExpansion {
         }
 
         String pathId = inactivePaths.get(index - 1);
-        return PATH_DISPLAY_MINIMESSAGE.getOrDefault(pathId, "None");
+        return display(PATH_DISPLAY_MINIMESSAGE, "paths", pathId, "None");
     }
 
-    
+
     private String getSecondaryPath(Player player) {
         LeagueMechanics lm = LeagueMechanics.getInstance();
         if (lm == null || lm.getRuneManager() == null) return "§7Under Development";
@@ -242,7 +335,7 @@ public class PlaceholderRegistry extends PlaceholderExpansion {
 
         String keystoneId = runeData.getKeystoneRune().getId();
         String keystoneName = formatRuneId(keystoneId);
-        String icon = KEYSTONE_ICONS.getOrDefault(keystoneId, "");
+        String icon = icon("keystones." + keystoneId);
 
         RunePath path = runeData.getKeystoneRune().getPath();
         String color = path != null ? KEYSTONE_COLORS.getOrDefault(path.getId(), "<white>") : "<white>";
@@ -330,9 +423,9 @@ public class PlaceholderRegistry extends PlaceholderExpansion {
             return "None";
         }
         return switch (shard) {
-            case ROW1_ADAP -> "<gold>🗡 +15 </gold><white>/ </white><blue>☄ +19 </blue><white>Adaptive Force</white>";
-            case ROW1_AS -> "<red>➺ +10</red><white> Attack Speed</white>";
-            case ROW1_CH -> "<gray>⌛ +18</gray><white> Cooldown Haste</white>";
+            case ROW1_ADAP -> icon("stats.ad") + " <white>+15 / " + icon("stats.ap") + " <white>+19 daptive Force";
+            case ROW1_AS -> icon("stats.as") + " <white>+10 Attack Speed";
+            case ROW1_CH -> icon("stats.ch") + " <white>+18 Cooldown Haste";
             default -> "None";
         };
     }
@@ -342,9 +435,9 @@ public class PlaceholderRegistry extends PlaceholderExpansion {
             return "None";
         }
         return switch (shard) {
-            case ROW2_ADAP -> "<gold>🗡 +15 </gold><white>/ </white><blue>☄ +19 </blue><white>Adaptive Force</white>";
-            case ROW2_MS -> "<white>👣 +15 Movement Speed</white>";
-            case ROW2_HR -> "<dark_green>❣ +2</dark_green> <white>Health Regen</white>";
+            case ROW2_ADAP -> icon("stats.ad") + " <white>+15 / " + icon("stats.ap") + " <white>+19 Adaptive Force";
+            case ROW2_MS -> icon("stats.ms") + " <white>+15 Movement Speed";
+            case ROW2_HR -> icon("stats.hr") + " <white>+2 Health Regen";
             default -> "None";
         };
     }
@@ -354,9 +447,9 @@ public class PlaceholderRegistry extends PlaceholderExpansion {
             return "None";
         }
         return switch (shard) {
-            case ROW3_HP -> "<green>❤ +20</green><white> Health</white>";
-            case ROW3_TN -> "<aqua>⏩ +30</aqua><white> Tenacity</white>";
-            case ROW3_HR -> "<dark_green>❣ +2</dark_green> <white>Health Regen</white>";
+            case ROW3_HP -> icon("stats.hp") + " <white>+20 Health";
+            case ROW3_TN -> icon("stats.tn") + " <white>+30 Tenacity";
+            case ROW3_HR -> icon("stats.hr") + " <white>+2 Health Regen";
             default -> "None";
         };
     }
@@ -431,23 +524,23 @@ public class PlaceholderRegistry extends PlaceholderExpansion {
 
         if (row == 1) {
             return switch (shard) {
-                case ROW1_ADAP -> "<gold>🗡 +15 </gold><white>/ </white><blue>☄ +19 </blue><white>Adaptive Force</white>";
-                case ROW1_AS -> "<red>➺ +10</red><white> Attack Speed</white>";
-                case ROW1_CH -> "<gray>⌛ +18</gray><white> Cooldown Haste</white>";
+                case ROW1_ADAP -> icon("stats.ad") + " +15 / " + icon("stats.ap") + " <white>+19 daptive Force";
+                case ROW1_AS -> icon("stats.as") + " <white>+10 Attack Speed";
+                case ROW1_CH -> icon("stats.ch") + " <white>+18 Cooldown Haste";
                 default -> "None";
             };
         } else if (row == 2) {
             return switch (shard) {
-                case ROW2_ADAP -> "<gold>🗡 +15 </gold><white>/ </white><blue>☄ +19 </blue><white>Adaptive Force</white>";
-                case ROW2_MS -> "<white>👣 +15 Movement Speed</white>";
-                case ROW2_HR -> "<dark_green>❣ +2</dark_green> <white>Health Regen</white>";
+                case ROW2_ADAP -> icon("stats.ad") + " <white>+15 / " + icon("stats.ap") + " <white>+19 Adaptive Force";
+                case ROW2_MS -> icon("stats.ms") + " <white>+15 Movement Speed";
+                case ROW2_HR -> icon("stats.hr") + " <white>+2 Health Regen";
                 default -> "None";
             };
         } else {
             return switch (shard) {
-                case ROW3_HP -> "<green>❤ +20</green><white> Health</white>";
-                case ROW3_TN -> "<aqua>⏩ +30</aqua><white> Tenacity</white>";
-                case ROW3_HR -> "<dark_green>❣ +2</dark_green><white> Health Regen</white>";
+                case ROW3_HP -> icon("stats.hp") + " <white>+20 Health";
+                case ROW3_TN -> icon("stats.tn") + " <white>+30 Tenacity";
+                case ROW3_HR -> icon("stats.hr") + " <white>+2 Health Regen";
                 default -> "None";
             };
         }
@@ -458,15 +551,21 @@ public class PlaceholderRegistry extends PlaceholderExpansion {
         if (player == null) return "§7⚔ No Class Selected";
         PlayerClassType ct = PlayerClass.getPlayerClass(player);
         if (ct == null) return "§7⚔ No Class Selected";
-        return CLASS_DISPLAY.getOrDefault(ct.getId(), "§7⚔ No Class Selected");
+        return display(CLASS_DISPLAY, "classes", ct.getId(), "§7⚔ No Class Selected");
     }
     private String getClassMM(Player player) {
         if (player == null) return "⚔ No Class Selected";
         PlayerClassType ct = PlayerClass.getPlayerClass(player);
         if (ct == null) return "⚔ No Class Selected";
-        return CLASS_DISPLAY_MINIMESSAGE.getOrDefault(ct.getId(), "⚔ No Class Selected");
+        return display(CLASS_DISPLAY_MINIMESSAGE, "classes", ct.getId(), "⚔ No Class Selected");
     }
 
+
+    private static String icon(String key) {
+        String glyph = Icons.get(key);
+        if (glyph.isEmpty()) return "";
+        return "<white>" + glyph + "</white>";
+    }
 
     private String formatRuneId(String id) {
         if (id == null || id.equals("None")) return "None";
@@ -476,76 +575,64 @@ public class PlaceholderRegistry extends PlaceholderExpansion {
     }
 
     private static final java.util.Map<String, String> KEYSTONE_COLORS = java.util.Map.of(
-            "domination", "<dark_red>",
-            "precision", "<gold>",
-            "resolve", "<dark_green>",
-            "inspiration", "<dark_aqua>",
-            "sorcery", "<dark_blue>"
+            "domination", "<red>",
+            "precision", "<yellow>",
+            "resolve", "<green>",
+            "inspiration", "<aqua>",
+            "sorcery", "<blue>"
     );
 
     private static final java.util.Map<String, String> PATH_DISPLAY = java.util.Map.of(
-            "domination",   "§c⚓ Domination",
-            "precision",    "§e⌖ Precision",
-            "resolve",     "§a⛨ Resolve",
-            "sorcery",     "§9ᛝ Sorcery",
-            "inspiration", "§3🌅 Inspiration"
+            "domination",   "§f{icon} §4Domination",
+            "precision",    "§f{icon} §6Precision",
+            "resolve",     "§f{icon} §2Resolve",
+            "sorcery",     "§f{icon} §1Sorcery",
+            "inspiration", "§f{icon} §3Inspiration"
     );
 
     private static final java.util.Map<String, String> CLASS_DISPLAY = java.util.Map.of(
-            "fighter",   "§6🗡 Fighter",
-            "mage",     "§9☄ Mage",
-            "tank",     "§e🛡 Tank",
-            "marksman", "§c🏹 Marksman",
-            "assassin", "§4➷ Assasin",
-            "support",  "§a❤ Support"
+            "fighter",   "§f{icon} §7Fighter",
+            "mage",     "§f{icon} §7Mage",
+            "tank",     "§f{icon} §7Tank",
+            "marksman", "§f{icon} §7Marksman",
+            "assassin", "§f{icon} §7Assasin",
+            "support",  "§f{icon} §7Support"
     );
 
     private static final java.util.Map<String, String> PATH_DISPLAY_MINIMESSAGE = java.util.Map.of(
-            "domination",   "<red>⚓ Domination</red>",
-            "precision",    "<yellow>⌖ Precision</yellow>",
-            "resolve",     "<green>⛨ Resolve</green>",
-            "sorcery",     "<blue>ᛝ Sorcery</blue>",
-            "inspiration", "<aqua>🌅 Inspiration</aqua>"
+            "domination",   "{font}<dark_red> Domination</dark_red>",
+            "precision",    "{font}<gold> Precision</gold>",
+            "resolve",     "{font}<dark_green> Resolve</dark_green>",
+            "sorcery",     "{font}<dark_blue> Sorcery</dark_blue>",
+            "inspiration", "{font}<dark_aqua> Inspiration</dark_aqua>"
     );
 
     private static final java.util.Map<String, String> CLASS_DISPLAY_MINIMESSAGE = java.util.Map.of(
-            "fighter",   "<gold>🗡 Fighter</gold>",
-            "mage",     "<blue>☄ Mage</blue>",
-            "tank",     "<yellow>🛡 Tank</yellow>",
-            "marksman", "<red>🏹 Marksman</red>",
-            "assassin", "<dark_red>➷ Assasin</dark_red>",
-            "support",  "<green>❤ Support</green>"
+            "fighter",   "{font}<gray> Fighter</gray>",
+            "mage",     "{font}<gray> Mage</gray>",
+            "tank",     "{font}<gray> Tank</gray>",
+            "marksman", "{icon}<gray> Marksman</gray>",
+            "assassin", "{font}<gray> Assasin</gray>",
+            "support",  "{font}<gray> Support</gray>"
     );
 
-    private static final java.util.Map<String, String> KEYSTONE_ICONS = java.util.Map.ofEntries(
-            java.util.Map.entry("dark-harvest", "👻"),
-            java.util.Map.entry("electrocute", "⚡"),
-            java.util.Map.entry("hail-of-blades", "❛❟❛"),
-            java.util.Map.entry("first-strike", "✎"),
-            java.util.Map.entry("glacial-augment", "❄"),
-            java.util.Map.entry("conqueror", "🪓"),
-            java.util.Map.entry("fleet-footwork", "👣"),
-            java.util.Map.entry("lethal-tempo", "⚚"),
-            java.util.Map.entry("press-the-attack", "✳"),
-            java.util.Map.entry("after-shock", "🌀"),
-            java.util.Map.entry("grasp-of-the-undying", "🥊"),
-            java.util.Map.entry("guardian", "❖"),
-            java.util.Map.entry("arcane-comet", "🌠"),
-            java.util.Map.entry("deathfire-torch", "🔥"),
-            java.util.Map.entry("storm-raider-surge", "👾")
-    );
-
+    private static String display(java.util.Map<String, String> map, String group, String id, String fallback) {
+        String template = map.get(id);
+        if (template == null) return fallback;
+        String key = group + "." + id;
+        return template.replace("{icon}", Icons.get(key)).replace("{font}", icon(key));
+    }
 
     private String getLine1(Player player, PlayerStats stats) {
-        double ad = stats.getPlayerAD(player);
-        double ap = stats.getPlayerAP(player);
-        return "§6🗡 §7" + String.format("%-4.0f", ad) + "  §9☄ §7" + String.format("%-4.0f", ap);
+        double ad = stats.getPlayerAD(player) * stats.getDamageBalancer();
+        double ap = stats.getPlayerAP(player) * stats.getDamageBalancer();
+        return "§f" + Icons.get("stats.ad") + " §7" + String.format("%-4.0f", ad) + "  §f" + Icons.get("stats.ap") + " §7" + String.format("%-4.0f", ap);
     }
 
     private String getLine2(Player player, PlayerStats stats) {
         double ar = stats.getPlayerAR(player);
         double mr = stats.getPlayerMR(player);
-        return "§e🛡 §7" + String.format("%-4.0f", ar) + "  §b⦿ §7" + String.format("%-4.0f", mr);
+        return "§f" + Icons.get("stats.ar") + " §7" + String.format("%-4.0f", ar) + "  §f" + Icons.get("stats.mr") + " §7" + String.format("%-4.0f", mr);
     }
 
     private String getLine3(Player player, PlayerStats stats) {
@@ -553,13 +640,13 @@ public class PlaceholderRegistry extends PlaceholderExpansion {
         double ch = stats.getPlayerCH(player);
         double roundedAS = Math.ceil(as * 100) / 100;
         String asFormatted = String.format("%.2f", roundedAS);
-        return "§c➺ §7" + String.format("%-6s", asFormatted) + "§7⌛ §7" + String.format("%-4.0f", ch);
+        return "§f" + Icons.get("stats.as") + " §7" + String.format("%-6s", asFormatted) + "§f" + Icons.get("stats.ch") + " §7" + String.format("%-4.0f", ch);
     }
 
     private String getLine4(Player player, PlayerStats stats) {
         double cc = stats.getPlayerCC(player);
         double ms = stats.getPlayerMS(player);
         String ccFormatted = String.format("%.0f", cc) + "%";
-        return "§0.§4➷ §7" + String.format("%-4s", ccFormatted) + "  §f👣 §7" + String.format("%-4.0f", ms);
+        return "§0.§f" + Icons.get("stats.cc") + " §7" + String.format("%-4s", ccFormatted) + "  §f" + Icons.get("stats.ms") + " §7" + String.format("%-4.0f", ms);
     }
 }

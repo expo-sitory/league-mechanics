@@ -8,6 +8,7 @@ import dev.ixpu.leaguemechanics.manager.StatScalingManager;
 
 import java.util.*;
 
+import dev.ixpu.leaguemechanics.util.Icons;
 import org.bukkit.attribute.Attribute;
 import org.bukkit.attribute.AttributeModifier;
 import org.bukkit.entity.Player;
@@ -163,8 +164,7 @@ public class FleetFootwork extends StacksHandler {
         }
 
         speedBuffTicks.put(playerUUID, SPEED_BUFF_DURATION_TICKS);
-        player.playSound(player.getLocation(), org.bukkit.Sound.ENTITY_BREEZE_IDLE_AIR, 1.0f, 1.2f);
-    }
+        player.getWorld().playSound(player.getLocation(), org.bukkit.Sound.ENTITY_BREEZE_IDLE_AIR, 1.0f, 1.2f);}
 
     private void refreshSpeedBuff(Player player) {
         UUID playerUUID = player.getUniqueId();
@@ -177,7 +177,7 @@ public class FleetFootwork extends StacksHandler {
         for (AttributeModifier mod : mods) {
             try {
                 Objects.requireNonNull(player.getAttribute(Attribute.MOVEMENT_SPEED)).removeModifier(mod);
-                player.playSound(player.getLocation(), org.bukkit.Sound.ENTITY_BREEZE_LAND, 1.0f, 1.2f);
+                player.getWorld().playSound(player.getLocation(), org.bukkit.Sound.ENTITY_BREEZE_LAND, 1.0f, 1.2f);
             } catch (Exception e) {
                 //
             }
@@ -224,10 +224,10 @@ public class FleetFootwork extends StacksHandler {
         return switch (state) {
             case ACTIVE -> {
                 double remainingSeconds = buffTicks / 20.0;
-                yield String.format("§e👣 (%.1fs)", remainingSeconds);
+                yield "§f" + Icons.get("keystones.fleet-footwork") + " §6" + String.format("(%.1fs)", remainingSeconds);
             }
-            case STACKING -> "§6👣 " + stacks + "/" + MAXIMUM_STACKS;
-            case IDLE -> "§6👣";
+            case STACKING -> "§f" + Icons.get("keystones.fleet-footwork") + " §6" + stacks + "/" + MAXIMUM_STACKS;
+            case IDLE -> "§f" + Icons.get("keystones.fleet-footwork");
         };
     }
 

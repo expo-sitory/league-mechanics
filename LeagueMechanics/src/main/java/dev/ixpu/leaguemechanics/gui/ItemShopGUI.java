@@ -4,6 +4,7 @@ import dev.ixpu.leaguemechanics.item.passives.ItemPassive;
 import dev.ixpu.leaguemechanics.item.passives.ItemPassivesRegistry;
 import dev.ixpu.leaguemechanics.item.shop.ItemShopData;
 import dev.ixpu.leaguemechanics.item.shop.ItemShopRegistry;
+import dev.ixpu.leaguemechanics.util.Icons;
 import dev.ixpu.leaguemechanics.util.ItemModifier;
 
 import org.bukkit.Bukkit;
@@ -87,15 +88,15 @@ public class ItemShopGUI {
     private void setCategoryButtons(Inventory inventory, String activeCategory) {
         int[] categorySlots = {0, 1, 2, 3, 4, 5, 6, 7, 8};
         String[][] categories = {
-            {CATEGORY_ALL, "§f§lᴀʟʟ", "§7View all items", "COPPER_CHEST", "WAXED_OXIDIZED_COPPER_CHEST"},
-            {CATEGORY_MAIN, "§7★ §lꜱᴛᴀʀᴛᴇʀ", "§7Early Scaling", "COPPER_CHEST", "WAXED_OXIDIZED_COPPER_CHEST"},
-            {CATEGORY_FIGHTER, "§6🗡 §lғɪɢʜᴛᴇʀ", "§7Sustained Combat", "COPPER_CHEST", "WAXED_OXIDIZED_COPPER_CHEST"},
-            {CATEGORY_MAGE, "§9☄ §lᴍᴀɢᴇ", "§7Magic Ability", "COPPER_CHEST", "WAXED_OXIDIZED_COPPER_CHEST"},
-            {CATEGORY_TANK, "§e🛡 §lᴛᴀɴᴋ", "§7Defensive Frontline", "COPPER_CHEST", "WAXED_OXIDIZED_COPPER_CHEST"},
-            {CATEGORY_MARKSMAN, "§c🏹 §lᴍᴀʀᴋꜱᴍᴀɴ", "§7Ranged Physical", "COPPER_CHEST", "WAXED_OXIDIZED_COPPER_CHEST"},
-            {CATEGORY_SUPPORT, "§a❤ §lꜱᴜᴘᴘᴏʀᴛ", "§7Utilities", "COPPER_CHEST", "WAXED_OXIDIZED_COPPER_CHEST"},
-            {"page_prev", "§c§l◀", "§7Previous page", "ARROW", "ARROW"},
-            {"page_next", "§a§l▶", "§7Next page", "ARROW", "ARROW"}
+                {CATEGORY_ALL, "§7ᴀʟʟ", "§7View all items", "COPPER_CHEST", "WAXED_OXIDIZED_COPPER_CHEST"},
+                {CATEGORY_MAIN, "§7ꜱᴛᴀʀᴛᴇʀ", "§7Early Scaling", "COPPER_CHEST", "WAXED_OXIDIZED_COPPER_CHEST"},
+                {CATEGORY_FIGHTER, "§f\uE241 §7ғɪɢʜᴛᴇʀ", "§7Sustained Combat", "COPPER_CHEST", "WAXED_OXIDIZED_COPPER_CHEST"},
+                {CATEGORY_MAGE, "§f\uE242 §7ᴍᴀɢᴇ", "§7Magic Ability", "COPPER_CHEST", "WAXED_OXIDIZED_COPPER_CHEST"},
+                {CATEGORY_TANK, "§f\uE245 §7ᴛᴀɴᴋ", "§7Defensive Frontline", "COPPER_CHEST", "WAXED_OXIDIZED_COPPER_CHEST"},
+                {CATEGORY_MARKSMAN, "§f\uE243 §7ᴍᴀʀᴋꜱᴍᴀɴ", "§7Ranged Physical", "COPPER_CHEST", "WAXED_OXIDIZED_COPPER_CHEST"},
+                {CATEGORY_SUPPORT, "§f\uE244 §7ꜱᴜᴘᴘᴏʀᴛ", "§7Utilities", "COPPER_CHEST", "WAXED_OXIDIZED_COPPER_CHEST"},
+                {"page_prev", "§c§l◀", "§7Previous page", "ARROW", "ARROW"},
+                {"page_next", "§a§l▶", "§7Next page", "ARROW", "ARROW"}
         };
 
         for (int i = 0; i < categories.length; i++) {
@@ -204,7 +205,7 @@ public class ItemShopGUI {
     }
 
     private List<ItemShopRegistry.ShopItem> getSortedItems(List<ItemShopRegistry.ShopItem> allItems,
-                                                          String category, ItemShopData shopData) {
+                                                           String category, ItemShopData shopData) {
         List<ItemShopRegistry.ShopItem> filtered;
 
         if (category == null || category.equals(CATEGORY_ALL)) {
@@ -280,55 +281,61 @@ public class ItemShopGUI {
             }
 
             if (shopItem.getStats().getAd() > 0) {
-                lore.add("§6🗡 " + formatStat(shopItem.getStats().getAd()) + " §fAttack Damage");
+                lore.add("§f" + Icons.get("stats.ad") + " " + formatStat(shopItem.getStats().getAd()) + " §7Attack Damage");
             }
             if (shopItem.getStats().getAp() > 0) {
-                lore.add("§9☄ " + formatStat(shopItem.getStats().getAp()) + " §fAbility Power");
+                lore.add("§f" + Icons.get("stats.ap") + " " + formatStat(shopItem.getStats().getAp()) + " §7Ability Power");
             }
             if (shopItem.getStats().getAr() > 0) {
-                lore.add("§e🛡 " + formatStat(shopItem.getStats().getAr()) + " §fArmor");
+                lore.add("§f" + Icons.get("stats.ar") + " " + formatStat(shopItem.getStats().getAr()) + " §7Armor");
             }
             if (shopItem.getStats().getMr() > 0) {
-                lore.add("§b⦿ " + formatStat(shopItem.getStats().getMr()) + " §fMagic Resist");
+                lore.add("§f" + Icons.get("stats.mr") + " " + formatStat(shopItem.getStats().getMr()) + " §7Magic Resist");
             }
             if (shopItem.getStats().getHp() > 0) {
-                lore.add("§a❤ " + formatStat(shopItem.getStats().getHp()) + " §fHealth");
+                lore.add("§f" + Icons.get("stats.hp") + " " + formatStat(shopItem.getStats().getHp()) + " §7Health");
             }
             if (shopItem.getStats().getHr() > 0) {
-                lore.add("§2❣ " + formatStat(shopItem.getStats().getHr()) + " §fHealth Regen per 5 sec.");
+                lore.add("§f" + Icons.get("stats.hr") + " " + formatStat(shopItem.getStats().getHr()) + " §7Health Regen per 5 sec.");
             }
             if (shopItem.getStats().getSr() > 0) {
-                lore.add("§6🍖 " + formatStat(shopItem.getStats().getSr()) + " §fSaturation Regen per 5 sec.");
+                lore.add("§6" + Icons.get("stats.sr") + " §f" + formatStat(shopItem.getStats().getSr()) + " §7Saturation Regen per 5 sec.");
             }
             if (shopItem.getStats().getAs() > 0) {
-                lore.add("§c➺ " + formatStat(shopItem.getStats().getAs()) + "% §fAttack Speed");
+                lore.add("§f" + Icons.get("stats.as") + " " + formatStat(shopItem.getStats().getAs()) + "% §7Attack Speed");
             }
             if (shopItem.getStats().getLs() > 0) {
-                lore.add("§4✚ " + formatStat(shopItem.getStats().getLs()) + "% §fLife Steal");
+                lore.add("§f" + Icons.get("stats.ls") + " " + formatStat(shopItem.getStats().getLs()) + "% §7Life Steal");
             }
             if (shopItem.getStats().getCc() > 0) {
-                lore.add("§4➷ " + formatStat(shopItem.getStats().getCc()) + "% §fCritical Chance");
+                lore.add("§f" + Icons.get("stats.cc") + " " + formatStat(shopItem.getStats().getCc()) + "% §7Critical Chance");
             }
             if (shopItem.getStats().getApenFlat() > 0) {
-                lore.add("§6🔰 " + formatStat(shopItem.getStats().getApenFlat()) + " §fLethality");
+                lore.add("§f" + Icons.get("stats.apen-flat") + " " + formatStat(shopItem.getStats().getApenFlat()) + " §7Lethality");
             }
             if (shopItem.getStats().getApenPercent() > 0) {
-                lore.add("§6⛨ " + formatStat(shopItem.getStats().getApenPercent()) + "% §fArmor Penetration");
+                lore.add("§f" + Icons.get("stats.apen-percent") + " " + formatStat(shopItem.getStats().getApenPercent()) + "% §7Armor Penetration");
             }
             if (shopItem.getStats().getMpenFlat() > 0) {
-                lore.add("§d🔘 " + formatStat(shopItem.getStats().getMpenFlat()) + " §fMagic Penetration");
+                lore.add("§f" + Icons.get("stats.mpen") + " " + formatStat(shopItem.getStats().getMpenFlat()) + " §7Magic Penetration");
             }
             if (shopItem.getStats().getMpenPercent() > 0) {
-                lore.add("§d🔘 " + formatStat(shopItem.getStats().getMpenPercent()) + "% §fMagic Penetration");
+                lore.add("§f" + Icons.get("stats.mpen") + " " + formatStat(shopItem.getStats().getMpenPercent()) + "% §7Magic Penetration");
+            }
+            if (shopItem.getStats().getCsd() > 0) {
+                lore.add("§f" + Icons.get("stats.critical-damage") + " " + formatStat(shopItem.getStats().getCsd()) + "% §7Critical Damage");
+            }
+            if (shopItem.getStats().getHm() > 0) {
+                lore.add("§f" + Icons.get("spells.heal") + " " + formatStat(shopItem.getStats().getHm()) + "% §7Healing Multiplier");
             }
             if (shopItem.getStats().getCh() > 0) {
-                lore.add("§7⌛ " + formatStat(shopItem.getStats().getCh()) + " §fCooldown Haste");
+                lore.add("§f" + Icons.get("stats.ch") + " " + formatStat(shopItem.getStats().getCh()) + " §7Cooldown Haste");
             }
             if (shopItem.getStats().getTn() > 0) {
-                lore.add("§3⏩ " + formatStat(shopItem.getStats().getTn()) + " §fTenacity");
+                lore.add("§f" + Icons.get("stats.tn") + " " + formatStat(shopItem.getStats().getTn()) + " §7Tenacity");
             }
             if (shopItem.getStats().getMs() > 0) {
-                lore.add("§7👣 " + formatStat(shopItem.getStats().getMs()) + "% §fMovement Speed");
+                lore.add("§f" + Icons.get("stats.ms") + " " + formatStat(shopItem.getStats().getMs()) + "% §7Movement Speed");
             }
 
             if (shopItem.getStats().hasPassive()) {
@@ -442,7 +449,7 @@ public class ItemShopGUI {
             int buttonIndex = slot - CATEGORY_START;
 
             String[] categoryIds = {CATEGORY_ALL, CATEGORY_MAIN, CATEGORY_FIGHTER, CATEGORY_MAGE, CATEGORY_TANK,
-                                   CATEGORY_MARKSMAN, CATEGORY_SUPPORT, "scroll_up", "scroll_down"};
+                    CATEGORY_MARKSMAN, CATEGORY_SUPPORT, "scroll_up", "scroll_down"};
 
             String clicked = categoryIds[buttonIndex];
 

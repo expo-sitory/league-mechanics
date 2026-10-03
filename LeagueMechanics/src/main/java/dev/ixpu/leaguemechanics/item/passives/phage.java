@@ -1,6 +1,7 @@
 package dev.ixpu.leaguemechanics.item.passives;
 
 import dev.ixpu.leaguemechanics.LeagueMechanics;
+import dev.ixpu.leaguemechanics.util.Icons;
 import org.bukkit.attribute.Attribute;
 import org.bukkit.attribute.AttributeModifier;
 import org.bukkit.entity.LivingEntity;
@@ -29,7 +30,7 @@ public class phage implements ItemPassive {
 
     @Override
     public String getDescription() {
-        return "§7ᴜɴɪQᴜᴇ – ʀᴀɢᴇ: §fAttacking a target grants §7+15% movement\n§7speed §ffor §e2 seconds§f, §fwhich refreshes on each hit.";
+        return "§7ᴜɴɪQᴜᴇ – ʀᴀɢᴇ: §fAttacking a target grants " + Icons.get("stats.ms") + " §7+15 movement speed\n§ffor 2 seconds, which refreshes on each hit.";
     }
 
     @Override

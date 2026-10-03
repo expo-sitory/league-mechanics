@@ -20,7 +20,7 @@ import org.bukkit.inventory.meta.SkullMeta;
 import java.util.*;
 
 public class InspectGUI {
-    private static final String INVENTORY_TITLE = "§8§lɪɴsᴘᴇᴄᴛ";
+    private static final String INVENTORY_TITLE = "§8§lʙᴜɪʟᴅ ᴄʜᴇᴄᴋ";
 
     public static void openInspect(Player viewer, Player target) {
         new InspectGUI().openInspectInstance(viewer, target);
@@ -122,7 +122,7 @@ public class InspectGUI {
                         lore.add("§7  sʟᴏᴛs: §e" + secondarySlots.toString());
                     }
                 } else {
-                    lore.add("§7sᴇᴄᴏɴᴅᴀʀʏ: §cnone");
+                   // lore.add("§7sᴇᴄᴏɴᴅᴀʀʏ: §cnone");
                 }
             } else {
                 lore.add("§7ʀᴜɴᴇs: §cnone");

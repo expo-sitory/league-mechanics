@@ -1,7 +1,6 @@
 package dev.ixpu.leaguemechanics.entity.player;
 
 import dev.ixpu.leaguemechanics.LeagueMechanics;
-import dev.ixpu.leaguemechanics.listener.DamageListener;
 import dev.ixpu.leaguemechanics.manager.ItemStatsManager;
 import dev.ixpu.leaguemechanics.rune.keystones.precision.LethalTempo;
 import dev.ixpu.leaguemechanics.rune.keystones.domination.HailOfBlades;
@@ -13,6 +12,7 @@ import dev.ixpu.leaguemechanics.item.passives.dark_seal;
 import dev.ixpu.leaguemechanics.rune.shards.ShardStats;
 import dev.ixpu.leaguemechanics.rune.RuneShard;
 
+import dev.ixpu.leaguemechanics.util.Icons;
 import org.bukkit.entity.Player;
 import org.bukkit.Material;
 import org.bukkit.attribute.Attribute;
@@ -28,6 +28,10 @@ import static dev.ixpu.leaguemechanics.entity.player.PlayerClass.*;
 public class PlayerStats {
     private static final Map<UUID, PlayerStats> INSTANCE_CACHE = new ConcurrentHashMap<>();
 
+    private static final double PLAYER_DAMAGE_BALANCER = 7.0;
+
+    private static final double BASE_HEALING_MULTIPLIER = 1.0;
+
     private double temporaryADModification = 0.0;
     private double temporaryAPModification = 0.0;
 
@@ -37,24 +41,36 @@ public class PlayerStats {
     private double temporaryMSModification = 0.0;
     private double temporaryASModification = 0.0;
     private double temporaryCritDamageModification = 0.0;
-    private double temporaryHealingMultiplier = 1.0;
+
+    private int graspHearts = 0;
 
     private ShardStats shardStats;
-    private int leagueLevel;
+    private int leagueLevel = 1;
 
     public static PlayerStats getOrCreate(Player player) {
         UUID uuid = player.getUniqueId();
         return INSTANCE_CACHE.computeIfAbsent(uuid, k -> {
             PlayerStats stats = new PlayerStats();
-            // Load league level from persistence
             int leagueLevel = LeagueMechanics.getInstance().getRunePersistence().loadLeagueLevel(uuid);
             stats.setLeagueLevel(leagueLevel);
             return stats;
         });
     }
 
+    public double getDamageBalancer() {
+        return PLAYER_DAMAGE_BALANCER;
+    }
+
     public static void invalidateCache(UUID uuid) {
-        INSTANCE_CACHE.remove(uuid);
+        PlayerStats current = INSTANCE_CACHE.remove(uuid);
+        int graspHearts = (current != null) ? current.getGraspHearts() : 0;
+        if (graspHearts > 0) {
+            PlayerStats restored = new PlayerStats();
+            int leagueLevel = LeagueMechanics.getInstance().getRunePersistence().loadLeagueLevel(uuid);
+            restored.setLeagueLevel(leagueLevel);
+            restored.setGraspHearts(graspHearts);
+            INSTANCE_CACHE.put(uuid, restored);
+        }
     }
 
     public int getLeagueLevel() {
@@ -63,8 +79,6 @@ public class PlayerStats {
 
     public void setLeagueLevel(int level) {
         this.leagueLevel = level;
-        // Save to persistence when level changes
-        // Note: We don't have the player reference here, so saving will need to be done elsewhere
     }
 
     public void saveLeagueLevel(Player player) {
@@ -80,14 +94,13 @@ public class PlayerStats {
             itemHP += itemStatsManager.getItemHP(player);
         }
         double shardsHP = getRuneShards(player).getHealth();
-        double leagueLevelHP = getLeagueLevel() * 4.0;
+        double leagueLevelHP = getLeagueLevel() * 8.0;
         return baseHP + itemHP + shardsHP + leagueLevelHP;
     }
 
     public double getPlayerHR(Player player) {
         ItemStatsManager itemStatsManager = LeagueMechanics.getInstance().getStatsManager();
-        double shardsHR = getRuneShards(player).getHealthRegen();
-        return itemStatsManager.getItemHR(player) + shardsHR;
+        return itemStatsManager.getItemHR(player) + getRuneShards(player).getHealthRegen();
     }
 
 
@@ -111,7 +124,7 @@ public class PlayerStats {
             totalAD = Math.max(0, totalAD * multiplier);
         }
 
-        return totalAD;
+        return totalAD / PLAYER_DAMAGE_BALANCER;
     }
 
     public double getPlayerAP(Player player) {
@@ -135,7 +148,7 @@ public class PlayerStats {
             totalAP = Math.max(0, totalAP * multiplier);
         }
 
-        return totalAP;
+        return totalAP / PLAYER_DAMAGE_BALANCER;
     }
 
     public double getPlayerAF(Player player) {
@@ -186,26 +199,27 @@ public class PlayerStats {
                 }
             }
         }
+        double weaponAS = getWeaponAS(player);
         double shardsAS = getRuneShards(player).getAttackSpeed();
         double asRatio = getPlayerClassAttackSpeedRatio(player);
-        double bonusASMultiplier = (itemAS + runeAS + shardsAS) / 100.0;
+        double bonusASMultiplier = (itemAS + weaponAS + asRatio + shardsAS) / 100.0;
         return asRatio * bonusASMultiplier + baseAS;
     }
 
     public double getPlayerAR(Player player) {
         ItemStatsManager itemStatsManager = LeagueMechanics.getInstance().getStatsManager();
         double itemAR = 0;
-        double baseAR = getPlayerClassBaseAR(player) + player.getAttribute(Attribute.ARMOR).getValue() * 7;
-        double enchantAR = getArmorEnchant(player);
+        double baseAR = getPlayerClassBaseAR(player) + player.getAttribute(Attribute.ARMOR).getValue();
         if (itemStatsManager != null) {
             itemAR += itemStatsManager.getItemAR(player);
         }
-        double totalAR = baseAR + itemAR + enchantAR + temporaryARModification;
+        double totalAR = baseAR + itemAR + temporaryARModification;
+        totalAR = totalAR * getProtectionARBonus(player);
 
         if (player.hasPotionEffect(PotionEffectType.RESISTANCE)) {
             int amplifier = player.getPotionEffect(PotionEffectType.RESISTANCE).getAmplifier();
             double multiplier = 1 + (0.2 * (amplifier + 1));
-            totalAR = totalAR * multiplier;
+            totalAR *= multiplier;
         }
 
         return Math.max(0, totalAR);
@@ -219,11 +233,12 @@ public class PlayerStats {
             itemMR += itemStatsManager.getItemMR(player);
         }
         double totalMR = baseMR + itemMR + temporaryMRModification;
+        totalMR = totalMR * getProtectionMRBonus(player);
 
         if (player.hasPotionEffect(PotionEffectType.RESISTANCE)) {
             int amplifier = player.getPotionEffect(PotionEffectType.RESISTANCE).getAmplifier();
             double multiplier = 1 + (0.2 * (amplifier + 1));
-            totalMR = totalMR * multiplier;
+            totalMR *= multiplier;
         }
 
         return Math.max(0, totalMR);
@@ -321,31 +336,35 @@ public class PlayerStats {
         if (sharpnessLevel == 0) {
             return 0;
         }
-        return 0.5 + (sharpnessLevel * 0.5);
+        return 0.5 + (sharpnessLevel * 0.5) * 7;
     }
 
-    public double getArmorEnchant(Player player) {
-        ItemStack helmet = player.getInventory().getHelmet();
-        ItemStack chestplate = player.getInventory().getChestplate();
-        ItemStack leggings = player.getInventory().getLeggings();
-        ItemStack boots = player.getInventory().getBoots();
+    public double getWeaponAS(Player player) {
+        ItemStack weapon = player.getInventory().getItemInMainHand();
+        if (weapon == null || weapon.getType().isAir()) {
+            return 0;
+        }
+        return player.getAttribute(Attribute.ATTACK_SPEED).getValue();
+    }
 
-        int totalBonusProtectionLevel = 0;
+    public double getProtectionMRBonus(Player player) {
+        int totalProtectionLevel = 0;
+        for (ItemStack armor : player.getInventory().getArmorContents()) {
+            if (armor != null && armor.getType() != Material.AIR) {
+                totalProtectionLevel += armor.getEnchantmentLevel(Enchantment.PROTECTION);
+            }
+        }
+        return 1.0 + (totalProtectionLevel * 0.05);
+    }
 
-        if (helmet != null && helmet.getType() != Material.AIR) {
-            totalBonusProtectionLevel += helmet.getEnchantmentLevel(Enchantment.PROTECTION);
+    public double getProtectionARBonus(Player player) {
+        int totalProtectionLevel = 0;
+        for (ItemStack armor : player.getInventory().getArmorContents()) {
+            if (armor != null && armor.getType() != Material.AIR) {
+                totalProtectionLevel += armor.getEnchantmentLevel(Enchantment.PROTECTION);
+            }
         }
-        if (chestplate != null && chestplate.getType() != Material.AIR) {
-            totalBonusProtectionLevel += chestplate.getEnchantmentLevel(Enchantment.PROTECTION);
-        }
-        if (leggings != null && leggings.getType() != Material.AIR) {
-            totalBonusProtectionLevel += leggings.getEnchantmentLevel(Enchantment.PROTECTION);
-        }
-        if (boots != null && boots.getType() != Material.AIR) {
-            totalBonusProtectionLevel += boots.getEnchantmentLevel(Enchantment.PROTECTION);
-        }
-
-        return totalBonusProtectionLevel * 0.4;
+        return 1.0 + (totalProtectionLevel * 0.05);
     }
 
     public void modifyAD(double amount) {
@@ -362,14 +381,6 @@ public class PlayerStats {
 
     public void modifyMR(double amount) {
         this.temporaryMRModification += amount;
-    }
-
-    public void modifyTD(double amount) {
-        this.temporaryTDModification += amount;
-    }
-
-    public void modifyMS(double amount) {
-        this.temporaryMSModification += amount;
     }
 
     public void setTemporaryMSModification(double value) {
@@ -392,12 +403,10 @@ public class PlayerStats {
         this.temporaryCritDamageModification += amount;
     }
 
-    public void modifyHealingMultiplier(double multiplier) {
-        this.temporaryHealingMultiplier = Math.max(0.0, this.temporaryHealingMultiplier + multiplier);
-    }
-
-    public double getHealingMultiplier() {
-        return temporaryHealingMultiplier;
+    public double getHealingMultiplier(Player player) {
+        ItemStatsManager itemStatsManager = LeagueMechanics.getInstance().getStatsManager();
+        double itemHM = itemStatsManager != null ? itemStatsManager.getItemHM(player) : 0;
+        return BASE_HEALING_MULTIPLIER * (1.0 + itemHM / 100.0);
     }
 
     public boolean hasGrievousWounds(Player player) {
@@ -406,7 +415,7 @@ public class PlayerStats {
     }
 
     public double getEffectiveHealingMultiplier(Player player) {
-        double base = getHealingMultiplier();
+        double base = getHealingMultiplier(player);
         if (hasGrievousWounds(player)) {
             base *= 0.6;
         }
@@ -427,30 +436,14 @@ public class PlayerStats {
         return baseRegen;
     }
 
-    public double getTemporaryTDModification() {
-        return temporaryTDModification;
+    public double getPlayerCSD(Player player) {
+        ItemStatsManager itemStatsManager = LeagueMechanics.getInstance().getStatsManager();
+        if (itemStatsManager == null) return 0;
+        return itemStatsManager.getItemCSD(player);
     }
 
     public double getCritDamageBonus(Player player) {
         return temporaryCritDamageModification;
-    }
-
-    public void resetTemporaryModifications() {
-        this.temporaryADModification = 0.0;
-        this.temporaryAPModification = 0.0;
-        this.temporaryARModification = 0.0;
-        this.temporaryMRModification = 0.0;
-        this.temporaryTDModification = 0.0;
-        this.temporaryMSModification = 0.0;
-        this.temporaryASModification = 0.0;
-        this.temporaryCritDamageModification = 0.0;
-        this.temporaryHealingMultiplier = 1.0;
-    }
-
-    public void clearDebuffs(Player player) {
-        if (player != null) {
-            DebuffManager.getInstance().clearDebuffs(player);
-        }
     }
 
     public String getActionBarSections(Player player) {
@@ -461,31 +454,25 @@ public class PlayerStats {
         DebuffManager debuffs = DebuffManager.getInstance();
         if (debuffs.hasDebuff(player, DebuffType.GRIEVOUS_WOUNDS)) {
             double remaining = debuffs.getRemainingSeconds(player, DebuffType.GRIEVOUS_WOUNDS);
-            sb.append(" §2🍀 (").append(String.format("%.1f", remaining)).append("s)");
+            sb.append(Icons.get("status.grievous-wounds") + " §4(").append(String.format("%.1f", remaining)).append("s)");
         }
         if (debuffs.hasDebuff(player, DebuffType.INFLAME)) {
             double remaining = debuffs.getRemainingSeconds(player, DebuffType.INFLAME);
-            sb.append(" §6🔥 (").append(String.format("%.1f", remaining)).append("s)");
+            sb.append(Icons.get("status.burned") + " §6(").append(String.format("%.1f", remaining)).append("s)");
         }
-        if (debuffs.hasDebuff(player, DebuffType.SLOW)) {
-            double remaining = debuffs.getRemainingSeconds(player, DebuffType.SLOW);
-            sb.append(" §3❄ (").append(String.format("%.1f", remaining)).append("s)");
-        }
-
-        long parryCd = DamageListener.getParryCooldown(player.getUniqueId());
-        if (parryCd > System.currentTimeMillis()) {
-            double remaining = (parryCd - System.currentTimeMillis()) / 1000.0;
-            sb.append(" §7⚔ ").append(String.format("%.1f", remaining));
+        org.bukkit.potion.PotionEffect slow = player.getPotionEffect(PotionEffectType.SLOWNESS);
+        if (slow != null && slow.getDuration() > 0) {
+            sb.append(Icons.get("status.slowed") + " §b(").append(String.format("%.1f", slow.getDuration() / 20.0)).append("s)");
         }
 
         dev.ixpu.leaguemechanics.manager.ItemPassivesManager passiveManager =
                 dev.ixpu.leaguemechanics.manager.ItemPassivesManager.getInstance();
         if (passiveManager != null) {
-            appendPassiveCooldown(sb, passiveManager, player, "hextech-alternator", "§7🕹");
-            appendPassiveCooldown(sb, passiveManager, player, "scouts-slingshot", "§7⌖");
-            appendPassiveCooldown(sb, passiveManager, player, "hexdrinker", "§7🛡");
-            appendPassiveCooldown(sb, passiveManager, player, "bamis-cinder", "§7🔥");
-            appendPassiveCooldown(sb, passiveManager, player, "verdant-barrier", "§7⛨");
+            appendPassiveCooldown(sb, passiveManager, player, "hextech-alternator", "§7" + Icons.get("items.hextech-alternator"));
+            appendPassiveCooldown(sb, passiveManager, player, "scouts-slingshot", "§7" + Icons.get("items.scouts-slingshot"));
+            appendPassiveCooldown(sb, passiveManager, player, "hexdrinker", "§7" + Icons.get("items.hexdrinker"));
+            appendPassiveCooldown(sb, passiveManager, player, "bamis-cinder", "§7" + Icons.get("items.bamis-cinder"));
+            appendPassiveCooldown(sb, passiveManager, player, "verdant-barrier", "§7" + Icons.get("items.verdant-barrier"));
         }
 
         return sb.toString();
@@ -520,5 +507,17 @@ public class PlayerStats {
             }
         }
         return shardStats;
+    }
+
+    public int getGraspHearts() {
+        return graspHearts;
+    }
+
+    public void addGraspHearts(int amount) {
+        this.graspHearts += amount;
+    }
+
+    public void setGraspHearts(int amount) {
+        this.graspHearts = amount;
     }
 }

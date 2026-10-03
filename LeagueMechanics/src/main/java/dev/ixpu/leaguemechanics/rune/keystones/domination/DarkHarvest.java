@@ -15,6 +15,7 @@ import dev.ixpu.leaguemechanics.manager.KillSourceTracker;
 
 import dev.ixpu.leaguemechanics.listener.PlayerEventListener;
 
+import dev.ixpu.leaguemechanics.util.Icons;
 import dev.ixpu.leaguemechanics.util.ItemModifier;
 import org.bukkit.Sound;
 import org.bukkit.entity.Player;
@@ -81,25 +82,13 @@ public class DarkHarvest extends StacksHandler {
 
         double damageToApply = keystoneDamage(player, target);
 
-        if (livingTarget instanceof Player targetPlayer) {
-            double absorption = targetPlayer.getAbsorptionAmount();
-            if (damageToApply > absorption) {
-                damageToApply -= absorption;
-                targetPlayer.setAbsorptionAmount(0);
-            } else {
-                targetPlayer.setAbsorptionAmount(absorption - damageToApply);
-                damageToApply = 0;
-            }
-        }
-
-        double newHealth = Math.clamp(livingTarget.getHealth() - damageToApply, 0, livingTarget.getMaxHealth());
-
         if (healthPercent >= threshold) {
             return;
         }
         if (livingTarget instanceof Player livingTargetPlayer) {
             KillSourceTracker.getInstance().setSource(livingTargetPlayer, player);
         }
+        livingTarget.damage(damageToApply);
 
         String DamageType;
         boolean isMagic = lastDamageWasMagic;
@@ -118,15 +107,13 @@ public class DarkHarvest extends StacksHandler {
             DamageType = "Physical Damage";
         }
 
+        livingTarget.damage(damageToApply);
         DebugLogger.debug(player, "§f[§dSource§f] §f[§cDark Harvest§f] Keystone Damage = §d" + Math.ceil(keystoneDamage(player, target) * 100) / 100.0 + "§f | Type = §d" + DamageType);
-        DebugLogger.debug(player, "§f[§dTarget§f] New Health = §d" + Math.ceil(newHealth * 100) / 100.0);
-
-        livingTarget.setHealth(newHealth);
+        DebugLogger.debug(player, "§f[§dSource§f] Keystone Damage Type = §d" + DamageType);
 
         if (isOnCooldown(player)) {
             return;
         }
-
         scheduleAddStack(player);
         resetCooldown(player);
     }
@@ -154,7 +141,7 @@ public class DarkHarvest extends StacksHandler {
             return;
         }
         addStack(player);
-        player.playSound(player.getLocation(), Sound.ENTITY_WITHER_HURT, 1.0f, 1.0f);
+        player.getWorld().playSound(player.getLocation(), Sound.ENTITY_WITHER_HURT, 1.0f, 1.0f);
     }
 
     @Override
@@ -189,9 +176,9 @@ public class DarkHarvest extends StacksHandler {
 
     private String getRuneDisplay(Player player, RuneState state, int currentStacks) {
         return switch (state) {
-            case COOLDOWN -> "§7👻 " + currentStacks + "/" + maxStacks + " | " + getCooldownDisplay(player);
-            case STACKING -> "§c👻 " + currentStacks + "/" + maxStacks;
-            case IDLE -> "§4👻";
+            case COOLDOWN -> "§7" + Icons.get("keystones.dark-harvest") + " §7" + currentStacks + "/" + maxStacks + " | " + getCooldownDisplay(player);
+            case STACKING -> "§f" + Icons.get("keystones.dark-harvest") + " §4" + currentStacks + "/" + maxStacks;
+            case IDLE -> "§f" + Icons.get("keystones.dark-harvest");
         };
     }
 

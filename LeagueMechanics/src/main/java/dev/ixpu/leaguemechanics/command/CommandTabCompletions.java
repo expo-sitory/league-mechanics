@@ -37,10 +37,18 @@ public class CommandTabCompletions implements org.bukkit.command.TabCompleter {
         if (args.length == 1) {
             if (player.hasPermission("leaguemechanics.admin")) {
                 completions.add("reload");
+                completions.add("setlevel");
                 completions.add("shop");
             }
             completions.add("inspect");
+            completions.add("dash");
             return filter(completions, args[0]);
+        }
+
+        if (args.length == 2 && args[0].equalsIgnoreCase("dash")) {
+            completions.add("on");
+            completions.add("off");
+            return filter(completions, args[1]);
         }
 
         if (args.length == 2 && args[0].equalsIgnoreCase("class")) {

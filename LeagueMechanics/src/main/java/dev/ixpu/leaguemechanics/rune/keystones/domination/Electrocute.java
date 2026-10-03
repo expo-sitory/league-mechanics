@@ -17,6 +17,7 @@ import dev.ixpu.leaguemechanics.listener.PlayerEventListener;
 
 import java.util.UUID;
 
+import dev.ixpu.leaguemechanics.util.Icons;
 import dev.ixpu.leaguemechanics.util.ItemModifier;
 import org.bukkit.Sound;
 
@@ -110,7 +111,6 @@ public class Electrocute extends StacksHandler {
             resetStacksForTarget(player, targetUUID);
             resetCooldown(player);
 
-            player.playSound(player.getLocation(), Sound.ITEM_TRIDENT_THUNDER, 1.0f, 1.2f);
             target.getWorld().playSound(target.getLocation(), Sound.ITEM_TRIDENT_THUNDER, 1.0f, 1.0f);
 
             if (livingTarget instanceof Player livingTargetPlayer) {
@@ -137,7 +137,11 @@ public class Electrocute extends StacksHandler {
             DebugLogger.debug(player, "§f[§dSource§f] Keystone Damage Type = §d" + DamageType);
             DebugLogger.debug(player, "§f[§dTarget§f] Target New HP = §d" + Math.ceil(newHealth * 100) / 100.0);
 
-            livingTarget.setHealth(newHealth);
+            if (newHealth <= 0) {
+                livingTarget.damage(livingTarget.getHealth());
+            } else {
+                livingTarget.setHealth(newHealth);
+            }
         }
     }
 
@@ -208,9 +212,9 @@ public class Electrocute extends StacksHandler {
 
     private String getRuneDisplay(Player player, RuneState state, int currentStacks) {
         return switch (state) {
-            case COOLDOWN -> "§7⚡ " + getCooldownDisplay(player);
-            case STACKING -> "§c⚡ " + currentStacks + "/" + MAXIMUM_STACKS;
-            case IDLE -> "§4⚡";
+            case COOLDOWN -> "§7" + Icons.get("keystones.electrocute") + " §7" + getCooldownDisplay(player);
+            case STACKING -> "§f" + Icons.get("keystones.electrocute") + " §4" + currentStacks + "/" + MAXIMUM_STACKS;
+            case IDLE -> "§f" + Icons.get("keystones.electrocute");
         };
     }
 }

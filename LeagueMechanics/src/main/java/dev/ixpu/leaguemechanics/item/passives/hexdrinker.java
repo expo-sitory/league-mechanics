@@ -3,6 +3,7 @@ package dev.ixpu.leaguemechanics.item.passives;
 import dev.ixpu.leaguemechanics.LeagueMechanics;
 import dev.ixpu.leaguemechanics.manager.ItemPassivesManager;
 import dev.ixpu.leaguemechanics.entity.player.PlayerStats;
+import dev.ixpu.leaguemechanics.util.Icons;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.scheduler.BukkitRunnable;
@@ -10,7 +11,7 @@ import org.bukkit.scheduler.BukkitRunnable;
 public class hexdrinker implements ItemPassive {
     private static final double LIFELINE_THRESHOLD_PERCENT = 0.30;
     private static final double LIFELINE_MR_BONUS_PERCENT = 0.60;
-    private static final long LIFELINE_DURATION_TICKS = 50L;
+    private static final long LIFELINE_DURATION_TICKS = 200L;
     private static final int LIFELINE_COOLDOWN_TICKS = 1800;
 
     @Override
@@ -20,7 +21,7 @@ public class hexdrinker implements ItemPassive {
 
     @Override
     public String getDescription() {
-        return "§7ᴜɴɪQᴜᴇ – ʟɪғᴇʟɪɴᴇ: §fTaking damage that would reduce you below §e30% §fof your maximum\n§fhealth temporarily increases your §bMagic Resistance §fby §e60% §ffor §e2.5 seconds.\n\n§790s Cooldown";
+        return "§7ᴜɴɪQᴜᴇ – ʟɪғᴇʟɪɴᴇ: §fTaking damage that would reduce you below 30%\n§fof your maximum health temporarily increases your " + Icons.get("stats.mr") + " §bMagic Resistance\n§fby 60% for 10 seconds.\n\n§790s Cooldown";
     }
 
     @Override

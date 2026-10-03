@@ -112,55 +112,61 @@ public class ItemModifier {
         }
 
         if (statData.getAd() > 0) {
-            lore.add("§6🗡 " + formatStat(statData.getAd()) + " §fAttack Damage");
+            lore.add("§f" + Icons.get("stats.ad") + " §f" + formatStat(statData.getAd()) + " §7Attack Damage");
         }
         if (statData.getAp() > 0) {
-            lore.add("§9☄ " + formatStat(statData.getAp()) + " §fAbility Power");
+            lore.add("§f" + Icons.get("stats.ap") + " §f" + formatStat(statData.getAp()) + " §7Ability Power");
         }
         if (statData.getAr() > 0) {
-            lore.add("§e🛡 " + formatStat(statData.getAr()) + " §fArmor");
+            lore.add("§f" + Icons.get("stats.ar") + " §f" + formatStat(statData.getAr()) + " §7Armor");
         }
         if (statData.getMr() > 0) {
-            lore.add("§b⦿ " + formatStat(statData.getMr()) + " §fMagic Resist");
+            lore.add("§f" + Icons.get("stats.mr") + " §f" + formatStat(statData.getMr()) + " §7Magic Resist");
         }
         if (statData.getHp() > 0) {
-            lore.add("§a❤ " + formatStat(statData.getHp()) + " §fHealth");
+            lore.add("§f" + Icons.get("stats.hp") + " §f" + formatStat(statData.getHp()) + " §7Health");
         }
         if (statData.getHr() > 0) {
-            lore.add("§2❣ " + formatStat(statData.getHr()) + " §fHealth Regen per 5 sec.");
+            lore.add("§f" + Icons.get("stats.hr") + " §f" + formatStat(statData.getHr()) + " §7Health Regen per 5 sec.");
         }
         if (statData.getSr() > 0) {
-            lore.add("§6🍖 " + formatStat(statData.getSr()) + " §fSaturation Regen per 5 sec.");
+            lore.add("§r" + "§6" + Icons.get("stats.sr") + " §f" + formatStat(statData.getSr()) + " §7Saturation Regen per 5 sec.");
         }
         if (statData.getAs() > 0) {
-            lore.add("§c➺ " + formatStat(statData.getAs()) + "% §fAttack Speed");
+            lore.add("§f" + Icons.get("stats.as") + " §f" + formatStat(statData.getAs()) + "% §7Attack Speed");
         }
         if (statData.getLs() > 0) {
-            lore.add("§4✚ " + formatStat(statData.getLs()) + "% §fLife Steal");
+            lore.add("§f" + Icons.get("stats.ls") + " §f" + formatStat(statData.getLs()) + "% §7Life Steal");
         }
         if (statData.getCc() > 0) {
-            lore.add("§4➷ " + formatStat(statData.getCc()) + "% §fCritical Chance");
+            lore.add("§f" + Icons.get("stats.cc") + " §f" + formatStat(statData.getCc()) + "% §7Critical Chance");
         }
         if (statData.getApenFlat() > 0) {
-            lore.add("§6🔰 " + formatStat(statData.getApenFlat()) + " §fLethality");
+            lore.add("§f" + Icons.get("stats.apen-flat") + " §f" + formatStat(statData.getApenFlat()) + " §7Lethality");
         }
         if (statData.getApenPercent() > 0) {
-            lore.add("§6⛨ " + formatStat(statData.getApenPercent()) + "% §fArmor Penetration");
+            lore.add("§f" + Icons.get("stats.apen-percent") + " §f" + formatStat(statData.getApenPercent()) + "% §7Armor Penetration");
         }
         if (statData.getMpenFlat() > 0) {
-            lore.add("§d🔘 " + formatStat(statData.getMpenFlat()) + " §fMagic Penetration");
+            lore.add("§f" + Icons.get("stats.mpen") + " §f" + formatStat(statData.getMpenFlat()) + " §7Magic Penetration");
         }
         if (statData.getMpenPercent() > 0) {
-            lore.add("§d🔘 " + formatStat(statData.getMpenPercent()) + "% §fMagic Penetration");
+            lore.add("§f" + Icons.get("stats.mpen") + " §f" + formatStat(statData.getMpenPercent()) + "% §7Magic Penetration");
+        }
+        if (statData.getCsd() > 0) {
+            lore.add("§f" + Icons.get("stats.critical-damage") + " §f" + formatStat(statData.getCsd()) + "% §7Critical Damage");
+        }
+        if (statData.getHm() > 0) {
+            lore.add("§f" + Icons.get("spells.heal") + " §f" + formatStat(statData.getHm()) + "% §7Healing Power");
         }
         if (statData.getCh() > 0) {
-            lore.add("§7⌛ " + formatStat(statData.getCh()) + " §fCooldown Haste");
+            lore.add("§f" + Icons.get("stats.ch") + " §f" + formatStat(statData.getCh()) + " §7Cooldown Haste");
         }
         if (statData.getTn() > 0) {
-            lore.add("§3⏩ " + formatStat(statData.getTn()) + " §fTenacity");
+            lore.add("§f" + Icons.get("stats.tn") + " §f" + formatStat(statData.getTn()) + " §7Tenacity");
         }
         if (statData.getMs() > 0) {
-            lore.add("§7👣 " + formatStat(statData.getMs()) + "% §fMovement Speed");
+            lore.add("§f" + Icons.get("stats.ms") + " §f" + formatStat(statData.getMs()) + "% §7Movement Speed");
         }
 
         if (statData.hasPassive()) {
@@ -178,8 +184,28 @@ public class ItemModifier {
     }
 
     private static void updateItemModel(ItemStack item, ItemStatsRegistry statData) {
-        int modelData = (int) (statData.getAd() + statData.getAp() + statData.getHp());
-        setCustomModelData(item, modelData);
+        ItemMeta meta = item.getItemMeta();
+        if (meta == null) return;
+
+        try {
+            Class<?> cmdComponentClass = Class.forName("org.bukkit.inventory.meta.components.CustomModelDataComponent");
+
+            Method getCmdMethod = ItemMeta.class.getMethod("getCustomModelDataComponent");
+            Object cmd = getCmdMethod.invoke(meta);
+
+            Method setStringsMethod = cmdComponentClass.getMethod("setStrings", List.class);
+            setStringsMethod.invoke(cmd, List.of(statData.getId()));
+
+            Method setComponentMethod = ItemMeta.class.getMethod("setCustomModelDataComponent", cmdComponentClass);
+            setComponentMethod.invoke(meta, cmd);
+
+            item.setItemMeta(meta);
+            return;
+        } catch (ClassNotFoundException | NoSuchMethodException | SecurityException | IllegalArgumentException
+                 | IllegalAccessException | java.lang.reflect.InvocationTargetException e) {
+        }
+
+        setCustomModelData(item, Math.abs(statData.getId().hashCode()));
     }
 
     private static String formatStat(double value) {
@@ -220,6 +246,8 @@ public class ItemModifier {
             case "MPEN_PERCENT" -> statData.getMpenPercent();
             case "CH" -> statData.getCh();
             case "TN" -> statData.getTn();
+            case "CSD" -> statData.getCsd();
+            case "HM" -> statData.getHm();
 
             default -> 0;
         };
