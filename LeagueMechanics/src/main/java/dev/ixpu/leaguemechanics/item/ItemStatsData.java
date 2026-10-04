@@ -32,21 +32,20 @@ public class ItemStatsData {
 
         // BASIC ITEMS
         addItem("amplifying-tome", "Amplifying Tome", 0.0, 0.0, 0.0, 20.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0);
-        addItem("blasting-wand", "Blasting Wand", 0.0, 0.0, 0.0, 45.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0);
-        addItem("needlessly-large-rod", "Needlessly Large Rod", 0.0, 0.0, 0.0, 55.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0);
+        addItem("blasting-wand", "Blasting Wand", 0.0, 0.0, 0.0, 55.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0);
+        addItem("needlessly-large-rod", "Needlessly Large Rod", 0.0, 0.0, 0.0, 60.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0);
         addItem("cull", "Cull", 0.0, 0.0, 7.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, true, "cull");
         addItem("long-sword", "Long Sword", 0.0, 0.0, 10.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0);
         addItem("pickaxe", "Pickaxe", 0.0, 0.0, 25.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0);
         addItem("b.f-sword", "B.F. Sword", 0.0, 0.0, 45.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0);
         addItem("cloth-armor", "Cloth Armor", 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 15.0, 0.0, 0.0, 0.0, 0.0, 0.0);
-        addItem("chain-vest", "Chain Vest", 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 55.0, 0.0, 0.0, 0.0, 0.0, 0.0);
-        addItem("null-magic-mantle", "Null-Magic Mantle", 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 30.0, 0.0, 0.0, 0.0, 0.0);
+        addItem("chain-vest", "Chain Vest", 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 75.0, 0.0, 0.0, 0.0, 0.0, 0.0);
+        addItem("null-magic-mantle", "Null-Magic Mantle", 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 45.0, 0.0, 0.0, 0.0, 0.0);
         addItem("negatron-cloak", "Negatron Cloak", 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 85.0, 0.0, 0.0, 0.0, 0.0);
-        addItem("ruby-crystal", "Ruby Crystal", 10.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0);
+        addItem("ruby-crystal", "Ruby Crystal", 12.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0);
         addItem("rejuvenation-bead", "Rejuvenation Bead", 0.0, 2.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0);
         addItem("faeri-charm", "Faeri Charm", 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.5, 0.0);
         addItem("dagger", "Dagger", 0.0, 0.0, 0.0, 0.0, 0.0, 10.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0);
-        addItem("aether-wisp", "Aether Wisp", 0.0, 0.0, 0.0, 30.0, 0.0 ,0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 4.0);
         addItem("zeal", "Zeal", 0.0, 0.0, 0.0, 0.0, 0.0, 15.0, 0.0, 0.0, 0.0, 15.0, 0.0, 4.0);
         addItem("vampiric-scepter", "Vampiric Scepter", 0.0, 0.0, 15.0, 0.0, 0.0, 0.0, 0.0, 0.0, 7.0, 0.0, 0.0, 0.0);
         addItem("tunneler", "Tunneler", 25.0, 0.0, 15.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0);
@@ -67,22 +66,22 @@ public class ItemStatsData {
         addItem("blightting-jewel", "Blightting Jewel", 0.0, 0.0, 0.0, 25.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0,
                 false, null, 0.0, 0.0, 0.0, 13.0);
         addItem("flendish-codex", "Flendish Codex", 0.0, 0.0, 0.0, 35.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0,
-                false, null, 0.0, 0.0, 0.0, 0.0, 25.0);
+                false, null, 0.0, 0.0, 0.0, 0.0, 18.0);
         addItem("lost-chapter", "Lost Chapter", 0.0, 0.0, 0.0, 40.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0,
                 false, null, 0.0, 0.0, 0.0, 0.0, 5.0);
-        addItem("fated-ashes", "Fated Ashes", 0.0, 0.0, 0.0, 30.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0,
+        addItem("fated-ashes", "Fated Ashes", 0.0, 0.0, 0.0, 25.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0,
                 true, "fated-ashes");
-        addItem("hextech-alternator", "Hextech Alternator", 0.0, 0.0, 0.0, 45.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0,
+        addItem("hextech-alternator", "Hextech Alternator", 0.0, 0.0, 0.0, 35.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0,
                 true, "hextech-alternator");
-        addItem("oblivion-orb", "Oblivion Orb", 0.0, 0.0, 0.0, 25.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0,
+        addItem("oblivion-orb", "Oblivion Orb", 0.0, 0.0, 0.0, 30.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0,
                 true, "oblivion-orb");
-        addItem("executioners-calling", "Executioner's Calling", 0.0, 0.0, 15.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0,
+        addItem("executioners-calling", "Executioner's Calling", 0.0, 0.0, 30.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0,
                 true, "executioners-calling");
-        addItem("caulfields-warhammer", "Caulfield's Warhammer", 0.0, 0.0, 20.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0,
+        addItem("caulfields-warhammer", "Caulfield's Warhammer", 0.0, 0.0, 35.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0,
                 false, null, 0.0, 0.0, 0.0, 0.0, 25.0);
         addItem("hexdrinker", "Hexdrinker", 0.0, 0.0, 25.0, 0.0, 0.0, 0.0, 0.0, 25.0, 0.0, 0.0, 0.0, 0.0,
                 true, "hexdrinker");
-        addItem("serrated-dirk", "Serrated Dirk", 0.0, 0.0, 20.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0,
+        addItem("serrated-dirk", "Serrated Dirk", 0.0, 0.0, 30.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0,
                 false, null, 10.0, 0.0, 0.0, 0.0);
         addItem("phage", "Phage", 20.0, 0.0, 15.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0,
                 true, "phage");
@@ -108,14 +107,14 @@ public class ItemStatsData {
                 true, "bamis-cinder", 0.0, 0.0, 0.0, 0.0, 18.0);
         addItem("verdant-barrier", "Verdant Barrier", 0.0, 0.0, 0.0, 40.0, 0.0, 0.0, 0.0, 25.0, 0.0, 0.0, 0.0, 0.0,
                 true, "verdant-barrier");
-        addItem("aether-wisp", "Aether Wisp", 0.0, 0.0, 0.0, 30.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 4.0);
+        addItem("aether-wisp", "Aether Wisp", 0.0, 0.0, 0.0, 20.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 4.0);
         addItem("bandleglass-mirror", "Bandleglass Mirror", 0.0, 0.0, 0.0, 20.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0,
-                false, null, 0.0, 0.0, 0.0, 0.0, 22.0);
-        addItem("vampiric-scepter", "Vampiric Scepter", 0.0, 0.0, 15.0, 0.0, 0.0, 0.0, 0.0, 0.0, 12.0, 0.0, 0.0, 0.0);
-        addItem("the-brutalizer", "The Brutalizer", 0.0, 0.0, 25.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0,
+                false, null, 0.0, 0.0, 0.0, 0.0, 15.0);
+        addItem("vampiric-scepter", "Vampiric Scepter", 0.0, 0.0, 15.0, 0.0, 0.0, 0.0, 0.0, 0.0, 17.0, 0.0, 0.0, 0.0);
+        addItem("the-brutalizer", "The Brutalizer", 0.0, 0.0, 35.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0,
                 false, null, 5.0, 0.0, 0.0, 0.0, 5.0);
         addItem("steel-sigil", "Steel Sigil", 0.0, 0.0, 15.0, 0.0, 0.0, 0.0, 30.0, 0.0, 0.0, 0.0, 0.0, 0.0);
-        addItem("zeal", "Zeal", 0.0, 0.0, 0.0, 0.0, 0.0, 15.0, 0.0, 0.0, 0.0, 15.0, 0.0, 4.0);
+        addItem("zeal", "Zeal", 0.0, 0.0, 0.0, 0.0, 0.0, 20.0, 0.0, 0.0, 0.0, 15.0, 0.0, 4.0);
 
         addItem("glowing-mote", "Glowing Mote", 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0,
                 false, null, 0.0, 0.0, 0.0, 0.0, 7.0);

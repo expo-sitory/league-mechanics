@@ -277,7 +277,7 @@ public class DamageListener implements Listener, RuneCooldownGate {
                 event.setCancelled(true);
                 return;
             }
-            if (!plugin.getCommandHandler().isPvpEnabled(shooter, targetPlayer) || !isWithinLevelGap(shooter, targetPlayer)) {
+            if (!plugin.getCommandHandler().isPvpEnabled(shooter, targetPlayer)) {
                 event.setCancelled(true);
                 return;
             }
@@ -361,7 +361,7 @@ public class DamageListener implements Listener, RuneCooldownGate {
                 event.setCancelled(true);
                 return;
             }
-            if (!plugin.getCommandHandler().isPvpEnabled(attacker, targetPlayer) || !isWithinLevelGap(attacker, targetPlayer)) {
+            if (!plugin.getCommandHandler().isPvpEnabled(attacker, targetPlayer)) {
                 event.setCancelled(true);
                 return;
             }
@@ -579,8 +579,8 @@ public class DamageListener implements Listener, RuneCooldownGate {
         PlayerRuneData critRuneData = runeManager.getPlayerRuneData(player);
         PlayerStats stats = PlayerStats.getOrCreate(player);
 
-        double attackerAD = (stats.getPlayerAD(player) * stats.getDamageBalancer());
-        double attackerAP = stats.getPlayerAP(player) * stats.getDamageBalancer();
+        double attackerAD = stats.getPlayerAD(player);
+        double attackerAP = stats.getPlayerAP(player);
         double targetAR = damage.getTargetAR(target);
         double targetMR = damage.getTargetMR(target);
 
@@ -615,7 +615,7 @@ public class DamageListener implements Listener, RuneCooldownGate {
             }
         }
         if (didCrit) {
-            player.getWorld().playSound(player.getLocation(), Sound.ITEM_MACE_SMASH_GROUND_HEAVY, 1.0f, 1.5f);
+            player.getWorld().playSound(player.getLocation(), Sound.ITEM_MACE_SMASH_GROUND_HEAVY, 1.0f, 1.7f);
             if (critRuneData != null) {
                 for (CooldownHandler rune : critRuneData.getAllRunes()) {
                     if (rune != null) {

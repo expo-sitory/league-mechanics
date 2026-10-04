@@ -624,8 +624,8 @@ public class PlaceholderRegistry extends PlaceholderExpansion {
     }
 
     private String getLine1(Player player, PlayerStats stats) {
-        double ad = stats.getPlayerAD(player) * stats.getDamageBalancer();
-        double ap = stats.getPlayerAP(player) * stats.getDamageBalancer();
+        double ad = stats.getPlayerAD(player);
+        double ap = stats.getPlayerAP(player);
         return "§f" + Icons.get("stats.ad") + " §7" + String.format("%-4.0f", ad) + "  §f" + Icons.get("stats.ap") + " §7" + String.format("%-4.0f", ap);
     }
 

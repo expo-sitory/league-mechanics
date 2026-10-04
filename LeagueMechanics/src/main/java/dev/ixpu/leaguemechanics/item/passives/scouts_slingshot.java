@@ -12,7 +12,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
 public class scouts_slingshot implements ItemPassive {
-    private static final int BULLSYE_BONUS_MAGIC_DAMAGE = 30;
+    private static final int BULLSYE_BONUS_MAGIC_DAMAGE = 55;
     private static final int BULLSYE_COOLDOWN_TICKS = 800;
     @Override
     public String getId() {

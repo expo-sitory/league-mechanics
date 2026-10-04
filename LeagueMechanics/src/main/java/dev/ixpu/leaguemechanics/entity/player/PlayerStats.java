@@ -28,8 +28,6 @@ import static dev.ixpu.leaguemechanics.entity.player.PlayerClass.*;
 public class PlayerStats {
     private static final Map<UUID, PlayerStats> INSTANCE_CACHE = new ConcurrentHashMap<>();
 
-    private static final double PLAYER_DAMAGE_BALANCER = 7.0;
-
     private static final double BASE_HEALING_MULTIPLIER = 1.0;
 
     private double temporaryADModification = 0.0;
@@ -55,10 +53,6 @@ public class PlayerStats {
             stats.setLeagueLevel(leagueLevel);
             return stats;
         });
-    }
-
-    public double getDamageBalancer() {
-        return PLAYER_DAMAGE_BALANCER;
     }
 
     public static void invalidateCache(UUID uuid) {
@@ -116,7 +110,7 @@ public class PlayerStats {
         if (itemStatsManager != null) {
             itemAD += itemStatsManager.getItemAD(player);
         }
-        double totalAD = Math.max(0, baseAD + itemAD + enchantAD + temporaryADModification);
+        double totalAD = Math.max(0, (baseAD + itemAD + temporaryADModification) * (1.0 + enchantAD));
 
         if (player.hasPotionEffect(PotionEffectType.WEAKNESS)) {
             int amplifier = player.getPotionEffect(PotionEffectType.WEAKNESS).getAmplifier();
@@ -124,7 +118,7 @@ public class PlayerStats {
             totalAD = Math.max(0, totalAD * multiplier);
         }
 
-        return totalAD / PLAYER_DAMAGE_BALANCER;
+        return totalAD;
     }
 
     public double getPlayerAP(Player player) {
@@ -148,7 +142,7 @@ public class PlayerStats {
             totalAP = Math.max(0, totalAP * multiplier);
         }
 
-        return totalAP / PLAYER_DAMAGE_BALANCER;
+        return totalAP;
     }
 
     public double getPlayerAF(Player player) {
@@ -336,7 +330,7 @@ public class PlayerStats {
         if (sharpnessLevel == 0) {
             return 0;
         }
-        return 0.5 + (sharpnessLevel * 0.5) * 7;
+        return sharpnessLevel * 0.10;
     }
 
     public double getWeaponAS(Player player) {
@@ -354,7 +348,7 @@ public class PlayerStats {
                 totalProtectionLevel += armor.getEnchantmentLevel(Enchantment.PROTECTION);
             }
         }
-        return 1.0 + (totalProtectionLevel * 0.05);
+        return 1.0 + (totalProtectionLevel * 0.15);
     }
 
     public double getProtectionARBonus(Player player) {
@@ -364,7 +358,7 @@ public class PlayerStats {
                 totalProtectionLevel += armor.getEnchantmentLevel(Enchantment.PROTECTION);
             }
         }
-        return 1.0 + (totalProtectionLevel * 0.05);
+        return 1.0 + (totalProtectionLevel * 0.10);
     }
 
     public void modifyAD(double amount) {
@@ -454,15 +448,15 @@ public class PlayerStats {
         DebuffManager debuffs = DebuffManager.getInstance();
         if (debuffs.hasDebuff(player, DebuffType.GRIEVOUS_WOUNDS)) {
             double remaining = debuffs.getRemainingSeconds(player, DebuffType.GRIEVOUS_WOUNDS);
-            sb.append(Icons.get("status.grievous-wounds") + " §4(").append(String.format("%.1f", remaining)).append("s)");
+            sb.append("§f" + Icons.get("status.grievous-wounds") + " §4(").append(String.format("%.1f", remaining)).append("s)§f");
         }
         if (debuffs.hasDebuff(player, DebuffType.INFLAME)) {
             double remaining = debuffs.getRemainingSeconds(player, DebuffType.INFLAME);
-            sb.append(Icons.get("status.burned") + " §6(").append(String.format("%.1f", remaining)).append("s)");
+            sb.append("§f" + Icons.get("status.burned") + " §6(").append(String.format("%.1f", remaining)).append("s)§f");
         }
         org.bukkit.potion.PotionEffect slow = player.getPotionEffect(PotionEffectType.SLOWNESS);
         if (slow != null && slow.getDuration() > 0) {
-            sb.append(Icons.get("status.slowed") + " §b(").append(String.format("%.1f", slow.getDuration() / 20.0)).append("s)");
+            sb.append("§f" + Icons.get("status.slowed") + " §b(").append(String.format("%.1f", slow.getDuration() / 20.0)).append("s)§f");
         }
 
         dev.ixpu.leaguemechanics.manager.ItemPassivesManager passiveManager =

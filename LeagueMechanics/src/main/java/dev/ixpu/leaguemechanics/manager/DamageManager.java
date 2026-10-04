@@ -15,6 +15,8 @@ public class DamageManager {
     private final ItemStatsManager itemStatsManager;
     private ItemPassivesRegistry passiveRegistry;
 
+    private double DAMAGE_BALANCEER_DIVISOR = 3.0;
+
     private double lastBonusMagicDamage = 0;
 
     protected boolean isAdaptiveScaling = false;
@@ -94,9 +96,9 @@ public class DamageManager {
             itemAD = statsManager.getItemAD(player);
 
             if (af <= ADAPTIVE_THRESHOLD) {
-                itemAD += (itemAD * af) / stats.getDamageBalancer();
+                itemAD += itemAD * af;
             } else {
-                itemAP += (itemAP * af) / stats.getDamageBalancer();
+                itemAP += itemAP * af;
             }
 
             rawAD = stats.getPlayerAD(player);
@@ -149,9 +151,11 @@ public class DamageManager {
                 magicDamage = procDamage * levelBasedBonusForLevel(leagueLevel);
             }
             baseDamage = applyResistance(magicDamage, true, targetAR, targetMR, apenFlat, apenPercent, mpenFlat, mpenPercent);
+
         } else if (isTrueDamage) {
             baseDamage = (playerTD
                     + (sourceAD + sourceAP) * (runesTrueDamage / 100.0));
+
         } else if (isAdaptiveDamage) {
             double adaptive = runesAdaptive * levelBasedBonusForLevel(leagueLevel);
             if (isAdaptiveScaling) {
@@ -160,6 +164,7 @@ public class DamageManager {
             boolean preferMagic = itemAP > itemAD;
             this.prefersMagic = preferMagic;
             baseDamage = applyResistance(adaptive, preferMagic, targetAR, targetMR, apenFlat, apenPercent, mpenFlat, mpenPercent);
+
         } else {
             double physical = applyResistance(sourceAD, false, targetAR, targetMR, apenFlat, apenPercent, mpenFlat, mpenPercent);
             baseDamage = physical;
@@ -175,7 +180,7 @@ public class DamageManager {
 
         double finalDamage = (baseDamage + procDamage) * stacks;
 
-        return finalDamage;
+        return finalDamage / DAMAGE_BALANCEER_DIVISOR;
     }
 
     private double applyResistance(double damage, boolean isMagic, double targetAR, double targetMR,

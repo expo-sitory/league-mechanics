@@ -11,7 +11,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
 public class hextech_alternator implements ItemPassive {
-    private static final int REVVED_BONUS_MAGIC_DAMAGE = 45;
+    private static final int REVVED_BONUS_MAGIC_DAMAGE = 60;
     private static final int REVVED_COOLDOWN_TICKS = 800;
     @Override
     public String getId() {
