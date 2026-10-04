@@ -249,21 +249,8 @@ Examples in the codebase: Recurve Bow (AD), Hexdrinker (MR), Guardian (AR), Glac
 
 `DamageManager.DamageCalculation(source, target, currentStacks, runesAdaptive, runesTrueDamage, procDamage)` returns the damage before crits and blocking.
 
-```
-Final damage = (Base damage + Proc damage) × Stacks
-
-Stacks = currentStacks   if per-stack scaling is enabled
-       = 1               otherwise
-```
-
-`Base damage` depends on the calculation mode (see [Calculation modes](#34-calculation-modes)). For a normal basic attack:
-
-```
-Source AD = AD + Doran's on-hit AD + shard AD
-Base damage = Source AD × 100 / (100 + Effective AR)
-```
-
-Where:
+### Player Statistics
+When referring to player units a statistic measures the magnitude of an unmodified basic attribute or capability. For example: how durable the unit is; how fast it is able to move; how quickly it is able to perform attacks; etc. An effect (e.g. how much damage an attack deals) that increases in strength by a statistic is said to "scale with" or "scale off of" that statistic. Scaling type can either directly or indirectly influence the player's capabilities, and often slightly correlates to the player's class.
 
 - `AD` is the player's total AD after the damage balancer.
 - `Doran's on-hit AD` is `+10` for each Doran's Ring or Doran's Shield in the inventory.
