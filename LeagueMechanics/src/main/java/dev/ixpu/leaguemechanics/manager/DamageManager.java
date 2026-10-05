@@ -15,7 +15,7 @@ public class DamageManager {
     private final ItemStatsManager itemStatsManager;
     private ItemPassivesRegistry passiveRegistry;
 
-    private double DAMAGE_BALANCEER_DIVISOR = 3.0;
+    private double DAMAGE_BALANCER_DIVISOR = 3.0;
 
     private double lastBonusMagicDamage = 0;
 
@@ -30,11 +30,11 @@ public class DamageManager {
 
     private static final double CRIT_DAMAGE_MULTIPLIER = 1.75;
 
-    private static final double BASE_BONUS = 1.07;
-    private static final double LEVEL_3_BONUS = 1.15;
-    private static final double LEVEL_8_BONUS = 1.37;
-    private static final double LEVEL_13_BONUS = 1.75;
-    private static final double LEVEL_18_BONUS = 1.90;
+    private static final double BASE_BONUS_ADAPTIVE = 1.07;
+    private static final double LEVEL_3_BONUS_ADAPTIVE = 1.15;
+    private static final double LEVEL_8_BONUS_ADAPTIVE = 1.37;
+    private static final double LEVEL_13_BONUS_ADAPTIVE = 1.75;
+    private static final double LEVEL_18_BONUS_ADAPTIVE = 1.90;
 
     private static final double ADAPTIVE_THRESHOLD = 0.7;
 
@@ -72,7 +72,7 @@ public class DamageManager {
         return isOnlyAP || (isAdaptiveDamage && prefersMagic);
     }
 
-    public double DamageCalculation(Entity source, Entity target, int currentStacks, double runesAdaptive, double runesTrueDamage, double procDamage) {
+    public double DamageCalculation(Entity source, Entity target, int currentStacks, double runesAdaptive, double procTrueDamage, double procDamage) {
         ItemStatsManager statsManager = LeagueMechanics.getInstance().getStatsManager();
         boolean isPlayerSource = source instanceof Player;
 
@@ -153,8 +153,7 @@ public class DamageManager {
             baseDamage = applyResistance(magicDamage, true, targetAR, targetMR, apenFlat, apenPercent, mpenFlat, mpenPercent);
 
         } else if (isTrueDamage) {
-            baseDamage = (playerTD
-                    + (sourceAD + sourceAP) * (runesTrueDamage / 100.0));
+            baseDamage = procTrueDamage;
 
         } else if (isAdaptiveDamage) {
             double adaptive = runesAdaptive * levelBasedBonusForLevel(leagueLevel);
@@ -180,7 +179,7 @@ public class DamageManager {
 
         double finalDamage = (baseDamage + procDamage) * stacks;
 
-        return finalDamage / DAMAGE_BALANCEER_DIVISOR;
+        return (playerTD + finalDamage) / DAMAGE_BALANCER_DIVISOR;
     }
 
     private double applyResistance(double damage, boolean isMagic, double targetAR, double targetMR,
@@ -215,15 +214,15 @@ public class DamageManager {
 
     public static double levelBasedBonusForLevel(double leagueLevel) {
         if (leagueLevel >= 18) {
-            return LEVEL_18_BONUS;
+            return LEVEL_18_BONUS_ADAPTIVE;
         } else if (leagueLevel >= 13) {
-            return LEVEL_13_BONUS;
+            return LEVEL_13_BONUS_ADAPTIVE;
         } else if (leagueLevel >= 8) {
-            return LEVEL_8_BONUS;
+            return LEVEL_8_BONUS_ADAPTIVE;
         } else if (leagueLevel >= 3) {
-            return LEVEL_3_BONUS;
+            return LEVEL_3_BONUS_ADAPTIVE;
         } else {
-            return BASE_BONUS;
+            return BASE_BONUS_ADAPTIVE;
         }
     }
 

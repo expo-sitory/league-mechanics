@@ -4,7 +4,7 @@ import dev.ixpu.leaguemechanics.LeagueMechanics;
 import dev.ixpu.leaguemechanics.manager.DamageManager;
 import dev.ixpu.leaguemechanics.manager.DebuffManager;
 import dev.ixpu.leaguemechanics.manager.KillSourceTracker;
-import dev.ixpu.leaguemechanics.rune.DebuffType;
+import dev.ixpu.leaguemechanics.debuff.DebuffType;
 import dev.ixpu.leaguemechanics.util.DebugLogger;
 import dev.ixpu.leaguemechanics.util.Icons;
 import org.bukkit.entity.Entity;

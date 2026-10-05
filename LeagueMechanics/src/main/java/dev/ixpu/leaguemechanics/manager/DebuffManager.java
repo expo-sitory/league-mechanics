@@ -1,11 +1,13 @@
 package dev.ixpu.leaguemechanics.manager;
 
 import dev.ixpu.leaguemechanics.LeagueMechanics;
-import dev.ixpu.leaguemechanics.rune.DebuffType;
+import dev.ixpu.leaguemechanics.debuff.DebuffType;
+import dev.ixpu.leaguemechanics.util.Icons;
 import org.bukkit.entity.Player;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
 
+import java.util.EnumSet;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
@@ -13,11 +15,19 @@ import java.util.UUID;
 public class DebuffManager {
     private static final double SLOW_PERCENT_PER_LEVEL = 20.0;
 
+    private static final EnumSet<DebuffType> CROWD_CONTROL = EnumSet.of(
+            DebuffType.STUN, DebuffType.GROUNDED, DebuffType.NEARSIGHTED, DebuffType.SLOW);
+
     private static DebuffManager instance;
 
     private final Map<UUID, Map<DebuffType, Long>> playerDebuffs = new HashMap<>();
     private final Map<UUID, Map<DebuffType, Long>> debuffDurationsMs = new HashMap<>();
     private final Map<UUID, Map<DebuffType, Double>> debuffStrengths = new HashMap<>();
+    private final Map<UUID, DebuffType> latestCrowdControl = new HashMap<>();
+
+    public static boolean isCrowdControl(DebuffType type) {
+        return CROWD_CONTROL.contains(type);
+    }
 
     public static DebuffManager getInstance() {
         if (instance == null) {
@@ -38,6 +48,9 @@ public class DebuffManager {
         playerDebuffs.computeIfAbsent(uuid, k -> new HashMap<>()).put(type, expiry);
         debuffDurationsMs.computeIfAbsent(uuid, k -> new HashMap<>()).put(type, durationMs);
         debuffStrengths.computeIfAbsent(uuid, k -> new HashMap<>()).put(type, Math.max(0.0, strength));
+        if (isCrowdControl(type)) {
+            latestCrowdControl.put(uuid, type);
+        }
 
         if (type == DebuffType.SLOW && strength > 0) {
             double tenacity = Math.min(100.0, getTenacityPercent(target, type));
@@ -47,16 +60,24 @@ public class DebuffManager {
                 target.addPotionEffect(new PotionEffect(PotionEffectType.SLOWNESS, effectiveTicks, amplifier, false, false));
             }
         }
+
+        if (type == DebuffType.NEARSIGHTED) {
+            double tenacity = Math.min(100.0, getTenacityPercent(target, type));
+            int effectiveTicks = (int) (durationTicks * (1.0 - tenacity / 100.0));
+            if (effectiveTicks > 0) {
+                target.addPotionEffect(new PotionEffect(PotionEffectType.DARKNESS, effectiveTicks, 0, false, false));
+            }
+        }
     }
 
 
     private double getTenacityPercent(Player target, DebuffType type) {
-        if (target == null || type != DebuffType.SLOW) return 0;
+        if (target == null || !isCrowdControl(type)) return 0;
         LeagueMechanics plugin = LeagueMechanics.getInstance();
         if (plugin == null) return 0;
         ItemStatsManager statsManager = plugin.getStatsManager();
         if (statsManager == null) return 0;
-        return Math.max(0.0, statsManager.getItemTN(target));
+        return Math.max(0.0, statsManager.getItemTN(target) + BuffManager.getInstance().getBonus(target, BuffManager.Stat.TN));
     }
 
     private long getEffectiveExpiry(Player target, DebuffType type, long rawExpiry) {
@@ -116,12 +137,74 @@ public class DebuffManager {
         if (strengths != null) strengths.remove(type);
     }
 
+    public DebuffType getLatestCrowdControl(Player player) {
+        if (player == null) return null;
+        DebuffType type = latestCrowdControl.get(player.getUniqueId());
+        if (type == null) return null;
+        return hasDebuff(player, type) ? type : null;
+    }
+
+    public static String getCrowdControlName(DebuffType type) {
+        return switch (type) {
+            case STUN -> "Stun";
+            case GROUNDED -> "Grounded";
+            case NEARSIGHTED -> "Nearsighted";
+            case SLOW -> "Slow";
+            default -> type.name();
+        };
+    }
+
+    public static String getCrowdControlIconKey(DebuffType type) {
+        return switch (type) {
+            case STUN -> "status.stunned";
+            case GROUNDED -> "status.grounded";
+            case NEARSIGHTED -> "status.nearsighted";
+            case SLOW -> "status.slowed";
+            default -> "";
+        };
+    }
+
+    public String getActionBarSection(Player player) {
+        if (player == null) return "";
+        StringBuilder sb = new StringBuilder();
+        if (hasDebuff(player, DebuffType.GRIEVOUS_WOUNDS)) {
+            appendStatus(sb, Icons.get("status.grievous-wounds"), "§4", getRemainingSeconds(player, DebuffType.GRIEVOUS_WOUNDS));
+        }
+        if (hasDebuff(player, DebuffType.INFLAME)) {
+            appendStatus(sb, Icons.get("status.burned"), "§6", getRemainingSeconds(player, DebuffType.INFLAME));
+        }
+        if (hasDebuff(player, DebuffType.BLIND)) {
+            appendStatus(sb, Icons.get("status.blind"), "§7", getRemainingSeconds(player, DebuffType.BLIND));
+        }
+        if (hasDebuff(player, DebuffType.GROUNDED)) {
+            appendStatus(sb, Icons.get("status.grounded"), "§e", getRemainingSeconds(player, DebuffType.GROUNDED));
+        }
+        if (hasDebuff(player, DebuffType.STUN)) {
+            appendStatus(sb, Icons.get("status.stunned"), "§d", getRemainingSeconds(player, DebuffType.STUN));
+        }
+        PotionEffect darkness = player.getPotionEffect(PotionEffectType.DARKNESS);
+        if (darkness != null && darkness.getDuration() > 0) {
+            appendStatus(sb, Icons.get("status.nearsighted"), "§8", darkness.getDuration() / 20.0);
+        }
+        PotionEffect slow = player.getPotionEffect(PotionEffectType.SLOWNESS);
+        if (slow != null && slow.getDuration() > 0) {
+            appendStatus(sb, Icons.get("status.slowed"), "§b", slow.getDuration() / 20.0);
+        }
+        return sb.toString();
+    }
+
+    private void appendStatus(StringBuilder sb, String icon, String color, double remainingSeconds) {
+        if (sb.length() > 0) sb.append(" ");
+        sb.append("§f").append(icon).append(" ").append(color).append("(").append(String.format("%.1f", remainingSeconds)).append("s)§f");
+    }
+
     public void clearDebuffs(Player player) {
         if (player == null) return;
         UUID uuid = player.getUniqueId();
         playerDebuffs.remove(uuid);
         debuffDurationsMs.remove(uuid);
         debuffStrengths.remove(uuid);
+        latestCrowdControl.remove(uuid);
     }
 
     public void tickAll() {

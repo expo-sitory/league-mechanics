@@ -1,0 +1,7 @@
+{
+    "parent": "item/generated",
+    "textures": {
+        "layer0": "item/2d/wine_glass_2d_overlay",
+        "layer1": "item/2d/wine_glass_main_2d"
+    }
+}

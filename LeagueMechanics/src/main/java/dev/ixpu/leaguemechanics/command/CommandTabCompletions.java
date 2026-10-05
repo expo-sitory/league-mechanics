@@ -1,9 +1,11 @@
 package dev.ixpu.leaguemechanics.command;
 
-import dev.ixpu.leaguemechanics.rune.CooldownHandler;
-import dev.ixpu.leaguemechanics.rune.RunePath;
-import dev.ixpu.leaguemechanics.rune.RuneRegistry;
-import dev.ixpu.leaguemechanics.rune.RuneSlot;
+import dev.ixpu.leaguemechanics.manager.BuffManager;
+import dev.ixpu.leaguemechanics.buff.BuffType;
+import dev.ixpu.leaguemechanics.util.RuneRegistry;
+import dev.ixpu.leaguemechanics.entity.player.PlayerClass;
+import dev.ixpu.leaguemechanics.skill.ClassSkill;
+import dev.ixpu.leaguemechanics.skill.ClassSkillRegistry;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
@@ -38,11 +40,62 @@ public class CommandTabCompletions implements org.bukkit.command.TabCompleter {
             if (player.hasPermission("leaguemechanics.admin")) {
                 completions.add("reload");
                 completions.add("setlevel");
+                completions.add("givebuff");
                 completions.add("shop");
             }
             completions.add("inspect");
+            completions.add("party");
             completions.add("dash");
+            completions.add("skills");
             return filter(completions, args[0]);
+        }
+
+        if (args[0].equalsIgnoreCase("givebuff") && player.hasPermission("leaguemechanics.admin")) {
+            if (args.length == 2) {
+                for (BuffType type : BuffType.values()) {
+                    completions.add(BuffManager.getId(type));
+                }
+                return filter(completions, args[1]);
+            }
+            if (args.length == 3) {
+                return org.bukkit.Bukkit.getOnlinePlayers().stream()
+                        .map(org.bukkit.entity.Player::getName)
+                        .filter(name -> name.toLowerCase().startsWith(args[2].toLowerCase()))
+                        .collect(Collectors.toList());
+            }
+            return new ArrayList<>();
+        }
+
+        if (args[0].equalsIgnoreCase("party")) {
+            if (args.length == 2) {
+                completions.add("invite");
+                completions.add("accept");
+                completions.add("leave");
+                completions.add("disband");
+                return filter(completions, args[1]);
+            }
+            if (args.length == 3 && args[1].equalsIgnoreCase("invite")) {
+                return org.bukkit.Bukkit.getOnlinePlayers().stream()
+                        .filter(p -> !p.equals(player))
+                        .map(org.bukkit.entity.Player::getName)
+                        .filter(name -> name.toLowerCase().startsWith(args[2].toLowerCase()))
+                        .collect(Collectors.toList());
+            }
+            return new ArrayList<>();
+        }
+
+        if (args[0].equalsIgnoreCase("skills")) {
+            if (args.length == 2) {
+                completions.add("select");
+                return filter(completions, args[1]);
+            }
+            if (args.length == 3 && args[1].equalsIgnoreCase("select")) {
+                for (ClassSkill skill : ClassSkillRegistry.getInstance().forClass(PlayerClass.getPlayerClass(player))) {
+                    completions.add(skill.getId());
+                }
+                return filter(completions, args[2]);
+            }
+            return new ArrayList<>();
         }
 
         if (args.length == 2 && args[0].equalsIgnoreCase("dash")) {

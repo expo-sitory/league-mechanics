@@ -3,6 +3,8 @@
 
 general-settings:
   debug: true
+  # true = always use the custom item models (pack loaded client-side / not pushed by the server)
+  assume-client-pack: true
   debug-disabled-worlds:
     - world_nether
     - world_the_end
@@ -99,6 +101,19 @@ icons:
     heal: "\uE24A"
     ignite: "\uE24B"
     smite: "\uE24C"
+  passives:
+    soraka_astral: "\uE40b"
+    nocturn_paranoia: "\uE400"
+    galio_durand: "\uE401"
+    vayne_final_hour: "\uE402"
+    tryndamere_undying_rage: "\uE403"
+    soraka_wish: "\uE404"
+    malzahar_void_shift: "\uE405"
+    blitzcrank_static_field: "\uE406"
+    karthus_requiem: "\uE407"
+    janna_monsoon: "\uE408"
+    kalista_rend: "\uE409"
+    sion_death_surge: "\uE40a"
   status:
     blind: "\uE24D"
     channeling: "\uE24E"
@@ -106,6 +121,17 @@ icons:
     slowed: "\uE250"
     burned: "\uE254"
     grievous-wounds: "\uE251"
+    grounded: "\uE235"
+    stunned: "\uE234"
+    nearsighted: "\uE24D"
+    crest-of-insight: "\uE25C"
+    crest-of-cinders: "\uE25D"
+    chemtech-blight: "\uE259"
+    cloudbringers-grace: "\uE25A"
+    hextech-prowess: "\uE258"
+    infernal-might: "\uE25B"
+    mountainous-vigor: "\uE257"
+    oceanic-will: "\uE256"
   items:
     aether-wisp: "\uE260"
     amplifying-tome: "\uE261"
@@ -168,6 +194,13 @@ icons:
     wardens-mail: "\uE29A"
     winged-moonplate: "\uE29B"
     zeal: "\uE29C"
+
+skills:
+  paranoia:
+    cooldown-seconds: 60
+    range: 25
+    duration-seconds: 5
+    require-pvp: true
 
 runes:
 
@@ -283,6 +316,48 @@ runes:
       storm-raider-surge:
         damage-percent-threshold: 30.0 # damage threshold to activate - default: 30%
         cooldown: 25 # seconds
+
+buffs:
+  crest_of_insight:
+    display-name: "Crest of Insight"
+    duration-seconds: 120
+    ch: 10
+    sr: 5
+  crest_of_cinders:
+    display-name: "Crest of Cinders"
+    duration-seconds: 120
+    slow-strength: 25
+    slow-duration-ticks: 60
+    inflame-duration-ticks: 60
+  chemtech_blight:
+    display-name: "Chemtech Blight"
+    duration-seconds: 120
+    tn: 24
+    heal-multiplier: 1.7
+  cloudbringers_grace:
+    display-name: "Cloudbringer's Grace"
+    duration-seconds: 120
+    tn: 20
+    ms: 20
+  hextech_prowess:
+    display-name: "Hextech Prowess"
+    duration-seconds: 120
+    ch: 20
+    as: 40
+  infernal_might:
+    display-name: "Infernal Might"
+    duration-seconds: 120
+    ad-percent: 20
+    ap-percent: 20
+  mountainous_vigor:
+    display-name: "Mountainous Vigor"
+    duration-seconds: 120
+    ar-percent: 20
+    mr-percent: 20
+  oceanic_will:
+    display-name: "Oceanic Will"
+    duration-seconds: 120
+    hr: 5
 
 # Mob Statistics Configuration
 mob-stats:

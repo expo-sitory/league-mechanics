@@ -6,6 +6,7 @@ import org.bukkit.boss.BarStyle;
 import org.bukkit.boss.BossBar;
 import org.bukkit.entity.Player;
 import dev.ixpu.leaguemechanics.LeagueMechanics;
+import dev.ixpu.leaguemechanics.entity.player.ClassPassives;
 
 import java.util.HashMap;
 import java.util.Locale;
@@ -16,7 +17,11 @@ public class Dash {
     private final Map<UUID, Long> playerCooldowns = new HashMap<>();
     private final Map<UUID, BossBar> dashBars = new HashMap<>();
 
-    private static final long COOLDOWN_MS = 7000L;
+    private static final long BASE_COOLDOWN_MS = 7000L;
+
+    private static long cooldownMs(Player player) {
+        return (long) (BASE_COOLDOWN_MS * ClassPassives.getMobilityCooldownMultiplier(player));
+    }
 
     public boolean isOnCooldown(Player player) {
         UUID uuid = player.getUniqueId();
@@ -25,7 +30,7 @@ public class Dash {
             return false;
         }
         long elapsed = System.currentTimeMillis() - lastActivation;
-        return elapsed < COOLDOWN_MS;
+        return elapsed < cooldownMs(player);
     }
 
     public void startCooldown(Player player) {
@@ -42,7 +47,7 @@ public class Dash {
         UUID uuid = player.getUniqueId();
         BossBar bar = dashBars.get(uuid);
         if (bar == null) {
-            bar = Bukkit.createBossBar("§bDash §f" + formatSeconds(COOLDOWN_MS), BarColor.BLUE, BarStyle.SOLID);
+            bar = Bukkit.createBossBar("§bDash §f" + formatSeconds(cooldownMs(player)), BarColor.BLUE, BarStyle.SOLID);
             bar.addPlayer(player);
             dashBars.put(uuid, bar);
         }
@@ -54,6 +59,7 @@ public class Dash {
     private void startCooldownAnimation(Player player) {
         UUID uuid = player.getUniqueId();
         long startTime = System.currentTimeMillis();
+        long cooldownMs = cooldownMs(player);
 
         Bukkit.getScheduler().runTaskTimer(LeagueMechanics.getInstance(), task -> {
             if (!player.isOnline()) {
@@ -70,11 +76,11 @@ public class Dash {
             }
 
             long elapsed = System.currentTimeMillis() - startTime;
-            double progress = Math.min(1.0, (double) elapsed / COOLDOWN_MS);
+            double progress = Math.min(1.0, (double) elapsed / cooldownMs);
             bar.setProgress(progress);
-            bar.setTitle("§bDash §f" + formatSeconds(COOLDOWN_MS - elapsed));
+            bar.setTitle("§bDash §f" + formatSeconds(cooldownMs - elapsed));
 
-            if (elapsed >= COOLDOWN_MS) {
+            if (elapsed >= cooldownMs) {
                 task.cancel();
                 bar.removeAll();
                 dashBars.remove(uuid);

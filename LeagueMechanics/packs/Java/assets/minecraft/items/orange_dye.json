@@ -1,0 +1,19 @@
+{
+	"model": {
+	  "type": "select",
+	  "property": "custom_model_data",
+	  "fallback": {
+		"type": "model",
+		"model": "item/orange_dye"
+	  },
+	  "cases": [
+		{
+		  "when": "db_drinks.glow_berry_mush",
+		  "model": {
+			"type": "minecraft:model",
+			"model": "minecraft:item/glow_berry_mush"
+		  }
+		}
+	  ]
+	}
+  }

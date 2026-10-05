@@ -9,6 +9,7 @@ import dev.ixpu.leaguemechanics.item.ItemStatsRegistry;
 import dev.ixpu.leaguemechanics.item.passives.ItemPassive;
 import dev.ixpu.leaguemechanics.item.passives.ItemPassivesRegistry;
 
+import dev.ixpu.leaguemechanics.manager.BuffManager;
 import dev.ixpu.leaguemechanics.manager.ItemStatsManager;
 
 import org.bukkit.attribute.Attribute;
@@ -127,7 +128,8 @@ public class PlayerStatsListener {
         double itemMS = statsManager.getItemMS(player);
         double runeMS = playerStats.getTemporaryMSModification();
         double shardMS = playerStats.getRuneShards(player).getMovementSpeed();
-        double bonusMS = itemMS + runeMS + shardMS;
+        double buffMS = BuffManager.getInstance().getBonus(player, BuffManager.Stat.MS);
+        double bonusMS = itemMS + runeMS + shardMS + buffMS;
         UUID playerId = player.getUniqueId();
 
         var attr = player.getAttribute(Attribute.MOVEMENT_SPEED);

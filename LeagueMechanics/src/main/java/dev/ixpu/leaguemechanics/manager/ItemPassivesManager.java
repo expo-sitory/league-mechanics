@@ -53,7 +53,7 @@ public class ItemPassivesManager {
         if (plugin == null) return 0;
         ItemStatsManager statsManager = plugin.getStatsManager();
         if (statsManager == null) return 0;
-        return Math.max(0.0, statsManager.getItemCH(player));
+        return Math.max(0.0, statsManager.getItemCH(player) + BuffManager.getInstance().getBonus(player, BuffManager.Stat.CH));
     }
 
     public boolean isOnCooldown(Player player, String passiveId) {
@@ -84,8 +84,8 @@ public class ItemPassivesManager {
         long expiry = System.currentTimeMillis() + durationMs;
         passiveDurationsMs.put(passiveId, durationMs);
         passiveCooldowns
-            .computeIfAbsent(passiveId, k -> new HashMap<>())
-            .put(player.getUniqueId(), expiry);
+                .computeIfAbsent(passiveId, k -> new HashMap<>())
+                .put(player.getUniqueId(), expiry);
     }
 
     public double getRemainingCooldownSeconds(Player player, String passiveId) {

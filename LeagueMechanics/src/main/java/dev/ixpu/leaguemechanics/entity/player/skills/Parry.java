@@ -6,6 +6,7 @@ import org.bukkit.boss.BarStyle;
 import org.bukkit.boss.BossBar;
 import org.bukkit.entity.Player;
 import dev.ixpu.leaguemechanics.LeagueMechanics;
+import dev.ixpu.leaguemechanics.entity.player.ClassPassives;
 
 import java.util.HashMap;
 import java.util.Locale;
@@ -24,17 +25,23 @@ public class Parry {
     public void resetCooldown(Player player) {
         UUID uuid = player.getUniqueId();
         playerCooldowns.put(uuid, System.currentTimeMillis());
-        cooldownDurations.put(uuid, SUCCESSFUL_COOLDOWN_MS);
+        long cooldownMs = scaled(player, SUCCESSFUL_COOLDOWN_MS);
+        cooldownDurations.put(uuid, cooldownMs);
         Bukkit.dispatchCommand(Bukkit.getConsoleSender(), "lp user " + player.getName() + " permission unset oldcombatmechanics.swordblock");
-        showSuccessfulCooldownBar(player);
+        showSuccessfulCooldownBar(player, cooldownMs);
     }
 
     public void startMissedCooldown(Player player) {
         UUID uuid = player.getUniqueId();
         playerCooldowns.put(uuid, System.currentTimeMillis());
-        cooldownDurations.put(uuid, MISSED_COOLDOWN_MS);
+        long cooldownMs = scaled(player, MISSED_COOLDOWN_MS);
+        cooldownDurations.put(uuid, cooldownMs);
         Bukkit.dispatchCommand(Bukkit.getConsoleSender(), "lp user " + player.getName() + " permission unset oldcombatmechanics.swordblock");
-        showMissedCooldownBar(player);
+        showMissedCooldownBar(player, cooldownMs);
+    }
+
+    private static long scaled(Player player, long baseMs) {
+        return (long) (baseMs * ClassPassives.getParryCooldownMultiplier(player));
     }
 
     public boolean isOnCooldown(Player player) {
@@ -98,30 +105,30 @@ public class Parry {
         }
     }
 
-    private void showSuccessfulCooldownBar(Player player) {
+    private void showSuccessfulCooldownBar(Player player, long cooldownMs) {
         UUID uuid = player.getUniqueId();
         BossBar bar = parryBars.get(uuid);
         if (bar == null) {
-            bar = Bukkit.createBossBar("§bParry §f" + formatSeconds(SUCCESSFUL_COOLDOWN_MS), BarColor.BLUE, BarStyle.SOLID);
+            bar = Bukkit.createBossBar("§bParry §f" + formatSeconds(cooldownMs), BarColor.BLUE, BarStyle.SOLID);
             bar.addPlayer(player);
             parryBars.put(uuid, bar);
         }
 
         bar.setProgress(0.0);
-        startCooldownAnimation(player, SUCCESSFUL_COOLDOWN_MS);
+        startCooldownAnimation(player, cooldownMs);
     }
 
-    private void showMissedCooldownBar(Player player) {
+    private void showMissedCooldownBar(Player player, long cooldownMs) {
         UUID uuid = player.getUniqueId();
         BossBar bar = parryBars.get(uuid);
         if (bar == null) {
-            bar = Bukkit.createBossBar("§bParry §f" + formatSeconds(MISSED_COOLDOWN_MS), BarColor.BLUE, BarStyle.SOLID);
+            bar = Bukkit.createBossBar("§bParry §f" + formatSeconds(cooldownMs), BarColor.BLUE, BarStyle.SOLID);
             bar.addPlayer(player);
             parryBars.put(uuid, bar);
         }
 
         bar.setProgress(0.0);
-        startCooldownAnimation(player, MISSED_COOLDOWN_MS);
+        startCooldownAnimation(player, cooldownMs);
     }
 
     private void startCooldownAnimation(Player player, long cooldownMs) {

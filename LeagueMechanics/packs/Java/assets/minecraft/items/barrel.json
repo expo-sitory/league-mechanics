@@ -1,0 +1,146 @@
+{
+	"model": {
+	  "type": "select",
+	  "property": "custom_model_data",
+	  "fallback": {
+		"type": "model",
+		"model": "item/barrel"
+	  },
+	  "cases": [
+		{
+		  "when": "db_drinks.pouring_barrel_2",
+		  "model": {
+			"type": "minecraft:model",
+			"model": "minecraft:item/pouring_barrel_2",
+			"tints": [
+			{
+              "type": "minecraft:potion",
+              "default": -13083194
+            },
+			{
+              "type": "minecraft:custom_model_data",
+              "default": -13083194
+            }
+          ]
+		  }
+		},
+		{
+		  "when": "db_drinks.pouring_barrel",
+		  "model": {
+			"type": "minecraft:model",
+			"model": "minecraft:item/pouring_barrel",
+			"tints": [
+			{
+              "type": "minecraft:potion",
+              "default": -13083194
+            },
+			{
+              "type": "minecraft:custom_model_data",
+              "default": -13083194
+            }
+          ]
+		  }
+		},
+		{
+		  "when": "db_drinks.aging_barrel",
+		  "model": {
+			"type": "minecraft:model",
+			"model": "minecraft:item/aging_barrel",
+			"tints": [
+			{
+              "type": "minecraft:potion",
+              "default": -13083194
+            },
+			{
+              "type": "minecraft:custom_model_data",
+              "default": -13083194
+            }
+          ]
+		  }
+		},
+		{
+		  "when": "db_drinks.aging_barrel.gui",
+		  "model": {
+			"type": "minecraft:model",
+			"model": "minecraft:item/gui/aging_barrel"
+		  }
+		},
+		{
+		  "when": "db_drinks.pouring_barrel.gui",
+		  "model": {
+			"type": "minecraft:model",
+			"model": "minecraft:item/gui/pouring_barrel"
+		  }
+		},
+		{
+		  "when": "db_drinks.pouring_barrel.gui1",
+		  "model": {
+			"type": "minecraft:model",
+			"model": "minecraft:item/gui/pouring_barrel_1",
+			"tints": [
+			{
+              "type": "minecraft:potion",
+              "default": -13083194
+            },
+			{
+              "type": "minecraft:custom_model_data",
+              "default": -13083194
+            }
+          ]
+		  }
+		},
+		{
+		  "when": "db_drinks.pouring_barrel.gui2",
+		  "model": {
+			"type": "minecraft:model",
+			"model": "minecraft:item/gui/pouring_barrel_2",
+			"tints": [
+			{
+              "type": "minecraft:potion",
+              "default": -13083194
+            },
+			{
+              "type": "minecraft:custom_model_data",
+              "default": -13083194
+            }
+          ]
+		  }
+		},
+		{
+		  "when": "db_drinks.pouring_barrel.gui3",
+		  "model": {
+			"type": "minecraft:model",
+			"model": "minecraft:item/gui/pouring_barrel_3",
+			"tints": [
+			{
+              "type": "minecraft:potion",
+              "default": -13083194
+            },
+			{
+              "type": "minecraft:custom_model_data",
+              "default": -13083194
+            }
+          ]
+		  }
+		},
+		{
+		  "when": "db_drinks.pouring_barrel.gui4",
+		  "model": {
+			"type": "minecraft:model",
+			"model": "minecraft:item/gui/pouring_barrel_4",
+			"tints": [
+			{
+              "type": "minecraft:potion",
+              "default": -13083194
+            },
+			{
+              "type": "minecraft:custom_model_data",
+              "default": -13083194
+            }
+          ]
+		  }
+		}
+	  ]
+	},
+	"oversized_in_gui": true
+  }

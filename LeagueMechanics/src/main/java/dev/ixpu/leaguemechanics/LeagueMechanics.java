@@ -1,5 +1,6 @@
 package dev.ixpu.leaguemechanics;
 
+import dev.ixpu.leaguemechanics.debuff.DebuffTicker;
 import dev.ixpu.leaguemechanics.placeholder.PlaceholderRegistry;
 import dev.ixpu.leaguemechanics.entity.player.PlayerStats;
 import dev.ixpu.leaguemechanics.util.ItemModifier;
@@ -8,6 +9,7 @@ import dev.ixpu.leaguemechanics.util.RunePersistence;
 import dev.ixpu.leaguemechanics.command.CommandHandler;
 import dev.ixpu.leaguemechanics.command.CommandTabCompletions;
 
+import dev.ixpu.leaguemechanics.manager.BuffManager;
 import dev.ixpu.leaguemechanics.manager.DebuffManager;
 import dev.ixpu.leaguemechanics.manager.MySQLManager;
 import dev.ixpu.leaguemechanics.manager.RuneManager;
@@ -22,6 +24,9 @@ import dev.ixpu.leaguemechanics.listener.PlayerStatsListener;
 import dev.ixpu.leaguemechanics.listener.PlayerInventoryListener;
 import dev.ixpu.leaguemechanics.listener.RuneListener;
 import dev.ixpu.leaguemechanics.entity.mob.MobStats;
+import dev.ixpu.leaguemechanics.listener.ClassSkillListener;
+import dev.ixpu.leaguemechanics.skill.ClassSkillRegistry;
+import dev.ixpu.leaguemechanics.skill.mage.Paranoia;
 
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
@@ -33,27 +38,27 @@ import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.configuration.file.FileConfiguration;
 
 import dev.ixpu.leaguemechanics.rune.CooldownHandler;
-import dev.ixpu.leaguemechanics.rune.RuneRegistry;
+import dev.ixpu.leaguemechanics.util.RuneRegistry;
 
-import dev.ixpu.leaguemechanics.rune.keystones.precision.Conqueror;
-import dev.ixpu.leaguemechanics.rune.keystones.precision.FleetFootwork;
-import dev.ixpu.leaguemechanics.rune.keystones.precision.LethalTempo;
-import dev.ixpu.leaguemechanics.rune.keystones.precision.PressTheAttack;
+import dev.ixpu.leaguemechanics.rune.paths.precision.Conqueror;
+import dev.ixpu.leaguemechanics.rune.paths.precision.FleetFootwork;
+import dev.ixpu.leaguemechanics.rune.paths.precision.LethalTempo;
+import dev.ixpu.leaguemechanics.rune.paths.precision.PressTheAttack;
 
-import dev.ixpu.leaguemechanics.rune.keystones.domination.DarkHarvest;
-import dev.ixpu.leaguemechanics.rune.keystones.domination.Electrocute;
-import dev.ixpu.leaguemechanics.rune.keystones.domination.HailOfBlades;
+import dev.ixpu.leaguemechanics.rune.paths.domination.DarkHarvest;
+import dev.ixpu.leaguemechanics.rune.paths.domination.Electrocute;
+import dev.ixpu.leaguemechanics.rune.paths.domination.HailOfBlades;
 
-import dev.ixpu.leaguemechanics.rune.keystones.resolve.GraspOfTheUndying;
-import dev.ixpu.leaguemechanics.rune.keystones.resolve.AfterShock;
-import dev.ixpu.leaguemechanics.rune.keystones.resolve.Guardian;
+import dev.ixpu.leaguemechanics.rune.paths.resolve.GraspOfTheUndying;
+import dev.ixpu.leaguemechanics.rune.paths.resolve.AfterShock;
+import dev.ixpu.leaguemechanics.rune.paths.resolve.Guardian;
 
-import dev.ixpu.leaguemechanics.rune.keystones.sorcery.ArcaneComet;
-import dev.ixpu.leaguemechanics.rune.keystones.sorcery.StormRaiderSurge;
-import dev.ixpu.leaguemechanics.rune.keystones.sorcery.DeathfireTorch;
+import dev.ixpu.leaguemechanics.rune.paths.sorcery.ArcaneComet;
+import dev.ixpu.leaguemechanics.rune.paths.sorcery.StormRaiderSurge;
+import dev.ixpu.leaguemechanics.rune.paths.sorcery.DeathfireTorch;
 
-import dev.ixpu.leaguemechanics.rune.keystones.inspiration.GlacialAugment;
-import dev.ixpu.leaguemechanics.rune.keystones.inspiration.FirstStrike;
+import dev.ixpu.leaguemechanics.rune.paths.inspiration.GlacialAugment;
+import dev.ixpu.leaguemechanics.rune.paths.inspiration.FirstStrike;
 
 import java.util.Objects;
 
@@ -97,10 +102,12 @@ public class LeagueMechanics extends JavaPlugin {
         saveDefaultConfig();
         reloadConfig();
         debugMode = getConfig().getBoolean("general-settings.debug", false);
+        BuffManager.getInstance().reload(getConfig());
 
         MobStats.initialize(this);
 
         ItemModifier.initialize(this);
+        ClassSkillRegistry.getInstance().register(new Paranoia(this));
         registerRunes();
         registerCommands();
         registerRegenTask();
@@ -113,7 +120,10 @@ public class LeagueMechanics extends JavaPlugin {
         Bukkit.getPluginManager().registerEvents(playerInventoryListener, this);
         Bukkit.getPluginManager().registerEvents(runeListener, this);
         Bukkit.getPluginManager().registerEvents(dashListener, this);
+        Bukkit.getPluginManager().registerEvents(new dev.ixpu.leaguemechanics.listener.ClassPassiveListener(this), this);
+        Bukkit.getPluginManager().registerEvents(new ClassSkillListener(this), this);
         Bukkit.getPluginManager().registerEvents(ItemShopManager.getInstance(), this);
+        dev.ixpu.leaguemechanics.manager.PartyManager.getInstance().enable(this);
 
         startRuneTicker();
         registerPlaceholders();
@@ -131,11 +141,13 @@ public class LeagueMechanics extends JavaPlugin {
             }
         }
 
+        dev.ixpu.leaguemechanics.manager.PartyManager.getInstance().disable();
+
         dev.ixpu.leaguemechanics.entity.player.PlayerKDA.getInstance().saveAll();
         dev.ixpu.leaguemechanics.entity.player.PlayerKDA.getInstance().close();
 
         CooldownHandler glacial = runeRegistry != null ? runeRegistry.getRune("glacial-augment") : null;
-        if (glacial instanceof dev.ixpu.leaguemechanics.rune.keystones.inspiration.GlacialAugment glacialAugment) {
+        if (glacial instanceof dev.ixpu.leaguemechanics.rune.paths.inspiration.GlacialAugment glacialAugment) {
             glacialAugment.clearAllSnowBlocks();
         }
 
@@ -211,6 +223,7 @@ public class LeagueMechanics extends JavaPlugin {
 
         reloadConfig();
         debugMode = getConfig().getBoolean("debug", false);
+        BuffManager.getInstance().reload(getConfig());
 
         if (runeRegistry != null) {
             runeRegistry.clearRegistry();
@@ -245,7 +258,7 @@ public class LeagueMechanics extends JavaPlugin {
                     }
 
                     double healthRegen = PlayerStats.getOrCreate(player).getPlayerHR(player);
-                    double saturationRegen = itemStatsManager.getItemSR(player);
+                    double saturationRegen = itemStatsManager.getItemSR(player) + BuffManager.getInstance().getBonus(player, BuffManager.Stat.SR);
 
                     dev.ixpu.leaguemechanics.entity.player.PlayerStats ps = dev.ixpu.leaguemechanics.entity.player.PlayerStats.getOrCreate(player);
                     double effectiveHR = ps.getEffectiveHealthRegen(player, healthRegen);
@@ -302,11 +315,12 @@ public class LeagueMechanics extends JavaPlugin {
 
     public void registerDebuffTicker() {
         DebuffManager.getInstance();
-        dev.ixpu.leaguemechanics.rune.DebuffTicker ticker = new dev.ixpu.leaguemechanics.rune.DebuffTicker();
+        DebuffTicker ticker = new DebuffTicker();
         new BukkitRunnable() {
             @Override
             public void run() {
                 DebuffManager.getInstance().tickAll();
+                BuffManager.getInstance().tickAll();
                 for (Player player : Bukkit.getOnlinePlayers()) {
                     ticker.tick(player, null);
                 }

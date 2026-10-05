@@ -1,0 +1,981 @@
+{
+  "model": 
+  {
+    "type": "minecraft:select",
+    "property": "display_context",
+    "fallback":
+  {
+    "type": "select",
+    "property": "custom_model_data",
+    "fallback": {
+      "type": "model",
+      "model": "item/potion",
+      "tints": [
+        {
+          "type": "minecraft:potion",
+          "default": -13083194
+        }
+      ]
+    },
+    "cases": [
+      {
+		  "when": "db_drinks.ship_in_bottle",
+		  "model": {
+			"type": "minecraft:model",
+			"model": "minecraft:item/ship_in_bottle",
+      "tints": [
+            {
+              "type": "minecraft:potion",
+              "default": -13083194
+            }
+          ]
+		  }
+		},
+      {
+		  "when": "db_drinks.ship_in_bottle.oak",
+		  "model": {
+			"type": "minecraft:model",
+			"model": "minecraft:item/ship_in_bottle/oak",
+      "tints": [
+            {
+              "type": "minecraft:potion",
+              "default": -13083194
+            }
+          ]
+		  }
+		},
+    {
+		  "when": "db_drinks.ship_in_bottle.dark_oak",
+		  "model": {
+			"type": "minecraft:model",
+			"model": "minecraft:item/ship_in_bottle/dark_oak",
+      "tints": [
+            {
+              "type": "minecraft:potion",
+              "default": -13083194
+            }
+          ]
+		  }
+		},
+    {
+		  "when": "db_drinks.ship_in_bottle.pale_oak",
+		  "model": {
+			"type": "minecraft:model",
+			"model": "minecraft:item/ship_in_bottle/pale_oak",
+      "tints": [
+            {
+              "type": "minecraft:potion",
+              "default": -13083194
+            }
+          ]
+		  }
+		},
+    {
+		  "when": "db_drinks.ship_in_bottle.mangrove",
+		  "model": {
+			"type": "minecraft:model",
+			"model": "minecraft:item/ship_in_bottle/mangrove",
+      "tints": [
+            {
+              "type": "minecraft:potion",
+              "default": -13083194
+            }
+          ]
+		  }
+		},
+    {
+		  "when": "db_drinks.ship_in_bottle.acacia",
+		  "model": {
+			"type": "minecraft:model",
+			"model": "minecraft:item/ship_in_bottle/acacia",
+      "tints": [
+            {
+              "type": "minecraft:potion",
+              "default": -13083194
+            }
+          ]
+		  }
+		},
+    {
+		  "when": "db_drinks.ship_in_bottle.spruce",
+		  "model": {
+			"type": "minecraft:model",
+			"model": "minecraft:item/ship_in_bottle/spruce",
+      "tints": [
+            {
+              "type": "minecraft:potion",
+              "default": -13083194
+            }
+          ]
+		  }
+		},
+    {
+		  "when": "db_drinks.ship_in_bottle.birch",
+		  "model": {
+			"type": "minecraft:model",
+			"model": "minecraft:item/ship_in_bottle/birch",
+      "tints": [
+            {
+              "type": "minecraft:potion",
+              "default": -13083194
+            }
+          ]
+		  }
+		},
+    {
+		  "when": "db_drinks.ship_in_bottle.cherry",
+		  "model": {
+			"type": "minecraft:model",
+			"model": "minecraft:item/ship_in_bottle/cherry",
+      "tints": [
+            {
+              "type": "minecraft:potion",
+              "default": -13083194
+            }
+          ]
+		  }
+		},
+    {
+		  "when": "db_drinks.ship_in_bottle.jungle",
+		  "model": {
+			"type": "minecraft:model",
+			"model": "minecraft:item/ship_in_bottle/jungle",
+      "tints": [
+            {
+              "type": "minecraft:potion",
+              "default": -13083194
+            }
+          ]
+		  }
+		},
+    {
+		  "when": "db_drinks.ship_in_bottle_empty",
+		  "model": {
+			"type": "minecraft:model",
+			"model": "minecraft:item/ender_sand_in_bottle",
+      "tints": [
+            {
+              "type": "minecraft:potion",
+              "default": -13083194
+            }
+          ]
+		  }
+		},
+      {
+		  "when": "db_drinks.barrel_tap",
+		  "model": {
+			"type": "minecraft:model",
+			"model": "minecraft:item/barrel_tap",
+      "tints": [
+            {
+              "type": "minecraft:potion",
+              "default": -13083194
+            }
+          ]
+		  }
+		},
+      {
+        "when": "db_drinks.beer",
+        "model": {
+          "type": "minecraft:model",
+          "model": "minecraft:item/beer_bottle",
+          "tints": [
+            {
+              "type": "minecraft:potion",
+              "default": -13083194
+            }
+          ]
+        }
+      },
+      {
+        "when": "db_drinks.vodka",
+        "model": {
+          "type": "minecraft:model",
+          "model": "minecraft:item/bottle_vodka",
+          "tints": [
+            {
+              "type": "minecraft:potion",
+              "default": -13083194
+            }
+          ]
+        }
+      },
+      {
+        "when": "db_drinks.cider",
+        "model": {
+          "type": "minecraft:model",
+          "model": "minecraft:item/cider_bottle",
+          "tints": [
+            {
+              "type": "minecraft:potion",
+              "default": -13083194
+            }
+          ]
+        }
+      },
+      {
+        "when": "db_drinks.absinthe",
+        "model": {
+          "type": "minecraft:model",
+          "model": "minecraft:item/absinthe_bottle",
+          "tints": [
+            {
+              "type": "minecraft:potion",
+              "default": -13083194
+            }
+          ]
+        }
+      },
+      {
+        "when": "db_drinks.beer.stavroforos",
+        "model": {
+          "type": "minecraft:model",
+          "model": "minecraft:item/beer_bottle_stavroforos",
+          "tints": [
+            {
+              "type": "minecraft:potion",
+              "default": -13083194
+            }
+          ]
+        }
+      },
+      {
+        "when": "db_drinks.rum",
+        "model": {
+          "type": "minecraft:model",
+          "model": "minecraft:item/rum_bottle",
+          "tints": [
+            {
+              "type": "minecraft:potion",
+              "default": -13083194
+            }
+          ]
+        }
+      },
+      {
+        "when": "db_drinks.rum.flyneberry",
+        "model": {
+          "type": "minecraft:model",
+          "model": "minecraft:item/rum_bottle_flyneberry",
+          "tints": [
+            {
+              "type": "minecraft:potion",
+              "default": -13083194
+            }
+          ]
+        }
+      },
+      {
+        "when": "db_drinks.rum.skeleton",
+        "model": {
+          "type": "minecraft:model",
+          "model": "minecraft:item/skeleton_rum_bottle",
+          "tints": [
+            {
+              "type": "minecraft:potion",
+              "default": -13083194
+            }
+          ]
+        }
+      },
+      {
+        "when": "db_drinks.roscuro",
+        "model": {
+          "type": "minecraft:model",
+          "model": "minecraft:item/tequila_skull_r",
+          "tints": [
+            {
+              "type": "minecraft:potion",
+              "default": -13083194
+            }
+          ]
+        }
+      },
+      {
+        "when": "db_drinks.tequila",
+        "model": {
+          "type": "minecraft:model",
+          "model": "minecraft:item/tequila_skull",
+          "tints": [
+            {
+              "type": "minecraft:potion",
+              "default": -13083194
+            }
+          ]
+        }
+      },
+      {
+        "when": "db_drinks.wine",
+        "model": {
+          "type": "minecraft:model",
+          "model": "minecraft:item/wine_bottle",
+          "tints": [
+            {
+              "type": "minecraft:potion",
+              "default": -13083194
+            }
+          ]
+        }
+      },
+      {
+        "when": "db_drinks.wine.crimson",
+        "model": {
+          "type": "minecraft:model",
+          "model": "minecraft:item/crimson_bottle",
+          "tints": [
+            {
+              "type": "minecraft:potion",
+              "default": -13083194
+            }
+          ]
+        }
+      },
+      {
+        "when": "db_drinks.moonshine",
+        "model": {
+          "type": "minecraft:model",
+          "model": "minecraft:item/moonshine_bottle",
+          "tints": [
+            {
+              "type": "minecraft:potion",
+              "default": -13083194
+            }
+          ]
+        }
+      },
+      {
+        "when": "db_drinks.whiskey",
+        "model": {
+          "type": "minecraft:model",
+          "model": "minecraft:item/whiskey_bottle",
+          "tints": [
+            {
+              "type": "minecraft:potion",
+              "default": -13083194
+            }
+          ]
+        }
+      },
+      {
+        "when": "db_drinks.whiskey.chorus",
+        "model": {
+          "type": "minecraft:model",
+          "model": "minecraft:item/whiskey_bottle_chorus",
+          "tints": [
+            {
+              "type": "minecraft:potion",
+              "default": -13083194
+            }
+          ]
+        }
+      },
+      {
+        "when": "db_drinks.whiskey.dwarven",
+        "model": {
+          "type": "minecraft:model",
+          "model": "minecraft:item/dwarven_whiskey_bottle",
+          "tints": [
+            {
+              "type": "minecraft:potion",
+              "default": -13083194
+            }
+          ]
+        }
+      },
+      {
+        "when": "db_drinks.mead",
+        "model": {
+          "type": "minecraft:model",
+          "model": "minecraft:item/mead_bottle",
+          "tints": [
+            {
+              "type": "minecraft:potion",
+              "default": -13083194
+            }
+          ]
+        }
+      },
+      {
+        "when": "db_drinks.mead.illager",
+        "model": {
+          "type": "minecraft:model",
+          "model": "minecraft:item/mead_bottle_illager",
+          "tints": [
+            {
+              "type": "minecraft:potion",
+              "default": -13083194
+            }
+          ]
+        }
+      },
+      {
+        "when": "db_drinks.wine.elven",
+        "model": {
+          "type": "minecraft:model",
+          "model": "minecraft:item/elven_wine_bottle",
+          "tints": [
+            {
+              "type": "minecraft:potion",
+              "default": -13083194
+            }
+          ]
+        }
+      },
+      {
+        "when": "db_drinks.whiskey.fire",
+        "model": {
+          "type": "minecraft:model",
+          "model": "minecraft:item/whiskey_bottle_fire",
+          "tints": [
+            {
+              "type": "minecraft:potion",
+              "default": -13083194
+            }
+          ]
+        }
+      },
+      {
+        "when": "db_drinks.dino_bottle",
+        "model": {
+          "type": "minecraft:model",
+          "model": "minecraft:item/dino_bottle",
+          "tints": [
+            {
+              "type": "minecraft:potion",
+              "default": -13083194
+            }
+          ]
+        }
+      },
+      {
+        "when": "db_drinks.milkshake",
+        "model": {
+          "type": "minecraft:model",
+          "model": "minecraft:item/milkshake_bottle",
+          "tints": [
+            {
+              "type": "minecraft:potion",
+              "default": -13083194
+            }
+          ]
+        }
+      },
+      {
+        "when": "db_drinks.wine_glass",
+        "model": {
+          "type": "minecraft:model",
+          "model": "minecraft:item/elven_wine_bottle",
+          "tints": [
+            {
+              "type": "minecraft:potion",
+              "default": -13083194
+            }
+          ]
+        }
+      },
+      {
+        "when": "db_drinks.the_rum",
+        "model": {
+          "type": "minecraft:model",
+          "model": "minecraft:item/the_rum_bottle",
+          "tints": [
+            {
+              "type": "minecraft:potion",
+              "default": -13083194
+            }
+          ]
+        }
+      }
+    ]
+  },
+    "cases": [
+    {
+      "when": "gui",
+      "model": {
+      "type": "select",
+        "property": "custom_model_data",
+        "fallback": {
+        "type": "model",
+        "model": "item/potion",
+        "tints": [
+          {
+           "type": "minecraft:potion",
+           "default": -13083194
+          }
+      ]
+    },
+    "cases": [
+      {
+		  "when": "db_drinks.barrel_tap",
+		  "model": {
+			"type": "minecraft:model",
+			"model": "minecraft:item/barrel_tap",
+      "tints": [
+            {
+              "type": "minecraft:potion",
+              "default": -13083194
+            }
+          ]
+		  }
+		},
+      {
+        "when": "db_drinks.beer",
+        "model": {
+          "type": "minecraft:model",
+          "model": "minecraft:item/2d_rum/beer_bottle",
+          "tints": [
+            {
+              "type": "minecraft:potion",
+              "default": -13083194
+            }
+          ]
+        }
+      },
+      {
+        "when": "db_drinks.ship_in_bottle",
+        "model": {
+          "type": "minecraft:model",
+          "model": "minecraft:item/2d_rum/ship_in_bottle",
+          "tints": [
+            {
+              "type": "minecraft:potion",
+              "default": -13083194
+            }
+          ]
+        }
+      },
+      {
+        "when": "db_drinks.ship_in_bottle.oak",
+        "model": {
+          "type": "minecraft:model",
+          "model": "minecraft:item/2d_rum/ship_in_bottle/oak",
+          "tints": [
+            {
+              "type": "minecraft:potion",
+              "default": -13083194
+            }
+          ]
+        }
+      },
+      {
+        "when": "db_drinks.ship_in_bottle.dark_oak",
+        "model": {
+          "type": "minecraft:model",
+          "model": "minecraft:item/2d_rum/ship_in_bottle/dark_oak",
+          "tints": [
+            {
+              "type": "minecraft:potion",
+              "default": -13083194
+            }
+          ]
+        }
+      },
+      {
+        "when": "db_drinks.ship_in_bottle.pale_oak",
+        "model": {
+          "type": "minecraft:model",
+          "model": "minecraft:item/2d_rum/ship_in_bottle/pale_oak",
+          "tints": [
+            {
+              "type": "minecraft:potion",
+              "default": -13083194
+            }
+          ]
+        }
+      },
+      {
+        "when": "db_drinks.ship_in_bottle.birch",
+        "model": {
+          "type": "minecraft:model",
+          "model": "minecraft:item/2d_rum/ship_in_bottle/birch",
+          "tints": [
+            {
+              "type": "minecraft:potion",
+              "default": -13083194
+            }
+          ]
+        }
+      },
+      {
+        "when": "db_drinks.ship_in_bottle.spruce",
+        "model": {
+          "type": "minecraft:model",
+          "model": "minecraft:item/2d_rum/ship_in_bottle/spruce",
+          "tints": [
+            {
+              "type": "minecraft:potion",
+              "default": -13083194
+            }
+          ]
+        }
+      },
+      {
+        "when": "db_drinks.ship_in_bottle.acacia",
+        "model": {
+          "type": "minecraft:model",
+          "model": "minecraft:item/2d_rum/ship_in_bottle/acacia",
+          "tints": [
+            {
+              "type": "minecraft:potion",
+              "default": -13083194
+            }
+          ]
+        }
+      },
+      {
+        "when": "db_drinks.ship_in_bottle.mangrove",
+        "model": {
+          "type": "minecraft:model",
+          "model": "minecraft:item/2d_rum/ship_in_bottle/mangrove",
+          "tints": [
+            {
+              "type": "minecraft:potion",
+              "default": -13083194
+            }
+          ]
+        }
+      },
+      {
+        "when": "db_drinks.ship_in_bottle.cherry",
+        "model": {
+          "type": "minecraft:model",
+          "model": "minecraft:item/2d_rum/ship_in_bottle/cherry",
+          "tints": [
+            {
+              "type": "minecraft:potion",
+              "default": -13083194
+            }
+          ]
+        }
+      },
+      {
+        "when": "db_drinks.ship_in_bottle.jungle",
+        "model": {
+          "type": "minecraft:model",
+          "model": "minecraft:item/2d_rum/ship_in_bottle/jungle",
+          "tints": [
+            {
+              "type": "minecraft:potion",
+              "default": -13083194
+            }
+          ]
+        }
+      },
+      {
+        "when": "db_drinks.ship_in_bottle_empty",
+        "model": {
+          "type": "minecraft:model",
+          "model": "minecraft:item/2d_rum/ender_sand_in_bottle",
+          "tints": [
+            {
+              "type": "minecraft:potion",
+              "default": -13083194
+            }
+          ]
+        }
+      },
+      {
+        "when": "db_drinks.vodka",
+        "model": {
+    "type": "minecraft:model",
+    "model": "minecraft:item/2d_rum/vodka",
+    "tints": [
+      {
+        "type": "minecraft:potion",
+        "default": -13083194
+      }
+    ]
+    }
+      },
+      {
+        "when": "db_drinks.cider",
+        "model": {
+    "type": "minecraft:model",
+    "model": "minecraft:item/2d_rum/cider",
+    "tints": [
+      {
+        "type": "minecraft:potion",
+        "default": -13083194
+      }
+    ]
+    }
+      },
+      {
+        "when": "db_drinks.absinthe",
+        "model": {
+    "type": "minecraft:model",
+    "model": "minecraft:item/2d_rum/absinthe_bottle",
+    "tints": [
+      {
+        "type": "minecraft:potion",
+        "default": -13083194
+      }
+    ]
+    }
+      },
+      {
+        "when": "db_drinks.mug_stavroforos",
+        "model": {
+    "type": "minecraft:model",
+    "model": "minecraft:item/beer_bottle_stavroforos",
+    "tints": [
+      {
+        "type": "minecraft:potion",
+        "default": -13083194
+      }
+    ]
+    }
+      },
+      {
+        "when": "db_drinks.rum",
+        "model": {
+    "type": "minecraft:model",
+    "model": "minecraft:item/2d_rum/rum",
+    "tints": [
+      {
+        "type": "minecraft:potion",
+        "default": -13083194
+      }
+    ]
+    }
+      },
+      {
+        "when": "db_drinks.rum.flyneberry",
+        "model": {
+    "type": "minecraft:model",
+    "model": "minecraft:item/2d_rum/flyneberry_rum",
+    "tints": [
+      {
+        "type": "minecraft:potion",
+        "default": -13083194
+      }
+    ]
+    }
+      },
+      {
+        "when": "db_drinks.rum.skeleton",
+        "model": {
+    "type": "minecraft:model",
+    "model": "minecraft:item/2d_rum/skeleton_rum",
+    "tints": [
+      {
+        "type": "minecraft:potion",
+        "default": -13083194
+      }
+    ]
+    }
+      },
+      {
+        "when": "db_drinks.roscuro",
+        "model": {
+    "type": "minecraft:model",
+    "model": "minecraft:item/2d_rum/roscuro_tequila",
+    "tints": [
+      {
+        "type": "minecraft:potion",
+        "default": -13083194
+      }
+    ]
+    }
+      },
+      {
+        "when": "db_drinks.tequila",
+        "model": {
+    "type": "minecraft:model",
+    "model": "minecraft:item/2d_rum/tequila",
+    "tints": [
+      {
+        "type": "minecraft:potion",
+        "default": -13083194
+      }
+    ]
+    }
+      },
+      {
+        "when": "db_drinks.wine",
+        "model": {
+    "type": "minecraft:model",
+    "model": "minecraft:item/2d_rum/wine",
+    "tints": [
+      {
+        "type": "minecraft:potion",
+        "default": -13083194
+      }
+    ]
+    }
+      },
+      {
+        "when": "db_drinks.wine.crimson",
+        "model": {
+    "type": "minecraft:model",
+    "model": "minecraft:item/2d_rum/crimson_wine",
+    "tints": [
+      {
+        "type": "minecraft:potion",
+        "default": -13083194
+      }
+    ]
+    }
+      },
+      {
+        "when": "db_drinks.moonshine",
+        "model": {
+    "type": "minecraft:model",
+    "model": "minecraft:item/2d_rum/moonshine_bottle",
+    "tints": [
+      {
+        "type": "minecraft:potion",
+        "default": -13083194
+      }
+    ]
+    }
+      },
+      {
+        "when": "db_drinks.whiskey",
+        "model": {
+    "type": "minecraft:model",
+    "model": "minecraft:item/2d_rum/whiskey",
+    "tints": [
+      {
+        "type": "minecraft:potion",
+        "default": -13083194
+      }
+    ]
+    }
+      },
+      {
+        "when": "db_drinks.whiskey.chorus",
+        "model": {
+    "type": "minecraft:model",
+    "model": "minecraft:item/2d_rum/chorus_whiskey",
+    "tints": [
+      {
+        "type": "minecraft:potion",
+        "default": -13083194
+      }
+    ]
+    }
+      },
+      {
+        "when": "db_drinks.whiskey.dwarven",
+        "model": {
+    "type": "minecraft:model",
+    "model": "minecraft:item/2d_rum/dwarven_whiskey",
+    "tints": [
+      {
+        "type": "minecraft:potion",
+        "default": -13083194
+      }
+    ]
+    }
+      },
+      {
+        "when": "db_drinks.mead",
+        "model": {
+    "type": "minecraft:model",
+    "model": "minecraft:item/2d_rum/mead_bottle",
+    "tints": [
+      {
+        "type": "minecraft:potion",
+        "default": -13083194
+      }
+    ]
+    }
+      },
+      {
+        "when": "db_drinks.mead.illager",
+        "model": {
+    "type": "minecraft:model",
+    "model": "minecraft:item/2d_rum/illager_mead_bottle",
+    "tints": [
+      {
+        "type": "minecraft:potion",
+        "default": -13083194
+      }
+    ]
+    }
+      },
+      {
+        "when": "db_drinks.wine.elven",
+        "model": {
+    "type": "minecraft:model",
+    "model": "minecraft:item/2d_rum/elven_wine",
+    "tints": [
+      {
+        "type": "minecraft:potion",
+        "default": -13083194
+      }
+    ]
+    }
+      },
+      {
+        "when": "db_drinks.whiskey.fire",
+        "model": {
+    "type": "minecraft:model",
+    "model": "minecraft:item/2d_rum/fire_whiskey",
+    "tints": [
+      {
+        "type": "minecraft:potion",
+        "default": -13083194
+      }
+    ]
+    }
+      },
+      {
+        "when": "db_drinks.beer.stavroforos",
+        "model": {
+    "type": "minecraft:model",
+    "model": "minecraft:item/2d_rum/beer_bottle_stavroforos",
+    "tints": [
+      {
+        "type": "minecraft:potion",
+        "default": -13083194
+      }
+    ]
+    }
+      },
+      {
+        "when": "db_drinks.dino_bottle",
+        "model": {
+    "type": "minecraft:model",
+    "model": "minecraft:item/2d_rum/dino_bottle",
+    "tints": [
+      {
+        "type": "minecraft:potion",
+        "default": -13083194
+      }
+    ]
+    }
+      },
+      {
+        "when": "db_drinks.milkshake",
+        "model": {
+    "type": "minecraft:model",
+    "model": "minecraft:item/2d_rum/milkshake",
+    "tints": [
+      {
+        "type": "minecraft:potion",
+        "default": -13083194
+      }
+    ]
+    }
+      },
+      {
+        "when": "db_drinks.wine_glass",
+        "model": {
+    "type": "minecraft:model",
+    "model": "minecraft:item/2d_rum/elven_wine",
+    "tints": [
+      {
+        "type": "minecraft:potion",
+        "default": -13083194
+      }
+    ]
+    }
+      }
+    ]
+  }
+    }
+    ]
+  }
+}

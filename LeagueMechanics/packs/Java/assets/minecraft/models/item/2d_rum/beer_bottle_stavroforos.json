@@ -1,0 +1,7 @@
+{
+    "parent": "item/generated",
+    "textures": {
+        "layer0": "item/2d/stavroforos_bottle_2d_overlay",
+        "layer1": "item/2d/stavroforos_bottle_2d"
+    }
+}

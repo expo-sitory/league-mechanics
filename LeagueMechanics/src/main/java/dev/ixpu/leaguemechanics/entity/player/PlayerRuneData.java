@@ -1,7 +1,7 @@
 package dev.ixpu.leaguemechanics.entity.player;
 
 import dev.ixpu.leaguemechanics.rune.CooldownHandler;
-import dev.ixpu.leaguemechanics.rune.RunePath;
+import dev.ixpu.leaguemechanics.rune.paths.RunePath;
 import org.bukkit.entity.Player;
 
 public class PlayerRuneData {

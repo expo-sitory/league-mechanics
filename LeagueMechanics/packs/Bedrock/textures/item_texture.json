@@ -1,0 +1,311 @@
+{
+    "resource_pack_name": "leaguemechanics",
+    "texture_name": "atlas.items",
+    "texture_data": {
+        "leaguemechanics.cull": {
+            "textures": [
+                "textures/items/cull"
+            ]
+        },
+        "leaguemechanics.dark_seal": {
+            "textures": [
+                "textures/items/dark_seal"
+            ]
+        },
+        "leaguemechanics.dorans_blade": {
+            "textures": [
+                "textures/items/dorans_blade"
+            ]
+        },
+        "leaguemechanics.dorans_bow": {
+            "textures": [
+                "textures/items/dorans_bow"
+            ]
+        },
+        "leaguemechanics.dorans_helm": {
+            "textures": [
+                "textures/items/dorans_helm"
+            ]
+        },
+        "leaguemechanics.dorans_ring": {
+            "textures": [
+                "textures/items/dorans_ring"
+            ]
+        },
+        "leaguemechanics.dorans_shield": {
+            "textures": [
+                "textures/items/dorans_shield"
+            ]
+        },
+        "leaguemechanics.berserkers_greaves": {
+            "textures": [
+                "textures/items/berserkers_greaves"
+            ]
+        },
+        "leaguemechanics.boots": {
+            "textures": [
+                "textures/items/boots"
+            ]
+        },
+        "leaguemechanics.mercurys_treads": {
+            "textures": [
+                "textures/items/mercurys_treads"
+            ]
+        },
+        "leaguemechanics.plated_steelcaps": {
+            "textures": [
+                "textures/items/plated_steelcaps"
+            ]
+        },
+        "leaguemechanics.sorcerers_shoes": {
+            "textures": [
+                "textures/items/sorcerers_shoes"
+            ]
+        },
+        "leaguemechanics.amplifying_tome": {
+            "textures": [
+                "textures/items/amplifying_tome"
+            ]
+        },
+        "leaguemechanics.b_f_sword": {
+            "textures": [
+                "textures/items/b_f_sword"
+            ]
+        },
+        "leaguemechanics.blasting_wand": {
+            "textures": [
+                "textures/items/blasting_wand"
+            ]
+        },
+        "leaguemechanics.cloak_of_agility": {
+            "textures": [
+                "textures/items/cloak_of_agility"
+            ]
+        },
+        "leaguemechanics.cloth_armor": {
+            "textures": [
+                "textures/items/cloth_armor"
+            ]
+        },
+        "leaguemechanics.dagger": {
+            "textures": [
+                "textures/items/dagger"
+            ]
+        },
+        "leaguemechanics.faeri_charm": {
+            "textures": [
+                "textures/items/faeri_charm"
+            ]
+        },
+        "leaguemechanics.glowing_mote": {
+            "textures": [
+                "textures/items/glowing_mote"
+            ]
+        },
+        "leaguemechanics.long_sword": {
+            "textures": [
+                "textures/items/long_sword"
+            ]
+        },
+        "leaguemechanics.needlessly_large_rod": {
+            "textures": [
+                "textures/items/needlessly_large_rod"
+            ]
+        },
+        "leaguemechanics.null_magic_mantle": {
+            "textures": [
+                "textures/items/null_magic_mantle"
+            ]
+        },
+        "leaguemechanics.pickaxe": {
+            "textures": [
+                "textures/items/pickaxe"
+            ]
+        },
+        "leaguemechanics.rejuvenation_bead": {
+            "textures": [
+                "textures/items/rejuvenation_bead"
+            ]
+        },
+        "leaguemechanics.ruby_crystal": {
+            "textures": [
+                "textures/items/ruby_crystal"
+            ]
+        },
+        "leaguemechanics.aether_wisp": {
+            "textures": [
+                "textures/items/aether_wisp"
+            ]
+        },
+        "leaguemechanics.bamis_cinder": {
+            "textures": [
+                "textures/items/bamis_cinder"
+            ]
+        },
+        "leaguemechanics.bandleglass_mirror": {
+            "textures": [
+                "textures/items/bandleglass_mirror"
+            ]
+        },
+        "leaguemechanics.blightting_jewel": {
+            "textures": [
+                "textures/items/blightting_jewel"
+            ]
+        },
+        "leaguemechanics.bramble_vest": {
+            "textures": [
+                "textures/items/bramble_vest"
+            ]
+        },
+        "leaguemechanics.caulfields_warhammer": {
+            "textures": [
+                "textures/items/caulfields_warhammer"
+            ]
+        },
+        "leaguemechanics.chain_vest": {
+            "textures": [
+                "textures/items/chain_vest"
+            ]
+        },
+        "leaguemechanics.crystalline_bracer": {
+            "textures": [
+                "textures/items/crystalline_bracer"
+            ]
+        },
+        "leaguemechanics.executioners_calling": {
+            "textures": [
+                "textures/items/executioners_calling"
+            ]
+        },
+        "leaguemechanics.fated_ashes": {
+            "textures": [
+                "textures/items/fated_ashes"
+            ]
+        },
+        "leaguemechanics.flendish_codex": {
+            "textures": [
+                "textures/items/flendish_codex"
+            ]
+        },
+        "leaguemechanics.giants_belt": {
+            "textures": [
+                "textures/items/giants_belt"
+            ]
+        },
+        "leaguemechanics.hearthbound_axe": {
+            "textures": [
+                "textures/items/hearthbound_axe"
+            ]
+        },
+        "leaguemechanics.hexdrinker": {
+            "textures": [
+                "textures/items/hexdrinker"
+            ]
+        },
+        "leaguemechanics.hextech_alternator": {
+            "textures": [
+                "textures/items/hextech_alternator"
+            ]
+        },
+        "leaguemechanics.kindlegem": {
+            "textures": [
+                "textures/items/kindlegem"
+            ]
+        },
+        "leaguemechanics.last_whisper": {
+            "textures": [
+                "textures/items/last_whisper"
+            ]
+        },
+        "leaguemechanics.lost_chapter": {
+            "textures": [
+                "textures/items/lost_chapter"
+            ]
+        },
+        "leaguemechanics.negatron_cloak": {
+            "textures": [
+                "textures/items/negatron_cloak"
+            ]
+        },
+        "leaguemechanics.noonquiver": {
+            "textures": [
+                "textures/items/noonquiver"
+            ]
+        },
+        "leaguemechanics.oblivion_orb": {
+            "textures": [
+                "textures/items/oblivion_orb"
+            ]
+        },
+        "leaguemechanics.phage": {
+            "textures": [
+                "textures/items/phage"
+            ]
+        },
+        "leaguemechanics.recurve_bow": {
+            "textures": [
+                "textures/items/recurve_bow"
+            ]
+        },
+        "leaguemechanics.scouts_slingshot": {
+            "textures": [
+                "textures/items/scouts_slingshot"
+            ]
+        },
+        "leaguemechanics.serrated_dirk": {
+            "textures": [
+                "textures/items/serrated_dirk"
+            ]
+        },
+        "leaguemechanics.spectres_cowl": {
+            "textures": [
+                "textures/items/spectres_cowl"
+            ]
+        },
+        "leaguemechanics.steel_sigil": {
+            "textures": [
+                "textures/items/steel_sigil"
+            ]
+        },
+        "leaguemechanics.the_brutalizer": {
+            "textures": [
+                "textures/items/the_brutalizer"
+            ]
+        },
+        "leaguemechanics.tunneler": {
+            "textures": [
+                "textures/items/tunneler"
+            ]
+        },
+        "leaguemechanics.vampiric_scepter": {
+            "textures": [
+                "textures/items/vampiric_scepter"
+            ]
+        },
+        "leaguemechanics.verdant_barrier": {
+            "textures": [
+                "textures/items/verdant_barrier"
+            ]
+        },
+        "leaguemechanics.wardens_mail": {
+            "textures": [
+                "textures/items/wardens_mail"
+            ]
+        },
+        "leaguemechanics.winged_moonplate": {
+            "textures": [
+                "textures/items/winged_moonplate"
+            ]
+        },
+        "leaguemechanics.zeal": {
+            "textures": [
+                "textures/items/zeal"
+            ]
+        },
+        "leaguemechanics.rectrix": {
+            "textures": [
+                "textures/items/rectrix"
+            ]
+        }
+    }
+}

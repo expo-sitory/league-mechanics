@@ -1,9 +1,13 @@
 package dev.ixpu.leaguemechanics.listener;
 
+import com.destroystokyo.paper.event.player.PlayerJumpEvent;
 import dev.ixpu.leaguemechanics.LeagueMechanics;
+import dev.ixpu.leaguemechanics.entity.player.ClassPassives;
 import dev.ixpu.leaguemechanics.entity.player.skills.Dash;
 import dev.ixpu.leaguemechanics.entity.player.skills.DoubleJump;
+import dev.ixpu.leaguemechanics.debuff.DebuffType;
 import dev.ixpu.leaguemechanics.manager.CombatStateManager;
+import dev.ixpu.leaguemechanics.manager.DebuffManager;
 import org.bukkit.GameMode;
 import org.bukkit.Input;
 import org.bukkit.Location;
@@ -15,6 +19,7 @@ import org.bukkit.NamespacedKey;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerInputEvent;
+import org.bukkit.event.player.PlayerMoveEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.util.Vector;
 
@@ -85,6 +90,10 @@ public class PlayerSkillListener implements Listener {
         if (player.isOnGround() || player.isFlying() || player.isGliding()) {
             return;
         }
+        if (DebuffManager.getInstance().hasDebuff(player, DebuffType.GROUNDED)
+                || DebuffManager.getInstance().hasDebuff(player, DebuffType.STUN)) {
+            return;
+        }
 
         if (jumpPressed && player.getLocation().getPitch() <= LOOK_UP_PITCH) {
             performDoubleJump(player);
@@ -105,14 +114,14 @@ public class PlayerSkillListener implements Listener {
         if (dashCooldown.isOnCooldown(player)) {
             return;
         }
-        if (player.getFoodLevel() < HUNGER_COST) {
+        if (player.getFoodLevel() < hungerCost(player)) {
             return;
         }
 
         dashCooldown.startCooldown(player);
-        player.setFoodLevel(player.getFoodLevel() - HUNGER_COST);
+        player.setFoodLevel(player.getFoodLevel() - hungerCost(player));
 
-        Vector velocity = direction.multiply(DASH_STRENGTH);
+        Vector velocity = direction.multiply(DASH_STRENGTH * ClassPassives.getDashStrengthMultiplier(player));
         velocity.setY(DASH_VERTICAL_BOOST);
         player.setVelocity(velocity);
 
@@ -123,19 +132,48 @@ public class PlayerSkillListener implements Listener {
         player.getWorld().spawnParticle(Particle.CLOUD, loc, 12, 0.3, 0.1, 0.3, 0.02);
     }
 
+    @EventHandler(ignoreCancelled = true)
+    public void onPlayerJump(PlayerJumpEvent event) {
+        DebuffManager debuffs = DebuffManager.getInstance();
+        if (debuffs.hasDebuff(event.getPlayer(), DebuffType.GROUNDED) || debuffs.hasDebuff(event.getPlayer(), DebuffType.STUN)) {
+            event.setCancelled(true);
+        }
+    }
+
+    @EventHandler(ignoreCancelled = true)
+    public void onPlayerMove(PlayerMoveEvent event) {
+        Location from = event.getFrom();
+        Location to = event.getTo();
+        if (to == null) return;
+        if (from.getX() == to.getX() && from.getZ() == to.getZ() && to.getY() <= from.getY()) return;
+        if (!DebuffManager.getInstance().hasDebuff(event.getPlayer(), DebuffType.STUN)) return;
+
+        Location locked = to.clone();
+        locked.setX(from.getX());
+        locked.setZ(from.getZ());
+        if (to.getY() > from.getY()) {
+            locked.setY(from.getY());
+        }
+        event.setTo(locked);
+    }
+
+    private int hungerCost(Player player) {
+        return ClassPassives.skipsMobilityHungerCost(player) ? 0 : HUNGER_COST;
+    }
+
     private void performDoubleJump(Player player) {
         if (doubleJumpCooldown.isOnCooldown(player)) {
             return;
         }
-        if (player.getFoodLevel() < HUNGER_COST) {
+        if (player.getFoodLevel() < hungerCost(player)) {
             return;
         }
 
         doubleJumpCooldown.startCooldown(player);
-        player.setFoodLevel(player.getFoodLevel() - HUNGER_COST);
+        player.setFoodLevel(player.getFoodLevel() - hungerCost(player));
 
         Vector velocity = player.getVelocity();
-        velocity.setY(DOUBLE_JUMP_STRENGTH);
+        velocity.setY(DOUBLE_JUMP_STRENGTH * ClassPassives.getDoubleJumpStrengthMultiplier(player));
         player.setVelocity(velocity);
 
         combatState.markDashFallImmunity(player.getUniqueId(), DOUBLE_JUMP_FALL_IMMUNITY_MS);

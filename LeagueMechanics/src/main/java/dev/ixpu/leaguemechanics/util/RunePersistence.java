@@ -3,8 +3,8 @@ package dev.ixpu.leaguemechanics.util;
 import dev.ixpu.leaguemechanics.LeagueMechanics;
 import dev.ixpu.leaguemechanics.manager.MySQLManager;
 import dev.ixpu.leaguemechanics.entity.player.PlayerClassType;
-import dev.ixpu.leaguemechanics.rune.RunePath;
-import dev.ixpu.leaguemechanics.rune.RuneSlot;
+import dev.ixpu.leaguemechanics.rune.paths.RunePath;
+import dev.ixpu.leaguemechanics.rune.slots.RuneSlot;
 import org.bukkit.plugin.Plugin;
 
 import java.util.UUID;

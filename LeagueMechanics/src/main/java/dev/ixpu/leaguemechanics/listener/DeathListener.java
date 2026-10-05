@@ -15,8 +15,8 @@ import dev.ixpu.leaguemechanics.item.passives.ItemPassivesRegistry;
 import dev.ixpu.leaguemechanics.manager.*;
 
 import dev.ixpu.leaguemechanics.rune.CooldownHandler;
-import dev.ixpu.leaguemechanics.rune.RuneRegistry;
-import dev.ixpu.leaguemechanics.rune.keystones.sorcery.DeathfireTorch;
+import dev.ixpu.leaguemechanics.util.RuneRegistry;
+import dev.ixpu.leaguemechanics.rune.paths.sorcery.DeathfireTorch;
 
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerRespawnEvent;
@@ -122,6 +122,7 @@ public class DeathListener implements Listener {
         combatState.addProcessedDeath(player.getUniqueId());
 
         dev.ixpu.leaguemechanics.entity.player.PlayerKDA.getInstance().recordDeath(player);
+        dev.ixpu.leaguemechanics.manager.BuffManager.getInstance().clearBuffs(player);
 
         fireTakedowns(player);
         CritManager.getInstance().resetFailureStreak(player);

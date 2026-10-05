@@ -3,9 +3,11 @@ package dev.ixpu.leaguemechanics.placeholder;
 import dev.ixpu.leaguemechanics.LeagueMechanics;
 import dev.ixpu.leaguemechanics.entity.player.PlayerClass;
 import dev.ixpu.leaguemechanics.entity.player.PlayerClassType;
+import dev.ixpu.leaguemechanics.debuff.DebuffType;
 import dev.ixpu.leaguemechanics.entity.player.PlayerStats;
-import dev.ixpu.leaguemechanics.rune.RunePath;
-import dev.ixpu.leaguemechanics.rune.RuneShard;
+import dev.ixpu.leaguemechanics.manager.DebuffManager;
+import dev.ixpu.leaguemechanics.rune.paths.RunePath;
+import dev.ixpu.leaguemechanics.rune.shards.RuneShard;
 import dev.ixpu.leaguemechanics.rune.shards.ShardStats;
 import dev.ixpu.leaguemechanics.util.Icons;
 import dev.ixpu.leaguemechanics.util.ItemModifier;
@@ -125,6 +127,9 @@ public class PlaceholderRegistry extends PlaceholderExpansion {
 
             case "class" -> getClass(player);
             case "class_mm" -> getClassMM(player);
+
+            case "latest_cc" -> getLatestCC(player);
+            case "latest_cc_duration" -> getLatestCCDuration(player);
 
             case "level" -> String.valueOf(stats.getLeagueLevel());
             case "item_count" -> String.valueOf(plugin.getStatsManager().countLeagueItems(player));
@@ -560,6 +565,21 @@ public class PlaceholderRegistry extends PlaceholderExpansion {
         return display(CLASS_DISPLAY_MINIMESSAGE, "classes", ct.getId(), "⚔ No Class Selected");
     }
 
+
+    private String getLatestCC(Player player) {
+        DebuffType type = DebuffManager.getInstance().getLatestCrowdControl(player);
+        if (type == null) return "";
+        String icon = Icons.get(DebuffManager.getCrowdControlIconKey(type));
+        String name = DebuffManager.getCrowdControlName(type);
+        return icon.isEmpty() ? name : icon + " " + name;
+    }
+
+    private String getLatestCCDuration(Player player) {
+        DebuffManager debuffs = DebuffManager.getInstance();
+        DebuffType type = debuffs.getLatestCrowdControl(player);
+        if (type == null) return "";
+        return String.format("%.1f", debuffs.getRemainingSeconds(player, type));
+    }
 
     private static String icon(String key) {
         String glyph = Icons.get(key);

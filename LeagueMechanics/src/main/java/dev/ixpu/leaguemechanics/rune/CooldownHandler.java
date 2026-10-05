@@ -2,6 +2,8 @@ package dev.ixpu.leaguemechanics.rune;
 
 import dev.ixpu.leaguemechanics.LeagueMechanics;
 import dev.ixpu.leaguemechanics.manager.ItemStatsManager;
+import dev.ixpu.leaguemechanics.rune.paths.RunePath;
+import dev.ixpu.leaguemechanics.rune.slots.RuneSlot;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 
@@ -49,7 +51,7 @@ public abstract class CooldownHandler {
         if (plugin == null) return 0;
         ItemStatsManager statsManager = plugin.getStatsManager();
         if (statsManager == null) return 0;
-        double ch = statsManager.getItemCH(player);
+        double ch = statsManager.getItemCH(player) + dev.ixpu.leaguemechanics.manager.BuffManager.getInstance().getBonus(player, dev.ixpu.leaguemechanics.manager.BuffManager.Stat.CH);
         if (ch <= 0) return 0;
         long baseMs = (long) (cooldownSeconds * 1000);
         return (long) (baseMs * (ch / 100.0));

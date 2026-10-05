@@ -252,7 +252,8 @@ public class ItemShopManager implements Listener {
         if (!shopData.hasCustomModel(itemId)) {
             return null;
         }
-        boolean hasPack = player.getResourcePackStatus() == PlayerResourcePackStatusEvent.Status.SUCCESSFULLY_LOADED;
+        boolean hasPack = LeagueMechanics.getInstance().getConfig().getBoolean("general-settings.assume-client-pack", false)
+                || player.getResourcePackStatus() == PlayerResourcePackStatusEvent.Status.SUCCESSFULLY_LOADED;
         return hasPack ? shopData.getModel(itemId) : shopData.getFallbackModel(itemId);
     }
 

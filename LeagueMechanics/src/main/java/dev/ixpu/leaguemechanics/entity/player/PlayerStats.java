@@ -1,16 +1,18 @@
 package dev.ixpu.leaguemechanics.entity.player;
 
 import dev.ixpu.leaguemechanics.LeagueMechanics;
+import dev.ixpu.leaguemechanics.manager.ClassSkillManager;
 import dev.ixpu.leaguemechanics.manager.ItemStatsManager;
-import dev.ixpu.leaguemechanics.rune.keystones.precision.LethalTempo;
-import dev.ixpu.leaguemechanics.rune.keystones.domination.HailOfBlades;
+import dev.ixpu.leaguemechanics.rune.paths.precision.LethalTempo;
+import dev.ixpu.leaguemechanics.rune.paths.domination.HailOfBlades;
 import dev.ixpu.leaguemechanics.rune.CooldownHandler;
+import dev.ixpu.leaguemechanics.manager.BuffManager;
 import dev.ixpu.leaguemechanics.manager.DebuffManager;
-import dev.ixpu.leaguemechanics.rune.DebuffType;
+import dev.ixpu.leaguemechanics.debuff.DebuffType;
 import dev.ixpu.leaguemechanics.item.passives.ItemPassivesRegistry;
 import dev.ixpu.leaguemechanics.item.passives.dark_seal;
 import dev.ixpu.leaguemechanics.rune.shards.ShardStats;
-import dev.ixpu.leaguemechanics.rune.RuneShard;
+import dev.ixpu.leaguemechanics.rune.shards.RuneShard;
 
 import dev.ixpu.leaguemechanics.util.Icons;
 import org.bukkit.entity.Player;
@@ -39,6 +41,12 @@ public class PlayerStats {
     private double temporaryMSModification = 0.0;
     private double temporaryASModification = 0.0;
     private double temporaryCritDamageModification = 0.0;
+
+    private double LEVEL_18_BONUS_TRUE_DAMAGE = 3.5;
+    private double LEVEL_13_BONUS_TRUE_DAMAGE = 2.7;
+    private double LEVEL_8_BONUS_TRUE_DAMAGE = 2.2;
+    private double LEVEL_3_BONUS_TRUE_DAMAGE = 1.7;
+    private double BASE_BONUS_TRUE_DAMAGE = 0;
 
     private int graspHearts = 0;
 
@@ -94,7 +102,8 @@ public class PlayerStats {
 
     public double getPlayerHR(Player player) {
         ItemStatsManager itemStatsManager = LeagueMechanics.getInstance().getStatsManager();
-        return itemStatsManager.getItemHR(player) + getRuneShards(player).getHealthRegen();
+        return itemStatsManager.getItemHR(player) + getRuneShards(player).getHealthRegen()
+                + BuffManager.getInstance().getBonus(player, BuffManager.Stat.HR);
     }
 
 
@@ -110,7 +119,8 @@ public class PlayerStats {
         if (itemStatsManager != null) {
             itemAD += itemStatsManager.getItemAD(player);
         }
-        double totalAD = Math.max(0, (baseAD + itemAD + temporaryADModification) * (1.0 + enchantAD));
+        double totalAD = Math.max(0, (baseAD + itemAD + temporaryADModification) * (1.0 + enchantAD)
+                * BuffManager.getInstance().getMultiplier(player, BuffManager.Stat.AD));
 
         if (player.hasPotionEffect(PotionEffectType.WEAKNESS)) {
             int amplifier = player.getPotionEffect(PotionEffectType.WEAKNESS).getAmplifier();
@@ -134,7 +144,8 @@ public class PlayerStats {
             itemAP += darkSeal.getAbilityPower(player);
         }
 
-        double totalAP = Math.max(0, baseAP + itemAP + temporaryAPModification);
+        double totalAP = Math.max(0, (baseAP + itemAP + temporaryAPModification)
+                * BuffManager.getInstance().getMultiplier(player, BuffManager.Stat.AP));
 
         if (player.hasPotionEffect(PotionEffectType.WEAKNESS)) {
             int amplifier = player.getPotionEffect(PotionEffectType.WEAKNESS).getAmplifier();
@@ -161,7 +172,7 @@ public class PlayerStats {
         ItemStatsManager itemStatsManager = LeagueMechanics.getInstance().getStatsManager();
         double itemTD = 0;
         double baseTD = 0;
-        double bonusTD = levelBasedTD(player);
+        double bonusTD = levelBasedTD();
         if (itemStatsManager != null) {
             itemTD += itemStatsManager.getItemTD(player);
         }
@@ -196,7 +207,8 @@ public class PlayerStats {
         double weaponAS = getWeaponAS(player);
         double shardsAS = getRuneShards(player).getAttackSpeed();
         double asRatio = getPlayerClassAttackSpeedRatio(player);
-        double bonusASMultiplier = (itemAS + weaponAS + asRatio + shardsAS) / 100.0;
+        double buffAS = BuffManager.getInstance().getBonus(player, BuffManager.Stat.AS);
+        double bonusASMultiplier = (itemAS + weaponAS + asRatio + shardsAS + buffAS) / 100.0;
         return asRatio * bonusASMultiplier + baseAS;
     }
 
@@ -209,6 +221,7 @@ public class PlayerStats {
         }
         double totalAR = baseAR + itemAR + temporaryARModification;
         totalAR = totalAR * getProtectionARBonus(player);
+        totalAR *= BuffManager.getInstance().getMultiplier(player, BuffManager.Stat.AR);
 
         if (player.hasPotionEffect(PotionEffectType.RESISTANCE)) {
             int amplifier = player.getPotionEffect(PotionEffectType.RESISTANCE).getAmplifier();
@@ -228,6 +241,7 @@ public class PlayerStats {
         }
         double totalMR = baseMR + itemMR + temporaryMRModification;
         totalMR = totalMR * getProtectionMRBonus(player);
+        totalMR *= BuffManager.getInstance().getMultiplier(player, BuffManager.Stat.MR);
 
         if (player.hasPotionEffect(PotionEffectType.RESISTANCE)) {
             int amplifier = player.getPotionEffect(PotionEffectType.RESISTANCE).getAmplifier();
@@ -256,6 +270,7 @@ public class PlayerStats {
             totalMS += (speedEffectBonus * 100);
             totalMS += itemMS + shardsMS;
             totalMS += temporaryMSModification;
+            totalMS += BuffManager.getInstance().getBonus(player, BuffManager.Stat.MS);
 
             return totalMS;
         } catch (Exception e) {
@@ -269,7 +284,7 @@ public class PlayerStats {
     }
 
     public double getPlayerCH(Player player) {
-        double shardsCH = getRuneShards(player).getCooldownHaste();
+        double shardsCH = getRuneShards(player).getCooldownHaste() + BuffManager.getInstance().getBonus(player, BuffManager.Stat.CH);
         ItemStatsManager itemStatsManager = LeagueMechanics.getInstance().getStatsManager();
         if (itemStatsManager == null) {
             return shardsCH;
@@ -281,21 +296,21 @@ public class PlayerStats {
         ItemStatsManager itemStatsManager = LeagueMechanics.getInstance().getStatsManager();
         if (itemStatsManager == null) return 0;
         double shardsTN = getRuneShards(player).getTenacity();
-        return itemStatsManager.getItemTN(player) + shardsTN;
+        return itemStatsManager.getItemTN(player) + shardsTN + BuffManager.getInstance().getBonus(player, BuffManager.Stat.TN);
     }
 
-    private double levelBasedTD(Player player) {
-        double playerLevel = player.getLevel();
-        if (playerLevel >= 300) {
-            return 15;
-        } else if (playerLevel >= 200) {
-            return 12;
-        } else if (playerLevel >= 100) {
-            return 8;
-        } else if (playerLevel >= 50) {
-            return 4;
+    private double levelBasedTD() {
+        int level = getLeagueLevel();
+        if (level >= 18) {
+            return LEVEL_18_BONUS_TRUE_DAMAGE;
+        } else if (level >= 13) {
+            return LEVEL_13_BONUS_TRUE_DAMAGE;
+        } else if (level >= 8) {
+            return LEVEL_8_BONUS_TRUE_DAMAGE;
+        } else if (level >= 3) {
+            return LEVEL_3_BONUS_TRUE_DAMAGE;
         } else {
-            return 2;
+            return BASE_BONUS_TRUE_DAMAGE;
         }
     }
 
@@ -400,7 +415,7 @@ public class PlayerStats {
     public double getHealingMultiplier(Player player) {
         ItemStatsManager itemStatsManager = LeagueMechanics.getInstance().getStatsManager();
         double itemHM = itemStatsManager != null ? itemStatsManager.getItemHM(player) : 0;
-        return BASE_HEALING_MULTIPLIER * (1.0 + itemHM / 100.0);
+        return BASE_HEALING_MULTIPLIER * (1.0 + itemHM / 100.0) * BuffManager.getInstance().getHealingMultiplier(player);
     }
 
     public boolean hasGrievousWounds(Player player) {
@@ -424,10 +439,11 @@ public class PlayerStats {
     }
 
     public double getEffectiveHealthRegen(Player player, double baseRegen) {
+        double regen = baseRegen * BuffManager.getInstance().getHealingMultiplier(player);
         if (hasGrievousWounds(player)) {
-            return baseRegen * 0.6;
+            return regen * 0.6;
         }
-        return baseRegen;
+        return regen;
     }
 
     public double getPlayerCSD(Player player) {
@@ -445,18 +461,12 @@ public class PlayerStats {
 
         StringBuilder sb = new StringBuilder();
 
-        DebuffManager debuffs = DebuffManager.getInstance();
-        if (debuffs.hasDebuff(player, DebuffType.GRIEVOUS_WOUNDS)) {
-            double remaining = debuffs.getRemainingSeconds(player, DebuffType.GRIEVOUS_WOUNDS);
-            sb.append("§f" + Icons.get("status.grievous-wounds") + " §4(").append(String.format("%.1f", remaining)).append("s)§f");
-        }
-        if (debuffs.hasDebuff(player, DebuffType.INFLAME)) {
-            double remaining = debuffs.getRemainingSeconds(player, DebuffType.INFLAME);
-            sb.append("§f" + Icons.get("status.burned") + " §6(").append(String.format("%.1f", remaining)).append("s)§f");
-        }
-        org.bukkit.potion.PotionEffect slow = player.getPotionEffect(PotionEffectType.SLOWNESS);
-        if (slow != null && slow.getDuration() > 0) {
-            sb.append("§f" + Icons.get("status.slowed") + " §b(").append(String.format("%.1f", slow.getDuration() / 20.0)).append("s)§f");
+        String debuffSection = DebuffManager.getInstance().getActionBarSection(player);
+        sb.append(debuffSection);
+        String buffSection = BuffManager.getInstance().getActionBarSection(player);
+        if (!buffSection.isEmpty()) {
+            if (sb.length() > 0) sb.append(" ");
+            sb.append(buffSection);
         }
 
         dev.ixpu.leaguemechanics.manager.ItemPassivesManager passiveManager =
@@ -469,7 +479,22 @@ public class PlayerStats {
             appendPassiveCooldown(sb, passiveManager, player, "verdant-barrier", "§7" + Icons.get("items.verdant-barrier"));
         }
 
+        appendClassCooldown(sb, "§7" + Icons.get("passives.soraka_astral"), ClassPassives.getSupportTransferCooldownSeconds(player));
+        appendClassCooldown(sb, "§7" + Icons.get("passives.malzahar_void_shift"), ClassPassives.getMageAbsorbCooldownSeconds(player));
+
+        ClassSkillManager classSkills = ClassSkillManager.getInstance();
+        dev.ixpu.leaguemechanics.skill.ClassSkill selectedSkill = classSkills.getSelectedSkill(player);
+
+        if (selectedSkill != null) {
+            appendClassCooldown(sb, "§7" + Icons.get(selectedSkill.getIconKey()), classSkills.getRemainingCooldownSeconds(player, selectedSkill));
+        }
+
         return sb.toString();
+    }
+
+    private void appendClassCooldown(StringBuilder sb, String icon, double remaining) {
+        if (remaining <= 0) return;
+        sb.append(" ").append(icon).append(" §7").append(String.format("%.1fs", remaining));
     }
 
     private void appendPassiveCooldown(StringBuilder sb,

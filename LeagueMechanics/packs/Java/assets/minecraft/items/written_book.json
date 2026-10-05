@@ -1,0 +1,19 @@
+{
+	"model": {
+	  "type": "select",
+	  "property": "custom_model_data",
+	  "fallback": {
+		"type": "model",
+		"model": "item/written_book"
+	  },
+	  "cases": [
+		{
+		  "when": "db_drinks.message_in_bottle",
+		  "model": {
+			"type": "minecraft:model",
+			"model": "minecraft:item/2d_rum/message_in_bottle"
+		  }
+		}
+	  ]
+	}
+  }

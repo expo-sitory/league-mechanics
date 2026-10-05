@@ -1,0 +1,17 @@
+{
+  "format_version": 2,
+  "header": {
+    "name": "KU-PACK",
+    "description": "Kupal Mc Server Resources",
+    "uuid": "301b9358-ca60-43da-bc19-ec3aaffc655a",
+    "version": [1, 0, 0],
+    "min_engine_version": [1, 26, 0]
+  },
+  "modules": [
+    {
+      "type": "resources",
+      "uuid": "2b80b0ea-7f13-45bc-a750-30d7cb5ba7b7",
+      "version": [1, 0, 0]
+    }
+  ]
+}

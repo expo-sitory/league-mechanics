@@ -3,7 +3,13 @@ package dev.ixpu.leaguemechanics.command;
 import dev.ixpu.leaguemechanics.LeagueMechanics;
 import dev.ixpu.leaguemechanics.entity.player.PlayerClass;
 import dev.ixpu.leaguemechanics.entity.player.PlayerClassType;
+import dev.ixpu.leaguemechanics.buff.BuffType;
+import dev.ixpu.leaguemechanics.manager.BuffManager;
 import dev.ixpu.leaguemechanics.manager.ItemShopManager;
+import dev.ixpu.leaguemechanics.manager.PartyManager;
+import dev.ixpu.leaguemechanics.skill.ClassSkill;
+import dev.ixpu.leaguemechanics.manager.ClassSkillManager;
+import dev.ixpu.leaguemechanics.skill.ClassSkillRegistry;
 import dev.ixpu.leaguemechanics.rune.shards.ShardStats;
 import dev.ixpu.leaguemechanics.util.RunePersistence;
 import dev.ixpu.leaguemechanics.entity.player.PlayerKDA;
@@ -12,10 +18,10 @@ import dev.ixpu.leaguemechanics.gui.InspectGUI;
 import dev.ixpu.leaguemechanics.gui.ItemShopGUI;
 
 import dev.ixpu.leaguemechanics.rune.CooldownHandler;
-import dev.ixpu.leaguemechanics.rune.RunePath;
-import dev.ixpu.leaguemechanics.rune.RuneRegistry;
-import dev.ixpu.leaguemechanics.rune.RuneSlot;
-import dev.ixpu.leaguemechanics.rune.RuneShard;
+import dev.ixpu.leaguemechanics.rune.paths.RunePath;
+import dev.ixpu.leaguemechanics.util.RuneRegistry;
+import dev.ixpu.leaguemechanics.rune.slots.RuneSlot;
+import dev.ixpu.leaguemechanics.rune.shards.RuneShard;
 
 import dev.ixpu.leaguemechanics.manager.ItemStatsManager;
 import dev.ixpu.leaguemechanics.manager.RuneManager;
@@ -89,12 +95,47 @@ public class CommandHandler implements CommandExecutor {
             case "clearkda" -> handleClearKda(sender);
             case "levelup" -> handleLevelUpCommand(sender, args);
             case "setlevel" -> handleSetLevelCommand(sender, args);
+            case "givebuff" -> handleGiveBuffCommand(sender, args);
+            case "party" -> handlePartyCommand(sender, args);
             case "dash" -> handleDashCommand(sender, args);
+            case "skills" -> handleSkillsCommand(sender, args);
             default -> {
                 sender.sendMessage(Component.text("§cUnknown subcommand."));
                 yield false;
             }
         };
+    }
+
+    private boolean handleSkillsCommand(CommandSender sender, String[] args) {
+        if (!(sender instanceof Player player)) {
+            sender.sendMessage(Component.text("§cOnly players can use this command."));
+            return true;
+        }
+        if (!sender.hasPermission("leaguemechanics.user")) {
+            sender.sendMessage(Component.text("§cYou don't have permission to use this command."));
+            return true;
+        }
+
+        if (args.length < 3 || !args[1].equalsIgnoreCase("select")) {
+            sender.sendMessage(Component.text("§cUsage: /lm skills select <skill>"));
+            return true;
+        }
+
+        ClassSkill skill = ClassSkillRegistry.getInstance().get(args[2]);
+        if (skill == null) {
+            sender.sendMessage(Component.text("§cUnknown skill: §e" + args[2]));
+            return true;
+        }
+
+        switch (ClassSkillManager.getInstance().select(player, skill)) {
+            case OK -> player.sendMessage(Component.text("§a✓ Skill set to §e" + skill.getDisplayName()));
+            case NO_CLASS -> player.sendMessage(Component.text("§cSelect a class first: /lm class select <class>"));
+            case WRONG_CLASS -> player.sendMessage(Component.text("§c" + skill.getDisplayName() + " is a "
+                    + skill.getClassType().getDisplayName() + " skill and doesn't belong to your class."));
+            case INVENTORY_FULL -> player.sendMessage(Component.text("§cYour inventory is full. Free a slot first."));
+            case ALREADY_SELECTED -> player.sendMessage(Component.text("§7You already have §e" + skill.getDisplayName() + " §7selected."));
+        }
+        return true;
     }
 
     private boolean handleClassCommand(CommandSender sender, String[] args) {
@@ -354,6 +395,82 @@ public class CommandHandler implements CommandExecutor {
         sender.sendMessage(Component.text("§a✓ Set level of §e" + target.getName() + " §ato §e" + newLevel));
         if (target != sender) {
             target.sendMessage(Component.text("§aYour level was set to §e" + newLevel));
+        }
+        return true;
+    }
+
+    private boolean handleGiveBuffCommand(CommandSender sender, String[] args) {
+        if (!sender.hasPermission("leaguemechanics.admin")) {
+            sender.sendMessage(Component.text("§cYou don't have permission to use this command."));
+            return true;
+        }
+
+        if (args.length < 2) {
+            sender.sendMessage(Component.text("§cUsage: /lm givebuff <buff> [player]"));
+            return true;
+        }
+
+        BuffType type = BuffManager.fromId(args[1]);
+        if (type == null) {
+            sender.sendMessage(Component.text("§cUnknown buff: §e" + args[1]));
+            return true;
+        }
+
+        Player target;
+        if (args.length >= 3) {
+            target = Bukkit.getPlayerExact(args[2]);
+            if (target == null) {
+                sender.sendMessage(Component.text("§cPlayer not found: §e" + args[2]));
+                return true;
+            }
+        } else if (sender instanceof Player self) {
+            target = self;
+        } else {
+            sender.sendMessage(Component.text("§cUsage: /lm givebuff <buff> <player>"));
+            return true;
+        }
+
+        BuffManager buffs = BuffManager.getInstance();
+        buffs.giveBuff(target, type);
+        String name = buffs.getDisplayName(type);
+        int seconds = (int) Math.round(buffs.getDurationSeconds(type));
+
+        sender.sendMessage(Component.text("§a✓ Gave §e" + name + " §ato §e" + target.getName() + " §7(" + seconds + "s)"));
+        if (target != sender) {
+            target.sendMessage(Component.text("§aYou gained §e" + name + " §7(" + seconds + "s)"));
+        }
+        return true;
+    }
+
+    private boolean handlePartyCommand(CommandSender sender, String[] args) {
+        if (!(sender instanceof Player player)) {
+            sender.sendMessage(Component.text("§cOnly players can use party commands."));
+            return true;
+        }
+        if (!sender.hasPermission("leaguemechanics.user")) {
+            sender.sendMessage(Component.text("§cYou don't have permission to use this command."));
+            return true;
+        }
+
+        PartyManager parties = PartyManager.getInstance();
+        String action = args.length >= 2 ? args[1].toLowerCase() : "";
+        switch (action) {
+            case "invite" -> {
+                if (args.length < 3) {
+                    sender.sendMessage(Component.text("§cUsage: /lm party invite <player>"));
+                    return true;
+                }
+                Player target = Bukkit.getPlayerExact(args[2]);
+                if (target == null) {
+                    sender.sendMessage(Component.text("§cPlayer not found: §e" + args[2]));
+                    return true;
+                }
+                parties.invite(player, target);
+            }
+            case "accept" -> parties.accept(player);
+            case "leave" -> parties.leave(player);
+            case "disband" -> parties.disband(player);
+            default -> sender.sendMessage(Component.text("§cUsage: /lm party <invite <player>|accept|leave|disband>"));
         }
         return true;
     }

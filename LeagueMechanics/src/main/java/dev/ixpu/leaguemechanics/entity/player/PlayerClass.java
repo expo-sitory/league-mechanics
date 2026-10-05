@@ -1,6 +1,7 @@
 package dev.ixpu.leaguemechanics.entity.player;
 
 import dev.ixpu.leaguemechanics.LeagueMechanics;
+import dev.ixpu.leaguemechanics.manager.ClassSkillManager;
 import org.bukkit.entity.Player;
 
 import java.util.EnumMap;
@@ -15,8 +16,8 @@ public class PlayerClass {
     }
 
     public record ClassStats(double baseAD, double baseAP, double baseHP,
-                            double baseAR, double baseMR, double baseAS,
-                            double attackSpeedRatio) {}
+                             double baseAR, double baseMR, double baseAS,
+                             double attackSpeedRatio) {}
 
     private static final Map<UUID, PlayerClassType> playerClassCache = new HashMap<>();
     private static final Map<PlayerClassType, ClassStats> CLASS_STATS = new EnumMap<>(PlayerClassType.class);
@@ -30,7 +31,7 @@ public class PlayerClass {
         CLASS_STATS.put(PlayerClassType.SUPPORT,   new ClassStats( 10.0,  10.0, 0.0,  5.0, 5.0, 0.20, 0.20));
         CLASS_STATS.put(PlayerClassType.ASSASSIN,  new ClassStats( 7.0,  4.0, 4.0,  4.0,  20.0, 0.75, 0.75));
         CLASS_STATS.put(PlayerClassType.MAGE,      new ClassStats( 1.0, 18.0, 4.0,  5.0,  7.0, 0.55, 0.55));
-        CLASS_STATS.put(PlayerClassType.TANK,      new ClassStats( 1.0,  2.0, 16.0, 25.0, 15.0, 0.15, 0.15));
+        CLASS_STATS.put(PlayerClassType.TANK,      new ClassStats( 1.0,  2.0, 18.0, 45.0, 35.0, 0.15, 0.15));
         CLASS_STATS.put(PlayerClassType.MARKSMAN,  new ClassStats( 4.0,  2.0, 0.0,  5.0,  8.0, 0.85, 0.85));
     }
 
@@ -41,6 +42,10 @@ public class PlayerClass {
         LeagueMechanics plugin = LeagueMechanics.getInstance();
         if (plugin != null && plugin.getRunePersistence() != null) {
             plugin.getRunePersistence().savePlayerClass(uuid, classType);
+        }
+
+        if (plugin != null) {
+            ClassSkillManager.getInstance().onClassChanged(player, classType);
         }
     }
 
@@ -63,6 +68,10 @@ public class PlayerClass {
         return null;
     }
 
+    public static PlayerClassType getCachedPlayerClass(Player player) {
+        return playerClassCache.get(player.getUniqueId());
+    }
+
     public static void loadPlayerClass(Player player) {
         UUID uuid = player.getUniqueId();
         LeagueMechanics plugin = LeagueMechanics.getInstance();
@@ -81,6 +90,10 @@ public class PlayerClass {
         LeagueMechanics plugin = LeagueMechanics.getInstance();
         if (plugin != null && plugin.getRunePersistence() != null) {
             plugin.getRunePersistence().savePlayerClass(uuid, null);
+        }
+
+        if (plugin != null) {
+            ClassSkillManager.getInstance().onClassChanged(player, null);
         }
 
         if (plugin != null && plugin.getPlayerEventListener() != null) {

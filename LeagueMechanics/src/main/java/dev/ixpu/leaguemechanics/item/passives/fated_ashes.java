@@ -1,7 +1,7 @@
 package dev.ixpu.leaguemechanics.item.passives;
 
 import dev.ixpu.leaguemechanics.manager.DebuffManager;
-import dev.ixpu.leaguemechanics.rune.DebuffType;
+import dev.ixpu.leaguemechanics.debuff.DebuffType;
 import dev.ixpu.leaguemechanics.util.Icons;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.LivingEntity;

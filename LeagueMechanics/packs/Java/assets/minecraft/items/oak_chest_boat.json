@@ -1,0 +1,19 @@
+{
+	"model": {
+	  "type": "select",
+	  "property": "custom_model_data",
+	  "fallback": {
+		"type": "model",
+		"model": "item/oak_chest_boat"
+	  },
+	  "cases": [
+		{
+		  "when": "db_drinks.ship_in_bottle",
+		  "model": {
+			"type": "minecraft:model",
+			"model": "minecraft:item/2d_rum/ship_in_bottle"
+		  }
+		}
+	  ]
+	}
+  }

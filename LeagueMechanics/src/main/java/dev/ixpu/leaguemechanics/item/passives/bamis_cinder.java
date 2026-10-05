@@ -1,5 +1,6 @@
 package dev.ixpu.leaguemechanics.item.passives;
 
+import dev.ixpu.leaguemechanics.manager.PartyManager;
 import dev.ixpu.leaguemechanics.LeagueMechanics;
 import dev.ixpu.leaguemechanics.manager.DamageManager;
 import dev.ixpu.leaguemechanics.manager.ItemStatsManager;
@@ -77,7 +78,8 @@ public class bamis_cinder implements ItemPassive {
 
                 for (Entity entity : source.getWorld().getNearbyEntities(
                         sourceLoc, IMMOLATE_RADIUS, IMMOLATE_RADIUS, IMMOLATE_RADIUS,
-                        e -> e instanceof LivingEntity && !e.getUniqueId().equals(source.getUniqueId()))) {
+                        e -> e instanceof LivingEntity && !e.getUniqueId().equals(source.getUniqueId())
+                                && !PartyManager.getInstance().isSameParty(source, e))) {
                     if (!(entity instanceof LivingEntity nearby)) continue;
                     double damageToApply = immolateDamage(source, nearby);
                     applyMagicDamage(nearby, damageToApply, source);
