@@ -1,7 +1,6 @@
 package dev.ixpu.leaguemechanics.rune;
 
-import dev.ixpu.leaguemechanics.LeagueMechanics;
-import dev.ixpu.leaguemechanics.manager.ItemStatsManager;
+import dev.ixpu.leaguemechanics.debuff.DebuffType;
 import dev.ixpu.leaguemechanics.rune.paths.RunePath;
 import dev.ixpu.leaguemechanics.rune.slots.RuneSlot;
 import org.bukkit.entity.Entity;
@@ -45,18 +44,6 @@ public abstract class CooldownHandler {
         this.cooldownSeconds = seconds;
     }
 
-    private long getCooldownHasteOffsetMs(Player player) {
-        if (cooldownSeconds <= 0) return 0;
-        LeagueMechanics plugin = LeagueMechanics.getInstance();
-        if (plugin == null) return 0;
-        ItemStatsManager statsManager = plugin.getStatsManager();
-        if (statsManager == null) return 0;
-        double ch = statsManager.getItemCH(player) + dev.ixpu.leaguemechanics.manager.BuffManager.getInstance().getBonus(player, dev.ixpu.leaguemechanics.manager.BuffManager.Stat.CH);
-        if (ch <= 0) return 0;
-        long baseMs = (long) (cooldownSeconds * 1000);
-        return (long) (baseMs * (ch / 100.0));
-    }
-
     public boolean isOnCooldown(Player player) {
         if (cooldownSeconds <= 0) {
             return false;
@@ -95,8 +82,7 @@ public abstract class CooldownHandler {
     }
 
     public void resetCooldown(Player player) {
-        long offset = getCooldownHasteOffsetMs(player);
-        playerCooldowns.put(player.getUniqueId(), System.currentTimeMillis() - offset);
+        playerCooldowns.put(player.getUniqueId(), System.currentTimeMillis());
     }
 
     public void clearPlayerCooldown(Player player) {
@@ -128,6 +114,8 @@ public abstract class CooldownHandler {
     public void onProjectileHit(Player shooter, Entity hitEntity) {}
 
     public void onTakedown(Player attacker, Player victim, boolean isKill) {}
+
+    public void onCrowdControl(Player source, Player target, DebuffType type) {}
 
     public void onPotionEffectGain(Player player, org.bukkit.potion.PotionEffect effect) {}
 

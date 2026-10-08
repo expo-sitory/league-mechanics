@@ -3,6 +3,7 @@ package dev.ixpu.leaguemechanics.manager;
 import dev.ixpu.leaguemechanics.LeagueMechanics;
 import dev.ixpu.leaguemechanics.buff.BuffType;
 import dev.ixpu.leaguemechanics.debuff.DebuffType;
+import dev.ixpu.leaguemechanics.util.ActionBarEntry;
 import dev.ixpu.leaguemechanics.util.Icons;
 import org.bukkit.Bukkit;
 import org.bukkit.configuration.ConfigurationSection;
@@ -11,6 +12,7 @@ import org.bukkit.entity.Player;
 
 import java.util.ArrayList;
 import java.util.EnumMap;
+import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
@@ -216,22 +218,22 @@ public class BuffManager {
         return product;
     }
 
-    public String getActionBarSection(Player player) {
-        if (player == null) return "";
+    public List<ActionBarEntry> getActionBarEntries(Player player) {
+        List<ActionBarEntry> entries = new ArrayList<>();
+        if (player == null) return entries;
         Map<BuffType, Long> map = expiry.get(player.getUniqueId());
-        if (map == null || map.isEmpty()) return "";
+        if (map == null || map.isEmpty()) return entries;
         long now = System.currentTimeMillis();
-        StringBuilder sb = new StringBuilder();
         for (BuffType type : BuffType.values()) {
             Long until = map.get(type);
             if (until == null || now >= until) continue;
             String icon = Icons.get("status." + getId(type).replace('_', '-'));
             String label = icon.isEmpty() ? getDisplayName(type) : icon;
             double seconds = (until - now) / 1000.0;
-            if (sb.length() > 0) sb.append(" ");
-            sb.append("§f").append(label).append(" ").append(getTimerColor(type)).append("(").append(String.format("%.1f", seconds)).append("s)§f");
+            entries.add(new ActionBarEntry("buff:" + getId(type),
+                    "§f" + label + " " + getTimerColor(type) + "(" + String.format("%.1f", seconds) + "s)§f"));
         }
-        return sb.toString();
+        return entries;
     }
 
     public void onHit(Player attacker, Player target) {

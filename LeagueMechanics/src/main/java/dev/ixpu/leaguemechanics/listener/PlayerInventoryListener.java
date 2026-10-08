@@ -136,12 +136,33 @@ public class PlayerInventoryListener implements Listener {
         if (pendingStatUpdates.add(uuid)) {
             scheduleTask(uuid, () -> {
                 try {
+                    itemStatsManager.enforceItemLimit(player);
                     applyPlayerStats(player);
                 } finally {
                     pendingStatUpdates.remove(uuid);
                 }
             }, 1L);
         }
+    }
+
+    @EventHandler
+    public void onJoinEnforce(org.bukkit.event.player.PlayerJoinEvent event) {
+        Player player = event.getPlayer();
+        scheduleTask(player.getUniqueId(), () -> itemStatsManager.enforceItemLimit(player), 20L);
+    }
+
+    @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
+    public void onPickup(org.bukkit.event.entity.EntityPickupItemEvent event) {
+        if (!(event.getEntity() instanceof Player player)) {
+            return;
+        }
+        if (ItemModifier.getItemId(event.getItem().getItemStack()) == null) {
+            return;
+        }
+        scheduleTask(player.getUniqueId(), () -> {
+            itemStatsManager.enforceItemLimit(player);
+            applyPlayerStats(player);
+        }, 1L);
     }
 
     public boolean checkItemLimit(InventoryClickEvent event, Player player, ItemStack currentItem) {

@@ -2,13 +2,16 @@ package dev.ixpu.leaguemechanics.manager;
 
 import dev.ixpu.leaguemechanics.LeagueMechanics;
 import dev.ixpu.leaguemechanics.debuff.DebuffType;
+import dev.ixpu.leaguemechanics.util.ActionBarEntry;
 import dev.ixpu.leaguemechanics.util.Icons;
 import org.bukkit.entity.Player;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
 
+import java.util.ArrayList;
 import java.util.EnumSet;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
@@ -38,6 +41,29 @@ public class DebuffManager {
 
     public void applyDebuff(Player target, DebuffType type, int durationTicks) {
         applyDebuff(target, type, durationTicks, 0.0);
+    }
+
+    public void applyDebuff(Player target, DebuffType type, int durationTicks, Player source) {
+        applyDebuff(target, type, durationTicks, 0.0, source);
+    }
+
+    /**
+     * Applies a debuff and, when it is crowd control applied by another player, notifies that
+     * player's runes (see {@link dev.ixpu.leaguemechanics.rune.CooldownHandler#onCrowdControl}).
+     */
+    public void applyDebuff(Player target, DebuffType type, int durationTicks, double strength, Player source) {
+        applyDebuff(target, type, durationTicks, strength);
+        if (target == null || source == null || source.equals(target) || !isCrowdControl(type)) return;
+
+        LeagueMechanics plugin = LeagueMechanics.getInstance();
+        if (plugin == null || plugin.getRuneManager() == null) return;
+        var runeData = plugin.getRuneManager().getPlayerRuneData(source);
+        if (runeData == null) return;
+        for (var rune : runeData.getAllRunes()) {
+            if (rune != null) {
+                rune.onCrowdControl(source, target, type);
+            }
+        }
     }
 
     public void applyDebuff(Player target, DebuffType type, int durationTicks, double strength) {
@@ -146,10 +172,10 @@ public class DebuffManager {
 
     public static String getCrowdControlName(DebuffType type) {
         return switch (type) {
-            case STUN -> "Stun";
-            case GROUNDED -> "Grounded";
-            case NEARSIGHTED -> "Nearsighted";
-            case SLOW -> "Slow";
+            case STUN -> "STUNNED";
+            case GROUNDED -> "GROUNDED";
+            case NEARSIGHTED -> "NEARSIGHTED";
+            case SLOW -> "SLOWED";
             default -> type.name();
         };
     }
@@ -164,38 +190,37 @@ public class DebuffManager {
         };
     }
 
-    public String getActionBarSection(Player player) {
-        if (player == null) return "";
-        StringBuilder sb = new StringBuilder();
+    public List<ActionBarEntry> getActionBarEntries(Player player) {
+        List<ActionBarEntry> entries = new ArrayList<>();
+        if (player == null) return entries;
         if (hasDebuff(player, DebuffType.GRIEVOUS_WOUNDS)) {
-            appendStatus(sb, Icons.get("status.grievous-wounds"), "§4", getRemainingSeconds(player, DebuffType.GRIEVOUS_WOUNDS));
+            entries.add(status("debuff:grievous_wounds", Icons.get("status.grievous-wounds"), "§4", getRemainingSeconds(player, DebuffType.GRIEVOUS_WOUNDS)));
         }
         if (hasDebuff(player, DebuffType.INFLAME)) {
-            appendStatus(sb, Icons.get("status.burned"), "§6", getRemainingSeconds(player, DebuffType.INFLAME));
+            entries.add(status("debuff:inflame", Icons.get("status.burned"), "§6", getRemainingSeconds(player, DebuffType.INFLAME)));
         }
         if (hasDebuff(player, DebuffType.BLIND)) {
-            appendStatus(sb, Icons.get("status.blind"), "§7", getRemainingSeconds(player, DebuffType.BLIND));
+            entries.add(status("debuff:blind", Icons.get("status.blind"), "§7", getRemainingSeconds(player, DebuffType.BLIND)));
         }
         if (hasDebuff(player, DebuffType.GROUNDED)) {
-            appendStatus(sb, Icons.get("status.grounded"), "§e", getRemainingSeconds(player, DebuffType.GROUNDED));
+            entries.add(status("debuff:grounded", Icons.get("status.grounded"), "§e", getRemainingSeconds(player, DebuffType.GROUNDED)));
         }
         if (hasDebuff(player, DebuffType.STUN)) {
-            appendStatus(sb, Icons.get("status.stunned"), "§d", getRemainingSeconds(player, DebuffType.STUN));
+            entries.add(status("debuff:stun", Icons.get("status.stunned"), "§d", getRemainingSeconds(player, DebuffType.STUN)));
         }
         PotionEffect darkness = player.getPotionEffect(PotionEffectType.DARKNESS);
         if (darkness != null && darkness.getDuration() > 0) {
-            appendStatus(sb, Icons.get("status.nearsighted"), "§8", darkness.getDuration() / 20.0);
+            entries.add(status("debuff:nearsighted", Icons.get("status.nearsighted"), "§8", darkness.getDuration() / 20.0));
         }
         PotionEffect slow = player.getPotionEffect(PotionEffectType.SLOWNESS);
         if (slow != null && slow.getDuration() > 0) {
-            appendStatus(sb, Icons.get("status.slowed"), "§b", slow.getDuration() / 20.0);
+            entries.add(status("debuff:slow", Icons.get("status.slowed"), "§b", slow.getDuration() / 20.0));
         }
-        return sb.toString();
+        return entries;
     }
 
-    private void appendStatus(StringBuilder sb, String icon, String color, double remainingSeconds) {
-        if (sb.length() > 0) sb.append(" ");
-        sb.append("§f").append(icon).append(" ").append(color).append("(").append(String.format("%.1f", remainingSeconds)).append("s)§f");
+    private ActionBarEntry status(String key, String icon, String color, double remainingSeconds) {
+        return new ActionBarEntry(key, "§f" + icon + " " + color + "(" + String.format("%.1f", remainingSeconds) + "s)§f");
     }
 
     public void clearDebuffs(Player player) {

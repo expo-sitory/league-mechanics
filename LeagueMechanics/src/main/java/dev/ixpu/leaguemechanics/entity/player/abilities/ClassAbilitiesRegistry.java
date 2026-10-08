@@ -1,4 +1,4 @@
-package dev.ixpu.leaguemechanics.skill;
+package dev.ixpu.leaguemechanics.entity.player.abilities;
 
 import dev.ixpu.leaguemechanics.entity.player.PlayerClassType;
 
@@ -7,31 +7,31 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
-public class ClassSkillRegistry {
-    private static ClassSkillRegistry instance;
+public class ClassAbilitiesRegistry {
+    private static ClassAbilitiesRegistry instance;
 
-    private final Map<String, ClassSkill> skills = new LinkedHashMap<>();
+    private final Map<String, ClassAbilities> skills = new LinkedHashMap<>();
 
-    public static ClassSkillRegistry getInstance() {
+    public static ClassAbilitiesRegistry getInstance() {
         if (instance == null) {
-            instance = new ClassSkillRegistry();
+            instance = new ClassAbilitiesRegistry();
         }
         return instance;
     }
 
-    public void register(ClassSkill skill) {
+    public void register(ClassAbilities skill) {
         skills.put(skill.getId().toLowerCase(), skill);
     }
 
-    public ClassSkill get(String id) {
+    public ClassAbilities get(String id) {
         if (id == null) return null;
         return skills.get(id.toLowerCase());
     }
 
-    public List<ClassSkill> forClass(PlayerClassType type) {
-        List<ClassSkill> result = new ArrayList<>();
+    public List<ClassAbilities> forClass(PlayerClassType type) {
+        List<ClassAbilities> result = new ArrayList<>();
         if (type == null) return result;
-        for (ClassSkill skill : skills.values()) {
+        for (ClassAbilities skill : skills.values()) {
             if (skill.getClassType() == type) {
                 result.add(skill);
             }

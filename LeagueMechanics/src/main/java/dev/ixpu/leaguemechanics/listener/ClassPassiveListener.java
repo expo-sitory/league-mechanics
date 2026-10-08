@@ -21,6 +21,13 @@ public class ClassPassiveListener implements Listener {
         this.plugin = plugin;
         Bukkit.getScheduler().runTaskTimer(plugin, this::tickSupportSpeed, SUPPORT_SPEED_CHECK_TICKS, SUPPORT_SPEED_CHECK_TICKS);
         Bukkit.getScheduler().runTaskTimer(plugin, this::tickMageRings, 2L, 2L);
+        Bukkit.getScheduler().runTaskTimer(plugin, this::tickShadowMarks, 4L, 4L);
+    }
+
+    private void tickShadowMarks() {
+        for (Player player : Bukkit.getOnlinePlayers()) {
+            ClassPassives.tickShadowMark(player);
+        }
     }
 
     private void tickMageRings() {

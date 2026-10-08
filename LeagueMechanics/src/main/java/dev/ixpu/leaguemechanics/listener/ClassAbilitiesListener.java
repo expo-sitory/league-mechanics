@@ -4,8 +4,10 @@ import dev.ixpu.leaguemechanics.LeagueMechanics;
 import dev.ixpu.leaguemechanics.entity.player.PlayerRuneData;
 import dev.ixpu.leaguemechanics.entity.player.PlayerStats;
 import dev.ixpu.leaguemechanics.rune.CooldownHandler;
-import dev.ixpu.leaguemechanics.skill.ClassSkill;
-import dev.ixpu.leaguemechanics.manager.ClassSkillManager;
+import dev.ixpu.leaguemechanics.entity.player.abilities.ClassAbilities;
+import dev.ixpu.leaguemechanics.entity.player.abilities.fighter.UndyingRage;
+import dev.ixpu.leaguemechanics.manager.AbilityEffectManager;
+import dev.ixpu.leaguemechanics.manager.ClassAbilitiesManager;
 import net.kyori.adventure.text.Component;
 import org.bukkit.Bukkit;
 import org.bukkit.GameMode;
@@ -16,6 +18,8 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.Action;
+import org.bukkit.event.entity.EntityDamageEvent;
+import org.bukkit.event.entity.EntityRegainHealthEvent;
 import org.bukkit.event.entity.PlayerDeathEvent;
 import org.bukkit.event.inventory.ClickType;
 import org.bukkit.event.inventory.InventoryClickEvent;
@@ -34,14 +38,14 @@ import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 
-public class ClassSkillListener implements Listener {
+public class ClassAbilitiesListener implements Listener {
     private static final long ACTIONBAR_FALLBACK_TICKS = 2L;
-    private static final String CANNOT_MOVE = "§cSkill items cannot be moved to another inventory";
+    private static final String CANNOT_MOVE = "§cAbility items cannot be moved to another inventory";
 
     private final LeagueMechanics plugin;
-    private final ClassSkillManager skills = ClassSkillManager.getInstance();
+    private final ClassAbilitiesManager skills = ClassAbilitiesManager.getInstance();
 
-    public ClassSkillListener(LeagueMechanics plugin) {
+    public ClassAbilitiesListener(LeagueMechanics plugin) {
         this.plugin = plugin;
         Bukkit.getScheduler().runTaskTimer(plugin, this::tickActionBarFallback,
                 ACTIONBAR_FALLBACK_TICKS, ACTIONBAR_FALLBACK_TICKS);
@@ -49,8 +53,9 @@ public class ClassSkillListener implements Listener {
 
     private void tickActionBarFallback() {
         for (Player player : Bukkit.getOnlinePlayers()) {
-            ClassSkill skill = skills.getSelectedSkill(player);
-            if (skill == null || skills.getRemainingCooldownSeconds(player, skill) <= 0) continue;
+            ClassAbilities skill = skills.getSelectedSkill(player);
+            if (skill == null) continue;
+            if (skills.getRemainingCooldownSeconds(player, skill) <= 0 && !skills.isEffectActive(player, skill)) continue;
             if (hasEquippedRunes(player)) continue;
             String text = PlayerStats.getOrCreate(player).getActionBarSections(player).trim();
             if (!text.isEmpty()) {
@@ -171,14 +176,28 @@ public class ClassSkillListener implements Listener {
     public void onDrop(PlayerDropItemEvent event) {
         if (!skills.isSkillItem(event.getItemDrop().getItemStack())) return;
         event.setCancelled(true);
-        event.getPlayer().sendMessage(Component.text("§cSkill items cannot be dropped"));
+        event.getPlayer().sendMessage(Component.text("§cAbility items cannot be dropped"));
     }
 
     @EventHandler(priority = EventPriority.HIGH)
     public void onSwapHands(PlayerSwapHandItemsEvent event) {
         if (skills.isSkillItem(event.getMainHandItem()) || skills.isSkillItem(event.getOffHandItem())) {
             event.setCancelled(true);
-            event.getPlayer().sendMessage(Component.text("§cSkill items cannot be swapped between hands"));
+            event.getPlayer().sendMessage(Component.text("§cAbility items cannot be swapped between hands"));
+        }
+    }
+
+    @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
+    public void onUndyingRageDamage(EntityDamageEvent event) {
+        if (!(event.getEntity() instanceof Player player)) return;
+        UndyingRage.protect(player, event);
+    }
+
+    @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
+    public void onUndyingRageHeal(EntityRegainHealthEvent event) {
+        if (!(event.getEntity() instanceof Player player)) return;
+        if (UndyingRage.isActive(player)) {
+            event.setCancelled(true);
         }
     }
 
@@ -206,6 +225,7 @@ public class ClassSkillListener implements Listener {
     @EventHandler
     public void onQuit(PlayerQuitEvent event) {
         skills.forgetPlayer(event.getPlayer().getUniqueId());
+        AbilityEffectManager.getInstance().purge(event.getPlayer().getUniqueId());
     }
 
     @EventHandler

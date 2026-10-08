@@ -189,6 +189,16 @@ public class DamageListener implements Listener, RuneCooldownGate {
         }
     }
 
+    @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
+    public void onPlayerDamagedGuardian(EntityDamageEvent event) {
+        if (!(event.getEntity() instanceof Player player) || event.getFinalDamage() <= 0) {
+            return;
+        }
+        if (plugin.getRuneRegistry() != null && plugin.getRuneRegistry().getRune("guardian") instanceof Guardian guardian) {
+            guardian.onGuardedPlayerDamaged(player);
+        }
+    }
+
     public ItemPassive getEquippedPassive(ItemStack item) {
         return playerStatsListener.getEquippedPassive(item);
     }
@@ -258,7 +268,7 @@ public class DamageListener implements Listener, RuneCooldownGate {
             if (parryTime != null && (System.currentTimeMillis() - parryTime) <= PARRY_WINDOW_MS) {
                 targetPlayer.sendTitlePart(TitlePart.TITLE, Component.text("ᴘᴀʀʀʏ!!", NamedTextColor.GREEN));
                 shooter.sendTitlePart(TitlePart.TITLE, Component.text("ᴇɴᴇᴍʏ ᴘᴀʀʀɪᴇᴅ!!", NamedTextColor.RED));
-                DebuffManager.getInstance().applyDebuff(shooter, DebuffType.STUN, PARRY_STUN_TICKS);
+                DebuffManager.getInstance().applyDebuff(shooter, DebuffType.STUN, PARRY_STUN_TICKS, targetPlayer);
                 Bukkit.dispatchCommand(Bukkit.getConsoleSender(), "attack-parried-sound " + targetPlayer.getName());
 
                 parriedProjectiles.add(event.getEntity());
@@ -337,7 +347,7 @@ public class DamageListener implements Listener, RuneCooldownGate {
 
                 if (event.getDamager() instanceof Player attacker) {
                     attacker.sendTitlePart(TitlePart.TITLE, Component.text("ᴇɴᴇᴍʏ ᴘᴀʀʀɪᴇᴅ!!", NamedTextColor.RED));
-                    DebuffManager.getInstance().applyDebuff(attacker, DebuffType.STUN, PARRY_STUN_TICKS);
+                    DebuffManager.getInstance().applyDebuff(attacker, DebuffType.STUN, PARRY_STUN_TICKS, targetPlayer);
                     Bukkit.dispatchCommand(Bukkit.getConsoleSender(), "enemy-parried-sound " + attacker.getName());
                 }
 
@@ -450,9 +460,6 @@ public class DamageListener implements Listener, RuneCooldownGate {
             if (rune instanceof HailOfBlades hailOfBlades) {
                 hailOfBlades.activateHailofBlades(player, null);
             }
-            if (rune instanceof Guardian guardian) {
-                guardian.onTakeDamage(player);
-            }
         }
         if (!(event.getDamager() instanceof Player)) {
             Player attacker = null;
@@ -533,10 +540,11 @@ public class DamageListener implements Listener, RuneCooldownGate {
     private double getMitigationPercent(Player player) {
         ItemStack offhand = player.getInventory().getItemInOffHand();
         if (offhand != null && offhand.getType() == Material.SHIELD) {
-            return getMitigationPercent(offhand.getType());
+            return ClassPassives.getShieldMitigationPercent(player, getMitigationPercent(offhand.getType()));
         }
         ItemStack mainhand = player.getInventory().getItemInMainHand();
-        return getMitigationPercent(mainhand.getType());
+        double percent = getMitigationPercent(mainhand.getType());
+        return mainhand.getType() == Material.SHIELD ? ClassPassives.getShieldMitigationPercent(player, percent) : percent;
     }
 
     private double getMitigationPercent(Material weapon) {

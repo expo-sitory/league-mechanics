@@ -129,7 +129,8 @@ public class PlayerStatsListener {
         double runeMS = playerStats.getTemporaryMSModification();
         double shardMS = playerStats.getRuneShards(player).getMovementSpeed();
         double buffMS = BuffManager.getInstance().getBonus(player, BuffManager.Stat.MS);
-        double bonusMS = itemMS + runeMS + shardMS + buffMS;
+        double classMS = dev.ixpu.leaguemechanics.entity.player.ClassPassives.getMovementSpeedBonus(player);
+        double bonusMS = itemMS + runeMS + shardMS + buffMS + classMS;
         UUID playerId = player.getUniqueId();
 
         var attr = player.getAttribute(Attribute.MOVEMENT_SPEED);

@@ -1,12 +1,13 @@
 package dev.ixpu.leaguemechanics.entity.player;
 
 import dev.ixpu.leaguemechanics.LeagueMechanics;
-import dev.ixpu.leaguemechanics.manager.ClassSkillManager;
+import dev.ixpu.leaguemechanics.manager.ClassAbilitiesManager;
 import dev.ixpu.leaguemechanics.manager.ItemStatsManager;
 import dev.ixpu.leaguemechanics.rune.paths.precision.LethalTempo;
 import dev.ixpu.leaguemechanics.rune.paths.domination.HailOfBlades;
 import dev.ixpu.leaguemechanics.rune.CooldownHandler;
 import dev.ixpu.leaguemechanics.manager.BuffManager;
+import dev.ixpu.leaguemechanics.manager.AbilityEffectManager;
 import dev.ixpu.leaguemechanics.manager.DebuffManager;
 import dev.ixpu.leaguemechanics.debuff.DebuffType;
 import dev.ixpu.leaguemechanics.item.passives.ItemPassivesRegistry;
@@ -14,6 +15,8 @@ import dev.ixpu.leaguemechanics.item.passives.dark_seal;
 import dev.ixpu.leaguemechanics.rune.shards.ShardStats;
 import dev.ixpu.leaguemechanics.rune.shards.RuneShard;
 
+import dev.ixpu.leaguemechanics.entity.player.abilities.ClassAbilities;
+import dev.ixpu.leaguemechanics.util.ActionBarEntry;
 import dev.ixpu.leaguemechanics.util.Icons;
 import org.bukkit.entity.Player;
 import org.bukkit.Material;
@@ -51,6 +54,7 @@ public class PlayerStats {
     private int graspHearts = 0;
 
     private ShardStats shardStats;
+    private final Map<String, Long> actionBarOrder = new HashMap<>();
     private int leagueLevel = 1;
 
     public static PlayerStats getOrCreate(Player player) {
@@ -207,7 +211,8 @@ public class PlayerStats {
         double weaponAS = getWeaponAS(player);
         double shardsAS = getRuneShards(player).getAttackSpeed();
         double asRatio = getPlayerClassAttackSpeedRatio(player);
-        double buffAS = BuffManager.getInstance().getBonus(player, BuffManager.Stat.AS);
+        double buffAS = BuffManager.getInstance().getBonus(player, BuffManager.Stat.AS)
+                + AbilityEffectManager.getInstance().getAttackSpeedBonus(player);
         double bonusASMultiplier = (itemAS + weaponAS + asRatio + shardsAS + buffAS) / 100.0;
         return asRatio * bonusASMultiplier + baseAS;
     }
@@ -222,6 +227,7 @@ public class PlayerStats {
         double totalAR = baseAR + itemAR + temporaryARModification;
         totalAR = totalAR * getProtectionARBonus(player);
         totalAR *= BuffManager.getInstance().getMultiplier(player, BuffManager.Stat.AR);
+        totalAR *= AbilityEffectManager.getInstance().getArmorMultiplier(player);
 
         if (player.hasPotionEffect(PotionEffectType.RESISTANCE)) {
             int amplifier = player.getPotionEffect(PotionEffectType.RESISTANCE).getAmplifier();
@@ -271,6 +277,7 @@ public class PlayerStats {
             totalMS += itemMS + shardsMS;
             totalMS += temporaryMSModification;
             totalMS += BuffManager.getInstance().getBonus(player, BuffManager.Stat.MS);
+            totalMS += ClassPassives.getMovementSpeedBonus(player);
 
             return totalMS;
         } catch (Exception e) {
@@ -459,50 +466,51 @@ public class PlayerStats {
     public String getActionBarSections(Player player) {
         if (player == null) return "";
 
-        StringBuilder sb = new StringBuilder();
-
-        String debuffSection = DebuffManager.getInstance().getActionBarSection(player);
-        sb.append(debuffSection);
-        String buffSection = BuffManager.getInstance().getActionBarSection(player);
-        if (!buffSection.isEmpty()) {
-            if (sb.length() > 0) sb.append(" ");
-            sb.append(buffSection);
-        }
+        List<ActionBarEntry> entries = new ArrayList<>();
+        entries.addAll(DebuffManager.getInstance().getActionBarEntries(player));
+        entries.addAll(BuffManager.getInstance().getActionBarEntries(player));
+        entries.addAll(AbilityEffectManager.getInstance().getActionBarEntries(player));
 
         dev.ixpu.leaguemechanics.manager.ItemPassivesManager passiveManager =
                 dev.ixpu.leaguemechanics.manager.ItemPassivesManager.getInstance();
         if (passiveManager != null) {
-            appendPassiveCooldown(sb, passiveManager, player, "hextech-alternator", "§7" + Icons.get("items.hextech-alternator"));
-            appendPassiveCooldown(sb, passiveManager, player, "scouts-slingshot", "§7" + Icons.get("items.scouts-slingshot"));
-            appendPassiveCooldown(sb, passiveManager, player, "hexdrinker", "§7" + Icons.get("items.hexdrinker"));
-            appendPassiveCooldown(sb, passiveManager, player, "bamis-cinder", "§7" + Icons.get("items.bamis-cinder"));
-            appendPassiveCooldown(sb, passiveManager, player, "verdant-barrier", "§7" + Icons.get("items.verdant-barrier"));
+            for (String passiveId : new String[]{"hextech-alternator", "scouts-slingshot", "hexdrinker", "bamis-cinder", "verdant-barrier"}) {
+                addCooldownEntry(entries, "passive:" + passiveId, Icons.get("items." + passiveId),
+                        passiveManager.getRemainingCooldownSeconds(player, passiveId));
+            }
         }
 
-        appendClassCooldown(sb, "§7" + Icons.get("passives.soraka_astral"), ClassPassives.getSupportTransferCooldownSeconds(player));
-        appendClassCooldown(sb, "§7" + Icons.get("passives.malzahar_void_shift"), ClassPassives.getMageAbsorbCooldownSeconds(player));
+        addCooldownEntry(entries, "class:support_transfer", Icons.get("passives.soraka_astral"), ClassPassives.getSupportTransferCooldownSeconds(player));
+        addCooldownEntry(entries, "class:mage_absorb", Icons.get("passives.malzahar_void_shift"), ClassPassives.getMageAbsorbCooldownSeconds(player));
+        addCooldownEntry(entries, "class:assassin_recall", Icons.get("passives.assassin_shadow_recall"), ClassPassives.getAssassinRecallCooldownSeconds(player));
 
-        ClassSkillManager classSkills = ClassSkillManager.getInstance();
-        dev.ixpu.leaguemechanics.skill.ClassSkill selectedSkill = classSkills.getSelectedSkill(player);
-
+        ClassAbilitiesManager classSkills = ClassAbilitiesManager.getInstance();
+        ClassAbilities selectedSkill = classSkills.getSelectedSkill(player);
         if (selectedSkill != null) {
-            appendClassCooldown(sb, "§7" + Icons.get(selectedSkill.getIconKey()), classSkills.getRemainingCooldownSeconds(player, selectedSkill));
+            addCooldownEntry(entries, "skill:" + selectedSkill.getId(), Icons.get(selectedSkill.getIconKey()),
+                    classSkills.getRemainingCooldownSeconds(player, selectedSkill));
         }
 
+        long now = System.nanoTime();
+        Set<String> active = new HashSet<>();
+        for (ActionBarEntry entry : entries) {
+            active.add(entry.key());
+            actionBarOrder.putIfAbsent(entry.key(), now);
+        }
+        actionBarOrder.keySet().retainAll(active);
+        entries.sort(Comparator.comparingLong(entry -> actionBarOrder.get(entry.key())));
+
+        StringBuilder sb = new StringBuilder();
+        for (ActionBarEntry entry : entries) {
+            if (sb.length() > 0) sb.append(" ");
+            sb.append(entry.text());
+        }
         return sb.toString();
     }
 
-    private void appendClassCooldown(StringBuilder sb, String icon, double remaining) {
+    private void addCooldownEntry(List<ActionBarEntry> entries, String key, String icon, double remaining) {
         if (remaining <= 0) return;
-        sb.append(" ").append(icon).append(" §7").append(String.format("%.1fs", remaining));
-    }
-
-    private void appendPassiveCooldown(StringBuilder sb,
-                                       dev.ixpu.leaguemechanics.manager.ItemPassivesManager manager,
-                                       Player player, String passiveId, String icon) {
-        double remaining = manager.getRemainingCooldownSeconds(player, passiveId);
-        if (remaining <= 0) return;
-        sb.append(" ").append(icon).append(" §7").append(String.format("%.1fs", remaining));
+        entries.add(new ActionBarEntry(key, "§7" + icon + " §7" + String.format("%.1fs", remaining)));
     }
 
     public ShardStats getRuneShards(Player player) {

@@ -7,9 +7,9 @@ import dev.ixpu.leaguemechanics.buff.BuffType;
 import dev.ixpu.leaguemechanics.manager.BuffManager;
 import dev.ixpu.leaguemechanics.manager.ItemShopManager;
 import dev.ixpu.leaguemechanics.manager.PartyManager;
-import dev.ixpu.leaguemechanics.skill.ClassSkill;
-import dev.ixpu.leaguemechanics.manager.ClassSkillManager;
-import dev.ixpu.leaguemechanics.skill.ClassSkillRegistry;
+import dev.ixpu.leaguemechanics.entity.player.abilities.ClassAbilities;
+import dev.ixpu.leaguemechanics.manager.ClassAbilitiesManager;
+import dev.ixpu.leaguemechanics.entity.player.abilities.ClassAbilitiesRegistry;
 import dev.ixpu.leaguemechanics.rune.shards.ShardStats;
 import dev.ixpu.leaguemechanics.util.RunePersistence;
 import dev.ixpu.leaguemechanics.entity.player.PlayerKDA;
@@ -86,7 +86,7 @@ public class CommandHandler implements CommandExecutor {
                 }
                 sender.sendMessage(Component.text("§6⟳ Reloading LeagueMechanics..."));
                 plugin.reloadPlugin();
-                sender.sendMessage(Component.text("§a✓ LeagueMechanics reloaded"));
+                sender.sendMessage(Component.text("§aLeagueMechanics reloaded"));
                 yield true;
             }
             case "runes" -> handleRunesCommand(sender, args);
@@ -98,7 +98,7 @@ public class CommandHandler implements CommandExecutor {
             case "givebuff" -> handleGiveBuffCommand(sender, args);
             case "party" -> handlePartyCommand(sender, args);
             case "dash" -> handleDashCommand(sender, args);
-            case "skills" -> handleSkillsCommand(sender, args);
+            case "ability" -> handleSkillsCommand(sender, args);
             default -> {
                 sender.sendMessage(Component.text("§cUnknown subcommand."));
                 yield false;
@@ -117,21 +117,21 @@ public class CommandHandler implements CommandExecutor {
         }
 
         if (args.length < 3 || !args[1].equalsIgnoreCase("select")) {
-            sender.sendMessage(Component.text("§cUsage: /lm skills select <skill>"));
+            sender.sendMessage(Component.text("§cUsage: /lm ability select <ability>"));
             return true;
         }
 
-        ClassSkill skill = ClassSkillRegistry.getInstance().get(args[2]);
+        ClassAbilities skill = ClassAbilitiesRegistry.getInstance().get(args[2]);
         if (skill == null) {
-            sender.sendMessage(Component.text("§cUnknown skill: §e" + args[2]));
+            sender.sendMessage(Component.text("§cUnknown Ability: §e" + args[2]));
             return true;
         }
 
-        switch (ClassSkillManager.getInstance().select(player, skill)) {
-            case OK -> player.sendMessage(Component.text("§a✓ Skill set to §e" + skill.getDisplayName()));
+        switch (ClassAbilitiesManager.getInstance().select(player, skill)) {
+            case OK -> player.sendMessage(Component.text("§aAbility set to §e" + skill.getDisplayName()));
             case NO_CLASS -> player.sendMessage(Component.text("§cSelect a class first: /lm class select <class>"));
             case WRONG_CLASS -> player.sendMessage(Component.text("§c" + skill.getDisplayName() + " is a "
-                    + skill.getClassType().getDisplayName() + " skill and doesn't belong to your class."));
+                    + skill.getClassType().getDisplayName() + " ability and doesn't belong to your class."));
             case INVENTORY_FULL -> player.sendMessage(Component.text("§cYour inventory is full. Free a slot first."));
             case ALREADY_SELECTED -> player.sendMessage(Component.text("§7You already have §e" + skill.getDisplayName() + " §7selected."));
         }
@@ -161,8 +161,12 @@ public class CommandHandler implements CommandExecutor {
 
             try {
                 PlayerClassType classType = PlayerClassType.valueOf(args[2].toUpperCase());
+                if (PartyManager.getInstance().isClassTakenInParty(player, classType)) {
+                    player.sendMessage(Component.text("§cYour party already has §e" + PartyManager.getInstance().describeClassLimit(classType) + "§c. Leave the party first or pick another class."));
+                    return true;
+                }
                 PlayerClass.setPlayerClass(player, classType);
-                player.sendMessage(Component.text("§a✓ Class set to §e" + classType.name().toLowerCase()));
+                player.sendMessage(Component.text("§aClass set to §e" + classType.name().toLowerCase()));
                 return true;
             } catch (IllegalArgumentException e) {
                 sender.sendMessage(Component.text("§cInvalid class. Use: fighter, support, assassin, mage, tank, or marksman"));
@@ -177,12 +181,12 @@ public class CommandHandler implements CommandExecutor {
                     return true;
                 }
                 PlayerClass.clearPlayerClass(target);
-                sender.sendMessage(Component.text("§a✓ Cleared class for player §e" + target.getName()));
+                sender.sendMessage(Component.text("§aCleared class for player §e" + target.getName()));
                 return true;
             } else {
                 if (sender instanceof Player player) {
                     PlayerClass.clearPlayerClass(player);
-                    sender.sendMessage(Component.text("§a✓ Your class has been cleared!"));
+                    sender.sendMessage(Component.text("§aYour class has been cleared!"));
                     return true;
                 } else {
                     sender.sendMessage(Component.text("§cUsage: /lm class clear <player>"));
@@ -252,7 +256,7 @@ public class CommandHandler implements CommandExecutor {
         }
 
         PlayerSkillListener.setDashEnabled(player, enable);
-        sender.sendMessage(Component.text(enable ? "§a✓ Dash enabled" : "§c✗ Dash disabled"));
+        sender.sendMessage(Component.text(enable ? "§aDash enabled" : "§c✗ Dash disabled"));
         return true;
     }
 
@@ -317,9 +321,9 @@ public class CommandHandler implements CommandExecutor {
         } else {
             if (sender instanceof Player) {
                 if (willBeEnabled) {
-                    sender.sendMessage(Component.text("§a✓ You have enabled PVP mode for §e" + targetPlayer.getName()));
+                    sender.sendMessage(Component.text("§aYou have enabled PVP mode for §e" + targetPlayer.getName()));
                 } else {
-                    sender.sendMessage(Component.text("§a✓ You have disabled PVP mode for §e" + targetPlayer.getName()));
+                    sender.sendMessage(Component.text("§aYou have disabled PVP mode for §e" + targetPlayer.getName()));
                 }
 
                 if (willBeEnabled) {
@@ -343,7 +347,7 @@ public class CommandHandler implements CommandExecutor {
 
         PlayerKDA.getInstance().loadAllFromDatabase();
 
-        sender.sendMessage(Component.text("§a✓ All player KDA data has been cleared!"));
+        sender.sendMessage(Component.text("§aAll player KDA data has been cleared!"));
         return true;
     }
 
@@ -392,7 +396,7 @@ public class CommandHandler implements CommandExecutor {
         stats.saveLeagueLevel(target);
         playerEventListener.applyPlayerStats(target);
 
-        sender.sendMessage(Component.text("§a✓ Set level of §e" + target.getName() + " §ato §e" + newLevel));
+        sender.sendMessage(Component.text("§aSet level of §e" + target.getName() + " §ato §e" + newLevel));
         if (target != sender) {
             target.sendMessage(Component.text("§aYour level was set to §e" + newLevel));
         }
@@ -435,7 +439,7 @@ public class CommandHandler implements CommandExecutor {
         String name = buffs.getDisplayName(type);
         int seconds = (int) Math.round(buffs.getDurationSeconds(type));
 
-        sender.sendMessage(Component.text("§a✓ Gave §e" + name + " §ato §e" + target.getName() + " §7(" + seconds + "s)"));
+        sender.sendMessage(Component.text("§aGave §e" + name + " §ato §e" + target.getName() + " §7(" + seconds + "s)"));
         if (target != sender) {
             target.sendMessage(Component.text("§aYou gained §e" + name + " §7(" + seconds + "s)"));
         }
@@ -457,7 +461,7 @@ public class CommandHandler implements CommandExecutor {
         switch (action) {
             case "invite" -> {
                 if (args.length < 3) {
-                    sender.sendMessage(Component.text("§cUsage: /lm party invite <player>"));
+                    sender.sendMessage(Component.text("§cUsage: /party invite <player>"));
                     return true;
                 }
                 Player target = Bukkit.getPlayerExact(args[2]);
@@ -467,10 +471,18 @@ public class CommandHandler implements CommandExecutor {
                 }
                 parties.invite(player, target);
             }
+            case "" -> {
+                if (parties.isInParty(player) && !parties.isLeader(player)) {
+                    Bukkit.dispatchCommand(Bukkit.getConsoleSender(), "dwopen party-member-menu " + player.getName());
+                } else {
+                    Bukkit.dispatchCommand(Bukkit.getConsoleSender(), "dwopen party-leader-menu " + player.getName());
+                }
+            }
             case "accept" -> parties.accept(player);
             case "leave" -> parties.leave(player);
             case "disband" -> parties.disband(player);
-            default -> sender.sendMessage(Component.text("§cUsage: /lm party <invite <player>|accept|leave|disband>"));
+            case "toggle" -> parties.toggleInvites(player);
+            default -> sender.sendMessage(Component.text("§cUsage: /party"));
         }
         return true;
     }
@@ -504,7 +516,7 @@ public class CommandHandler implements CommandExecutor {
         stats.setLeagueLevel(currentLevel + 1);
         stats.saveLeagueLevel(player);
 
-        sender.sendMessage(Component.text("§a✓ Level Up! §e[" + (currentLevel + 1) + "]"));
+        sender.sendMessage(Component.text("§aLevel Up! §e[" + (currentLevel + 1) + "]"));
 
         playerEventListener.applyPlayerStats(player);
 
@@ -602,7 +614,7 @@ public class CommandHandler implements CommandExecutor {
                 RuneSlot.PRIMARY_SLOT_2,
                 RuneSlot.PRIMARY_SLOT_3
         };
-        StringBuilder summary = new StringBuilder("§a✓ Primary path set to §e" + path.getId());
+        StringBuilder summary = new StringBuilder("§aPrimary path set to §e" + path.getId());
 
         for (int i = 4; i < args.length; i++) {
             RuneSlot slot = slotOrder[i - 4];
@@ -634,7 +646,7 @@ public class CommandHandler implements CommandExecutor {
 //        runePersistence.saveSecondaryPath(player.getUniqueId(), path);
 
 //        RuneSlot[] slotOrder = {RuneSlot.SECONDARY_SLOT_1, RuneSlot.SECONDARY_SLOT_2};
-//        StringBuilder summary = new StringBuilder("§a✓ Secondary path set to §e" + path.getId());
+//        StringBuilder summary = new StringBuilder("§aSecondary path set to §e" + path.getId());
 
 //        for (int i = 4; i < args.length; i++) {
 //            RuneSlot slot = slotOrder[i - 4];
@@ -833,7 +845,7 @@ public class CommandHandler implements CommandExecutor {
     private boolean handleRunesClear(Player player, String[] args) {
         runePersistence.clearAllRunes(player.getUniqueId());
         runeManager.clearPlayerRunes(player);
-        player.sendMessage(Component.text("§a✓ All runes cleared"));
+        player.sendMessage(Component.text("§aAll runes cleared"));
         return true;
     }
 

@@ -110,12 +110,7 @@ public class ItemShopManager implements Listener {
         int playerLevel = player.getLevel();
         int currentCount = itemStatsManager.countLeagueItems(player);
 
-        int requiredOwned = 0;
-        for (String reqId : required) {
-            if (hasLeagueItemInInventory(player, reqId)) {
-                requiredOwned++;
-            }
-        }
+        int requiredOwned = shopItem.countOwnedComponents(player);
         int netChange = 1 - requiredOwned;
         if (currentCount + netChange > 6) {
             player.sendMessage(Component.text("§cLeague Items Count: " + currentCount + "/6"));

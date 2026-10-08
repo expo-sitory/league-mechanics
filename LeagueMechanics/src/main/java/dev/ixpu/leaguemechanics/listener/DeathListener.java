@@ -49,7 +49,7 @@ public class DeathListener implements Listener {
     private final PlayerInventoryListener playerInventoryListener;
     private final CombatStateManager combatState = CombatStateManager.getInstance();
 
-    private final Map<UUID, List<ItemStack>> pendingLeagueItemRestore = new HashMap<>();
+    private final Map<UUID, List<Map.Entry<ItemStack, Integer>>> pendingLeagueItemRestore = new java.util.concurrent.ConcurrentHashMap<>();
 
     private static final long MULTIKILL_WINDOW_MS = 10_000L;
     private static final long ASSIST_WINDOW_MS = 10_000L;
@@ -103,7 +103,7 @@ public class DeathListener implements Listener {
         }
     }
 
-    @EventHandler(priority = EventPriority.HIGHEST)
+    @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
     public void onPlayerDeath(PlayerDeathEvent event) {
         Player player = event.getEntity();
 
@@ -116,6 +116,15 @@ public class DeathListener implements Listener {
 
         event.deathMessage(net.kyori.adventure.text.Component.empty());
 
+        captureLeagueItems(player, event);
+
+        Bukkit.getScheduler().runTaskLater(plugin, () -> {
+            if (player.isOnline() && !player.isDead()) {
+                combatState.clearProcessedDeath(player.getUniqueId());
+                pendingLeagueItemRestore.remove(player.getUniqueId());
+            }
+        }, 2L);
+
         if (combatState.isDeathProcessed(player.getUniqueId())) {
             return;
         }
@@ -123,6 +132,8 @@ public class DeathListener implements Listener {
 
         dev.ixpu.leaguemechanics.entity.player.PlayerKDA.getInstance().recordDeath(player);
         dev.ixpu.leaguemechanics.manager.BuffManager.getInstance().clearBuffs(player);
+        dev.ixpu.leaguemechanics.manager.AbilityEffectManager.getInstance().clear(player);
+        dev.ixpu.leaguemechanics.entity.player.ClassPassives.clearShadowMark(player.getUniqueId());
 
         fireTakedowns(player);
         CritManager.getInstance().resetFailureStreak(player);
@@ -191,29 +202,6 @@ public class DeathListener implements Listener {
             }
         }
 
-        List<Map.Entry<ItemStack, Integer>> leagueItems = new ArrayList<>();
-        for (ItemStack drop : event.getDrops()) {
-            if (drop != null && !drop.getType().isAir()) {
-                String itemId = ItemModifier.getItemId(drop);
-                if (itemId != null) {
-                    int originalSlot = findItemSlot(player, drop);
-                    leagueItems.add(new AbstractMap.SimpleEntry<>(drop.clone(), originalSlot));
-                }
-            }
-        }
-
-        for (Map.Entry<ItemStack, Integer> entry : leagueItems) {
-            event.getDrops().remove(entry.getKey());
-        }
-
-        if (!leagueItems.isEmpty()) {
-            List<ItemStack> toRestore = new ArrayList<>();
-            for (Map.Entry<ItemStack, Integer> entry : leagueItems) {
-                toRestore.add(entry.getKey());
-            }
-            pendingLeagueItemRestore.put(player.getUniqueId(), toRestore);
-        }
-
         for (ItemStack item : player.getInventory().getContents()) {
             if (item == null || item.getType().isAir()) {
                 continue;
@@ -236,6 +224,59 @@ public class DeathListener implements Listener {
                 player.spigot().respawn();
             }
         }, 40L);
+    }
+
+    private void captureLeagueItems(Player player, PlayerDeathEvent event) {
+        if (event.getKeepInventory()) {
+            return;
+        }
+
+        List<Map.Entry<ItemStack, Integer>> leagueItems = new ArrayList<>();
+        ItemStack[] contents = player.getInventory().getContents();
+        for (int slot = 0; slot < contents.length; slot++) {
+            ItemStack item = contents[slot];
+            if (item == null || item.getType().isAir()) {
+                continue;
+            }
+            if (ItemModifier.getItemId(item) != null) {
+                leagueItems.add(new AbstractMap.SimpleEntry<>(item.clone(), slot));
+            }
+        }
+
+        event.getDrops().removeIf(drop -> drop != null && !drop.getType().isAir() && ItemModifier.getItemId(drop) != null);
+
+        if (!leagueItems.isEmpty()) {
+            pendingLeagueItemRestore.put(player.getUniqueId(), leagueItems);
+        }
+    }
+
+    private void restoreLeagueItems(Player player, List<Map.Entry<ItemStack, Integer>> items) {
+        org.bukkit.inventory.PlayerInventory inventory = player.getInventory();
+        for (Map.Entry<ItemStack, Integer> entry : items) {
+            ItemStack item = entry.getKey();
+            if (item == null || item.getType().isAir()) {
+                continue;
+            }
+
+            int slot = entry.getValue();
+            if (slot >= 0 && slot <= 40) {
+                ItemStack existing = inventory.getItem(slot);
+                if (existing == null || existing.getType().isAir()) {
+                    inventory.setItem(slot, item);
+                    continue;
+                }
+            }
+
+            int empty = inventory.firstEmpty();
+            if (empty >= 0) {
+                inventory.setItem(empty, item);
+                continue;
+            }
+
+            player.getWorld().dropItemNaturally(player.getLocation(), item);
+        }
+        plugin.getStatsManager().enforceItemLimit(player);
+        playerInventoryListener.applyPlayerStats(player);
     }
 
     public void fireTakedowns(Player victim) {
@@ -351,16 +392,16 @@ public class DeathListener implements Listener {
         combatState.clearProcessedDeath(player.getUniqueId());
         combatState.clearLastMobDamager(player.getUniqueId());
 
-        List<ItemStack> cached = pendingLeagueItemRestore.remove(player.getUniqueId());
+        List<Map.Entry<ItemStack, Integer>> cached = pendingLeagueItemRestore.remove(player.getUniqueId());
         if (cached == null || cached.isEmpty()) {
             return;
         }
         plugin.getServer().getScheduler().runTaskLater(plugin, () -> {
-            if (!player.isOnline()) return;
-            for (ItemStack item : cached) {
-                if (item == null || item.getType().isAir()) continue;
-                removeFromHotbar(player, item);
+            if (!player.isOnline()) {
+                pendingLeagueItemRestore.put(player.getUniqueId(), cached);
+                return;
             }
+            restoreLeagueItems(player, cached);
         }, 1L);
     }
 }

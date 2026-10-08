@@ -1,11 +1,11 @@
-package dev.ixpu.leaguemechanics.skill.mage;
+package dev.ixpu.leaguemechanics.entity.player.abilities.assassin;
 
 import dev.ixpu.leaguemechanics.LeagueMechanics;
 import dev.ixpu.leaguemechanics.debuff.DebuffType;
 import dev.ixpu.leaguemechanics.entity.player.PlayerClassType;
 import dev.ixpu.leaguemechanics.manager.DebuffManager;
 import dev.ixpu.leaguemechanics.manager.PartyManager;
-import dev.ixpu.leaguemechanics.skill.ClassSkill;
+import dev.ixpu.leaguemechanics.entity.player.abilities.ClassAbilities;
 import net.kyori.adventure.text.Component;
 import org.bukkit.GameMode;
 import org.bukkit.Location;
@@ -17,18 +17,24 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 
-public class Paranoia extends ClassSkill {
+public class Paranoia extends ClassAbilities {
     private static final String CFG = "skills.paranoia.";
 
-    private static final double DEFAULT_COOLDOWN_SECONDS = 60.0;
+    private static final double DEFAULT_COOLDOWN_SECONDS = 90.0;
+    private static final double DEFAULT_MIN_COOLDOWN_SECONDS = 20.0;
     private static final double DEFAULT_RANGE = 25.0;
     private static final double DEFAULT_DURATION_SECONDS = 5.0;
 
     public Paranoia(LeagueMechanics plugin) {
-        super(plugin, "paranoia", "Paranoia", PlayerClassType.MAGE,
+        super(plugin, "paranoia", "Paranoia", PlayerClassType.ASSASSIN,
                 "passives.nocturn_paranoia",
                 "leaguemechanics:paranoia",
                 "minecraft:ender_eye");
+    }
+
+    @Override
+    public double getMinCooldownSeconds() {
+        return plugin.getConfig().getDouble(CFG + "min-cooldown-seconds", DEFAULT_MIN_COOLDOWN_SECONDS);
     }
 
     @Override
@@ -52,7 +58,7 @@ public class Paranoia extends ClassSkill {
     public List<String> getDescription() {
         return List.of(
                 "§7Reduce the sight of every non-partied",
-                "§7players within §f" + trim(getRange()) + " blocks§7 for §f" + trim(getDurationSeconds()) + "seconds§7."
+                "§7players within §f" + trim(getRange()) + " blocks§7 for §f" + trim(getDurationSeconds()) + " seconds§7."
         );
     }
 

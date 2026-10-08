@@ -1,15 +1,20 @@
 package dev.ixpu.leaguemechanics.manager;
 
 import dev.ixpu.leaguemechanics.LeagueMechanics;
+import dev.ixpu.leaguemechanics.entity.player.PlayerClass;
+import dev.ixpu.leaguemechanics.entity.player.PlayerClassType;
+import dev.ixpu.leaguemechanics.entity.player.PlayerStats;
 import dev.ixpu.leaguemechanics.party.PartyGlow;
 import net.kyori.adventure.text.Component;
 import org.bukkit.Bukkit;
+import org.bukkit.NamespacedKey;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
+import org.bukkit.persistence.PersistentDataType;
 
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -154,8 +159,162 @@ public class PartyManager implements Listener {
         persist(() -> db.savePartyMember(partyId, player));
     }
 
+    private static final int UNIQUE_CLASS_LIMIT = 1;
+    private static final int DEFAULT_CLASS_LIMIT = 2;
+
+    private int classLimit(PlayerClassType type) {
+        return type == PlayerClassType.TANK || type == PlayerClassType.SUPPORT ? UNIQUE_CLASS_LIMIT : DEFAULT_CLASS_LIMIT;
+    }
+
+    public String describeClassLimit(PlayerClassType type) {
+        int limit = classLimit(type);
+        return limit == 1 ? "a " + type.getDisplayName() : limit + " " + type.getDisplayName() + "s";
+    }
+
+    private PlayerClassType classOf(UUID uuid) {
+        Player online = Bukkit.getPlayer(uuid);
+        if (online != null) return PlayerClass.getPlayerClass(online);
+        return LeagueMechanics.getInstance().getRunePersistence().loadPlayerClass(uuid);
+    }
+
+    private boolean isGroupFull(Set<UUID> group, UUID exclude, PlayerClassType type) {
+        int count = 0;
+        for (UUID uuid : group) {
+            if (uuid.equals(exclude)) continue;
+            if (classOf(uuid) == type) count++;
+        }
+        return count >= classLimit(type);
+    }
+
+    private PlayerClassType findClassConflict(Player inviter, Player joiner) {
+        PlayerClassType type = PlayerClass.getPlayerClass(joiner);
+        if (type == null) return null;
+
+        Party party = partyByPlayer.get(inviter.getUniqueId());
+        Set<UUID> group = party != null ? party.members : Set.of(inviter.getUniqueId());
+        return isGroupFull(group, joiner.getUniqueId(), type) ? type : null;
+    }
+
+    public boolean isClassTakenInParty(Player player, PlayerClassType type) {
+        if (type == null) return false;
+        Party party = partyByPlayer.get(player.getUniqueId());
+        if (party == null) return false;
+        return isGroupFull(party.members, player.getUniqueId(), type);
+    }
+
+    private NamespacedKey invitesDisabledKey() {
+        return new NamespacedKey(LeagueMechanics.getInstance(), "party_invites_disabled");
+    }
+
+    public boolean areInvitesDisabled(Player player) {
+        Byte value = player.getPersistentDataContainer().get(invitesDisabledKey(), PersistentDataType.BYTE);
+        return value != null && value == 1;
+    }
+
+    public void toggleInvites(Player player) {
+        boolean disable = !areInvitesDisabled(player);
+        if (disable) {
+            player.getPersistentDataContainer().set(invitesDisabledKey(), PersistentDataType.BYTE, (byte) 1);
+            invites.remove(player.getUniqueId());
+            player.sendMessage(Component.text("§cParty invitations disabled."));
+        } else {
+            player.getPersistentDataContainer().remove(invitesDisabledKey());
+            player.sendMessage(Component.text("§aParty invitations enabled."));
+        }
+    }
+
     public boolean isInParty(Player player) {
         return player != null && partyByPlayer.containsKey(player.getUniqueId());
+    }
+
+    public boolean isLeader(Player player) {
+        Party party = player == null ? null : partyByPlayer.get(player.getUniqueId());
+        return party != null && player.getUniqueId().equals(party.owner);
+    }
+
+    public String getLeaderName(Player player) {
+        Party party = player == null ? null : partyByPlayer.get(player.getUniqueId());
+        if (party == null || party.owner == null) return "";
+        return nameOf(party.owner);
+    }
+
+    public String getInviterName(Player player) {
+        LinkedList<Invite> queue = player == null ? null : invites.get(player.getUniqueId());
+        if (queue == null) return "";
+        for (Invite invite : queue) {
+            Player inviter = Bukkit.getPlayer(invite.inviter);
+            if (inviter != null && inviter.isOnline()) return invite.inviterName;
+        }
+        return "";
+    }
+
+    public String getMemberName(Player player, int index) {
+        UUID uuid = getMemberUuid(player, index);
+        return uuid == null ? "" : nameOf(uuid);
+    }
+
+    private UUID getPartyMemberUuid(Player player, int index) {
+        Party party = player == null ? null : partyByPlayer.get(player.getUniqueId());
+        if (party == null || index < 0) return null;
+        if (index == 0) return party.owner != null && !nameOf(party.owner).isEmpty() ? party.owner : null;
+
+        List<UUID> uuids = new ArrayList<>();
+        for (UUID uuid : party.members) {
+            if (uuid.equals(party.owner)) continue;
+            if (!nameOf(uuid).isEmpty()) uuids.add(uuid);
+        }
+        uuids.sort((a, b) -> String.CASE_INSENSITIVE_ORDER.compare(nameOf(a), nameOf(b)));
+        return index <= uuids.size() ? uuids.get(index - 1) : null;
+    }
+
+    public String getPartyMemberName(Player player, int index) {
+        UUID uuid = getPartyMemberUuid(player, index);
+        return uuid == null ? "" : nameOf(uuid);
+    }
+
+    public PlayerClassType getPartyMemberClass(Player player, int index) {
+        UUID uuid = getPartyMemberUuid(player, index);
+        return uuid == null ? null : classOf(uuid);
+    }
+
+    public int getPartyMemberLevel(Player player, int index) {
+        UUID uuid = getPartyMemberUuid(player, index);
+        if (uuid == null) return 0;
+        Player online = Bukkit.getPlayer(uuid);
+        if (online != null) return PlayerStats.getOrCreate(online).getLeagueLevel();
+        return LeagueMechanics.getInstance().getRunePersistence().loadLeagueLevel(uuid);
+    }
+
+    public Player getMemberPlayer(Player player, int index) {
+        UUID uuid = getMemberUuid(player, index);
+        return uuid == null ? null : Bukkit.getPlayer(uuid);
+    }
+
+    private UUID getMemberUuid(Player player, int index) {
+        Party party = player == null ? null : partyByPlayer.get(player.getUniqueId());
+        if (party == null || index < 1) return null;
+        List<UUID> uuids = new ArrayList<>();
+        for (UUID uuid : party.members) {
+            if (uuid.equals(player.getUniqueId())) continue;
+            if (!nameOf(uuid).isEmpty()) uuids.add(uuid);
+        }
+        uuids.sort((a, b) -> String.CASE_INSENSITIVE_ORDER.compare(nameOf(a), nameOf(b)));
+        return index <= uuids.size() ? uuids.get(index - 1) : null;
+    }
+
+    private String nameOf(UUID uuid) {
+        Player online = Bukkit.getPlayer(uuid);
+        if (online != null) return online.getName();
+        String name = Bukkit.getOfflinePlayer(uuid).getName();
+        return name == null ? "" : name;
+    }
+
+    public List<Player> getOnlineTeammates(Player player) {
+        Party party = player == null ? null : partyByPlayer.get(player.getUniqueId());
+        if (party == null) return new ArrayList<>();
+        List<Player> teammates = onlineMembers(party);
+        teammates.removeIf(member -> member.getUniqueId().equals(player.getUniqueId()));
+        return teammates;
     }
 
     public boolean isSameParty(Entity a, Entity b) {
@@ -188,6 +347,15 @@ public class PartyManager implements Listener {
             inviter.sendMessage(Component.text("§e" + target.getName() + " §cis already in a party."));
             return;
         }
+        if (areInvitesDisabled(target)) {
+            inviter.sendMessage(Component.text("§e" + target.getName() + " §cis not accepting party invitations."));
+            return;
+        }
+        PlayerClassType conflict = findClassConflict(inviter, target);
+        if (conflict != null) {
+            inviter.sendMessage(Component.text("§cCan't invite §e" + target.getName() + "§c: your party already has §e" + describeClassLimit(conflict) + "§c."));
+            return;
+        }
         if (!inviter.getWorld().equals(target.getWorld())
                 || inviter.getLocation().distanceSquared(target.getLocation()) > INVITE_RANGE * INVITE_RANGE) {
             inviter.sendMessage(Component.text("§e" + target.getName() + " §cmust be within §e" + (int) INVITE_RANGE + " blocks §cto be invited."));
@@ -200,15 +368,15 @@ public class PartyManager implements Listener {
         queue.add(invite);
 
         long seconds = INVITE_TTL_TICKS / 20L;
-        inviter.sendMessage(Component.text("§a✓ Party invite sent to §e" + target.getName() + " §7(expires in " + seconds + "s)"));
-        target.sendMessage(Component.text("§e" + inviter.getName() + " §ainvited you to their party. Type §e/lm party accept §ato join §7(" + seconds + "s)"));
+        inviter.sendMessage(Component.text("§aParty invite sent to §e" + target.getName() + " §7(expires in " + seconds + "s)"));
+        Bukkit.dispatchCommand(Bukkit.getConsoleSender(), "dwopen party-invite-menu " + target.getName());
 
         Bukkit.getScheduler().runTaskLater(LeagueMechanics.getInstance(), () -> expire(target.getUniqueId(), invite), INVITE_TTL_TICKS);
     }
 
     public void accept(Player player) {
         if (isInParty(player)) {
-            player.sendMessage(Component.text("§cYou're already in a party. Use §e/lm party leave §cfirst."));
+            player.sendMessage(Component.text("§cYou're already in a party. Use §e/party leave §cfirst."));
             return;
         }
 
@@ -224,6 +392,13 @@ public class PartyManager implements Listener {
         }
         if (inviter == null) {
             player.sendMessage(Component.text("§cYou have no pending party invites."));
+            return;
+        }
+
+        PlayerClassType conflict = findClassConflict(inviter, player);
+        if (conflict != null) {
+            player.sendMessage(Component.text("§cYou can't join §e" + inviter.getName() + "§c's party: it already has §e" + describeClassLimit(conflict) + "§c."));
+            inviter.sendMessage(Component.text("§e" + player.getName() + " §ccan't join: your party already has §e" + describeClassLimit(conflict) + "§c."));
             return;
         }
         invites.remove(player.getUniqueId());
@@ -247,7 +422,7 @@ public class PartyManager implements Listener {
         for (Player member : existing) {
             member.sendMessage(Component.text("§e" + player.getName() + " §ajoined the party."));
         }
-        player.sendMessage(Component.text("§a✓ You joined §e" + inviter.getName() + "§a's party."));
+        player.sendMessage(Component.text("§aYou joined §e" + inviter.getName() + "§a's party."));
 
         for (Player member : existing) {
             glowPair(member, player);
@@ -265,7 +440,7 @@ public class PartyManager implements Listener {
             return;
         }
         removeFromParty(player, true);
-        player.sendMessage(Component.text("§a✓ You left the party."));
+        player.sendMessage(Component.text("§aYou left the party."));
     }
 
     public void disband(Player player) {

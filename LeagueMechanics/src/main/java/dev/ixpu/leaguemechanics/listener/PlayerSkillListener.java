@@ -3,6 +3,7 @@ package dev.ixpu.leaguemechanics.listener;
 import com.destroystokyo.paper.event.player.PlayerJumpEvent;
 import dev.ixpu.leaguemechanics.LeagueMechanics;
 import dev.ixpu.leaguemechanics.entity.player.ClassPassives;
+import dev.ixpu.leaguemechanics.entity.player.abilities.marksman.FinalHour;
 import dev.ixpu.leaguemechanics.entity.player.skills.Dash;
 import dev.ixpu.leaguemechanics.entity.player.skills.DoubleJump;
 import dev.ixpu.leaguemechanics.debuff.DebuffType;
@@ -105,6 +106,10 @@ public class PlayerSkillListener implements Listener {
         if (!isDashEnabled(player)) {
             return;
         }
+        if (dashCooldown.isOnCooldown(player) && ClassPassives.hasShadowMark(player)) {
+            ClassPassives.recallToShadowMark(player);
+            return;
+        }
 
         Vector direction = resolveDashDirection(player, input);
         if (direction == null) {
@@ -120,12 +125,14 @@ public class PlayerSkillListener implements Listener {
 
         dashCooldown.startCooldown(player);
         player.setFoodLevel(player.getFoodLevel() - hungerCost(player));
+        ClassPassives.onDash(player, player.getLocation(), dashCooldown.getRemainingMs(player));
 
         Vector velocity = direction.multiply(DASH_STRENGTH * ClassPassives.getDashStrengthMultiplier(player));
         velocity.setY(DASH_VERTICAL_BOOST);
         player.setVelocity(velocity);
 
         combatState.markDashFallImmunity(uuid, DASH_FALL_IMMUNITY_MS);
+        FinalHour.onMobility(player);
 
         Location loc = player.getLocation();
         player.getWorld().playSound(loc, Sound.ENTITY_ENDER_DRAGON_FLAP, 0.6f, 1.6f);
@@ -177,6 +184,7 @@ public class PlayerSkillListener implements Listener {
         player.setVelocity(velocity);
 
         combatState.markDashFallImmunity(player.getUniqueId(), DOUBLE_JUMP_FALL_IMMUNITY_MS);
+        FinalHour.onMobility(player);
 
         Location loc = player.getLocation();
         player.getWorld().playSound(loc, Sound.ENTITY_ENDER_DRAGON_FLAP, 0.6f, 1.9f);
@@ -189,6 +197,7 @@ public class PlayerSkillListener implements Listener {
         wasJumping.remove(event.getPlayer().getUniqueId());
         dashCooldown.cleanup(event.getPlayer());
         doubleJumpCooldown.cleanup(event.getPlayer());
+        FinalHour.cleanup(event.getPlayer());
     }
 
     private Vector resolveDashDirection(Player player, Input input) {

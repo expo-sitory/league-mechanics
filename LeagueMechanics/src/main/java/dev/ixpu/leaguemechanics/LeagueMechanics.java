@@ -24,9 +24,14 @@ import dev.ixpu.leaguemechanics.listener.PlayerStatsListener;
 import dev.ixpu.leaguemechanics.listener.PlayerInventoryListener;
 import dev.ixpu.leaguemechanics.listener.RuneListener;
 import dev.ixpu.leaguemechanics.entity.mob.MobStats;
-import dev.ixpu.leaguemechanics.listener.ClassSkillListener;
-import dev.ixpu.leaguemechanics.skill.ClassSkillRegistry;
-import dev.ixpu.leaguemechanics.skill.mage.Paranoia;
+import dev.ixpu.leaguemechanics.listener.ClassAbilitiesListener;
+import dev.ixpu.leaguemechanics.entity.player.abilities.ClassAbilitiesRegistry;
+import dev.ixpu.leaguemechanics.entity.player.abilities.assassin.Paranoia;
+import dev.ixpu.leaguemechanics.entity.player.abilities.mage.Riftwalk;
+import dev.ixpu.leaguemechanics.entity.player.abilities.tank.ShieldOfDurand;
+import dev.ixpu.leaguemechanics.entity.player.abilities.marksman.FinalHour;
+import dev.ixpu.leaguemechanics.entity.player.abilities.fighter.UndyingRage;
+import dev.ixpu.leaguemechanics.entity.player.abilities.support.Wish;
 
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
@@ -107,7 +112,12 @@ public class LeagueMechanics extends JavaPlugin {
         MobStats.initialize(this);
 
         ItemModifier.initialize(this);
-        ClassSkillRegistry.getInstance().register(new Paranoia(this));
+        ClassAbilitiesRegistry.getInstance().register(new Paranoia(this));
+        ClassAbilitiesRegistry.getInstance().register(new Riftwalk(this));
+        ClassAbilitiesRegistry.getInstance().register(new ShieldOfDurand(this));
+        ClassAbilitiesRegistry.getInstance().register(new FinalHour(this));
+        ClassAbilitiesRegistry.getInstance().register(new UndyingRage(this));
+        ClassAbilitiesRegistry.getInstance().register(new Wish(this));
         registerRunes();
         registerCommands();
         registerRegenTask();
@@ -121,7 +131,7 @@ public class LeagueMechanics extends JavaPlugin {
         Bukkit.getPluginManager().registerEvents(runeListener, this);
         Bukkit.getPluginManager().registerEvents(dashListener, this);
         Bukkit.getPluginManager().registerEvents(new dev.ixpu.leaguemechanics.listener.ClassPassiveListener(this), this);
-        Bukkit.getPluginManager().registerEvents(new ClassSkillListener(this), this);
+        Bukkit.getPluginManager().registerEvents(new ClassAbilitiesListener(this), this);
         Bukkit.getPluginManager().registerEvents(ItemShopManager.getInstance(), this);
         dev.ixpu.leaguemechanics.manager.PartyManager.getInstance().enable(this);
 
@@ -243,7 +253,23 @@ public class LeagueMechanics extends JavaPlugin {
         CommandTabCompletions tabCompleter = new CommandTabCompletions(runeRegistry);
         Objects.requireNonNull(getCommand("leaguemechanics")).setExecutor(commandHandler);
         Objects.requireNonNull(getCommand("leaguemechanics")).setTabCompleter(tabCompleter);
+
+        // /party runs the same code as /lm party
+        org.bukkit.command.PluginCommand partyCommand = getCommand("party");
+        if (partyCommand != null) {
+            partyCommand.setExecutor((sender, command, label, args) ->
+                    commandHandler.onCommand(sender, command, label, prependArg("party", args)));
+            partyCommand.setTabCompleter((sender, command, alias, args) ->
+                    tabCompleter.onTabComplete(sender, command, alias, prependArg("party", args)));
+        }
         getLogger().info("Commands registered!");
+    }
+
+    private static String[] prependArg(String first, String[] args) {
+        String[] result = new String[args.length + 1];
+        result[0] = first;
+        System.arraycopy(args, 0, result, 1, args.length);
+        return result;
     }
 
     public void registerRegenTask() {
@@ -263,7 +289,7 @@ public class LeagueMechanics extends JavaPlugin {
                     dev.ixpu.leaguemechanics.entity.player.PlayerStats ps = dev.ixpu.leaguemechanics.entity.player.PlayerStats.getOrCreate(player);
                     double effectiveHR = ps.getEffectiveHealthRegen(player, healthRegen);
 
-                    if (effectiveHR > 0) {
+                    if (effectiveHR > 0 && !UndyingRage.isActive(player)) {
                         double newHealth = Math.min(player.getHealth() + effectiveHR, player.getMaxHealth());
                         player.setHealth(newHealth);
                     }

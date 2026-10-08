@@ -93,19 +93,6 @@ public class Electrocute extends StacksHandler {
 
         double damageToApply = keystoneDamage(player, target);
 
-        if (livingTarget instanceof Player targetPlayer) {
-            double absorption = targetPlayer.getAbsorptionAmount();
-            if (damageToApply > absorption) {
-                damageToApply -= absorption;
-                targetPlayer.setAbsorptionAmount(0);
-            } else {
-                targetPlayer.setAbsorptionAmount(absorption - damageToApply);
-                damageToApply = 0;
-            }
-        }
-
-        double newHealth = Math.clamp(livingTarget.getHealth() - damageToApply, 0, livingTarget.getMaxHealth());
-
         if (stacks >= MAXIMUM_STACKS) {
             target.getWorld().strikeLightning(target.getLocation());
             resetStacksForTarget(player, targetUUID);
@@ -116,6 +103,8 @@ public class Electrocute extends StacksHandler {
             if (livingTarget instanceof Player livingTargetPlayer) {
                 KillSourceTracker.getInstance().setSource(livingTargetPlayer, player);
             }
+            livingTarget.damage(damageToApply);
+
             String DamageType;
             boolean isMagic = lastDamageWasMagic;
 
@@ -132,16 +121,9 @@ public class Electrocute extends StacksHandler {
             } else {
                 DamageType = "Physical Damage";
             }
-
             DebugLogger.debug(player, "§f[§dSource§f] §f[§cElectrocute§f] Keystone Damage = §d" + Math.ceil(keystoneDamage(player, target) * 100) / 100.0);
             DebugLogger.debug(player, "§f[§dSource§f] Keystone Damage Type = §d" + DamageType);
-            DebugLogger.debug(player, "§f[§dTarget§f] Target New HP = §d" + Math.ceil(newHealth * 100) / 100.0);
 
-            if (newHealth <= 0) {
-                livingTarget.damage(livingTarget.getHealth());
-            } else {
-                livingTarget.setHealth(newHealth);
-            }
         }
     }
 

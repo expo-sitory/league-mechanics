@@ -6,19 +6,26 @@ import dev.ixpu.leaguemechanics.entity.player.PlayerClassType;
 import dev.ixpu.leaguemechanics.debuff.DebuffType;
 import dev.ixpu.leaguemechanics.entity.player.PlayerStats;
 import dev.ixpu.leaguemechanics.manager.DebuffManager;
+import dev.ixpu.leaguemechanics.manager.PartyManager;
 import dev.ixpu.leaguemechanics.rune.paths.RunePath;
 import dev.ixpu.leaguemechanics.rune.shards.RuneShard;
 import dev.ixpu.leaguemechanics.rune.shards.ShardStats;
 import dev.ixpu.leaguemechanics.util.Icons;
 import dev.ixpu.leaguemechanics.util.ItemModifier;
+import me.clip.placeholderapi.PlaceholderAPI;
 import me.clip.placeholderapi.expansion.PlaceholderExpansion;
 import org.bukkit.attribute.Attribute;
 import org.bukkit.entity.Player;
+import org.bukkit.event.EventHandler;
+import org.bukkit.event.Listener;
+import org.bukkit.event.player.PlayerQuitEvent;
 
 import java.util.Arrays;
-import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 public class PlaceholderRegistry extends PlaceholderExpansion {
@@ -50,8 +57,27 @@ public class PlaceholderRegistry extends PlaceholderExpansion {
     }
 
 
-    private final Map<UUID, Integer> lastHealthBars = new HashMap<>();
-    private final Map<UUID, Long> healthBlinkStartTime = new HashMap<>();
+    private record BarKey(UUID viewer, UUID target) {}
+
+    private final Map<BarKey, Integer> lastHealthBars = new ConcurrentHashMap<>();
+    private final Map<BarKey, Long> healthBlinkStartTime = new ConcurrentHashMap<>();
+
+    @Override
+    public boolean register() {
+        boolean ok = super.register();
+        plugin.getServer().getPluginManager().registerEvents(new Listener() {
+            @EventHandler
+            public void onQuit(PlayerQuitEvent event) {
+                clearBarState(event.getPlayer().getUniqueId());
+            }
+        }, plugin);
+        return ok;
+    }
+
+    private void clearBarState(UUID uuid) {
+        lastHealthBars.keySet().removeIf(k -> k.viewer().equals(uuid) || k.target().equals(uuid));
+        healthBlinkStartTime.keySet().removeIf(k -> k.viewer().equals(uuid) || k.target().equals(uuid));
+    }
 
     @Override
     public String onPlaceholderRequest(Player player, String params) {
@@ -135,6 +161,36 @@ public class PlaceholderRegistry extends PlaceholderExpansion {
             case "item_count" -> String.valueOf(plugin.getStatsManager().countLeagueItems(player));
             case "kda" -> dev.ixpu.leaguemechanics.entity.player.PlayerKDA.getInstance().getFormattedKDA(player.getUniqueId());
 
+            case "party_leader" -> PartyManager.getInstance().getLeaderName(player);
+            case "party_member_1" -> PartyManager.getInstance().getMemberName(player, 1);
+            case "party_member_2" -> PartyManager.getInstance().getMemberName(player, 2);
+            case "party_member_3" -> PartyManager.getInstance().getMemberName(player, 3);
+            case "party_member_4" -> PartyManager.getInstance().getMemberName(player, 4);
+
+            case "party_leader_name" -> PartyManager.getInstance().getPartyMemberName(player, 0);
+            case "party_leader_level" -> getPartyMemberLevel(player, 0);
+            case "party_leader_class_icon" -> getPartyMemberClassIcon(player, 0, false);
+
+            case "party_member_1_name" -> PartyManager.getInstance().getPartyMemberName(player, 1);
+            case "party_member_2_name" -> PartyManager.getInstance().getPartyMemberName(player, 2);
+            case "party_member_3_name" -> PartyManager.getInstance().getPartyMemberName(player, 3);
+            case "party_member_4_name" -> PartyManager.getInstance().getPartyMemberName(player, 4);
+            case "party_member_5_name" -> PartyManager.getInstance().getPartyMemberName(player, 5);
+
+            case "party_member_1_class_icon" -> getPartyMemberClassIcon(player, 1, false);
+            case "party_member_2_class_icon" -> getPartyMemberClassIcon(player, 2, false);
+            case "party_member_3_class_icon" -> getPartyMemberClassIcon(player, 3, false);
+            case "party_member_4_class_icon" -> getPartyMemberClassIcon(player, 4, false);
+            case "party_member_5_class_icon" -> getPartyMemberClassIcon(player, 5, false);
+
+            case "party_member_1_level" -> getPartyMemberLevel(player, 1);
+            case "party_member_2_level" -> getPartyMemberLevel(player, 2);
+            case "party_member_3_level" -> getPartyMemberLevel(player, 3);
+            case "party_member_4_level" -> getPartyMemberLevel(player, 4);
+            case "party_member_5_level" -> getPartyMemberLevel(player, 5);
+
+            case "party_inviter" -> PartyManager.getInstance().getInviterName(player);
+
             case "line1" -> getLine1(player, stats);
             case "line2" -> getLine2(player, stats);
             case "line3" -> getLine3(player, stats);
@@ -148,53 +204,93 @@ public class PlaceholderRegistry extends PlaceholderExpansion {
             case "league_item_6" -> getLeagueItemIcon(player, 6);
             case "league_items" -> String.join("", collectLeagueItemIcons(player));
 
-            case "health_absorption_bar" -> {
-                UUID uuid = player.getUniqueId();
-                int maxHealth = (int) player.getAttribute(Attribute.MAX_HEALTH).getValue();
-                int currentHealth = (int) player.getHealth();
-                double absorption = player.getAbsorptionAmount();
-
-                int barLength = 10;
-                int absorptionHearts = Math.min(barLength - 1, (int) Math.ceil((absorption / (double) maxHealth) * barLength));
-                int maxHealthBars = barLength - absorptionHearts;
-                int currentHealthBars = Math.max(1, Math.min(maxHealthBars, (int) ((currentHealth / (double) maxHealth) * barLength)));
-
-                Integer prevHealthBars = lastHealthBars.getOrDefault(uuid, currentHealthBars);
-                if (currentHealthBars < prevHealthBars) {
-                    healthBlinkStartTime.put(uuid, System.currentTimeMillis());
-                }
-                lastHealthBars.put(uuid, currentHealthBars);
-
-                boolean isBlinking = false;
-                long now = System.currentTimeMillis();
-                Long blinkStart = healthBlinkStartTime.get(uuid);
-
-                if (blinkStart != null) {
-                    if (now - blinkStart < 700) {
-                        isBlinking = true;
-                    } else {
-                        healthBlinkStartTime.remove(uuid);
-                    }
-                }
-
-                int lostBars = Math.max(0, prevHealthBars - currentHealthBars);
-                lostBars = Math.min(lostBars, barLength - currentHealthBars - absorptionHearts);
-                int emptyBars = Math.max(0, barLength - currentHealthBars - absorptionHearts - lostBars);
-
-                StringBuilder bar = new StringBuilder();
-                for (int i = 0; i < currentHealthBars; i++) bar.append("&c█");
-                if (isBlinking) {
-                    for (int i = 0; i < lostBars; i++) bar.append("&4█");
-                } else {
-                    for (int i = 0; i < lostBars; i++) bar.append("&8█");
-                }
-                for (int i = 0; i < absorptionHearts; i++) bar.append("&f█");
-                for (int i = 0; i < emptyBars; i++) bar.append("&8█");
-
-                yield bar.toString();
+            case "health_absorption_bar" -> getHealthAbsorptionBar(player, player);
+            default -> {
+                Matcher m = PARTY_MEMBER_STAT.matcher(params);
+                yield m.matches()
+                        ? getPartyMemberStat(player, Integer.parseInt(m.group(1)), m.group(2))
+                        : getRegionIcon(params);
             }
-            default -> getRegionIcon(params);
         };
+    }
+
+    private static final Pattern PARTY_MEMBER_STAT =
+            Pattern.compile("party_member_([1-4])_(level|class|current-hp|max-hp|health_absorption_bar)", Pattern.CASE_INSENSITIVE);
+
+    private String getPartyMemberStat(Player viewer, int index, String stat) {
+        Player member = PartyManager.getInstance().getMemberPlayer(viewer, index);
+        if (member == null) return "";
+
+        return switch (stat.toLowerCase()) {
+            case "level" -> String.valueOf(PlayerStats.getOrCreate(member).getLeagueLevel());
+            case "class" -> {
+                PlayerClassType type = PlayerClass.getPlayerClass(member);
+                yield type == null ? "" : Icons.get("classes." + type.getId());
+            }
+            case "current-hp" -> String.valueOf((int) Math.ceil(member.getHealth()));
+            case "health_absorption_bar" -> getHealthAbsorptionBar(viewer, member);
+            case "max-hp" -> {
+                var attr = member.getAttribute(Attribute.MAX_HEALTH);
+                yield attr == null ? "" : String.valueOf((int) Math.round(attr.getValue()));
+            }
+            default -> "";
+        };
+    }
+
+    private String getPartyMemberClassIcon(Player player, int index, boolean minimessage) {
+        PlayerClassType ct = PartyManager.getInstance().getPartyMemberClass(player, index);
+        if (ct == null) return "";
+        String key = "classes." + ct.getId();
+        return minimessage ? icon(key) : "<white>" + Icons.get(key);
+    }
+
+    private String getPartyMemberLevel(Player player, int index) {
+        int level = PartyManager.getInstance().getPartyMemberLevel(player, index);
+        return level > 0 ? String.valueOf(level) : "";
+    }
+
+    private String getHealthAbsorptionBar(Player viewer, Player target) {
+        var attr = target.getAttribute(Attribute.MAX_HEALTH);
+        if (attr == null) return "";
+
+        BarKey key = new BarKey(viewer.getUniqueId(), target.getUniqueId());
+        int maxHealth = (int) attr.getValue();
+        int currentHealth = (int) target.getHealth();
+        double absorption = target.getAbsorptionAmount();
+
+        int barLength = 10;
+        int absorptionHearts = Math.min(barLength - 1, (int) Math.ceil((absorption / (double) maxHealth) * barLength));
+        int maxHealthBars = barLength - absorptionHearts;
+        int currentHealthBars = Math.max(1, Math.min(maxHealthBars, (int) ((currentHealth / (double) maxHealth) * barLength)));
+
+        Integer prevHealthBars = lastHealthBars.getOrDefault(key, currentHealthBars);
+        if (currentHealthBars < prevHealthBars) {
+            healthBlinkStartTime.put(key, System.currentTimeMillis());
+        }
+        lastHealthBars.put(key, currentHealthBars);
+
+        boolean isBlinking = false;
+        long now = System.currentTimeMillis();
+        Long blinkStart = healthBlinkStartTime.get(key);
+
+        if (blinkStart != null) {
+            if (now - blinkStart < 700) {
+                isBlinking = true;
+            } else {
+                healthBlinkStartTime.remove(key);
+            }
+        }
+
+        int lostBars = Math.max(0, prevHealthBars - currentHealthBars);
+        lostBars = Math.min(lostBars, barLength - currentHealthBars - absorptionHearts);
+        int emptyBars = Math.max(0, barLength - currentHealthBars - absorptionHearts - lostBars);
+
+        StringBuilder bar = new StringBuilder();
+        for (int i = 0; i < currentHealthBars; i++) bar.append("&c█");
+        for (int i = 0; i < lostBars; i++) bar.append(isBlinking ? "&4█" : "&8█");
+        for (int i = 0; i < absorptionHearts; i++) bar.append("&f█");
+        for (int i = 0; i < emptyBars; i++) bar.append("&8█");
+        return bar.toString();
     }
 
     private java.util.List<String> collectLeagueItemIcons(Player player) {
@@ -559,19 +655,19 @@ public class PlaceholderRegistry extends PlaceholderExpansion {
         return display(CLASS_DISPLAY, "classes", ct.getId(), "§7⚔ No Class Selected");
     }
     private String getClassMM(Player player) {
-        if (player == null) return "⚔ No Class Selected";
+        if (player == null) return "";
         PlayerClassType ct = PlayerClass.getPlayerClass(player);
-        if (ct == null) return "⚔ No Class Selected";
-        return display(CLASS_DISPLAY_MINIMESSAGE, "classes", ct.getId(), "⚔ No Class Selected");
+        if (ct == null) return "";
+        return icon("classes." + ct.getId());
     }
 
 
     private String getLatestCC(Player player) {
         DebuffType type = DebuffManager.getInstance().getLatestCrowdControl(player);
-        if (type == null) return "";
+        if (type == null) return PlaceholderAPI.setPlaceholders(player, "%luckperms_prefix%%luckperms_suffix_element_lowest_inherited%%essentials_nickname%");
         String icon = Icons.get(DebuffManager.getCrowdControlIconKey(type));
         String name = DebuffManager.getCrowdControlName(type);
-        return icon.isEmpty() ? name : icon + " " + name;
+        return icon.isEmpty() ? name : "§f" + icon + " " + name;
     }
 
     private String getLatestCCDuration(Player player) {
@@ -595,18 +691,18 @@ public class PlaceholderRegistry extends PlaceholderExpansion {
     }
 
     private static final java.util.Map<String, String> KEYSTONE_COLORS = java.util.Map.of(
-            "domination", "<red>",
-            "precision", "<yellow>",
-            "resolve", "<green>",
-            "inspiration", "<aqua>",
-            "sorcery", "<blue>"
+            "domination", "<white>",
+            "precision", "<white>",
+            "resolve", "<white>",
+            "inspiration", "<white>",
+            "sorcery", "<white>"
     );
 
     private static final java.util.Map<String, String> PATH_DISPLAY = java.util.Map.of(
             "domination",   "§f{icon} §4Domination",
             "precision",    "§f{icon} §6Precision",
             "resolve",     "§f{icon} §2Resolve",
-            "sorcery",     "§f{icon} §1Sorcery",
+            "sorcery",     "§f{icon} §9Sorcery",
             "inspiration", "§f{icon} §3Inspiration"
     );
 
@@ -615,16 +711,16 @@ public class PlaceholderRegistry extends PlaceholderExpansion {
             "mage",     "§f{icon} §7Mage",
             "tank",     "§f{icon} §7Tank",
             "marksman", "§f{icon} §7Marksman",
-            "assassin", "§f{icon} §7Assasin",
+            "assassin", "§f{icon} §7Assassin",
             "support",  "§f{icon} §7Support"
     );
 
     private static final java.util.Map<String, String> PATH_DISPLAY_MINIMESSAGE = java.util.Map.of(
-            "domination",   "{font}<dark_red> Domination</dark_red>",
-            "precision",    "{font}<gold> Precision</gold>",
-            "resolve",     "{font}<dark_green> Resolve</dark_green>",
-            "sorcery",     "{font}<dark_blue> Sorcery</dark_blue>",
-            "inspiration", "{font}<dark_aqua> Inspiration</dark_aqua>"
+            "domination",   "{font}<white> Domination</white>",
+            "precision",    "{font}<white> Precision</white>",
+            "resolve",     "{font}<white> Resolve</white>",
+            "sorcery",     "{font}<white> Sorcery</white>",
+            "inspiration", "{font}<white> Inspiration</white>"
     );
 
     private static final java.util.Map<String, String> CLASS_DISPLAY_MINIMESSAGE = java.util.Map.of(
@@ -632,7 +728,7 @@ public class PlaceholderRegistry extends PlaceholderExpansion {
             "mage",     "{font}<gray> Mage</gray>",
             "tank",     "{font}<gray> Tank</gray>",
             "marksman", "{icon}<gray> Marksman</gray>",
-            "assassin", "{font}<gray> Assasin</gray>",
+            "assassin", "{font}<gray> Assassin</gray>",
             "support",  "{font}<gray> Support</gray>"
     );
 

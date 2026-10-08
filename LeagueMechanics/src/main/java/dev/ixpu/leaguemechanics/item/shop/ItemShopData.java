@@ -50,7 +50,7 @@ public class ItemShopData {
         // --------------------------------- BASIC ITEMS ---------------------------------
 
         addItem("ruby-crystal", 17, 3, 8, ItemRarity.UNCOMMON, null, "main");
-        addItem("dagger", 13, 3, 11, ItemRarity.UNCOMMON, null, "main");
+        addItem("dagger", 13, 3, 11, ItemRarity.UNCOMMON, null, "assassin");
         addItem("amplifying-tome", 17, 3, 0, ItemRarity.UNCOMMON, null, "mage");
         addItem("blasting-wand", 24, 3, 1, ItemRarity.UNCOMMON, null, "mage");
         addItem("needlessly-large-rod", 28, 3, 2, ItemRarity.UNCOMMON, null, "mage");
@@ -60,7 +60,7 @@ public class ItemShopData {
         addItem("cloth-armor", 14, 3, 0, ItemRarity.UNCOMMON, null, "tank");
         addItem("rejuvenation-bead", 14, 3, 9, ItemRarity.UNCOMMON, null, "support");
         addItem("faeri-charm", 11, 3, 10, ItemRarity.UNCOMMON, null, "support");
-        addItem("glowing-mote", 13, 3, 0, ItemRarity.UNCOMMON, null, "support");
+        addItem("glowing-mote", 13, 3, 0, ItemRarity.UNCOMMON, null, "assassin");
 
         // --------------------------------- EPIC ITEMS ---------------------------------
 
@@ -73,9 +73,9 @@ public class ItemShopData {
         addItem("fated-ashes", 30, 1, 3, ItemRarity.RARE, null, "mage");
         addItem("hextech-alternator", 30, 1, 7, ItemRarity.RARE, null, "mage");
         addItem("oblivion-orb", 28, 3, 8, ItemRarity.RARE, null, "mage");
-        addItem("caulfields-warhammer", 27, 3, 3, ItemRarity.RARE, null, "fighter");
-        addItem("hexdrinker", 35, 3, 4, ItemRarity.RARE, null, "fighter");
-        addItem("serrated-dirk", 25, 1, 5, ItemRarity.RARE, null, "fighter");
+        addItem("caulfields-warhammer", 27, 3, 3, ItemRarity.RARE, null, "assassin");
+        addItem("hexdrinker", 35, 3, 4, ItemRarity.RARE, null, "assassin");
+        addItem("serrated-dirk", 25, 1, 5, ItemRarity.RARE, null, "assassin");
         addItem("phage", 30, 3, 6, ItemRarity.RARE, null, "fighter");
         addItem("executioners-calling", 25, 1, 7, ItemRarity.RARE, null, "fighter");
         addItem("crystalline-bracer", 24, 3, 4, ItemRarity.RARE, null, "tank");

@@ -3,9 +3,6 @@ package dev.ixpu.leaguemechanics.command;
 import dev.ixpu.leaguemechanics.manager.BuffManager;
 import dev.ixpu.leaguemechanics.buff.BuffType;
 import dev.ixpu.leaguemechanics.util.RuneRegistry;
-import dev.ixpu.leaguemechanics.entity.player.PlayerClass;
-import dev.ixpu.leaguemechanics.skill.ClassSkill;
-import dev.ixpu.leaguemechanics.skill.ClassSkillRegistry;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
@@ -17,9 +14,6 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 public class CommandTabCompletions implements org.bukkit.command.TabCompleter {
-    private static final List<String> PATHS = List.of(
-            "domination", "precision", "inspiration", "resolve", "sorcery"
-    );
 
     private final RuneRegistry runeRegistry;
 
@@ -46,7 +40,6 @@ public class CommandTabCompletions implements org.bukkit.command.TabCompleter {
             completions.add("inspect");
             completions.add("party");
             completions.add("dash");
-            completions.add("skills");
             return filter(completions, args[0]);
         }
 
@@ -62,38 +55,6 @@ public class CommandTabCompletions implements org.bukkit.command.TabCompleter {
                         .map(org.bukkit.entity.Player::getName)
                         .filter(name -> name.toLowerCase().startsWith(args[2].toLowerCase()))
                         .collect(Collectors.toList());
-            }
-            return new ArrayList<>();
-        }
-
-        if (args[0].equalsIgnoreCase("party")) {
-            if (args.length == 2) {
-                completions.add("invite");
-                completions.add("accept");
-                completions.add("leave");
-                completions.add("disband");
-                return filter(completions, args[1]);
-            }
-            if (args.length == 3 && args[1].equalsIgnoreCase("invite")) {
-                return org.bukkit.Bukkit.getOnlinePlayers().stream()
-                        .filter(p -> !p.equals(player))
-                        .map(org.bukkit.entity.Player::getName)
-                        .filter(name -> name.toLowerCase().startsWith(args[2].toLowerCase()))
-                        .collect(Collectors.toList());
-            }
-            return new ArrayList<>();
-        }
-
-        if (args[0].equalsIgnoreCase("skills")) {
-            if (args.length == 2) {
-                completions.add("select");
-                return filter(completions, args[1]);
-            }
-            if (args.length == 3 && args[1].equalsIgnoreCase("select")) {
-                for (ClassSkill skill : ClassSkillRegistry.getInstance().forClass(PlayerClass.getPlayerClass(player))) {
-                    completions.add(skill.getId());
-                }
-                return filter(completions, args[2]);
             }
             return new ArrayList<>();
         }

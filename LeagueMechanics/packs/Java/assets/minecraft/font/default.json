@@ -250,6 +250,24 @@
         },
         {
             "type": "bitmap",
+            "file": "minecraft:font/shadow_recall.png",
+            "ascent": 10,
+            "height": 12,
+            "chars": [
+                "\ue40c"
+            ]
+        },
+        {
+            "type": "bitmap",
+            "file": "minecraft:font/riftwalk.png",
+            "ascent": 10,
+            "height": 12,
+            "chars": [
+                "\ue40d"
+            ]
+        },
+        {
+            "type": "bitmap",
             "file": "minecraft:font/nocturne_paranoia.png",
             "ascent": 10,
             "height": 12,

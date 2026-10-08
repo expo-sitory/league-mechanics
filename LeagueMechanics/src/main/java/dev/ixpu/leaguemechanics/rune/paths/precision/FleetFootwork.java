@@ -94,7 +94,9 @@ public class FleetFootwork extends StacksHandler {
             double healAmount = missingHealth * scaledHealPercent
                     * dev.ixpu.leaguemechanics.manager.BuffManager.getInstance().getHealingMultiplier(player);
 
-            player.setHealth(Math.min(maxHealth, currentHealth + healAmount));
+            if (!dev.ixpu.leaguemechanics.entity.player.abilities.fighter.UndyingRage.isActive(player)) {
+                player.setHealth(Math.min(maxHealth, currentHealth + healAmount));
+            }
             resetStacks(player);
             activateEffects(player);
             distanceAccumulator.put(player.getUniqueId(), 0.0);

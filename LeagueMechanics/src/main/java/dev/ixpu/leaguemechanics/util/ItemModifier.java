@@ -160,7 +160,7 @@ public class ItemModifier {
             lore.add("§f" + Icons.get("spells.heal") + " §f" + formatStat(statData.getHm()) + "% §7Healing Power");
         }
         if (statData.getCh() > 0) {
-            lore.add("§f" + Icons.get("stats.ch") + " §f" + formatStat(statData.getCh()) + " §7Cooldown Haste");
+            lore.add("§f" + Icons.get("stats.ch") + " §f" + formatStat(statData.getCh()) + " §7Ability Haste");
         }
         if (statData.getTn() > 0) {
             lore.add("§f" + Icons.get("stats.tn") + " §f" + formatStat(statData.getTn()) + " §7Tenacity");

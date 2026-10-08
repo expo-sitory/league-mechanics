@@ -4,11 +4,13 @@ import dev.ixpu.leaguemechanics.LeagueMechanics;
 import dev.ixpu.leaguemechanics.debuff.DebuffType;
 import dev.ixpu.leaguemechanics.entity.player.PlayerClass;
 import dev.ixpu.leaguemechanics.entity.player.PlayerClassType;
-import dev.ixpu.leaguemechanics.skill.ClassSkill;
-import dev.ixpu.leaguemechanics.skill.ClassSkillRegistry;
+import dev.ixpu.leaguemechanics.entity.player.PlayerStats;
+import dev.ixpu.leaguemechanics.entity.player.abilities.ClassAbilities;
+import dev.ixpu.leaguemechanics.entity.player.abilities.ClassAbilitiesRegistry;
 import dev.ixpu.leaguemechanics.util.ItemModifier;
 import net.kyori.adventure.text.Component;
 import org.bukkit.Bukkit;
+import org.bukkit.GameMode;
 import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
 import org.bukkit.entity.Player;
@@ -27,29 +29,32 @@ import java.util.Map;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 
-public class ClassSkillManager {
+public class ClassAbilitiesManager {
     public enum SelectResult {
         OK, NO_CLASS, WRONG_CLASS, INVENTORY_FULL, ALREADY_SELECTED
     }
 
-    private static ClassSkillManager instance;
+    private static ClassAbilitiesManager instance;
 
     private final LeagueMechanics plugin;
     private final NamespacedKey selectedKey;
     private final NamespacedKey itemKey;
 
     private final Map<UUID, Map<String, Long>> cooldownUntil = new ConcurrentHashMap<>();
+    private final Map<UUID, Map<String, Long>> effectUntil = new ConcurrentHashMap<>();
+    private final Map<UUID, Map<String, Long>> cooldownDurationMs = new ConcurrentHashMap<>();
     private final Map<UUID, Integer> lastAttemptTick = new HashMap<>();
+    private static final int HOLD_GAP_TICKS = 6;
 
-    private ClassSkillManager(LeagueMechanics plugin) {
+    private ClassAbilitiesManager(LeagueMechanics plugin) {
         this.plugin = plugin;
         this.selectedKey = new NamespacedKey(plugin, "class_skill");
         this.itemKey = new NamespacedKey(plugin, "class_skill_item");
     }
 
-    public static ClassSkillManager getInstance() {
+    public static ClassAbilitiesManager getInstance() {
         if (instance == null) {
-            instance = new ClassSkillManager(LeagueMechanics.getInstance());
+            instance = new ClassAbilitiesManager(LeagueMechanics.getInstance());
         }
         return instance;
     }
@@ -67,22 +72,22 @@ public class ClassSkillManager {
         return player.getPersistentDataContainer().get(selectedKey, PersistentDataType.STRING);
     }
 
-    public ClassSkill getSelectedSkill(Player player) {
+    public ClassAbilities getSelectedSkill(Player player) {
         String id = getSelectedSkillId(player);
         if (id == null) return null;
-        ClassSkill skill = ClassSkillRegistry.getInstance().get(id);
+        ClassAbilities skill = ClassAbilitiesRegistry.getInstance().get(id);
         if (skill == null) return null;
         PlayerClassType current = PlayerClass.getPlayerClass(player);
         if (current == null || skill.getClassType() != current) return null;
         return skill;
     }
 
-    public SelectResult select(Player player, ClassSkill skill) {
+    public SelectResult select(Player player, ClassAbilities skill) {
         PlayerClassType current = PlayerClass.getPlayerClass(player);
         if (current == null) return SelectResult.NO_CLASS;
         if (skill.getClassType() != current) return SelectResult.WRONG_CLASS;
 
-        ClassSkill selected = getSelectedSkill(player);
+        ClassAbilities selected = getSelectedSkill(player);
         if (selected != null && selected.getId().equals(skill.getId()) && hasSkillItem(player)) {
             return SelectResult.ALREADY_SELECTED;
         }
@@ -105,7 +110,7 @@ public class ClassSkillManager {
     public void onClassChanged(Player player, PlayerClassType newType) {
         String id = getSelectedSkillId(player);
         if (id == null) return;
-        ClassSkill skill = ClassSkillRegistry.getInstance().get(id);
+        ClassAbilities skill = ClassAbilitiesRegistry.getInstance().get(id);
         if (skill == null || newType == null || skill.getClassType() != newType) {
             clearSelection(player);
             player.sendMessage(Component.text("§7Your class skill was removed because your class changed."));
@@ -133,7 +138,7 @@ public class ClassSkillManager {
         }
     }
 
-    public ItemStack createItem(Player player, ClassSkill skill) {
+    public ItemStack createItem(Player player, ClassAbilities skill) {
         ItemStack item = new ItemStack(Material.NETHERITE_INGOT);
         ItemMeta meta = item.getItemMeta();
         if (meta != null) {
@@ -143,6 +148,9 @@ public class ClassSkillManager {
             List<String> lore = new ArrayList<>(skill.getDescription());
             lore.add("");
             lore.add("§7ᴄᴏᴏʟᴅᴏᴡɴ: §f" + formatSeconds(skill.getCooldownSeconds()));
+            if (skill.getHungerCost() > 0) {
+                lore.add("§7ᴄᴏꜱᴛ: §f" + skill.getHungerCost() + " ꜱᴀᴛᴜʀᴀᴛɪᴏɴ");
+            }
             meta.setLore(lore);
 
             PersistentDataContainer data = meta.getPersistentDataContainer();
@@ -153,13 +161,13 @@ public class ClassSkillManager {
         return item;
     }
 
-    private String resolveModel(Player player, ClassSkill skill) {
+    private String resolveModel(Player player, ClassAbilities skill) {
         boolean hasPack = plugin.getConfig().getBoolean("general-settings.assume-client-pack", false)
                 || player.getResourcePackStatus() == PlayerResourcePackStatusEvent.Status.SUCCESSFULLY_LOADED;
         return hasPack ? skill.getModel() : skill.getFallbackModel();
     }
 
-    private boolean giveItem(Player player, ClassSkill skill) {
+    private boolean giveItem(Player player, ClassAbilities skill) {
         PlayerInventory inv = player.getInventory();
         int slot = -1;
         for (int i = 0; i < 9; i++) {
@@ -179,7 +187,7 @@ public class ClassSkillManager {
 
     public void ensureItem(Player player) {
         if (!player.isOnline()) return;
-        ClassSkill skill = getSelectedSkill(player);
+        ClassAbilities skill = getSelectedSkill(player);
         if (skill == null) {
             if (hasSkillItem(player)) removeSkillItems(player);
             return;
@@ -203,7 +211,7 @@ public class ClassSkillManager {
     }
 
     public void refreshModel(Player player) {
-        ClassSkill skill = getSelectedSkill(player);
+        ClassAbilities skill = getSelectedSkill(player);
         if (skill == null) return;
         for (ItemStack item : player.getInventory().getContents()) {
             if (isSkillItem(item)) {
@@ -217,10 +225,18 @@ public class ClassSkillManager {
         Integer last = lastAttemptTick.put(player.getUniqueId(), tick);
         if (last != null && last == tick) return;
 
-        ClassSkill skill = getSelectedSkill(player);
+        ClassAbilities skill = getSelectedSkill(player);
         if (skill == null) {
             player.sendMessage(Component.text("§cThis skill doesn't belong to your class."));
             return;
+        }
+
+        if (skill.isChargeable()) {
+            if (skill.isCharging(player)) {
+                skill.cast(player);
+                return;
+            }
+            if (last != null && tick - last <= HOLD_GAP_TICKS) return;
         }
 
         DebuffManager debuffs = DebuffManager.getInstance();
@@ -229,10 +245,19 @@ public class ClassSkillManager {
             return;
         }
 
-        double remaining = getRemainingCooldownSeconds(player, skill);
-        if (remaining > 0) {
-            player.sendMessage(Component.text("§c" + skill.getDisplayName() + " is on cooldown §7("
-                    + String.format(Locale.ROOT, "%.1f", remaining) + "s)"));
+        if (getRemainingLockSeconds(player, skill) > 0) {
+            if (isEffectActive(player, skill)) {
+                player.sendMessage(Component.text("§c" + skill.getDisplayName() + " is still active"));
+            } else {
+                player.sendMessage(Component.text("§c" + skill.getDisplayName() + " is on cooldown §7("
+                        + String.format(Locale.ROOT, "%.1f", getRemainingCooldownSeconds(player, skill)) + "s)"));
+            }
+            return;
+        }
+
+        if (!hasEnoughHunger(player, skill)) {
+            player.sendMessage(Component.text("§cNot enough hunger to cast " + skill.getDisplayName()
+                    + " §7(needs " + skill.getHungerRequired() + ")"));
             return;
         }
 
@@ -240,22 +265,105 @@ public class ClassSkillManager {
         startCooldown(player, skill);
     }
 
-    private void startCooldown(Player player, ClassSkill skill) {
-        long until = System.currentTimeMillis() + (long) (skill.getCooldownSeconds() * 1000.0);
-        cooldownUntil.computeIfAbsent(player.getUniqueId(), k -> new ConcurrentHashMap<>()).put(skill.getId(), until);
+    private boolean bypassesHunger(Player player) {
+        GameMode mode = player.getGameMode();
+        return mode == GameMode.CREATIVE || mode == GameMode.SPECTATOR;
     }
 
-    public double getRemainingCooldownSeconds(Player player, ClassSkill skill) {
+    public boolean hasEnoughHunger(Player player, ClassAbilities skill) {
+        if (bypassesHunger(player)) return true;
+        return player.getFoodLevel() >= skill.getHungerRequired();
+    }
+
+    private void consumeHunger(Player player, ClassAbilities skill) {
+        int cost = skill.getHungerCost();
+        if (cost <= 0 || bypassesHunger(player)) return;
+        int level = Math.max(0, player.getFoodLevel() - cost);
+        player.setFoodLevel(level);
+        if (player.getSaturation() > level) {
+            player.setSaturation(level);
+        }
+    }
+
+    public void startCooldown(Player player, ClassAbilities skill) {
+        consumeHunger(player, skill);
+        long now = System.currentTimeMillis();
+        long effectEnd = now;
+        if (skill.startsCooldownAfterEffect()) {
+            effectEnd += (long) (skill.getEffectSeconds() * 1000.0);
+        }
+        long cooldownMs = (long) (skill.getCooldownSeconds() * 1000.0);
+        long until = effectEnd + cooldownMs;
+
+        UUID uuid = player.getUniqueId();
+        cooldownUntil.computeIfAbsent(uuid, k -> new ConcurrentHashMap<>()).put(skill.getId(), until);
+        cooldownDurationMs.computeIfAbsent(uuid, k -> new ConcurrentHashMap<>()).put(skill.getId(), cooldownMs);
+
+        if (effectEnd > now) {
+            effectUntil.computeIfAbsent(uuid, k -> new ConcurrentHashMap<>()).put(skill.getId(), effectEnd);
+        } else {
+            Map<String, Long> effects = effectUntil.get(uuid);
+            if (effects != null) effects.remove(skill.getId());
+        }
+    }
+
+    public boolean isEffectActive(Player player, ClassAbilities skill) {
+        Map<String, Long> map = effectUntil.get(player.getUniqueId());
+        if (map == null) return false;
+        Long until = map.get(skill.getId());
+        if (until == null) return false;
+        if (until <= System.currentTimeMillis()) {
+            map.remove(skill.getId());
+            return false;
+        }
+        return true;
+    }
+
+    public double getRemainingLockSeconds(Player player, ClassAbilities skill) {
         Map<String, Long> map = cooldownUntil.get(player.getUniqueId());
         if (map == null) return 0;
         Long until = map.get(skill.getId());
         if (until == null) return 0;
-        long remaining = until - System.currentTimeMillis();
+        long remaining = until - cooldownHasteReductionMs(player, skill) - System.currentTimeMillis();
         if (remaining <= 0) {
             map.remove(skill.getId());
             return 0;
         }
         return remaining / 1000.0;
+    }
+
+    private long cooldownHasteReductionMs(Player player, ClassAbilities skill) {
+        Map<String, Long> durations = cooldownDurationMs.get(player.getUniqueId());
+        if (durations == null) return 0;
+        Long durationMs = durations.get(skill.getId());
+        if (durationMs == null || durationMs <= 0) return 0;
+        double ch = Math.min(100.0, Math.max(0.0, PlayerStats.getOrCreate(player).getPlayerCH(player)));
+        long reduction = (long) (durationMs * (ch / 100.0));
+
+        long minMs = (long) (skill.getMinCooldownSeconds() * 1000.0);
+        long maxReduction = Math.max(0L, durationMs - minMs);
+        return Math.min(reduction, maxReduction);
+    }
+
+    public double getRemainingCooldownSeconds(Player player, ClassAbilities skill) {
+        double lock = getRemainingLockSeconds(player, skill);
+        if (lock <= 0) return 0;
+        if (isEffectActive(player, skill)) return 0;
+        return lock;
+    }
+
+    public void endEffects(Player player) {
+        UUID uuid = player.getUniqueId();
+        Map<String, Long> effects = effectUntil.remove(uuid);
+        if (effects == null) return;
+        Map<String, Long> cooldowns = cooldownUntil.get(uuid);
+        if (cooldowns == null) return;
+        long now = System.currentTimeMillis();
+        for (Map.Entry<String, Long> entry : effects.entrySet()) {
+            long cut = entry.getValue() - now;
+            if (cut <= 0) continue;
+            cooldowns.computeIfPresent(entry.getKey(), (k, v) -> v - cut);
+        }
     }
 
     public void forgetPlayer(UUID uuid) {

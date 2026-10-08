@@ -18,30 +18,53 @@ import org.bukkit.inventory.meta.ItemMeta;
 import java.util.*;
 
 import dev.ixpu.leaguemechanics.item.ItemStatsData;
+import dev.ixpu.leaguemechanics.item.ItemStatsRegistry;
 
 public class ItemShopGUI {
     private static ItemShopGUI instance;
     private static final int INVENTORY_SIZE = 54;
     private static final String INVENTORY_TITLE = "§8§lɪᴛᴇᴍ ꜱʜᴏᴘ";
 
-    private static final int CATEGORY_START = 0;
-    private static final int CATEGORY_END = 8;
-    private static final int FILLER_START = 9;
-    private static final int FILLER_END = 17;
-    static final int ITEMS_START = 18;
-    private static final int ITEMS_PER_ROW = 9;
-    private static final int ITEMS_ROWS = 4;
+    private static final int COLUMNS = 9;
+    private static final int GRID_FIRST_ROW = 2;
+    private static final int GRID_FIRST_COL = 2;
+    static final int ITEMS_PER_ROW = 7;
+    static final int ITEMS_ROWS = 4;
+    private static final int SCROLL_DOWN_SLOT = 7;
+    private static final int SCROLL_UP_SLOT = 8;
 
     private static final String CATEGORY_ALL = "all";
     private static final String CATEGORY_MAIN = "main";
     private static final String CATEGORY_MAGE = "mage";
     private static final String CATEGORY_FIGHTER = "fighter";
+    private static final String CATEGORY_ASSASSIN = "assassin";
     private static final String CATEGORY_TANK = "tank";
     private static final String CATEGORY_MARKSMAN = "marksman";
     private static final String CATEGORY_SUPPORT = "support";
 
+    private static final Material BUTTON_MATERIAL = Material.NETHERITE_INGOT;
+
+    private static final String[][] CATEGORY_BUTTONS = {
+            {CATEGORY_ALL, "§7ᴀʟʟ", "§7View all items", "leaguemechanics:shop-all"},
+            {CATEGORY_FIGHTER, "§7ғɪɢʜᴛᴇʀ", "§7Sustained Combat", "leaguemechanics:shop-fighter"},
+            {CATEGORY_MAGE, "§7ᴍᴀɢᴇ", "§7Magic Ability", "leaguemechanics:shop-mage"},
+            {CATEGORY_ASSASSIN, "§7ᴀꜱꜱᴀꜱꜱɪɴ", "§7Quick Attacks", "leaguemechanics:shop-assassin"},
+            {CATEGORY_TANK, "§7ᴛᴀɴᴋ", "§7Defensive Frontline", "leaguemechanics:shop-tank"},
+            {CATEGORY_SUPPORT, "§7ꜱᴜᴘᴘᴏʀᴛ", "§7Utilities", "leaguemechanics:shop-support"},
+            {CATEGORY_MARKSMAN, "§7ᴍᴀʀᴋꜱᴍᴀɴ", "§7Ranged Physical", "leaguemechanics:shop-marksman"}
+    };
+
+    private static final String[][] STAT_BUTTONS = {
+            {"ad", "§7ᴀᴛᴛᴀᴄᴋ ᴅᴀᴍᴀɢᴇ", "§7Items with Attack Damage", "leaguemechanics:shop-stat-ad"},
+            {"as", "§7ᴀᴛᴛᴀᴄᴋ ꜱᴘᴇᴇᴅ", "§7Items with Attack Speed", "leaguemechanics:shop-stat-as"},
+            {"cc", "§7ᴄʀɪᴛꜱ", "§7Items with Critical Chance", "leaguemechanics:shop-stat-cc"},
+            {"ap", "§7ᴀʙɪʟɪᴛʏ ᴘᴏᴡᴇʀ", "§7Items with Ability Power", "leaguemechanics:shop-stat-ap"},
+            {"ms", "§7ᴍᴏᴠᴇᴍᴇɴᴛ ꜱᴘᴇᴇᴅ", "§7Items with Movement Speed", "leaguemechanics:shop-stat-ms"}
+    };
+
     private final Map<UUID, Integer> playerScrollRow = new HashMap<>();
     private final Map<UUID, String> playerCategory = new HashMap<>();
+    private final Map<UUID, String> playerStatFilter = new HashMap<>();
 
     public static ItemShopGUI getInstance() {
         if (instance == null) {
@@ -77,70 +100,69 @@ public class ItemShopGUI {
     }
 
     private void buildGUI(Inventory inventory, Player player) {
-        String category = playerCategory.getOrDefault(player.getUniqueId(), CATEGORY_ALL);
-        int scrollRow = playerScrollRow.getOrDefault(player.getUniqueId(), 0);
+        UUID id = player.getUniqueId();
+        String statFilter = playerStatFilter.get(id);
+        String activeCategory = statFilter != null ? null : playerCategory.getOrDefault(id, CATEGORY_ALL);
+        int scrollRow = playerScrollRow.getOrDefault(id, 0);
 
-        setCategoryButtons(inventory, category);
+        setCategoryButtons(inventory, activeCategory);
+        setStatButtons(inventory, statFilter);
         setFillers(inventory);
-        setItems(inventory, player, category, scrollRow);
+        setItems(inventory, player, scrollRow);
+    }
+
+    private ItemStack createFilterButton(String displayName, String description, String model, boolean active) {
+        ItemStack item = new ItemStack(BUTTON_MATERIAL);
+        ItemMeta meta = item.getItemMeta();
+        if (meta != null) {
+            meta.setDisplayName(active ? " §a▶ " + displayName : displayName);
+            List<String> lore = new ArrayList<>();
+            lore.add(description);
+            meta.setLore(lore);
+            if (active) {
+                meta.setEnchantmentGlintOverride(true);
+            }
+            item.setItemMeta(meta);
+            ItemModifier.setItemModel(item, model);
+        }
+        return item;
     }
 
     private void setCategoryButtons(Inventory inventory, String activeCategory) {
-        int[] categorySlots = {0, 1, 2, 3, 4, 5, 6, 7, 8};
-        String[][] categories = {
-                {CATEGORY_ALL, "§7ᴀʟʟ", "§7View all items", "COPPER_CHEST", "WAXED_OXIDIZED_COPPER_CHEST"},
-                {CATEGORY_MAIN, "§7ꜱᴛᴀʀᴛᴇʀ", "§7Early Scaling", "COPPER_CHEST", "WAXED_OXIDIZED_COPPER_CHEST"},
-                {CATEGORY_FIGHTER, "§f\uE241 §7ғɪɢʜᴛᴇʀ", "§7Sustained Combat", "COPPER_CHEST", "WAXED_OXIDIZED_COPPER_CHEST"},
-                {CATEGORY_MAGE, "§f\uE242 §7ᴍᴀɢᴇ", "§7Magic Ability", "COPPER_CHEST", "WAXED_OXIDIZED_COPPER_CHEST"},
-                {CATEGORY_TANK, "§f\uE245 §7ᴛᴀɴᴋ", "§7Defensive Frontline", "COPPER_CHEST", "WAXED_OXIDIZED_COPPER_CHEST"},
-                {CATEGORY_MARKSMAN, "§f\uE243 §7ᴍᴀʀᴋꜱᴍᴀɴ", "§7Ranged Physical", "COPPER_CHEST", "WAXED_OXIDIZED_COPPER_CHEST"},
-                {CATEGORY_SUPPORT, "§f\uE244 §7ꜱᴜᴘᴘᴏʀᴛ", "§7Utilities", "COPPER_CHEST", "WAXED_OXIDIZED_COPPER_CHEST"},
-                {"page_prev", "§c§l◀", "§7Previous page", "ARROW", "ARROW"},
-                {"page_next", "§a§l▶", "§7Next page", "ARROW", "ARROW"}
-        };
-
-        for (int i = 0; i < categories.length; i++) {
-            String[] cat = categories[i];
-            String categoryId = cat[0];
-            String displayName = cat[1];
-            String description = cat[2];
-            String defaultMaterialName = cat[3];
-            String activeMaterialName = cat[4];
-
-            if (categoryId.isEmpty() && displayName.isEmpty()) {
-                continue;
-            }
-
-            boolean isActive = categoryId.equals(activeCategory);
-            boolean isPageButton = categoryId.equals("page_prev") || categoryId.equals("page_next");
-
-            String materialName = (isActive && !isPageButton && !activeMaterialName.isEmpty())
-                    ? activeMaterialName
-                    : defaultMaterialName;
-
-            Material material;
-            try {
-                material = Material.valueOf(materialName);
-            } catch (IllegalArgumentException e) {
-                material = Material.PAPER;
-            }
-
-            ItemStack item = new ItemStack(material);
-            ItemMeta meta = item.getItemMeta();
-
-            if (meta != null) {
-                if (isActive && !isPageButton) {
-                    meta.setDisplayName(" §a▶ " + displayName);
-                } else {
-                    meta.setDisplayName(displayName);
-                }
-                List<String> lore = new ArrayList<>();
-                lore.add(description);
-                meta.setLore(lore);
-                item.setItemMeta(meta);
-                inventory.setItem(categorySlots[i], item);
-            }
+        for (int slot = 0; slot < CATEGORY_BUTTONS.length; slot++) {
+            String[] cat = CATEGORY_BUTTONS[slot];
+            boolean active = cat[0].equals(activeCategory);
+            inventory.setItem(slot, createFilterButton(cat[1], cat[2], cat[3], active));
         }
+    }
+
+    private void setStatButtons(Inventory inventory, String activeStat) {
+        for (int i = 0; i < STAT_BUTTONS.length; i++) {
+            String[] stat = STAT_BUTTONS[i];
+            boolean active = stat[0].equals(activeStat);
+            inventory.setItem(statSlot(i), createFilterButton(stat[1], stat[2], stat[3], active));
+        }
+    }
+
+    private static int statSlot(int statIndex) {
+        return (statIndex + 1) * COLUMNS;
+    }
+
+    private static int statIndexForSlot(int slot) {
+        if (slot % COLUMNS != 0) return -1;
+        int index = slot / COLUMNS - 1;
+        return index >= 0 && index < STAT_BUTTONS.length ? index : -1;
+    }
+
+    private static int gridSlot(int row, int col) {
+        return (GRID_FIRST_ROW + row) * COLUMNS + GRID_FIRST_COL + col;
+    }
+
+    private static int gridIndexForSlot(int slot) {
+        int row = slot / COLUMNS - GRID_FIRST_ROW;
+        int col = slot % COLUMNS - GRID_FIRST_COL;
+        if (row < 0 || row >= ITEMS_ROWS || col < 0 || col >= ITEMS_PER_ROW) return -1;
+        return row * ITEMS_PER_ROW + col;
     }
 
     private void setFillers(Inventory inventory) {
@@ -152,76 +174,92 @@ public class ItemShopGUI {
             filler.setItemMeta(meta);
         }
 
-        for (int slot = FILLER_START; slot <= FILLER_END; slot++) {
-            inventory.setItem(slot, filler);
+        for (int slot = 0; slot < INVENTORY_SIZE; slot++) {
+            int row = slot / COLUMNS;
+            int col = slot % COLUMNS;
+            boolean isFiller = (row == 1 && col >= 1) || (col == 1 && row >= GRID_FIRST_ROW);
+            if (isFiller) {
+                inventory.setItem(slot, filler);
+            }
         }
     }
 
-    private void setItems(Inventory inventory, Player player, String category, int scrollRow) {
-        ItemShopRegistry registry = ItemShopRegistry.getInstance();
-        ItemShopData shopData = ItemShopData.getInstance();
-
-        List<ItemShopRegistry.ShopItem> filteredItems = getSortedItems(registry.getAllShopItems(), category, shopData);
+    private void setItems(Inventory inventory, Player player, int scrollRow) {
+        List<ItemShopRegistry.ShopItem> filteredItems = getVisibleItems(player.getUniqueId());
 
         int totalItems = filteredItems.size();
-        int maxScrollRow = Math.max(0, (int) Math.ceil((double) totalItems / ITEMS_PER_ROW) - ITEMS_ROWS);
+        int maxScrollRow = getMaxScrollRow(totalItems);
         int safeScrollRow = Math.min(scrollRow, maxScrollRow);
         int startIndex = safeScrollRow * ITEMS_PER_ROW;
-
-        for (int slot = ITEMS_START; slot < INVENTORY_SIZE; slot++) {
-            inventory.setItem(slot, null);
-        }
 
         for (int row = 0; row < ITEMS_ROWS; row++) {
             for (int col = 0; col < ITEMS_PER_ROW; col++) {
                 int absoluteIndex = startIndex + (row * ITEMS_PER_ROW) + col;
-                int slot = ITEMS_START + (row * ITEMS_PER_ROW) + col;
+                int slot = gridSlot(row, col);
                 if (absoluteIndex < totalItems) {
                     ItemShopRegistry.ShopItem shopItem = filteredItems.get(absoluteIndex);
-                    ItemStack displayItem = createItemDisplay(shopItem, player);
-                    inventory.setItem(slot, displayItem);
+                    inventory.setItem(slot, createItemDisplay(shopItem, player));
+                } else {
+                    inventory.setItem(slot, null);
                 }
             }
         }
         updateScrollIndicators(inventory, safeScrollRow, maxScrollRow);
     }
 
-    private void updateScrollIndicators(Inventory inventory, int currentRow, int maxRow) {
-        ItemStack prev = new ItemStack(Material.ARROW);
-        ItemMeta meta = prev.getItemMeta();
-        if (meta != null) {
-            meta.setDisplayName(currentRow > 0 ? "§a§l▲ §fScroll Up" : "§7§l▲ §8Scroll Up");
-            prev.setItemMeta(meta);
-        }
-        inventory.setItem(CATEGORY_START + 7, prev);
+    private int getMaxScrollRow(int totalItems) {
+        return Math.max(0, (int) Math.ceil((double) totalItems / ITEMS_PER_ROW) - ITEMS_ROWS);
+    }
 
-        ItemStack next = new ItemStack(Material.ARROW);
-        ItemMeta nextMeta = next.getItemMeta();
-        if (nextMeta != null) {
-            nextMeta.setDisplayName(currentRow < maxRow ? "§a§l▼ §fScroll Down" : "§7§l▼ §8Scroll Down");
-            next.setItemMeta(nextMeta);
+    private void updateScrollIndicators(Inventory inventory, int currentRow, int maxRow) {
+        boolean canScrollDown = currentRow < maxRow;
+        inventory.setItem(SCROLL_DOWN_SLOT, createScrollButton(
+                canScrollDown ? "§a§l▼ §fScroll Down" : "§7§l▼ §8Scroll Down",
+                canScrollDown ? "leaguemechanics:shop-scroll-down" : "leaguemechanics:shop-scroll-down-off"));
+
+        boolean canScrollUp = currentRow > 0;
+        inventory.setItem(SCROLL_UP_SLOT, createScrollButton(
+                canScrollUp ? "§a§l▲ §fScroll Up" : "§7§l▲ §8Scroll Up",
+                canScrollUp ? "leaguemechanics:shop-scroll-up" : "leaguemechanics:shop-scroll-up-off"));
+    }
+
+    private ItemStack createScrollButton(String displayName, String model) {
+        ItemStack item = new ItemStack(Material.ARROW);
+        ItemMeta meta = item.getItemMeta();
+        if (meta != null) {
+            meta.setDisplayName(displayName);
+            item.setItemMeta(meta);
+            ItemModifier.setItemModel(item, model);
         }
-        inventory.setItem(CATEGORY_START + 8, next);
+        return item;
+    }
+
+    private List<ItemShopRegistry.ShopItem> getVisibleItems(UUID playerId) {
+        String category = playerCategory.getOrDefault(playerId, CATEGORY_ALL);
+        String statFilter = playerStatFilter.get(playerId);
+        return getSortedItems(ItemShopRegistry.getInstance().getAllShopItems(), category, statFilter,
+                ItemShopData.getInstance());
     }
 
     private List<ItemShopRegistry.ShopItem> getSortedItems(List<ItemShopRegistry.ShopItem> allItems,
-                                                           String category, ItemShopData shopData) {
-        List<ItemShopRegistry.ShopItem> filtered;
+                                                           String category, String statFilter,
+                                                           ItemShopData shopData) {
+        boolean hasStat = statFilter != null;
+        boolean allCategories = category == null || category.equals(CATEGORY_ALL);
 
-        if (category == null || category.equals(CATEGORY_ALL)) {
-            filtered = new ArrayList<>(allItems);
-        } else {
-            filtered = new ArrayList<>();
-            for (ItemShopRegistry.ShopItem item : allItems) {
-                String itemCategory = shopData.getCategory(item.getId());
-                if (category.equals(itemCategory)) {
-                    filtered.add(item);
-                }
+        List<ItemShopRegistry.ShopItem> filtered = new ArrayList<>();
+        for (ItemShopRegistry.ShopItem item : allItems) {
+            if (hasStat) {
+                if (getStatValue(item.getStats(), statFilter) <= 0) continue;
+            } else if (!allCategories && !category.equals(shopData.getCategory(item.getId()))) {
+                continue;
             }
+            filtered.add(item);
         }
 
+        boolean groupByCategory = hasStat || allCategories;
         filtered.sort((a, b) -> {
-            if (category == null || category.equals(CATEGORY_ALL)) {
+            if (groupByCategory) {
                 int catOrderA = getCategoryDisplayOrder(shopData.getCategory(a.getId()));
                 int catOrderB = getCategoryDisplayOrder(shopData.getCategory(b.getId()));
                 if (catOrderA != catOrderB) {
@@ -236,15 +274,28 @@ public class ItemShopGUI {
         return filtered;
     }
 
+    private double getStatValue(ItemStatsRegistry stats, String statFilter) {
+        if (stats == null) return 0.0;
+        return switch (statFilter) {
+            case "ad" -> stats.getAd();
+            case "as" -> stats.getAs();
+            case "cc" -> stats.getCc();
+            case "ap" -> stats.getAp();
+            case "ms" -> stats.getMs();
+            default -> 0.0;
+        };
+    }
+
     private int getCategoryDisplayOrder(String category) {
         if (category == null) return 99;
         return switch (category) {
-            case "main" -> 0;
-            case "fighter" -> 1;
-            case "mage" -> 2;
-            case "tank" -> 3;
-            case "marksman" -> 4;
-            case "support" -> 5;
+            case CATEGORY_MAIN -> 0;
+            case CATEGORY_FIGHTER -> 1;
+            case CATEGORY_MAGE -> 2;
+            case CATEGORY_ASSASSIN -> 3;
+            case CATEGORY_TANK -> 4;
+            case CATEGORY_SUPPORT -> 5;
+            case CATEGORY_MARKSMAN -> 6;
             default -> 99;
         };
     }
@@ -329,7 +380,7 @@ public class ItemShopGUI {
                 lore.add("§f" + Icons.get("spells.heal") + " " + formatStat(shopItem.getStats().getHm()) + "% §7Healing Multiplier");
             }
             if (shopItem.getStats().getCh() > 0) {
-                lore.add("§f" + Icons.get("stats.ch") + " " + formatStat(shopItem.getStats().getCh()) + " §7Cooldown Haste");
+                lore.add("§f" + Icons.get("stats.ch") + " " + formatStat(shopItem.getStats().getCh()) + " §7Ability Haste");
             }
             if (shopItem.getStats().getTn() > 0) {
                 lore.add("§f" + Icons.get("stats.tn") + " " + formatStat(shopItem.getStats().getTn()) + " §7Tenacity");
@@ -354,12 +405,7 @@ public class ItemShopGUI {
             List<String> required = shopItem.getRequiredItems();
             String names = formatRequiredItemNamesWithCount(player, required);
 
-            int requiredOwned = 0;
-            for (String reqId : required) {
-                if (countOwnedLeagueItems(player, reqId) > 0) {
-                    requiredOwned++;
-                }
-            }
+            int requiredOwned = shopItem.countOwnedComponents(player);
             int effectiveNetChange = 1 - requiredOwned;
             int currentCount = dev.ixpu.leaguemechanics.LeagueMechanics.getInstance().getStatsManager().countLeagueItems(player);
 
@@ -445,59 +491,58 @@ public class ItemShopGUI {
     public void handleClick(Player player, int slot) {
         UUID playerId = player.getUniqueId();
 
-        if (slot >= CATEGORY_START && slot <= CATEGORY_END) {
-            int buttonIndex = slot - CATEGORY_START;
-
-            String[] categoryIds = {CATEGORY_ALL, CATEGORY_MAIN, CATEGORY_FIGHTER, CATEGORY_MAGE, CATEGORY_TANK,
-                    CATEGORY_MARKSMAN, CATEGORY_SUPPORT, "scroll_up", "scroll_down"};
-
-            String clicked = categoryIds[buttonIndex];
-
-            if (clicked.equals("scroll_up") || clicked.equals("scroll_down")) {
-                int currentRow = playerScrollRow.getOrDefault(playerId, 0);
-                String category = playerCategory.getOrDefault(playerId, CATEGORY_ALL);
-
-                ItemShopRegistry registry = ItemShopRegistry.getInstance();
-                ItemShopData shopData = ItemShopData.getInstance();
-                List<ItemShopRegistry.ShopItem> filtered = getSortedItems(registry.getAllShopItems(), category, shopData);
-                int totalItems = filtered.size();
-                int maxRow = Math.max(0, (int) Math.ceil((double) totalItems / ITEMS_PER_ROW) - ITEMS_ROWS);
-
-                if (clicked.equals("scroll_up")) {
-                    playerScrollRow.put(playerId, Math.max(0, currentRow - 1));
-                } else {
-                    playerScrollRow.put(playerId, Math.min(maxRow, currentRow + 1));
-                }
-                refreshGUI(player);
-            } else {
-                playerCategory.put(playerId, clicked);
-                playerScrollRow.put(playerId, 0);
-                refreshGUI(player);
-            }
+        if (slot >= 0 && slot < CATEGORY_BUTTONS.length) {
+            playerStatFilter.remove(playerId);
+            playerCategory.put(playerId, CATEGORY_BUTTONS[slot][0]);
+            playerScrollRow.put(playerId, 0);
+            refreshGUI(player);
             return;
         }
 
-        if (slot >= ITEMS_START && slot < INVENTORY_SIZE) {
-            handleItemClick(player, slot);
+        if (slot == SCROLL_UP_SLOT || slot == SCROLL_DOWN_SLOT) {
+            int currentRow = playerScrollRow.getOrDefault(playerId, 0);
+            int maxRow = getMaxScrollRow(getVisibleItems(playerId).size());
+
+            if (slot == SCROLL_UP_SLOT) {
+                playerScrollRow.put(playerId, Math.max(0, currentRow - 1));
+            } else {
+                playerScrollRow.put(playerId, Math.min(maxRow, currentRow + 1));
+            }
+            refreshGUI(player);
+            return;
         }
 
+        int statIndex = statIndexForSlot(slot);
+        if (statIndex >= 0) {
+            String statId = STAT_BUTTONS[statIndex][0];
+            if (statId.equals(playerStatFilter.get(playerId))) {
+                playerStatFilter.remove(playerId);
+            } else {
+                playerStatFilter.put(playerId, statId);
+            }
+            playerCategory.put(playerId, CATEGORY_ALL);
+            playerScrollRow.put(playerId, 0);
+            refreshGUI(player);
+            return;
+        }
+
+        if (gridIndexForSlot(slot) >= 0) {
+            handleItemClick(player, slot);
+        }
     }
 
     private void handleItemClick(Player player, int slot) {
-        int scrollRow = playerScrollRow.getOrDefault(player.getUniqueId(), 0);
-        String category = playerCategory.getOrDefault(player.getUniqueId(), CATEGORY_ALL);
+        UUID playerId = player.getUniqueId();
+        int scrollRow = playerScrollRow.getOrDefault(playerId, 0);
+        List<ItemShopRegistry.ShopItem> visibleItems = getVisibleItems(playerId);
 
-        ItemShopRegistry registry = ItemShopRegistry.getInstance();
-        ItemShopData shopData = ItemShopData.getInstance();
-        List<ItemShopRegistry.ShopItem> sortedItems = getSortedItems(registry.getAllShopItems(), category, shopData);
+        int gridIndex = gridIndexForSlot(slot);
+        if (gridIndex < 0) return;
 
-        int localIndex = slot - ITEMS_START;
-        int row = localIndex / ITEMS_PER_ROW;
-        int col = localIndex % ITEMS_PER_ROW;
-        int absoluteIndex = (scrollRow + row) * ITEMS_PER_ROW + col;
+        int absoluteIndex = scrollRow * ITEMS_PER_ROW + gridIndex;
 
-        if (absoluteIndex < sortedItems.size()) {
-            ItemShopRegistry.ShopItem clickedItem = sortedItems.get(absoluteIndex);
+        if (absoluteIndex < visibleItems.size()) {
+            ItemShopRegistry.ShopItem clickedItem = visibleItems.get(absoluteIndex);
             dev.ixpu.leaguemechanics.manager.ItemShopManager.getInstance()
                     .purchaseFromGUI(player, clickedItem);
         }
@@ -528,7 +573,7 @@ public class ItemShopGUI {
             return false;
         }
         int currentCount = dev.ixpu.leaguemechanics.LeagueMechanics.getInstance().getStatsManager().countLeagueItems(player);
-        int netChange = 1 - required.size();
+        int netChange = 1 - shopItem.countOwnedComponents(player);
         return netChange <= 0 || currentCount < 6;
     }
 
@@ -711,6 +756,7 @@ public class ItemShopGUI {
     public void cleanup(Player player) {
         playerScrollRow.remove(player.getUniqueId());
         playerCategory.remove(player.getUniqueId());
+        playerStatFilter.remove(player.getUniqueId());
     }
 
     public String getPlayerCategory(Player player) {

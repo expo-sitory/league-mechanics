@@ -104,7 +104,9 @@ public class GraspOfTheUndying extends StacksHandler {
         double missingHealth = maxHealth - currentHealth;
         double healAmount = missingHealth * (HEAL_PERCENT / 100.0)
                 * dev.ixpu.leaguemechanics.manager.BuffManager.getInstance().getHealingMultiplier(player);
-        player.setHealth(Math.min(maxHealth, currentHealth + healAmount));
+        if (!dev.ixpu.leaguemechanics.entity.player.abilities.fighter.UndyingRage.isActive(player)) {
+            player.setHealth(Math.min(maxHealth, currentHealth + healAmount));
+        }
 
         player.playSound(player.getLocation(), org.bukkit.Sound.ENTITY_WITHER_AMBIENT, 1.0f, 1.0f);
     }

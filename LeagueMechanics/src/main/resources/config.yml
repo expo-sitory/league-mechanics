@@ -114,6 +114,8 @@ icons:
     janna_monsoon: "\uE408"
     kalista_rend: "\uE409"
     sion_death_surge: "\uE40a"
+    assassin_shadow_recall: "\ue40c"
+    mage_riftwalk: "\ue40d"
   status:
     blind: "\uE24D"
     channeling: "\uE24E"
@@ -197,10 +199,48 @@ icons:
 
 skills:
   paranoia:
-    cooldown-seconds: 60
+    cooldown-seconds: 90
+    min-cooldown-seconds: 20.0
+    duration-seconds: 10
+    hunger-cost: 4
     range: 25
-    duration-seconds: 5
     require-pvp: true
+  riftwalk:
+    cooldown-seconds: 40
+    min-cooldown-seconds: 10.0
+    hunger-cost: 4
+    range: 17
+  shield-of-durand:
+    cooldown-seconds: 90
+    hunger-cost: 4
+    duration-seconds: 10
+    cooldown-after-effect: true
+    armor-percent: 60
+    range: 10
+    charge-start-range: 3
+    charge-range-step: 1
+    charge-step-seconds: 0.5
+    charge-slow-percent: 50
+    stun-seconds: 2
+    require-pvp: true
+  final-hour:
+    cooldown-seconds: 90
+    hunger-cost: 4
+    duration-seconds: 16
+    cooldown-after-effect: true
+    attack-speed: 20
+    vanish-seconds: 1.5
+  undying-rage:
+    cooldown-seconds: 90
+    hunger-cost: 0
+    duration-seconds: 20
+    cooldown-after-effect: true
+    min-health: 1
+  wish:
+    cooldown-seconds: 90
+    hunger-cost: 8
+    heal-percent: 70
+    range: 50
 
 runes:
 
@@ -221,10 +261,8 @@ runes:
         cooldown: 25 # seconds
 
       hail-of-blades:
-        base-attack-speed: 10.0 # default: 10%
-        base-true-damage: 7.0 #  default: 7%
-        ad-percentage-multiplier: 8.0 # bonus true damage percentage from total AP percent - default: 8%
-        ap-percentage-multiplier: 6.0 # bonus true damage percentage from total AP percent - default: 6%
+        base-attack-speed: 40.0
+        base-true-damage: 8.0
         cooldown: 60 # seconds
 
 
@@ -234,18 +272,18 @@ runes:
 
     precision:
       conqueror:
-        base-adaptive-damage-per-stack: 1.8 # hard coded max stack: 12
+        base-adaptive-damage-per-stack: 1.2 # hard coded max stack: 12
 
       fleet-footwork:
-        blocks-per-stack: 10.0 # blocks to pass to gain 1 stack
-        projectile-stack-gain: 5 # stack to gain when hitting projectiles
-        heal-percent: 25.0 # missing health percentage - default: 25%
-        ad-percentage-multiplier: 10.0 # bonus healing percentage from total AD percent - default: this is 10%
-        ap-percentage-multiplier: 5.0 # bonus healing percentage from total AP percent - default: this is 5%
+        blocks-per-stack: 10.0
+        projectile-stack-gain: 5
+        heal-percent: 40.0
+        ad-percentage-multiplier: 10.0
+        ap-percentage-multiplier: 5.0
 
       lethal-tempo:
-        base-adaptive-damage: 2.7 # adaptive damage when on max/active state
-        attack-speed: 60.0 # when on max stacks/active state - # percentage - default: 60%
+        base-adaptive-damage: 5.5 # adaptive damage when on max/active state
+        attack-speed: 60.0 # when on max stacks/active state
         cooldown: 30 # seconds
 
       press-the-attack:
@@ -260,16 +298,14 @@ runes:
 
       glacial-augment:
         base-freeze-duration: 120 # in ticks
-        ad-percentage-multiplier: 7.0 # bonus freeze duration from total AD percent - default 7%
-        ap-percentage-multiplier: 6.0 # bonus freeze duration from total AP percent - default 6%
+        ad-percentage-multiplier: 7.0
+        ap-percentage-multiplier: 6.0
         cooldown: 45 # seconds
 
       first-strike:
-        initial-xp: 24.0 # starting xp
+        initial-xp: 12.0 # starting xp
         buff-duration: 3 #seconds
-        true-damage-percent: 7.0 # while on active state
-        ad-percentage: 20.0 # bonus true damage from total AD percent - default: 20%
-        ap-percentage: 15.0 # bonus true damage from total AP percent - default: 15%
+        true-damage-amount: 4.0 # while on active state
         cooldown: 25 # seconds
 
     # ============================= #
@@ -279,21 +315,23 @@ runes:
     resolve:
 
       aftershock:
-        bonus-armor-percent: 75.0 # bonus armor percentage
-        bonus-magic-resist-percent: 75.0 # bonus magic-resist percentage
-        base-shockwave-damage: 12.5 # base shockwave magic damage
-        shockwave-bonus-hp-percent: 25.0 # bonus magic damage from total hp percentage
+        countdown-seconds: 2.5
+        bonus-armor: 55.0
+        bonus-magic-resist: 55.0
+        base-shockwave-damage: 12.5
+        shockwave-bonus-hp-percent: 25.0
         cooldown: 20 # seconds
 
       grasp-of-the-undying:
-        heal-percent: 60.0 # missing health percent - default: 60%
+        heal-percent: 60.0
         cooldown: 45 # seconds
 
       guardian:
-        max-players: 5 # max number of players that will get the effect
-        armor-percentage: 80
-        magic-resist-percentage: 80
-        cooldown: 60 # seconds
+        range: 5.0
+        bonus-armor-percent: 30.0
+        bonus-magic-resist-percent: 30.0
+        buff-duration-seconds: 10.0
+        cooldown: 75
 
 
     # ============================= #
@@ -304,17 +342,17 @@ runes:
 
       arcane-comet:
         base-adaptive-damage: 17.5
-        ad-percentage-multiplier: 5.0 # bonus adaptive damage from total AD percent - default: 5%
-        ap-percentage-multiplier: 15.0 # bonus adaptive damage from total AP percent - default: 15%
+        ad-percentage-multiplier: 5.0
+        ap-percentage-multiplier: 7.0
         cooldown: 20 # seconds
 
       deathfire-torch:
-        base-magic-damage: 2.5 # base magic damage per tick
-        ad-percentage-multiplier: 3.0 # bonus magic damage from total AD percent - default: 3%
-        ap-percentage-multiplier: 6.0 # bonus magic damage from total AP percent - default: 6%
+        base-magic-damage: 0.5
+        ad-percentage-multiplier: 2.0
+        ap-percentage-multiplier: 4.0
 
       storm-raider-surge:
-        damage-percent-threshold: 30.0 # damage threshold to activate - default: 30%
+        damage-percent-threshold: 20.0
         cooldown: 25 # seconds
 
 buffs:
@@ -362,26 +400,26 @@ buffs:
 # Mob Statistics Configuration
 mob-stats:
   zombie:
-    ad: 37.0
+    ad: 27.0
     ap: 12.0
-    ar: 150.0
+    ar: 130.0
     mr: 70.0
     type: UNDEAD
   skeleton:
     ad: 15.0
-    ap: 35.0
+    ap: 25.0
     ar: 40.0
-    mr: 175.0
+    mr: 125.0
     type: UNDEAD
   spider:
-    ad: 38.0
-    ap: 22.0
-    ar: 30.0
-    mr: 100.0
+    ad: 28.0
+    ap: 0.0
+    ar: 80.0
+    mr: 150.0
     type: ARTHROPOD
   cave_spider:
     ad: 34.0
-    ap: 46.0
+    ap: 0.0
     ar: 400.0
     mr: 60.0
     type: ARTHROPOD
@@ -392,20 +430,20 @@ mob-stats:
     mr: 399.0
     type: CRITTER
   enderman:
-    ad: 70.0
-    ap: 70.0
+    ad: 40.0
+    ap: 40.0
     ar: 120.0
     mr: 820.0
     type: ENDERMAN
   witch:
     ad: 0.0
-    ap: 485.0
+    ap: 185.0
     ar: 55.0
     mr: 530.0
     type: WITCH
   slime:
-    ad: 70.0
-    ap: 70.0
+    ad: 50.0
+    ap: 50.0
     ar: 999.0
     mr: 10.0
     type: SLIME
@@ -452,13 +490,13 @@ mob-stats:
     mr: 120.0
     type: UNDEAD
   iron_golem:
-    ad: 250.0
+    ad: 80.0
     ap: 0.0
     ar: 700.0
     mr: 180.0
     type: IRON_GOLEM
   drowned:
-    ad: 48.0
+    ad: 28.0
     ap: 18.0
     ar: 160.0
     mr: 85.0
@@ -548,7 +586,7 @@ mob-stats:
     mr: 92.0
     type: PARCHED
   phantom:
-    ad: 62.0
+    ad: 42.0
     ap: 42.0
     ar: 95.0
     mr: 140.0

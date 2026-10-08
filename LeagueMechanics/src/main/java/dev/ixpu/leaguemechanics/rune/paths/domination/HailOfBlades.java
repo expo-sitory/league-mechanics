@@ -10,7 +10,6 @@ import dev.ixpu.leaguemechanics.rune.slots.RuneSlot;
 
 import dev.ixpu.leaguemechanics.manager.DamageManager;
 import dev.ixpu.leaguemechanics.manager.KillSourceTracker;
-import dev.ixpu.leaguemechanics.manager.StatScalingManager;
 
 import dev.ixpu.leaguemechanics.listener.PlayerEventListener;
 
@@ -29,9 +28,6 @@ import net.kyori.adventure.text.Component;
 public class HailOfBlades extends CooldownHandler {
     private double ATTACK_SPEED;
     private double TRUE_DAMAGE_AMOUNT;
-
-    private double AD_PERCENTAGE_MULTIPLIER;
-    private double AP_PERCENTAGE_MULTIPLIER;
 
     int COOLDOWN_DURATION_SECONDS;
 
@@ -58,8 +54,6 @@ public class HailOfBlades extends CooldownHandler {
         if (section != null) {
             this.ATTACK_SPEED = section.getDouble("base-attack-speed", this.ATTACK_SPEED);
             this.TRUE_DAMAGE_AMOUNT = section.getDouble("base-true-damage", this.TRUE_DAMAGE_AMOUNT);
-            this.AD_PERCENTAGE_MULTIPLIER = section.getDouble("ad-percentage-multiplier", this.AD_PERCENTAGE_MULTIPLIER);
-            this.AP_PERCENTAGE_MULTIPLIER = section.getDouble("ap-percentage-multiplier", this.AP_PERCENTAGE_MULTIPLIER);
             this.COOLDOWN_DURATION_SECONDS = section.getInt("cooldown", COOLDOWN_DURATION_SECONDS);
         }
         this.setCooldownSeconds(COOLDOWN_DURATION_SECONDS);
@@ -115,7 +109,7 @@ public class HailOfBlades extends CooldownHandler {
                 return;
             }
 
-            double damageToApply = keystoneDamage(player, target) * getScaledTrueDamage(player);
+            double damageToApply = keystoneDamage(player, target);
 
             if (windupActive.contains(playerUUID) || isOnCooldown(player)) {
                 return;
@@ -167,16 +161,6 @@ public class HailOfBlades extends CooldownHandler {
         }
 
         return currentStacks.getOrDefault(playerUUID, 0);
-    }
-
-    private double getScaledTrueDamage(Player player) {
-        StatScalingManager statScalingManager = new StatScalingManager();
-        return statScalingManager.calculateScaledValue(
-                player,
-                TRUE_DAMAGE_AMOUNT,
-                AD_PERCENTAGE_MULTIPLIER,
-                AP_PERCENTAGE_MULTIPLIER
-        );
     }
 
     private void deactivateEffect(Player player) {

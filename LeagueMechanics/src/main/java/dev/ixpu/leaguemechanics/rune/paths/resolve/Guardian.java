@@ -1,357 +1,314 @@
 package dev.ixpu.leaguemechanics.rune.paths.resolve;
 
+import dev.ixpu.leaguemechanics.LeagueMechanics;
+import dev.ixpu.leaguemechanics.entity.player.PlayerStats;
+import dev.ixpu.leaguemechanics.manager.PartyManager;
 import dev.ixpu.leaguemechanics.rune.CooldownHandler;
 import dev.ixpu.leaguemechanics.rune.paths.RunePath;
 import dev.ixpu.leaguemechanics.rune.slots.RuneSlot;
-import dev.ixpu.leaguemechanics.entity.player.PlayerStats;
-import dev.ixpu.leaguemechanics.LeagueMechanics;
-import dev.ixpu.leaguemechanics.manager.ItemStatsManager;
+
+import dev.ixpu.leaguemechanics.util.Icons;
+import net.kyori.adventure.text.Component;
+import org.bukkit.Bukkit;
+import org.bukkit.FluidCollisionMode;
+import org.bukkit.GameMode;
+import org.bukkit.Location;
+import org.bukkit.Particle;
+import org.bukkit.Sound;
+import org.bukkit.World;
+import org.bukkit.configuration.ConfigurationSection;
+import org.bukkit.entity.Player;
+import org.bukkit.scheduler.BukkitRunnable;
+import org.bukkit.scheduler.BukkitTask;
+import org.bukkit.util.RayTraceResult;
+import org.bukkit.util.Vector;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
+import java.util.Set;
 import java.util.UUID;
-
-import org.bukkit.Sound;
-import org.bukkit.entity.Player;
-import org.bukkit.configuration.ConfigurationSection;
-
-import net.kyori.adventure.text.Component;
 
 public class Guardian extends CooldownHandler {
 
-    private int MAX_PLAYERS;
-    private double BASE_ARMOR;
-    private double BASE_MAGIC_RESIST;
-    private double ARMOR_PERCENTAGE;
-    private double MAGIC_RESIST_PERCENTAGE;
+    private static final double DEFAULT_RANGE = 5.0;
+    private static final double DEFAULT_BONUS_ARMOR_PERCENT = 30.0;
+    private static final double DEFAULT_BONUS_MAGIC_RESIST_PERCENT = 30.0;
+    private static final double DEFAULT_BUFF_SECONDS = 5.0;
+    private static final int DEFAULT_COOLDOWN_SECONDS = 75;
 
-    private int COOLDOWN_SECONDS;
+    private static final Particle GUARD_PARTICLE = Particle.GLOW;
 
-    private static final double DETECTION_RANGE = 3.0;
-    private final static int PEACE_DURATION_TICKS = 200;
-    private final static int GUARD_RAISE_DURATION_TICKS = 200;
-    private final static int BUFF_DURATION_TICKS = 400;
+    private static final double FOOT_RING_RADIUS = 0.6;
+    private static final int RANGE_RING_INTERVAL_TICKS = 40;
+    private static final int FOOT_RING_INTERVAL_TICKS = 20;
+    private static final int PULSE_TICKS = 8;
 
-    private final Map<UUID, List<UUID>> trackedPlayers = new HashMap<>();
-    private final Map<UUID, Integer> windupCounter = new HashMap<>();
-    private final Map<UUID, Long> lastShieldTime = new HashMap<>();
-    private final Map<UUID, Long> lastCombatTime = new HashMap<>();
-    private final Map<UUID, Integer> buffTaskIds = new HashMap<>();
-    private final Map<UUID, Map<UUID, Double>> appliedArmorBonuses = new HashMap<>();
-    private final Map<UUID, Map<UUID, Double>> appliedMRBonuses = new HashMap<>();
+    private double range = DEFAULT_RANGE;
+    private double bonusArmorPercent = DEFAULT_BONUS_ARMOR_PERCENT;
+    private double bonusMagicResistPercent = DEFAULT_BONUS_MAGIC_RESIST_PERCENT;
+    private int buffTicks = (int) Math.round(DEFAULT_BUFF_SECONDS * 20.0);
+    private int cooldownSeconds = DEFAULT_COOLDOWN_SECONDS;
+
+    private final Set<UUID> holders = new HashSet<>();
+    private final Set<UUID> raised = new HashSet<>();
+    private final Map<UUID, Applied> applied = new HashMap<>();
+
+    private static final class Applied {
+        final UUID holder;
+        final PlayerStats stats;
+        final double armor;
+        final double magicResist;
+        final long expiresAt;
+        BukkitTask task;
+
+        Applied(UUID holder, PlayerStats stats, double armor, double magicResist, long expiresAt) {
+            this.holder = holder;
+            this.stats = stats;
+            this.armor = armor;
+            this.magicResist = magicResist;
+            this.expiresAt = expiresAt;
+        }
+    }
 
     public Guardian(ConfigurationSection config) {
         super("guardian", RunePath.RESOLVE, RuneSlot.KEYSTONE);
         ConfigurationSection section = config.getConfigurationSection("runes.keystones.resolve.guardian");
         if (section != null) {
-            this.MAX_PLAYERS = section.getInt("max-players", this.MAX_PLAYERS);
-            this.BASE_ARMOR = section.getDouble("base-armor", this.BASE_ARMOR);
-            this.BASE_MAGIC_RESIST = section.getDouble("base-magic-resist", this.BASE_MAGIC_RESIST);
-            this.ARMOR_PERCENTAGE = section.getDouble("armor-percentage", this.ARMOR_PERCENTAGE);
-            this.MAGIC_RESIST_PERCENTAGE = section.getDouble("magic-resist-percentage", this.MAGIC_RESIST_PERCENTAGE);
-            this.COOLDOWN_SECONDS = section.getInt("cooldown", this.COOLDOWN_SECONDS);
+            this.range = section.getDouble("range", this.range);
+            this.bonusArmorPercent = section.getDouble("bonus-armor-percent", this.bonusArmorPercent);
+            this.bonusMagicResistPercent = section.getDouble("bonus-magic-resist-percent", this.bonusMagicResistPercent);
+            double buffSeconds = section.getDouble("buff-duration-seconds", DEFAULT_BUFF_SECONDS);
+            this.buffTicks = Math.max(1, (int) Math.round(buffSeconds * 20.0));
+            this.cooldownSeconds = section.getInt("cooldown", this.cooldownSeconds);
         }
-        this.setCooldownSeconds(COOLDOWN_SECONDS);
+        this.setCooldownSeconds(cooldownSeconds);
     }
 
     @Override
     public void onEnable(Player player) {
-        UUID uuid = player.getUniqueId();
-        trackedPlayers.put(uuid, new ArrayList<>());
-        windupCounter.put(uuid, 0);
-        lastShieldTime.put(uuid, 0L);
-        lastCombatTime.put(uuid, 0L);
-        buffTaskIds.put(uuid, -1);
-        appliedArmorBonuses.put(uuid, new HashMap<>());
-        appliedMRBonuses.put(uuid, new HashMap<>());
+        holders.add(player.getUniqueId());
     }
 
     @Override
     public void onDisable(Player player) {
         UUID uuid = player.getUniqueId();
+        holders.remove(uuid);
+        raised.remove(uuid);
         clearPlayerCooldown(player);
 
-        Integer taskId = buffTaskIds.remove(uuid);
-        if (taskId != null && taskId != -1) {
-            LeagueMechanics.getInstance().getServer().getScheduler().cancelTask(taskId);
+        for (UUID recipient : new ArrayList<>(applied.keySet())) {
+            Applied entry = applied.get(recipient);
+            if (entry != null && entry.holder.equals(uuid)) {
+                clearBuff(recipient);
+            }
         }
-
-        clearAllResistances(player);
-
-        trackedPlayers.remove(uuid);
-        windupCounter.remove(uuid);
-        lastShieldTime.remove(uuid);
-        lastCombatTime.remove(uuid);
-        appliedArmorBonuses.remove(uuid);
-        appliedMRBonuses.remove(uuid);
     }
 
-    public void onPlayerDamage(Player victim, double damage) {
-        activateGuardian(victim);
+    public void onGuardedPlayerDamaged(Player damaged) {
+        if (damaged == null) return;
+        var runeManager = LeagueMechanics.getInstance().getRuneManager();
+
+        for (UUID holderId : new ArrayList<>(holders)) {
+            Player holder = Bukkit.getPlayer(holderId);
+            if (holder == null || !holder.isOnline() || holder.isDead()) continue;
+            if (runeManager != null && !runeManager.hasActiveRunes(holder)) continue;
+            if (isOnCooldown(holder)) continue;
+
+            List<Player> guarded = getGuarded(holder);
+            if (!guarded.contains(damaged)) continue;
+
+            trigger(holder, guarded);
+        }
     }
 
-    private void activateGuardian(Player player) {
-        UUID uuid = player.getUniqueId();
-        if (windupCounter.getOrDefault(uuid, 0) > 0) {
-            windupCounter.put(uuid, 0);
-            trackedPlayers.put(uuid, new ArrayList<>());
+    private List<Player> getGuarded(Player holder) {
+        List<Player> guarded = new ArrayList<>();
+        double rangeSq = range * range;
+        Location origin = holder.getLocation();
+
+        for (Player mate : PartyManager.getInstance().getOnlineTeammates(holder)) {
+            if (mate.isDead() || mate.getGameMode() == GameMode.SPECTATOR) continue;
+            if (!mate.getWorld().equals(holder.getWorld())) continue;
+            if (mate.getLocation().distanceSquared(origin) > rangeSq) continue;
+            guarded.add(mate);
         }
+
+        if (!guarded.isEmpty()) {
+            guarded.add(0, holder);
+        }
+        return guarded;
+    }
+
+    private void trigger(Player holder, List<Player> guarded) {
+        resetCooldown(holder);
+        raised.remove(holder.getUniqueId());
+
+        for (Player player : guarded) {
+            applyBuff(holder, player);
+            Location body = player.getLocation().add(0, 1.0, 0);
+            player.getWorld().spawnParticle(GUARD_PARTICLE, body, 10, 0.4, 0.6, 0.4, 0.05);
+            player.playSound(player.getLocation(), Sound.ITEM_SHIELD_BLOCK, 1.0f, 1.2f);
+            player.playSound(player.getLocation(), Sound.BLOCK_AMETHYST_BLOCK_CHIME, 1.0f, 1.0f);
+        }
+
+        spawnPulse(holder.getLocation());
+    }
+
+    private void applyBuff(Player holder, Player recipient) {
+        UUID recipientId = recipient.getUniqueId();
+        clearBuff(recipientId);
+
+        PlayerStats stats = PlayerStats.getOrCreate(recipient);
+        double armor = Math.max(0.0, stats.getPlayerAR(recipient)) * bonusArmorPercent / 100.0;
+        double magicResist = Math.max(0.0, stats.getPlayerMR(recipient)) * bonusMagicResistPercent / 100.0;
+
+        stats.modifyAR(armor);
+        stats.modifyMR(magicResist);
+
+        Applied entry = new Applied(holder.getUniqueId(), stats, armor, magicResist,
+                System.currentTimeMillis() + buffTicks * 50L);
+        entry.task = Bukkit.getScheduler().runTaskLater(LeagueMechanics.getInstance(), () -> {
+            if (applied.get(recipientId) == entry) {
+                clearBuff(recipientId);
+            }
+        }, buffTicks);
+        applied.put(recipientId, entry);
+    }
+
+    private void clearBuff(UUID recipientId) {
+        Applied entry = applied.remove(recipientId);
+        if (entry == null) return;
+        if (entry.task != null) entry.task.cancel();
+        // Reverting on the stored stats object is safe even if the player has since left.
+        entry.stats.modifyAR(-entry.armor);
+        entry.stats.modifyMR(-entry.magicResist);
+    }
+
+    private double getBuffRemainingSeconds(Player player) {
+        Applied entry = applied.get(player.getUniqueId());
+        if (entry == null) return 0.0;
+        return Math.max(0.0, (entry.expiresAt - System.currentTimeMillis()) / 1000.0);
     }
 
     @Override
     public void tick(Player player) {
-        UUID playerUUID = player.getUniqueId();
-        List<UUID> nearbyPlayers = getNearbyPeacefulPlayers(player);
-
-        int windupCount = windupCounter.getOrDefault(playerUUID, 0);
-
-        if (windupCount > 0) {
-            List<UUID> trackedPlayers = this.trackedPlayers.getOrDefault(playerUUID, new ArrayList<>());
-            long currentTime = System.currentTimeMillis();
-            long peaceDurationMs = PEACE_DURATION_TICKS * 50L;
-
-            boolean anyTrackedPlayerInCombat = false;
-            for (UUID trackedUUID : trackedPlayers) {
-                long lastCombat = lastCombatTime.getOrDefault(trackedUUID, 0L);
-                if ((currentTime - lastCombat) < peaceDurationMs) {
-                    anyTrackedPlayerInCombat = true;
-                    break;
-                }
-            }
-
-            if (anyTrackedPlayerInCombat) {
-                windupCounter.put(playerUUID, 0);
-                this.trackedPlayers.put(playerUUID, new ArrayList<>());
-                String runeDisplay = getRuneDisplay(RuneState.IDLE, player, 0, 0);
-                setPlayerDisplay(player, runeDisplay);
-                return;
-            }
-
-            String runeDisplay = getRuneDisplay(RuneState.WINDUP, player, windupCount, trackedPlayers.size());
-            setPlayerDisplay(player, runeDisplay);
-
-            windupCounter.put(playerUUID, windupCount - 1);
-            if (windupCount == 1) {
-                activateEffects(player);
-            }
-            return;
-        }
-
-        trackedPlayers.put(playerUUID, nearbyPlayers);
-
-        long lastCombat = lastCombatTime.getOrDefault(playerUUID, 0L);
-        long currentTime = System.currentTimeMillis();
-        long peaceDurationMs = PEACE_DURATION_TICKS * 50L;
-        boolean playerIsPeaceful = (currentTime - lastCombat) >= peaceDurationMs;
-
-        if (!nearbyPlayers.isEmpty() && playerIsPeaceful && !isOnCooldown(player)) {
-            startGuardRaise(player);
-            return;
-        }
-
-        if (isOnCooldown(player)) {
-            String runeDisplay = getRuneDisplay(RuneState.COOLDOWN, player, 0, 0);
-            setPlayerDisplay(player, runeDisplay);
-            return;
-        }
-
-        String runeDisplay = getRuneDisplay(RuneState.IDLE, player, 0, 0);
-        setPlayerDisplay(player, runeDisplay);
-    }
-
-    private List<UUID> getNearbyPeacefulPlayers(Player player) {
-        List<UUID> peaceful = new ArrayList<>();
-        long currentTime = System.currentTimeMillis();
-
-        for (Player nearby : player.getWorld().getPlayers()) {
-            if (nearby.getUniqueId().equals(player.getUniqueId())) {
-                continue;
-            }
-
-            if (nearby.getLocation().distance(player.getLocation()) > DETECTION_RANGE) {
-                continue;
-            }
-
-            long lastCombat = lastCombatTime.getOrDefault(nearby.getUniqueId(), 0L);
-            long peaceDurationMs = PEACE_DURATION_TICKS * 50L;
-
-            if ((currentTime - lastCombat) >= peaceDurationMs) {
-                peaceful.add(nearby.getUniqueId());
-                if (peaceful.size() >= MAX_PLAYERS) {
-                    break;
-                }
-            }
-        }
-
-        return peaceful;
-    }
-
-    private void startGuardRaise(Player player) {
-        UUID playerUUID = player.getUniqueId();
-        List<UUID> nearbyPlayers = getNearbyPeacefulPlayers(player);
-        trackedPlayers.put(playerUUID, nearbyPlayers);
-        windupCounter.put(playerUUID, GUARD_RAISE_DURATION_TICKS);
-        lastShieldTime.put(playerUUID, System.currentTimeMillis());
-        player.getWorld().playSound(player.getLocation(), org.bukkit.Sound.BLOCK_BEACON_ACTIVATE, 1.0f, 1.2f);
-    }
-
-    public void onTakeDamage(Player player) {
         UUID uuid = player.getUniqueId();
-        if (windupCounter.getOrDefault(uuid, 0) > 0) {
-            windupCounter.put(uuid, 0);
-            trackedPlayers.put(uuid, new ArrayList<>());
-            resetCooldown(player);
-        }
-    }
-
-    private void activateEffects(Player player) {
-        UUID playerUUID = player.getUniqueId();
-        List<UUID> shields = trackedPlayers.getOrDefault(playerUUID, new ArrayList<>());
-
-        applyResistances(player);
-        player.getWorld().playSound(player.getLocation(), Sound.ITEM_TRIDENT_RETURN, 1.0f, 1.5f);
-
-        int count = 0;
-        for (UUID trackedUUID : shields) {
-            if (count >= MAX_PLAYERS) break;
-
-            Player trackedPlayer = player.getServer().getPlayer(trackedUUID);
-            if (trackedPlayer != null && trackedPlayer.isOnline()) {
-                applyResistances(trackedPlayer);
-                trackedPlayer.getWorld().playSound(trackedPlayer.getLocation(), Sound.ITEM_TRIDENT_RETURN, 1.0f, 0.5f);
-                count++;
-            }
-        }
-        resetCooldown(player);
-    }
-
-    private void applyResistances(Player player) {
-        UUID playerUUID = player.getUniqueId();
-        ItemStatsManager itemStatsManager = LeagueMechanics.getInstance().getStatsManager();
-
-        double itemAR = (itemStatsManager != null) ? itemStatsManager.getItemAR(player) : 0.0;
-        double bonusArmor = BASE_ARMOR + (ARMOR_PERCENTAGE / 100.0 * Math.max(0, itemAR));
-
-        double itemMR = (itemStatsManager != null) ? itemStatsManager.getItemMR(player) : 0.0;
-        double bonusMR = BASE_MAGIC_RESIST + (MAGIC_RESIST_PERCENTAGE / 100.0 * itemMR);
-
-        PlayerStats stats = PlayerStats.getOrCreate(player);
-        stats.modifyAR(bonusArmor);
-        stats.modifyMR(bonusMR);
-
-        Map<UUID, Double> armorMap = appliedArmorBonuses.getOrDefault(playerUUID, new HashMap<>());
-        Map<UUID, Double> mrMap = appliedMRBonuses.getOrDefault(playerUUID, new HashMap<>());
-        armorMap.put(playerUUID, bonusArmor);
-        mrMap.put(playerUUID, bonusMR);
-        appliedArmorBonuses.put(playerUUID, armorMap);
-        appliedMRBonuses.put(playerUUID, mrMap);
-
-        Integer existingTaskId = buffTaskIds.getOrDefault(playerUUID, -1);
-        if (existingTaskId != -1) {
-            LeagueMechanics.getInstance().getServer().getScheduler().cancelTask(existingTaskId);
-        }
-
-        int[] taskId = { -1 };
-        taskId[0] = LeagueMechanics.getInstance().getServer().getScheduler().scheduleSyncDelayedTask(
-                LeagueMechanics.getInstance(),
-                () -> clearResistance(player, playerUUID),
-                BUFF_DURATION_TICKS
-        );
-        buffTaskIds.put(playerUUID, taskId[0]);
-    }
-
-    private void clearResistance(Player player, UUID playerUUID) {
-        if (!player.isOnline()) {
-            appliedArmorBonuses.remove(playerUUID);
-            appliedMRBonuses.remove(playerUUID);
-            buffTaskIds.remove(playerUUID);
+        if (player.isDead()) {
+            raised.remove(uuid);
             return;
         }
 
-        PlayerStats stats = PlayerStats.getOrCreate(player);
-        Double armorBonus = appliedArmorBonuses.getOrDefault(playerUUID, new HashMap<>()).remove(playerUUID);
-        Double mrBonus = appliedMRBonuses.getOrDefault(playerUUID, new HashMap<>()).remove(playerUUID);
+        boolean onCooldown = isOnCooldown(player);
+        List<Player> guarded = onCooldown ? new ArrayList<>() : getGuarded(player);
+        boolean guardUp = !guarded.isEmpty();
 
-        if (armorBonus != null) {
-            stats.modifyAR(-armorBonus);
-        }
-        if (mrBonus != null) {
-            stats.modifyMR(-mrBonus);
+        if (guardUp && raised.add(uuid)) {
+            for (Player member : guarded) {
+                member.playSound(member.getLocation(), Sound.BLOCK_BEACON_ACTIVATE, 0.4f, 1.6f);
+            }
+        } else if (!guardUp) {
+            raised.remove(uuid);
         }
 
-        buffTaskIds.put(playerUUID, -1);
+        if (!onCooldown) {
+            int tick = Bukkit.getCurrentTick();
+            if (tick % RANGE_RING_INTERVAL_TICKS == 0) {
+                drawRing(player.getLocation(), range, tick);
+            }
+            if (guardUp && tick % FOOT_RING_INTERVAL_TICKS == 0) {
+                for (Player member : guarded) {
+                    drawRing(member.getLocation(), FOOT_RING_RADIUS, tick);
+                }
+            }
+        }
+
+        String display;
+        double buffRemaining = getBuffRemainingSeconds(player);
+        if (buffRemaining > 0 && applied.get(uuid) != null && applied.get(uuid).holder.equals(uuid)) {
+            display = getRuneDisplay(RuneState.ACTIVE, player, 0);
+        } else if (onCooldown) {
+            display = getRuneDisplay(RuneState.COOLDOWN, player, 0);
+        } else if (guardUp) {
+            display = getRuneDisplay(RuneState.GUARDING, player, guarded.size());
+        } else {
+            display = getRuneDisplay(RuneState.IDLE, player, 0);
+        }
+        setPlayerDisplay(player, display);
     }
 
-    private void clearAllResistances(Player player) {
-        UUID playerUUID = player.getUniqueId();
-        if (!player.isOnline()) {
-            appliedArmorBonuses.remove(playerUUID);
-            appliedMRBonuses.remove(playerUUID);
-            return;
+    private void drawRing(Location center, double radius, int tick) {
+        World world = center.getWorld();
+        if (world == null) return;
+
+        double y = groundY(center) + 0.05;
+        int points = Math.max(8, (int) Math.round(radius * 2.0 * Math.PI / 0.7));
+        double step = 2.0 * Math.PI / points;
+        double shimmer = ((tick / 5) % 3) * step / 3.0;
+
+        for (int i = 0; i < points; i++) {
+            double angle = i * step + shimmer;
+            Location point = new Location(world,
+                    center.getX() + Math.cos(angle) * radius, y, center.getZ() + Math.sin(angle) * radius);
+            world.spawnParticle(GUARD_PARTICLE, point, 1, 0, 0, 0, 0);
         }
+    }
 
-        PlayerStats stats = PlayerStats.getOrCreate(player);
-        Map<UUID, Double> armorMap = appliedArmorBonuses.getOrDefault(playerUUID, new HashMap<>());
-        Map<UUID, Double> mrMap = appliedMRBonuses.getOrDefault(playerUUID, new HashMap<>());
+    private double groundY(Location at) {
+        World world = at.getWorld();
+        RayTraceResult hit = world.rayTraceBlocks(at.clone().add(0, 0.5, 0), new Vector(0, -1, 0), 3.0,
+                FluidCollisionMode.NEVER, true);
+        return hit != null ? hit.getHitPosition().getY() : at.getY();
+    }
 
-        for (Double bonus : armorMap.values()) {
-            if (bonus != null) {
-                stats.modifyAR(-bonus);
+    private void spawnPulse(Location origin) {
+        new BukkitRunnable() {
+            int step = 0;
+
+            @Override
+            public void run() {
+                step++;
+                drawRing(origin, range * step / PULSE_TICKS, 0);
+                if (step >= PULSE_TICKS) cancel();
             }
-        }
-        for (Double bonus : mrMap.values()) {
-            if (bonus != null) {
-                stats.modifyMR(-bonus);
-            }
-        }
-
-        armorMap.clear();
-        mrMap.clear();
+        }.runTaskTimer(LeagueMechanics.getInstance(), 0L, 1L);
     }
 
     private void setPlayerDisplay(Player player, String runeDisplay) {
         PlayerStats playerStats = PlayerStats.getOrCreate(player);
         String statsDisplay = playerStats.getActionBarSections(player);
-
-        String actionBarMessage = runeDisplay + " " + statsDisplay;
-        player.sendActionBar(Component.text(actionBarMessage));
+        player.sendActionBar(Component.text(runeDisplay + " " + statsDisplay));
     }
 
     enum RuneState {
-        WINDUP, COOLDOWN, IDLE
+        ACTIVE, COOLDOWN, GUARDING, IDLE
     }
 
-    private String getRuneDisplay(RuneState state, Player player, int remaining, int nearbyCount) {
+    private String getRuneDisplay(RuneState state, Player player, int guardedCount) {
         return switch (state) {
-            case COOLDOWN -> "§7《❖》 " + getCooldownDisplay(player);
-            case WINDUP -> {
-                String message;
-                if (remaining > GUARD_RAISE_DURATION_TICKS * 2 / 3) {
-                    message = "§a《§2❖》 §a" + nearbyCount + "/" + MAX_PLAYERS;
-                } else if (remaining > GUARD_RAISE_DURATION_TICKS / 3) {
-                    message = "§a《❖§2》 §a" + nearbyCount + "/" + MAX_PLAYERS;
-                } else {
-                    message = "§a《❖》 §a" + nearbyCount + "/" + MAX_PLAYERS;
-                }
-                yield message;
-            }
-            case IDLE -> "§2《❖》";
+            case ACTIVE -> "§f" + Icons.get("keystones.guardian") + " §a" + String.format(Locale.ROOT, " %.1fs", getBuffRemainingSeconds(player));
+            case COOLDOWN -> "§7" + Icons.get("keystones.guardian") + " §7" + getCooldownDisplay(player);
+            case GUARDING -> "§f" + Icons.get("keystones.guardian") + " §a(" + guardedCount + ")";
+            case IDLE -> "§f" + Icons.get("keystones.guardian");
         };
     }
 
     @Override
     public String getDisplaySection(Player player) {
-        UUID playerUUID = player.getUniqueId();
-        int remaining = windupCounter.getOrDefault(playerUUID, 0);
-        int nearbyCount = trackedPlayers.getOrDefault(playerUUID, new ArrayList<>()).size();
-        if (remaining > 0) {
-            return getRuneDisplay(RuneState.WINDUP, player, remaining, nearbyCount);
+        UUID uuid = player.getUniqueId();
+        Applied own = applied.get(uuid);
+        if (own != null && own.holder.equals(uuid) && getBuffRemainingSeconds(player) > 0) {
+            return getRuneDisplay(RuneState.ACTIVE, player, 0);
         }
         if (isOnCooldown(player)) {
-            return getRuneDisplay(RuneState.COOLDOWN, player, 0, 0);
+            return getRuneDisplay(RuneState.COOLDOWN, player, 0);
         }
-        return getRuneDisplay(RuneState.IDLE, player, 0, 0);
+        if (raised.contains(uuid)) {
+            return getRuneDisplay(RuneState.GUARDING, player, getGuarded(player).size());
+        }
+        return getRuneDisplay(RuneState.IDLE, player, 0);
     }
 }

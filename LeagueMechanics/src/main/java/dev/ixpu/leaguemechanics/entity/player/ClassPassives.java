@@ -2,6 +2,7 @@ package dev.ixpu.leaguemechanics.entity.player;
 
 import dev.ixpu.leaguemechanics.LeagueMechanics;
 import dev.ixpu.leaguemechanics.debuff.DebuffType;
+import dev.ixpu.leaguemechanics.manager.CombatStateManager;
 import dev.ixpu.leaguemechanics.manager.DebuffManager;
 import dev.ixpu.leaguemechanics.manager.KillSourceTracker;
 import dev.ixpu.leaguemechanics.manager.PartyManager;
@@ -15,6 +16,7 @@ import org.bukkit.entity.Entity;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Mob;
 import org.bukkit.entity.Player;
+import org.bukkit.entity.Warden;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
 import org.bukkit.util.Vector;
@@ -33,6 +35,8 @@ public final class ClassPassives {
     private static final double SLOW_PERCENT_PER_LEVEL = 20.0;
     private static final double TANK_SLAM_DAMAGE = 3.0;
     private static final double TANK_SLAM_KNOCKBACK = 0.6;
+    private static final double TANK_SHIELD_MITIGATION_PERCENT = 90.0;
+    private static final int WARDEN_TAUNT_ANGER = 150;
 
     private static final double MARKSMAN_KNOCKBACK_STRENGTH = 0.5;
     private static final double MARKSMAN_COOLDOWN_MULTIPLIER = 0.5;
@@ -51,6 +55,15 @@ public final class ClassPassives {
     private static final double MAGE_DASH_MULTIPLIER = 1.3;
     private static final double MAGE_DOUBLE_JUMP_MULTIPLIER = 1.25;
 
+    private static final long ASSASSIN_RECALL_COOLDOWN_MS = 20000L;
+    private static final long ASSASSIN_MARK_CLEAR_OFFSET_MS = 1000L;
+    private static final long ASSASSIN_RECALL_FALL_IMMUNITY_MS = 2000L;
+    private static final double PLAYER_HEIGHT = 1.8;
+
+    private record ShadowMark(Location location, long expiresAt) {}
+
+    private static final Map<UUID, ShadowMark> assassinMarks = new ConcurrentHashMap<>();
+    private static final Map<UUID, Long> assassinRecallCooldownUntil = new ConcurrentHashMap<>();
     private static final Map<UUID, Long> supportTransferCooldown = new ConcurrentHashMap<>();
     private static final Set<UUID> supportSpeedActive = ConcurrentHashMap.newKeySet();
     private static final Map<UUID, Long> mageLastDamage = new ConcurrentHashMap<>();
@@ -83,6 +96,10 @@ public final class ClassPassives {
         return is(player, PlayerClassType.MAGE) ? MAGE_DOUBLE_JUMP_MULTIPLIER : 1.0;
     }
 
+    public static double getShieldMitigationPercent(Player player, double basePercent) {
+        return is(player, PlayerClassType.TANK) ? TANK_SHIELD_MITIGATION_PERCENT : basePercent;
+    }
+
     public static double getFallDamageMultiplier(Player player) {
         return is(player, PlayerClassType.TANK) ? TANK_FALL_DAMAGE_MULTIPLIER : 1.0;
     }
@@ -106,7 +123,7 @@ public final class ClassPassives {
                 if (other.getGameMode() == GameMode.CREATIVE || other.getGameMode() == GameMode.SPECTATOR) continue;
                 if (parties.isSameParty(player, other)) continue;
                 if (!plugin.getCommandHandler().isPvpEnabled(player, other)) continue;
-                DebuffManager.getInstance().applyDebuff(other, DebuffType.SLOW, TANK_SLAM_SLOW_TICKS, TANK_SLAM_SLOW_STRENGTH);
+                DebuffManager.getInstance().applyDebuff(other, DebuffType.SLOW, TANK_SLAM_SLOW_TICKS, TANK_SLAM_SLOW_STRENGTH, player);
                 KillSourceTracker.getInstance().setSource(other, player);
             } else {
                 int amplifier = Math.max(1, (int) Math.round(TANK_SLAM_SLOW_STRENGTH / SLOW_PERCENT_PER_LEVEL)) - 1;
@@ -134,8 +151,24 @@ public final class ClassPassives {
     public static void onMeleeHit(Player attacker, LivingEntity target) {
         if (!is(attacker, PlayerClassType.TANK)) return;
         if (target instanceof Mob mob && !mob.isDead()) {
-            mob.setTarget(attacker);
+            taunt(mob, attacker);
         }
+    }
+
+    /**
+     * Forces a mob to focus the given player. Wardens ignore Mob#setTarget because their target is
+     * driven by their anger table, so for them we move the anger onto the taunter instead.
+     */
+    public static void taunt(Mob mob, Player taunter) {
+        if (mob == null || taunter == null || mob.isDead() || !taunter.isOnline()) return;
+        if (mob instanceof Warden warden) {
+            Entity current = warden.getEntityAngryAt();
+            if (current != null && !current.equals(taunter)) {
+                warden.clearAnger(current);
+            }
+            warden.setAnger(taunter, WARDEN_TAUNT_ANGER);
+        }
+        mob.setTarget(taunter);
     }
 
     public static void onProjectileHit(Player shooter, LivingEntity target, Vector velocity) {
@@ -151,7 +184,22 @@ public final class ClassPassives {
             length = Math.sqrt(x * x + z * z);
             if (length < 1.0E-4) return;
         }
-        target.knockback(MARKSMAN_KNOCKBACK_STRENGTH, -x / length, -z / length);
+        double pushX = x / length;
+        double pushZ = z / length;
+
+        if (target instanceof Player) {
+            target.knockback(MARKSMAN_KNOCKBACK_STRENGTH, -pushX, -pushZ);
+            return;
+        }
+
+        Vector current = target.getVelocity();
+        double pushY = target.isOnGround()
+                ? Math.min(0.4, current.getY() / 2.0 + MARKSMAN_KNOCKBACK_STRENGTH)
+                : current.getY();
+        target.setVelocity(new Vector(
+                current.getX() / 2.0 + pushX * MARKSMAN_KNOCKBACK_STRENGTH,
+                pushY,
+                current.getZ() / 2.0 + pushZ * MARKSMAN_KNOCKBACK_STRENGTH));
     }
 
     public static boolean refreshSupportSpeed(Player player) {
@@ -193,14 +241,23 @@ public final class ClassPassives {
             return;
         }
 
+        if (dev.ixpu.leaguemechanics.entity.player.abilities.fighter.UndyingRage.isActive(target)) {
+            return;
+        }
+
+        double multiplier = PlayerStats.getOrCreate(supporter).getEffectiveHealingMultiplier(supporter);
+        if (multiplier <= 0) {
+            return;
+        }
+
         double missing = target.getMaxHealth() - target.getHealth();
-        double amount = Math.min(supporter.getHealth() * SUPPORT_TRANSFER_PERCENT, missing);
+        double amount = Math.min(supporter.getHealth() * SUPPORT_TRANSFER_PERCENT, missing / multiplier);
         if (amount <= 0 || target.isDead()) {
             return;
         }
 
         supporter.setHealth(supporter.getHealth() - amount);
-        target.setHealth(Math.min(target.getMaxHealth(), target.getHealth() + amount));
+        target.setHealth(Math.min(target.getMaxHealth(), target.getHealth() + amount * multiplier));
         supportTransferCooldown.put(uuid, now + SUPPORT_TRANSFER_COOLDOWN_MS);
 
         Location loc = target.getLocation().add(0, 1.0, 0);
@@ -217,11 +274,11 @@ public final class ClassPassives {
 
         if (now < mageImmuneUntil.getOrDefault(uuid, 0L)) return true;
 
-        boolean offCooldown = now >= mageCooldownUntil.getOrDefault(uuid, 0L);
+        boolean offCooldown = now >= mageCooldownEnd(player);
         boolean notRecentlyDamaged = now - mageLastDamage.getOrDefault(uuid, 0L) >= MAGE_RECENT_DAMAGE_MS;
         if (offCooldown && notRecentlyDamaged) {
             mageImmuneUntil.put(uuid, now + MAGE_IMMUNITY_MS);
-            mageCooldownUntil.put(uuid, now + MAGE_COOLDOWN_MS);
+            mageCooldownUntil.put(uuid, now + MAGE_IMMUNITY_MS + MAGE_COOLDOWN_MS);
 
             Location loc = player.getLocation().add(0, 1.0, 0);
             player.getWorld().playSound(loc, Sound.BLOCK_BEACON_ACTIVATE, 0.8f, 1.8f);
@@ -250,6 +307,116 @@ public final class ClassPassives {
         }
     }
 
+    public static void onDash(Player player, Location start, long dashCooldownMs) {
+        if (!is(player, PlayerClassType.ASSASSIN)) return;
+
+        long lifetime = dashCooldownMs - ASSASSIN_MARK_CLEAR_OFFSET_MS;
+        if (lifetime <= 0) {
+            assassinMarks.remove(player.getUniqueId());
+            return;
+        }
+
+        assassinMarks.put(player.getUniqueId(),
+                new ShadowMark(start.clone(), System.currentTimeMillis() + lifetime));
+
+        spawnShadowPuff(start);
+        start.getWorld().playSound(start, Sound.ENTITY_ENDERMAN_TELEPORT, 0.4f, 0.6f);
+    }
+
+    public static boolean hasShadowMark(Player player) {
+        return activeShadowMark(player) != null;
+    }
+
+    public static boolean recallToShadowMark(Player player) {
+        ShadowMark mark = activeShadowMark(player);
+        if (mark == null) return false;
+        if (assassinRecallReadyAt(player) > System.currentTimeMillis()) return false;
+        assassinMarks.remove(player.getUniqueId());
+
+        Location destination = mark.location();
+        if (destination.getWorld() == null || !destination.getWorld().equals(player.getWorld())) return false;
+        if (!isStandable(destination)) {
+            player.sendMessage(net.kyori.adventure.text.Component.text("§cYour shadow mark was obstructed"));
+            return false;
+        }
+
+        Location from = player.getLocation();
+        Location target = destination.clone();
+        target.setYaw(from.getYaw());
+        target.setPitch(from.getPitch());
+
+        spawnShadowPuff(from);
+        player.teleport(target);
+        player.setVelocity(new Vector(0, 0, 0));
+        player.setFallDistance(0f);
+        CombatStateManager.getInstance().markDashFallImmunity(player.getUniqueId(), ASSASSIN_RECALL_FALL_IMMUNITY_MS);
+        assassinRecallCooldownUntil.put(player.getUniqueId(), System.currentTimeMillis() + ASSASSIN_RECALL_COOLDOWN_MS);
+
+        spawnShadowPuff(target);
+        target.getWorld().playSound(target, Sound.ENTITY_ENDERMAN_TELEPORT, 0.7f, 1.4f);
+        return true;
+    }
+
+    public static void tickShadowMark(Player player) {
+        ShadowMark mark = activeShadowMark(player);
+        if (mark == null) return;
+
+        Location center = mark.location();
+        if (center.getWorld() == null || !center.getWorld().equals(player.getWorld())) return;
+
+        boolean ready = assassinRecallReadyAt(player) <= System.currentTimeMillis();
+        Particle.DustOptions shade = new Particle.DustOptions(
+                ready ? Color.fromRGB(70, 0, 110) : Color.fromRGB(70, 70, 70), 1.2f);
+        int points = 12;
+        double radius = 0.6;
+        for (int i = 0; i < points; i++) {
+            double angle = 2 * Math.PI * i / points;
+            player.spawnParticle(Particle.DUST,
+                    center.getX() + Math.cos(angle) * radius, center.getY() + 0.1, center.getZ() + Math.sin(angle) * radius,
+                    1, 0, 0, 0, 0, shade);
+        }
+        player.spawnParticle(Particle.PORTAL, center.getX(), center.getY() + 0.9, center.getZ(), 4, 0.25, 0.7, 0.25, 0.0);
+    }
+
+    public static void clearShadowMark(UUID uuid) {
+        assassinMarks.remove(uuid);
+    }
+
+    private static ShadowMark activeShadowMark(Player player) {
+        UUID uuid = player.getUniqueId();
+        ShadowMark mark = assassinMarks.get(uuid);
+        if (mark == null) return null;
+        if (!is(player, PlayerClassType.ASSASSIN) || System.currentTimeMillis() >= mark.expiresAt()) {
+            assassinMarks.remove(uuid);
+            return null;
+        }
+        return mark;
+    }
+
+    public static double getAssassinRecallCooldownSeconds(Player player) {
+        if (!is(player, PlayerClassType.ASSASSIN)) return 0;
+        return remainingSeconds(assassinRecallReadyAt(player));
+    }
+
+    private static long assassinRecallReadyAt(Player player) {
+        Long until = assassinRecallCooldownUntil.get(player.getUniqueId());
+        if (until == null) return 0L;
+        return until;
+    }
+
+    private static boolean isStandable(Location location) {
+        for (double offset : new double[]{0.0, 1.0, PLAYER_HEIGHT}) {
+            if (!location.clone().add(0, offset, 0).getBlock().isPassable()) return false;
+        }
+        return true;
+    }
+
+    private static void spawnShadowPuff(Location at) {
+        Location body = at.clone().add(0, 1.0, 0);
+        at.getWorld().spawnParticle(Particle.SQUID_INK, body, 14, 0.3, 0.5, 0.3, 0.02);
+        at.getWorld().spawnParticle(Particle.PORTAL, body, 20, 0.3, 0.5, 0.3, 0.3);
+    }
+
     public static double getSupportTransferCooldownSeconds(Player player) {
         if (!is(player, PlayerClassType.SUPPORT)) return 0;
         return remainingSeconds(supportTransferCooldown.get(player.getUniqueId()));
@@ -257,7 +424,15 @@ public final class ClassPassives {
 
     public static double getMageAbsorbCooldownSeconds(Player player) {
         if (!is(player, PlayerClassType.MAGE)) return 0;
-        return remainingSeconds(mageCooldownUntil.get(player.getUniqueId()));
+        Long immuneUntil = mageImmuneUntil.get(player.getUniqueId());
+        if (immuneUntil != null && System.currentTimeMillis() < immuneUntil) return 0;
+        return remainingSeconds(mageCooldownEnd(player));
+    }
+
+    private static long mageCooldownEnd(Player player) {
+        Long until = mageCooldownUntil.get(player.getUniqueId());
+        if (until == null) return 0L;
+        return until;
     }
 
     private static double remainingSeconds(Long readyAt) {
@@ -272,5 +447,7 @@ public final class ClassPassives {
         mageLastDamage.remove(uuid);
         mageImmuneUntil.remove(uuid);
         mageCooldownUntil.remove(uuid);
+        assassinMarks.remove(uuid);
+        assassinRecallCooldownUntil.remove(uuid);
     }
 }

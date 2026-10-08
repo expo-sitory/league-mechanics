@@ -13,6 +13,9 @@ commands:
     description: League of Legends mechanics — shop, class, runes, shards, stats, debuffs
     usage: /<leaguemechanics|lm> <shop|class|skills|runes|reload>
     aliases: [lm, league]
+  party:
+    description: Create and manage your party
+    usage: /party <invite <player>|accept|leave|disband>
 
 permissions:
   leaguemechanics.admin:

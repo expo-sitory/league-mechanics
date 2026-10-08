@@ -1,5 +1,6 @@
 package dev.ixpu.leaguemechanics.rune.paths.resolve;
 
+import dev.ixpu.leaguemechanics.debuff.DebuffType;
 import dev.ixpu.leaguemechanics.manager.PartyManager;
 import dev.ixpu.leaguemechanics.LeagueMechanics;
 import dev.ixpu.leaguemechanics.item.passives.ItemPassive;
@@ -14,7 +15,6 @@ import dev.ixpu.leaguemechanics.rune.RuneCooldownGate;
 
 import dev.ixpu.leaguemechanics.manager.DamageManager;
 import dev.ixpu.leaguemechanics.manager.KillSourceTracker;
-import dev.ixpu.leaguemechanics.manager.ItemStatsManager;
 
 import dev.ixpu.leaguemechanics.listener.PlayerEventListener;
 
@@ -36,28 +36,28 @@ import java.util.*;
 
 public class AfterShock extends CooldownHandler {
 
-    private RuneCooldownGate listener;
+    private final RuneCooldownGate listener;
 
-    private double BASE_ARMOR_PERCENTAGE;
-    private double BASE_MAGIC_RESIST_PERCENTAGE;
-    private double BASE_SHOCKWAVE_MAGIC_DAMAGE;
-    private double BONUS_SHOCKWAVE_MAGIC_DAMAGE;
+    private static final double DEFAULT_BONUS_ARMOR = 55.0;
+    private static final double DEFAULT_BONUS_MAGIC_RESIST = 55.0;
+    private static final double DEFAULT_COUNTDOWN_SECONDS = 2.5;
+    private static final double DEFAULT_BASE_SHOCKWAVE_DAMAGE = 12.5;
+    private static final double DEFAULT_SHOCKWAVE_BONUS_HP_PERCENT = 25.0;
+    private static final int DEFAULT_COOLDOWN_SECONDS = 20;
 
-    private int COOLDOWN_DURATION_SECONDS;
-
-    private static final double BASE_ARMOR = 45.0;
-    private static final double BASE_MAGIC_RESIST = 45.0;
+    private double bonusArmor = DEFAULT_BONUS_ARMOR;
+    private double bonusMagicResist = DEFAULT_BONUS_MAGIC_RESIST;
+    private int countdownTicks = (int) Math.round(DEFAULT_COUNTDOWN_SECONDS * 20.0);
+    private double BASE_SHOCKWAVE_MAGIC_DAMAGE = DEFAULT_BASE_SHOCKWAVE_DAMAGE;
+    private double BONUS_SHOCKWAVE_MAGIC_DAMAGE = DEFAULT_SHOCKWAVE_BONUS_HP_PERCENT;
+    private int COOLDOWN_DURATION_SECONDS = DEFAULT_COOLDOWN_SECONDS;
 
     private static final double shockwaveRadius = 5.0;
-    private static final double triggerThresholdPercent = 50.0;
-    private static final int buffDurationTicks = 50;
-
 
     private final Map<UUID, Integer> effectTaskIds = new HashMap<>();
     private final Map<UUID, Integer> effectRemainingTicks = new HashMap<>();
     private final Map<UUID, Double> lastArmorBonus = new HashMap<>();
     private final Map<UUID, Double> lastMRBonus = new HashMap<>();
-    private final Map<UUID, Double> triggerHealthThreshold = new HashMap<>();
 
     public AfterShock(ConfigurationSection config, PlayerEventListener listener) {
         super("after-shock", RunePath.RESOLVE, RuneSlot.KEYSTONE);
@@ -65,8 +65,10 @@ public class AfterShock extends CooldownHandler {
 
         ConfigurationSection section = config.getConfigurationSection("runes.keystones.resolve.aftershock");
         if (section != null) {
-            this.BASE_ARMOR_PERCENTAGE = section.getDouble("bonus-armor-percent", this.BASE_ARMOR_PERCENTAGE);
-            this.BASE_MAGIC_RESIST_PERCENTAGE = section.getDouble("bonus-magic-resist-percent", this.BASE_MAGIC_RESIST_PERCENTAGE);
+            this.bonusArmor = section.getDouble("bonus-armor", this.bonusArmor);
+            this.bonusMagicResist = section.getDouble("bonus-magic-resist", this.bonusMagicResist);
+            double countdownSeconds = section.getDouble("countdown-seconds", DEFAULT_COUNTDOWN_SECONDS);
+            this.countdownTicks = Math.max(1, (int) Math.round(countdownSeconds * 20.0));
             this.BASE_SHOCKWAVE_MAGIC_DAMAGE = section.getDouble("base-shockwave-damage", this.BASE_SHOCKWAVE_MAGIC_DAMAGE);
             this.BONUS_SHOCKWAVE_MAGIC_DAMAGE = section.getDouble("shockwave-bonus-hp-percent", this.BONUS_SHOCKWAVE_MAGIC_DAMAGE);
             this.COOLDOWN_DURATION_SECONDS = section.getInt("cooldown", this.COOLDOWN_DURATION_SECONDS);
@@ -88,104 +90,66 @@ public class AfterShock extends CooldownHandler {
     }
 
     @Override
-    public void onPlayerDamage(Player player, double damage) {
-        UUID playerUUID = player.getUniqueId();
+    public void onCrowdControl(Player source, Player target, DebuffType type) {
+        if (source == null || target == null || !source.isOnline() || source.isDead()) return;
+        if (PartyManager.getInstance().isSameParty(source, target)) return;
 
-        if (isOnCooldown(player)) {
-            return;
-        }
+        UUID uuid = source.getUniqueId();
+        if (effectRemainingTicks.getOrDefault(uuid, 0) > 0) return;
+        if (isOnCooldown(source)) return;
 
-        Double threshold = triggerHealthThreshold.getOrDefault(playerUUID, -1.0);
-        if (threshold > 0 && player.getHealth() < threshold) {
-            triggerShockwaveRelease(player);
-            return;
-        }
-
-        activateAfterShock(player);
+        startCountdown(source);
     }
 
-    private void triggerShockwaveRelease(Player player) {
+    private void startCountdown(Player player) {
         UUID playerUUID = player.getUniqueId();
-        releaseShockwave(player);
-        triggerHealthThreshold.remove(playerUUID);
-        effectRemainingTicks.remove(playerUUID);
-        resetCooldown(player);
-
-        Integer taskId = effectTaskIds.remove(playerUUID);
-        if (taskId != null && taskId != -1) {
-            LeagueMechanics.getInstance().getServer().getScheduler().cancelTask(taskId);
-        }
-    }
-
-    private void activateAfterShock(Player player) {
-        UUID playerUUID = player.getUniqueId();
-
-        if (effectRemainingTicks.getOrDefault(playerUUID, 0) > 0) {
-            return;
-        }
-        if (isOnCooldown(player)) {
-            return;
-        }
-        if (isHotbarCooldownBlocking(listener, player)) {
-            return;
-        }
-        doActivateAfterShock(player);
-    }
-
-    static boolean isHotbarCooldownBlocking(RuneCooldownGate gate, Player player) {
-        return gate.isAnyHotbarOnCooldown(player) && !gate.letRunesThrough(player);
-    }
-
-    private void doActivateAfterShock(Player player) {
-        UUID playerUUID = player.getUniqueId();
-        double currentHealth = player.getHealth();
-        double thresholdHealth = currentHealth * 0.5;
-
-        triggerHealthThreshold.put(playerUUID, thresholdHealth);
-        applyResistances(player);
         LeagueMechanics plugin = LeagueMechanics.getInstance();
-        effectRemainingTicks.put(playerUUID, 1);
+
+        applyResistances(player);
+        effectRemainingTicks.put(playerUUID, countdownTicks);
 
         int[] taskId = { -1 };
-        taskId[0] = plugin.getServer().getScheduler().scheduleSyncRepeatingTask(plugin, new Runnable() {
-            @Override
-            public void run() {
-                if (player.isDead()) {
-                    plugin.getServer().getScheduler().cancelTask(taskId[0]);
-                    effectTaskIds.remove(playerUUID);
-                    effectRemainingTicks.remove(playerUUID);
-                    triggerHealthThreshold.remove(playerUUID);
-                    clearResistances(player);
-                    return;
-                }
-
-                Double threshold = triggerHealthThreshold.getOrDefault(playerUUID, -1.0);
-                if (threshold > 0 && player.getHealth() < threshold) {
-                    triggerShockwaveRelease(player);
-                }
+        taskId[0] = plugin.getServer().getScheduler().scheduleSyncRepeatingTask(plugin, () -> {
+            if (!player.isOnline() || player.isDead()) {
+                cancelEffect(player);
+                return;
             }
-        }, 0L, 1L);
+
+            int remaining = effectRemainingTicks.getOrDefault(playerUUID, 0) - 1;
+            if (remaining <= 0) {
+                finishCountdown(player);
+                return;
+            }
+            effectRemainingTicks.put(playerUUID, remaining);
+        }, 1L, 1L);
 
         effectTaskIds.put(playerUUID, taskId[0]);
 
         player.getWorld().playSound(player.getLocation(), Sound.ENTITY_WARDEN_HEARTBEAT, 1.0f, 0.5f);
     }
 
+    private void finishCountdown(Player player) {
+        UUID playerUUID = player.getUniqueId();
+
+        Integer taskId = effectTaskIds.remove(playerUUID);
+        if (taskId != null && taskId != -1) {
+            LeagueMechanics.getInstance().getServer().getScheduler().cancelTask(taskId);
+        }
+        effectRemainingTicks.remove(playerUUID);
+
+        releaseShockwave(player);
+        resetCooldown(player);
+    }
+
     private void applyResistances(Player player) {
         UUID playerUUID = player.getUniqueId();
         clearResistances(player);
-        ItemStatsManager itemStatsManager = LeagueMechanics.getInstance().getStatsManager();
 
-        double itemAR = (itemStatsManager != null) ? itemStatsManager.getItemAR(player) : 0.0;
-        double bonusArmorBonus = BASE_ARMOR + (BASE_ARMOR_PERCENTAGE / 100.0 * Math.max(0, itemAR));
-
-        double itemMR = (itemStatsManager != null) ? itemStatsManager.getItemMR(player) : 0.0;
-        double bonusMRBonus = BASE_MAGIC_RESIST + (BASE_MAGIC_RESIST_PERCENTAGE / 100.0 * itemMR);
-        lastArmorBonus.put(playerUUID, bonusArmorBonus);
-        lastMRBonus.put(playerUUID, bonusMRBonus);
+        lastArmorBonus.put(playerUUID, bonusArmor);
+        lastMRBonus.put(playerUUID, bonusMagicResist);
         PlayerStats stats = PlayerStats.getOrCreate(player);
-        stats.modifyAR(bonusArmorBonus);
-        stats.modifyMR(bonusMRBonus);
+        stats.modifyAR(bonusArmor);
+        stats.modifyMR(bonusMagicResist);
     }
 
     private void clearResistances(Player player) {
@@ -356,7 +320,7 @@ public class AfterShock extends CooldownHandler {
 
     private String getRuneDisplay(RuneState state, Player player) {
         return switch (state) {
-            case ACTIVE -> "§2§k|| §r" + Icons.get("keystones.after-shock") + " §2§k||§r";
+            case ACTIVE -> "§a" + Icons.get("keystones.after-shock") + " §a" + String.format(Locale.ROOT, "(%.1fs)", effectRemainingTicks.getOrDefault(player.getUniqueId(), 0) / 20.0);
             case COOLDOWN -> "§7" + Icons.get("keystones.after-shock") + " §7" + getCooldownDisplay(player);
             case IDLE -> Icons.get("keystones.after-shock");
         };

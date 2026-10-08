@@ -17,7 +17,7 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.scheduler.BukkitRunnable;
 
 public class bamis_cinder implements ItemPassive {
-    private static final double IMMOLATE_DAMAGE_PER_TICK = 5.0;
+    private static final double IMMOLATE_DAMAGE_PER_TICK = 15.0;
     private static final double IMMOLATE_RADIUS = 5.0;
     private static final int IMMOLATE_DURATION_TICKS = 60;
     private static final int IMMOLATE_TICK_INTERVAL = 20;

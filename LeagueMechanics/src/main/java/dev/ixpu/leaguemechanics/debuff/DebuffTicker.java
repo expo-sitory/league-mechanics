@@ -11,7 +11,7 @@ import org.bukkit.entity.Player;
 
 public class DebuffTicker {
     private static final int INFLAME_INTERVAL_TICKS = 30;
-    private static final double INFLAME_BASE_DAMAGE = 1.7;
+    private static final double INFLAME_BASE_DAMAGE = 2.5;
 
     private final java.util.Map<java.util.UUID, Integer> inflameTickCounters = new java.util.HashMap<>();
 

@@ -46,7 +46,7 @@ public class ItemShopRegistry {
                 "caulfields-warhammer", "hexdrinker", "serrated-dirk", "phage",
                 "crystalline-bracer", "giants-belt", "kindlegem", "bramble-vest",
                 "cloak-of-agility", "noonquiver", "rectrix", "recurve-bow",
-                "scouts-slingshot", "last-whisper", "heartbound-axe",
+                "scouts-slingshot", "last-whisper", "hearthbound-axe", "tunneler",
                 "spectres-cowl", "winged-moonplate", "wardens-mail", "bamis-cinder",
                 "verdant-barrier", "aether-wisp", "bandleglass-mirror",
                 "vampiric-scepter", "the-brutalizer", "steel-sigil", "zeal",
@@ -123,23 +123,39 @@ public class ItemShopRegistry {
             }
 
             if (player != null) {
-                for (String reqId : new LinkedHashSet<>(requiredItems)) {
-                    if (playerOwnsLeagueItemId(player, reqId)) {
-                        total -= shopData.getPrice(reqId);
-                    }
+                for (Map.Entry<String, Integer> entry : getRequiredCounts().entrySet()) {
+                    int covered = Math.min(countOwnedLeagueItemId(player, entry.getKey()), entry.getValue());
+                    total -= shopData.getPrice(entry.getKey()) * covered;
                 }
             }
 
             return total;
         }
 
-        private static boolean playerOwnsLeagueItemId(Player player, String itemId) {
+        public int countOwnedComponents(Player player) {
+            int covered = 0;
+            for (Map.Entry<String, Integer> entry : getRequiredCounts().entrySet()) {
+                covered += Math.min(countOwnedLeagueItemId(player, entry.getKey()), entry.getValue());
+            }
+            return covered;
+        }
+
+        private Map<String, Integer> getRequiredCounts() {
+            Map<String, Integer> counts = new LinkedHashMap<>();
+            for (String reqId : requiredItems) {
+                counts.merge(reqId, 1, Integer::sum);
+            }
+            return counts;
+        }
+
+        private static int countOwnedLeagueItemId(Player player, String itemId) {
+            int count = 0;
             for (ItemStack inv : player.getInventory().getContents()) {
                 if (inv != null && !inv.getType().isAir() && itemId.equals(ItemModifier.getItemId(inv))) {
-                    return true;
+                    count++;
                 }
             }
-            return false;
+            return count;
         }
 
     }

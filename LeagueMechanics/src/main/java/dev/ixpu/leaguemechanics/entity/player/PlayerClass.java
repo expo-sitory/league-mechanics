@@ -1,7 +1,7 @@
 package dev.ixpu.leaguemechanics.entity.player;
 
 import dev.ixpu.leaguemechanics.LeagueMechanics;
-import dev.ixpu.leaguemechanics.manager.ClassSkillManager;
+import dev.ixpu.leaguemechanics.manager.ClassAbilitiesManager;
 import org.bukkit.entity.Player;
 
 import java.util.EnumMap;
@@ -45,7 +45,7 @@ public class PlayerClass {
         }
 
         if (plugin != null) {
-            ClassSkillManager.getInstance().onClassChanged(player, classType);
+            ClassAbilitiesManager.getInstance().onClassChanged(player, classType);
         }
     }
 
@@ -93,7 +93,7 @@ public class PlayerClass {
         }
 
         if (plugin != null) {
-            ClassSkillManager.getInstance().onClassChanged(player, null);
+            ClassAbilitiesManager.getInstance().onClassChanged(player, null);
         }
 
         if (plugin != null && plugin.getPlayerEventListener() != null) {

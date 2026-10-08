@@ -120,10 +120,9 @@ public class DarkHarvest extends StacksHandler {
 
     private double keystoneDamage(Player player, Entity target) {
         DamageManager damageManager = new DamageManager(LeagueMechanics.getInstance().getStatsManager());
-        damageManager.enablePerStackScaling();
         damageManager.enableAdaptiveDamage();
-        int currentStacks = getStacks(player);
-        double damage = damageManager.DamageCalculation(player, target, currentStacks, BASE_ADAPTIVE_DAMAGE_PER_STACK, 0, 0);
+        int currentStacks = getStacks(player) * 2;
+        double damage = damageManager.DamageCalculation(player, target, 0, BASE_ADAPTIVE_DAMAGE_PER_STACK + currentStacks, 0, 0);
         this.lastDamageWasMagic = damageManager.isMagicDamage();
         return damage;
     }

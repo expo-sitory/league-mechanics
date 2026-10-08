@@ -153,7 +153,7 @@ public class GlacialAugment extends CooldownHandler {
             StatScalingManager ssm = new StatScalingManager();
             double slowStrength = ssm.calculateScaledValue(player, BASE_FREEZE_STRENGTH, AD_PERCENTAGE_MULTIPLIER, AP_PERCENTAGE_MULTIPLIER);
             int slowDurationTicks = 60;
-            DebuffManager.getInstance().applyDebuff(slowPlayer, DebuffType.SLOW, slowDurationTicks, slowStrength);
+            DebuffManager.getInstance().applyDebuff(slowPlayer, DebuffType.SLOW, slowDurationTicks, slowStrength, player);
         }
 
         applyDebuffToTarget(livingTarget, targetUUID, scaledFreezeDuration);

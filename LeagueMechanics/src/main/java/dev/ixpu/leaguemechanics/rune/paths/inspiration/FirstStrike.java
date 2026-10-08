@@ -18,10 +18,7 @@ import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 
 import dev.ixpu.leaguemechanics.util.Icons;
-import org.bukkit.entity.ArmorStand;
-import org.bukkit.entity.Player;
-import org.bukkit.entity.Entity;
-import org.bukkit.entity.LivingEntity;
+import org.bukkit.entity.*;
 import org.bukkit.Location;
 import org.bukkit.Particle;
 import org.bukkit.configuration.ConfigurationSection;
@@ -34,9 +31,6 @@ public class FirstStrike extends CooldownHandler {
     private double TRUE_DAMAGE_AMOUNT;
 
     private int COOLDOWN_SECONDS;
-
-    private double AD_PERCENTAGE;
-    private double AP_PERCENTAGE;
 
     private PlayerEventListener listener;
 
@@ -57,10 +51,8 @@ public class FirstStrike extends CooldownHandler {
         if (section != null) {
             this.INITIAL_XP = section.getDouble("initial-xp", this.INITIAL_XP);
             this.BUFF_DURATION_SECONDS = section.getDouble("buff-duration", this.BUFF_DURATION_SECONDS);
-            this.TRUE_DAMAGE_AMOUNT = section.getDouble("true-damage-percent", this.TRUE_DAMAGE_AMOUNT);
+            this.TRUE_DAMAGE_AMOUNT = section.getDouble("true-damage-amount", this.TRUE_DAMAGE_AMOUNT);
             this.COOLDOWN_SECONDS = section.getInt("cooldown", this.COOLDOWN_SECONDS);
-            this.AD_PERCENTAGE = section.getDouble("ad-percentage", this.AD_PERCENTAGE);
-            this.AP_PERCENTAGE = section.getDouble("ap-percentage", this.AP_PERCENTAGE);
         }
         this.setCooldownSeconds(COOLDOWN_SECONDS);
     }
@@ -97,7 +89,7 @@ public class FirstStrike extends CooldownHandler {
         if (!(target instanceof LivingEntity livingTarget)) {
             return;
         }
-        if (livingTarget instanceof Player || livingTarget instanceof ArmorStand) {
+        if (livingTarget instanceof Player || livingTarget instanceof ArmorStand || livingTarget instanceof Boat || livingTarget instanceof ChestBoat) {
             return;
         }
         if (livingTarget.getMaxHealth() < 20) {
@@ -227,21 +219,9 @@ public class FirstStrike extends CooldownHandler {
     }
 
     private void grantXPBonus(Player player) {
-        PlayerStats playerStats = PlayerStats.getOrCreate(player);
-        double totalAD = playerStats.getPlayerAD(player);
-        double totalAP = playerStats.getPlayerAP(player);
-
-        if (totalAD <= 0) totalAD = 2.0;
-        if (totalAP <= 0) totalAP = 12.0;
-
-        double adBonus = totalAD * AD_PERCENTAGE;
-        double apBonus = totalAP * AP_PERCENTAGE;
-        double statScaling = Math.max(adBonus, apBonus);
-
         double DamageCalculation = bonusDamageTracked.getOrDefault(player.getUniqueId(), 0.0);
-        double finalXP = DamageCalculation * statScaling;
+        double finalXP = DamageCalculation;
         int xpToGive = (int) finalXP;
-
         player.giveExp(xpToGive);
     }
 
