@@ -4,6 +4,7 @@ import dev.ixpu.leaguemechanics.LeagueMechanics;
 import dev.ixpu.leaguemechanics.entity.player.PlayerStats;
 
 import dev.ixpu.leaguemechanics.manager.DamageManager;
+import dev.ixpu.leaguemechanics.manager.StatScalingManager;
 
 import dev.ixpu.leaguemechanics.rune.CooldownHandler;
 import dev.ixpu.leaguemechanics.rune.paths.RunePath;
@@ -34,6 +35,9 @@ public class FirstStrike extends CooldownHandler {
 
     private PlayerEventListener listener;
 
+    private double AD_PERCENTAGE_MULTIPLIER;
+    private double AP_PERCENTAGE_MULTIPLIER;
+
     private static final double COMBAT_WINDOW_MS = 250;
 
     private final Map<UUID, Long> lastCombatTime = new HashMap<>();
@@ -52,6 +56,8 @@ public class FirstStrike extends CooldownHandler {
             this.INITIAL_XP = section.getDouble("initial-xp", this.INITIAL_XP);
             this.BUFF_DURATION_SECONDS = section.getDouble("buff-duration", this.BUFF_DURATION_SECONDS);
             this.TRUE_DAMAGE_AMOUNT = section.getDouble("true-damage-amount", this.TRUE_DAMAGE_AMOUNT);
+            this.AD_PERCENTAGE_MULTIPLIER = section.getDouble("ad-percentage-multiplier", this.AD_PERCENTAGE_MULTIPLIER);
+            this.AP_PERCENTAGE_MULTIPLIER = section.getDouble("ap-percentage-multiplier", this.AP_PERCENTAGE_MULTIPLIER);
             this.COOLDOWN_SECONDS = section.getInt("cooldown", this.COOLDOWN_SECONDS);
         }
         this.setCooldownSeconds(COOLDOWN_SECONDS);
@@ -103,7 +109,7 @@ public class FirstStrike extends CooldownHandler {
         long lastCombat = lastCombatTime.getOrDefault(attackerUUID, 0L);
 
         if (currentTime - lastCombat > COMBAT_WINDOW_MS && !isOnCooldown(player)) {
-            player.giveExp((int) INITIAL_XP);
+            player.giveExp((int) scaledXP(player, INITIAL_XP));
             firstStrikeActive.add(attackerUUID);
             bonusDamageTracked.put(attackerUUID, 0.0);
 
@@ -218,10 +224,14 @@ public class FirstStrike extends CooldownHandler {
         setPlayerDisplay(player, runeDisplay);
     }
 
+    private double scaledXP(Player player, double baseXP) {
+        return new StatScalingManager().calculateScaledValue(player, baseXP, AD_PERCENTAGE_MULTIPLIER, AP_PERCENTAGE_MULTIPLIER);
+    }
+
     private void grantXPBonus(Player player) {
         double DamageCalculation = bonusDamageTracked.getOrDefault(player.getUniqueId(), 0.0);
         double finalXP = DamageCalculation;
-        int xpToGive = (int) finalXP;
+        int xpToGive = (int) scaledXP(player, finalXP);
         player.giveExp(xpToGive);
     }
 

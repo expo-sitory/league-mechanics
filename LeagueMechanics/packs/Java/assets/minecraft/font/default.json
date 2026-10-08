@@ -2524,6 +2524,204 @@
             "chars": [
                 "\ue2f7"
             ]
+        },
+        {
+            "type": "bitmap",
+            "file": "leaguemechanics:item/forbidden-idol.png",
+            "ascent": 10,
+            "height": 12,
+            "chars": [
+                "\ue2f8"
+            ]
+        },
+        {
+            "type": "bitmap",
+            "file": "leaguemechanics:item/haunting-guise.png",
+            "ascent": 10,
+            "height": 12,
+            "chars": [
+                "\ue2f9"
+            ]
+        },
+        {
+            "type": "bitmap",
+            "file": "leaguemechanics:item/sheen.png",
+            "ascent": 10,
+            "height": 12,
+            "chars": [
+                "\ue2fa"
+            ]
+        },
+        {
+            "type": "bitmap",
+            "file": "leaguemechanics:item/tiamat.png",
+            "ascent": 10,
+            "height": 12,
+            "chars": [
+                "\ue2fb"
+            ]
+        },
+        {
+            "type": "bitmap",
+            "file": "minecraft:font/airborne_icon.png",
+            "ascent": 10,
+            "height": 12,
+            "chars": [
+                "\ue40e"
+            ]
+        },
+        {
+            "type": "bitmap",
+            "file": "minecraft:font/be_icon.png",
+            "ascent": 10,
+            "height": 12,
+            "chars": [
+                "\ue40f"
+            ]
+        },
+        {
+            "type": "bitmap",
+            "file": "minecraft:font/cc_immune_icon.png",
+            "ascent": 10,
+            "height": 12,
+            "chars": [
+                "\ue410"
+            ]
+        },
+        {
+            "type": "bitmap",
+            "file": "minecraft:font/charm_icon.png",
+            "ascent": 10,
+            "height": 12,
+            "chars": [
+                "\ue411"
+            ]
+        },
+        {
+            "type": "bitmap",
+            "file": "minecraft:font/cripple_icon.png",
+            "ascent": 10,
+            "height": 12,
+            "chars": [
+                "\ue412"
+            ]
+        },
+        {
+            "type": "bitmap",
+            "file": "minecraft:font/death.png",
+            "ascent": 10,
+            "height": 12,
+            "chars": [
+                "\ue413"
+            ]
+        },
+        {
+            "type": "bitmap",
+            "file": "minecraft:font/disarm_icon.png",
+            "ascent": 10,
+            "height": 12,
+            "chars": [
+                "\ue414"
+            ]
+        },
+        {
+            "type": "bitmap",
+            "file": "minecraft:font/enhanced_critical_damage_icon.png",
+            "ascent": 10,
+            "height": 12,
+            "chars": [
+                "\ue415"
+            ]
+        },
+        {
+            "type": "bitmap",
+            "file": "minecraft:font/fear_icon.png",
+            "ascent": 10,
+            "height": 12,
+            "chars": [
+                "\ue416"
+            ]
+        },
+        {
+            "type": "bitmap",
+            "file": "minecraft:font/fear_icon_wr.png",
+            "ascent": 10,
+            "height": 12,
+            "chars": [
+                "\ue417"
+            ]
+        },
+        {
+            "type": "bitmap",
+            "file": "minecraft:font/heal_and_shield_power_icon.png",
+            "ascent": 10,
+            "height": 12,
+            "chars": [
+                "\ue418"
+            ]
+        },
+        {
+            "type": "bitmap",
+            "file": "minecraft:font/oe_icon.png",
+            "ascent": 10,
+            "height": 12,
+            "chars": [
+                "\ue419"
+            ]
+        },
+        {
+            "type": "bitmap",
+            "file": "minecraft:font/omnivamp_colored_icon.png",
+            "ascent": 10,
+            "height": 12,
+            "chars": [
+                "\ue41a"
+            ]
+        },
+        {
+            "type": "bitmap",
+            "file": "minecraft:font/physical_damage_shield.png",
+            "ascent": 10,
+            "height": 12,
+            "chars": [
+                "\ue41b"
+            ]
+        },
+        {
+            "type": "bitmap",
+            "file": "minecraft:font/root_icon.png",
+            "ascent": 10,
+            "height": 12,
+            "chars": [
+                "\ue41c"
+            ]
+        },
+        {
+            "type": "bitmap",
+            "file": "minecraft:font/taunt_icon.png",
+            "ascent": 10,
+            "height": 12,
+            "chars": [
+                "\ue41d"
+            ]
+        },
+        {
+            "type": "bitmap",
+            "file": "minecraft:font/unkillable_icon.png",
+            "ascent": 10,
+            "height": 12,
+            "chars": [
+                "\ue41e"
+            ]
+        },
+        {
+            "type": "bitmap",
+            "file": "minecraft:font/untargetable_icon.png",
+            "ascent": 10,
+            "height": 12,
+            "chars": [
+                "\ue41f"
+            ]
         }
     ]
 }

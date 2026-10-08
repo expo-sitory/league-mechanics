@@ -81,5 +81,7 @@ public abstract class ClassAbilities {
         return false;
     }
 
+    public void interruptCharge(Player player) {}
+
     public abstract boolean cast(Player caster);
 }

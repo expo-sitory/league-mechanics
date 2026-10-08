@@ -1,5 +1,8 @@
 package dev.ixpu.leaguemechanics.item.passives;
 
+import dev.ixpu.leaguemechanics.item.ItemStatsData;
+import dev.ixpu.leaguemechanics.item.ItemStatsRegistry;
+
 import java.util.HashMap;
 import java.util.Map;
 
@@ -11,6 +14,7 @@ public class ItemPassivesRegistry {
         if (instance == null) {
             instance = new ItemPassivesRegistry();
             instance.registerDefaults();
+            instance.registerPlaceholders();
         }
         return instance;
     }
@@ -32,6 +36,15 @@ public class ItemPassivesRegistry {
         register(new verdant_barrier());
         register(new bamis_cinder());
         register(new scouts_slingshot());
+    }
+
+    private void registerPlaceholders() {
+        for (ItemStatsRegistry stats : ItemStatsData.getInstance().getAllItems()) {
+            String passiveId = stats.getPassiveId();
+            if (stats.hasPassive() && passiveId != null && !passives.containsKey(passiveId)) {
+                register(new PlaceholderPassive(passiveId));
+            }
+        }
     }
 
     public void register(ItemPassive passive) {

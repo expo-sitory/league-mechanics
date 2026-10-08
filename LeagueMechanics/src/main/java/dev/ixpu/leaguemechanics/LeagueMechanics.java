@@ -3,6 +3,9 @@ package dev.ixpu.leaguemechanics;
 import dev.ixpu.leaguemechanics.debuff.DebuffTicker;
 import dev.ixpu.leaguemechanics.placeholder.PlaceholderRegistry;
 import dev.ixpu.leaguemechanics.entity.player.PlayerStats;
+import dev.ixpu.leaguemechanics.item.ItemStatsData;
+import dev.ixpu.leaguemechanics.item.shop.ItemShopData;
+import dev.ixpu.leaguemechanics.util.ConfigFiles;
 import dev.ixpu.leaguemechanics.util.ItemModifier;
 import dev.ixpu.leaguemechanics.util.RunePersistence;
 
@@ -105,7 +108,8 @@ public class LeagueMechanics extends JavaPlugin {
         getLogger().info("League Mechanics is starting...");
 
         saveDefaultConfig();
-        reloadConfig();
+        ConfigFiles.saveDefaults(this);
+        loadConfigs();
         debugMode = getConfig().getBoolean("general-settings.debug", false);
         BuffManager.getInstance().reload(getConfig());
 
@@ -224,6 +228,13 @@ public class LeagueMechanics extends JavaPlugin {
         return mySQLManager;
     }
 
+    private void loadConfigs() {
+        reloadConfig();
+        ConfigFiles.merge(this, getConfig());
+        ItemStatsData.getInstance().applyConfig(getConfig().getConfigurationSection("item-stats"));
+        ItemShopData.getInstance().applyPrices(getConfig().getConfigurationSection("item-prices"));
+    }
+
     public boolean isDebugMode() {
         return debugMode;
     }
@@ -231,7 +242,7 @@ public class LeagueMechanics extends JavaPlugin {
     public void reloadPlugin() {
         getLogger().info("Reloading LeagueMechanics configuration...");
 
-        reloadConfig();
+        loadConfigs();
         debugMode = getConfig().getBoolean("debug", false);
         BuffManager.getInstance().reload(getConfig());
 
@@ -261,6 +272,20 @@ public class LeagueMechanics extends JavaPlugin {
                     commandHandler.onCommand(sender, command, label, prependArg("party", args)));
             partyCommand.setTabCompleter((sender, command, alias, args) ->
                     tabCompleter.onTabComplete(sender, command, alias, prependArg("party", args)));
+        }
+        org.bukkit.command.PluginCommand forceChannelCommand = getCommand("force-channel");
+        if (forceChannelCommand != null) {
+            forceChannelCommand.setExecutor((sender, command, label, args) ->
+                    commandHandler.onCommand(sender, command, label, prependArg("forcechannel", args)));
+            forceChannelCommand.setTabCompleter((sender, command, alias, args) ->
+                    tabCompleter.onTabComplete(sender, command, alias, prependArg("forcechannel", args)));
+        }
+        org.bukkit.command.PluginCommand forceStopChannelCommand = getCommand("force-stop-channel");
+        if (forceStopChannelCommand != null) {
+            forceStopChannelCommand.setExecutor((sender, command, label, args) ->
+                    commandHandler.onCommand(sender, command, label, prependArg("forcestopchannel", args)));
+            forceStopChannelCommand.setTabCompleter((sender, command, alias, args) ->
+                    tabCompleter.onTabComplete(sender, command, alias, prependArg("forcestopchannel", args)));
         }
         getLogger().info("Commands registered!");
     }

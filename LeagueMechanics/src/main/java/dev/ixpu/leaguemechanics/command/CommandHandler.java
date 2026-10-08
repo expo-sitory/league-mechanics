@@ -96,6 +96,8 @@ public class CommandHandler implements CommandExecutor {
             case "levelup" -> handleLevelUpCommand(sender, args);
             case "setlevel" -> handleSetLevelCommand(sender, args);
             case "givebuff" -> handleGiveBuffCommand(sender, args);
+            case "forcechannel" -> handleForceChannelCommand(sender, args);
+            case "forcestopchannel" -> handleForceStopChannelCommand(sender, args);
             case "party" -> handlePartyCommand(sender, args);
             case "dash" -> handleDashCommand(sender, args);
             case "ability" -> handleSkillsCommand(sender, args);
@@ -399,6 +401,66 @@ public class CommandHandler implements CommandExecutor {
         sender.sendMessage(Component.text("§aSet level of §e" + target.getName() + " §ato §e" + newLevel));
         if (target != sender) {
             target.sendMessage(Component.text("§aYour level was set to §e" + newLevel));
+        }
+        return true;
+    }
+
+    private boolean handleForceStopChannelCommand(CommandSender sender, String[] args) {
+        if (!sender.hasPermission("leaguemechanics.admin")) {
+            sender.sendMessage(Component.text("§cYou don't have permission to use this command."));
+            return true;
+        }
+
+        if (args.length < 2) {
+            sender.sendMessage(Component.text("§cUsage: /force-stop-channel <player>"));
+            return true;
+        }
+
+        Player target = Bukkit.getPlayerExact(args[1]);
+        if (target == null) {
+            sender.sendMessage(Component.text("§cPlayer not found: §e" + args[1]));
+            return true;
+        }
+
+        ClassAbilitiesRegistry.getInstance().stopChanneling(target);
+        sender.sendMessage(Component.text("§e" + target.getName() + " §7is no longer channeling."));
+        return true;
+    }
+
+    private boolean handleForceChannelCommand(CommandSender sender, String[] args) {
+        if (!sender.hasPermission("leaguemechanics.admin")) {
+            sender.sendMessage(Component.text("§cYou don't have permission to use this command."));
+            return true;
+        }
+
+        if (args.length < 3) {
+            sender.sendMessage(Component.text("§cUsage: /force-channel <player> <seconds>"));
+            return true;
+        }
+
+        Player target = Bukkit.getPlayerExact(args[1]);
+        if (target == null) {
+            sender.sendMessage(Component.text("§cPlayer not found: §e" + args[1]));
+            return true;
+        }
+
+        double seconds;
+        try {
+            seconds = Double.parseDouble(args[2]);
+        } catch (NumberFormatException e) {
+            sender.sendMessage(Component.text("§cInvalid seconds: §e" + args[2]));
+            return true;
+        }
+        if (seconds < 0 || Double.isNaN(seconds) || Double.isInfinite(seconds)) {
+            sender.sendMessage(Component.text("§cInvalid seconds: §e" + args[2]));
+            return true;
+        }
+
+        ClassAbilitiesRegistry.getInstance().forceChannel(target, seconds);
+        if (seconds == 0) {
+            sender.sendMessage(Component.text("§e" + target.getName() + " §7is no longer forced to channel."));
+        } else {
+            sender.sendMessage(Component.text("§e" + target.getName() + " §7is now channeling for §f" + seconds + "s§7."));
         }
         return true;
     }

@@ -247,6 +247,11 @@
                 "textures/items/flendish_codex"
             ]
         },
+        "leaguemechanics.forbidden_idol": {
+            "textures": [
+                "textures/items/forbidden_idol"
+            ]
+        },
         "leaguemechanics.force_of_nature": {
             "textures": [
                 "textures/items/force_of_nature"
@@ -275,6 +280,11 @@
         "leaguemechanics.guinsoos_rageblade": {
             "textures": [
                 "textures/items/guinsoos_rageblade"
+            ]
+        },
+        "leaguemechanics.haunting_guise": {
+            "textures": [
+                "textures/items/haunting_guise"
             ]
         },
         "leaguemechanics.hearthbound_axe": {
@@ -602,6 +612,11 @@
                 "textures/items/shadowflame"
             ]
         },
+        "leaguemechanics.sheen": {
+            "textures": [
+                "textures/items/sheen"
+            ]
+        },
         "leaguemechanics.shield_of_durand": {
             "textures": [
                 "textures/items/shield_of_durand"
@@ -700,6 +715,11 @@
         "leaguemechanics.thornmail": {
             "textures": [
                 "textures/items/thornmail"
+            ]
+        },
+        "leaguemechanics.tiamat": {
+            "textures": [
+                "textures/items/tiamat"
             ]
         },
         "leaguemechanics.titanic_hydra": {

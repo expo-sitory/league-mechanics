@@ -15,7 +15,15 @@ commands:
     aliases: [lm, league]
   party:
     description: Create and manage your party
-    usage: /party <invite <player>|accept|leave|disband>
+    usage: /party
+  force-channel:
+    description: Force a player into the channeling state
+    usage: /force-channel <player> <seconds>
+    permission: leaguemechanics.admin
+  force-stop-channel:
+    description: Stop a player's channeling state
+    usage: /force-stop-channel <player>
+    permission: leaguemechanics.admin
 
 permissions:
   leaguemechanics.admin:

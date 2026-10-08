@@ -362,7 +362,6 @@ public class DamageListener implements Listener, RuneCooldownGate {
 
                 if (event.getDamager() instanceof LivingEntity damager) {
                     damager.knockback(0.5, Math.cos(damager.getLocation().getYaw() * Math.PI / 180), Math.sin(damager.getLocation().getYaw() * Math.PI / 180));
-                    damager.addPotionEffect(new PotionEffect(PotionEffectType.SLOWNESS, 30, 3, false, false));
                     damager.addPotionEffect(new PotionEffect(PotionEffectType.WEAKNESS,30, 3, false, false));
                 }
 
@@ -589,13 +588,6 @@ public class DamageListener implements Listener, RuneCooldownGate {
                 }
             }
         }
-    }
-
-    private static final int MAX_LEVEL_GAP = 3;
-
-    private boolean isWithinLevelGap(Player attacker, Player target) {
-        int gap = Math.abs(PlayerStats.getOrCreate(attacker).getLeagueLevel() - PlayerStats.getOrCreate(target).getLeagueLevel());
-        return gap <= MAX_LEVEL_GAP;
     }
 
     public void damageEvent(Player player, LivingEntity target, String type, double vanillaDamage) {

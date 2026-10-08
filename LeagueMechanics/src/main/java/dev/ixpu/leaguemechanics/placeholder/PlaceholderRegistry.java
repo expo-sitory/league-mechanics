@@ -5,6 +5,7 @@ import dev.ixpu.leaguemechanics.entity.player.PlayerClass;
 import dev.ixpu.leaguemechanics.entity.player.PlayerClassType;
 import dev.ixpu.leaguemechanics.debuff.DebuffType;
 import dev.ixpu.leaguemechanics.entity.player.PlayerStats;
+import dev.ixpu.leaguemechanics.entity.player.abilities.ClassAbilitiesRegistry;
 import dev.ixpu.leaguemechanics.manager.DebuffManager;
 import dev.ixpu.leaguemechanics.manager.PartyManager;
 import dev.ixpu.leaguemechanics.rune.paths.RunePath;
@@ -154,8 +155,8 @@ public class PlaceholderRegistry extends PlaceholderExpansion {
             case "class" -> getClass(player);
             case "class_mm" -> getClassMM(player);
 
-            case "latest_cc" -> getLatestCC(player);
-            case "latest_cc_duration" -> getLatestCCDuration(player);
+            case "latest_status", "latest_cc" -> getLatestStatus(player);
+            case "latest_status_duration", "latest_cc_duration" -> getLatestStatusDuration(player);
 
             case "level" -> String.valueOf(stats.getLeagueLevel());
             case "item_count" -> String.valueOf(plugin.getStatsManager().countLeagueItems(player));
@@ -662,15 +663,21 @@ public class PlaceholderRegistry extends PlaceholderExpansion {
     }
 
 
-    private String getLatestCC(Player player) {
+    private String getLatestStatus(Player player) {
         DebuffType type = DebuffManager.getInstance().getLatestCrowdControl(player);
-        if (type == null) return PlaceholderAPI.setPlaceholders(player, "%luckperms_prefix%%luckperms_suffix_element_lowest_inherited%%essentials_nickname%");
-        String icon = Icons.get(DebuffManager.getCrowdControlIconKey(type));
-        String name = DebuffManager.getCrowdControlName(type);
-        return icon.isEmpty() ? name : "§f" + icon + " " + name;
+        if (type != null) {
+            String icon = Icons.get(DebuffManager.getCrowdControlIconKey(type));
+            String name = DebuffManager.getCrowdControlName(type);
+            return icon.isEmpty() ? name : "§f" + icon + " " + name;
+        }
+        if (ClassAbilitiesRegistry.getInstance().isChanneling(player)) {
+            String icon = Icons.get("status.channeling");
+            return icon.isEmpty() ? "CHANNELING" : "§f" + icon + " CHANNELING";
+        }
+        return PlaceholderAPI.setPlaceholders(player, "%luckperms_prefix%%luckperms_suffix_element_lowest_inherited%%essentials_nickname%");
     }
 
-    private String getLatestCCDuration(Player player) {
+    private String getLatestStatusDuration(Player player) {
         DebuffManager debuffs = DebuffManager.getInstance();
         DebuffType type = debuffs.getLatestCrowdControl(player);
         if (type == null) return "";

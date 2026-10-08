@@ -147,6 +147,11 @@ public class ShieldOfDurand extends ClassAbilities {
     }
 
     @Override
+    public void interruptCharge(Player player) {
+        stopCharge(player);
+    }
+
+    @Override
     public boolean cast(Player caster) {
         Charge charge = charges.get(caster.getUniqueId());
         if (charge != null) {

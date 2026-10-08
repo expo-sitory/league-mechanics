@@ -314,12 +314,15 @@ public class ItemShopGUI {
 
             boolean canBuy = canPlayerBuyItem(player, shopItem);
             String itemGroup = ItemShopData.getInstance().getGroup(shopItem.getId());
-            boolean isBootsItem = "boots".equals(itemGroup);
-            boolean ownsAdvancedBoots = isBootsItem && playerOwnsAdvancedBoots(player);
-            boolean ownsNormalBoots = isBootsItem && playerOwnsNormalBoots(player);
-            boolean ownsThisBoots = isBootsItem && playerOwnsItemById(player, shopItem.getId());
+            boolean isGroupedItem = itemGroup != null;
+            List<String> ownedGroupIds = isGroupedItem ? getOwnedGroupIds(player, itemGroup) : List.of();
+            List<String> thisRequired = ItemShopData.getInstance().getRequiredItems(shopItem.getId());
+            boolean ownsThisItem = ownedGroupIds.contains(shopItem.getId());
+            boolean ownsUpgradeBase = ownedGroupIds.stream().anyMatch(thisRequired::contains);
+            boolean isComponentOfOwned = ownedGroupIds.stream()
+                    .anyMatch(id -> ItemShopData.getInstance().getRequiredItems(id).contains(shopItem.getId()));
 
-            if (canBuy && !(isBootsItem && ownsAdvancedBoots)) {
+            if (canBuy) {
                 meta.setEnchantmentGlintOverride(true);
             }
 
@@ -374,10 +377,10 @@ public class ItemShopGUI {
                 lore.add("§f" + Icons.get("stats.mpen") + " " + formatStat(shopItem.getStats().getMpenPercent()) + "% §7Magic Penetration");
             }
             if (shopItem.getStats().getCsd() > 0) {
-                lore.add("§f" + Icons.get("stats.critical-damage") + " " + formatStat(shopItem.getStats().getCsd()) + "% §7Critical Damage");
+                lore.add("§f" + Icons.get("stats.enhanced-critical-damage") + " " + formatStat(shopItem.getStats().getCsd()) + "% §7Critical Damage");
             }
             if (shopItem.getStats().getHm() > 0) {
-                lore.add("§f" + Icons.get("spells.heal") + " " + formatStat(shopItem.getStats().getHm()) + "% §7Healing Multiplier");
+                lore.add("§f" + Icons.get("stats.heal-and-shield-power") + " " + formatStat(shopItem.getStats().getHm()) + "% §7Healing Power");
             }
             if (shopItem.getStats().getCh() > 0) {
                 lore.add("§f" + Icons.get("stats.ch") + " " + formatStat(shopItem.getStats().getCh()) + " §7Ability Haste");
@@ -413,37 +416,15 @@ public class ItemShopGUI {
             String statusColor;
             boolean canAfford = player.getLevel() >= price;
 
-            if (isBootsItem) {
-                if (ownsNormalBoots) {
-                    if (ownsThisBoots) {
-                        status = "ᴏᴡɴᴇᴅ";
-                        statusColor = "§7";
-                    } else {
-                        status = "ᴘᴜʀᴄʜᴀꜱᴇ";
-                        statusColor = canAfford ? "§a" : "§7";
-                    }
-                } else if (ownsAdvancedBoots) {
-                    if (ownsThisBoots || "boots".equals(shopItem.getId())) {
-                        status = "ᴏᴡɴᴇᴅ";
-                        statusColor = "§7";
-                    } else {
-                        status = "ᴜɴᴀᴠᴀɪʟᴀʙʟᴇ";
-                        statusColor = "§7";
-                    }
-                } else {
-                    if (canBuy) {
-                        if (currentCount >= 6 && effectiveNetChange > 0) {
-                            status = "ʟᴏᴄᴋᴇᴅ";
-                            statusColor = "§7";
-                        } else {
-                            status = "ᴘᴜʀᴄʜᴀꜱᴇ";
-                            statusColor = canAfford ? "§a" : "§7";
-                        }
-                    } else {
-                        status = "ʟᴏᴄᴋᴇᴅ";
-                        statusColor = "§7";
-                    }
-                }
+            if (isGroupedItem && (ownsThisItem || isComponentOfOwned)) {
+                status = "ᴏᴡɴᴇᴅ";
+                statusColor = "§7";
+            } else if (isGroupedItem && ownsUpgradeBase) {
+                status = "ᴘᴜʀᴄʜᴀꜱᴇ";
+                statusColor = canAfford ? "§a" : "§7";
+            } else if (isGroupedItem && !ownedGroupIds.isEmpty()) {
+                status = "ᴜɴᴀᴠᴀɪʟᴀʙʟᴇ";
+                statusColor = "§7";
             } else {
                 if (playerOwnsItem(player, shopItem)) {
                     status = "ᴏᴡɴᴇᴅ";
@@ -696,6 +677,19 @@ public class ItemShopGUI {
             }
         }
         return count;
+    }
+
+    private List<String> getOwnedGroupIds(Player player, String group) {
+        ItemShopData shopData = ItemShopData.getInstance();
+        List<String> ids = new ArrayList<>();
+        for (ItemStack inv : player.getInventory().getContents()) {
+            if (inv == null || inv.getType().isAir()) continue;
+            String ownedId = ItemModifier.getItemId(inv);
+            if (ownedId != null && group.equals(shopData.getGroup(ownedId))) {
+                ids.add(ownedId);
+            }
+        }
+        return ids;
     }
 
     private boolean playerOwnsAdvancedBoots(Player player) {

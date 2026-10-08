@@ -51,7 +51,29 @@ public class ItemShopRegistry {
                 "verdant-barrier", "aether-wisp", "bandleglass-mirror",
                 "vampiric-scepter", "the-brutalizer", "steel-sigil", "zeal",
                 "berserkers-greaves", "mercurys-treads", "plated-steelcaps", "sorcerers-shoes",
-                "glowing-mote"
+                "glowing-mote",
+                "forbidden-idol", "haunting-guise", "sheen", "tiamat",
+                "abyssal-mask", "ardent-censer", "atmas-reckoning", "bandlepipes",
+                "banshees-veil", "black-cleaver", "blackfire-torch", "blade-of-the-ruined-king",
+                "bloodletters-curse", "bloodthirster", "chempunk-chainsword", "cosmic-drive",
+                "cryptbloom", "dead-mans-plate", "deaths-dance", "eclipse",
+                "edge-of-night", "endless-hunger", "essence-reaver", "experimental-hexplate",
+                "force-of-nature", "guardian-angel", "guinsoos-rageblade", "heartsteel",
+                "hexoptics-c44", "horizon-focus", "hubris", "hullbreaker",
+                "iceborn-gauntlet", "immortal-shieldbow", "imperial-mandate", "infinity-edge",
+                "jaksho-the-protean", "knights-vow", "kraken-slayer", "liandrys-torment",
+                "lich-bane", "lord-dominiks-regards", "ludens-echo", "malignance",
+                "maw-of-malmortius", "mejais-soulstealer", "mercurial-scimitar", "morellonomicon",
+                "mortal-reminder", "nashors-tooth", "navori-flickerblade", "overlords-bloodmail",
+                "phantom-dancer", "rabadons-deathcap", "rapid-firecannon", "ravenous-hydra",
+                "riftmaker", "runaans-hurricane", "rylais-crystal-scepter", "serpents-fang",
+                "seryldas-grudge", "shadowflame", "spear-of-shojin", "spirit-visage",
+                "staff-of-flowing-water", "statikk-shiv", "steraks-gage", "stormrazor",
+                "stormsurge", "stridebreaker", "sundered-sky", "sunfire-aegis",
+                "terminus", "the-collector", "thornmail", "titanic-hydra",
+                "trinity-force", "unending-despair", "void-staff", "voltaic-cyclosword",
+                "warmogs-armor", "wits-end", "youmuus-ghostblade", "yun-tal-wildarrows",
+                "zekes-convergence"
         };
 
         for (String itemId : itemIds) {
@@ -95,7 +117,7 @@ public class ItemShopRegistry {
         }
 
         public int getPrice() {
-            return price;
+            return ItemShopData.getInstance().getPrice(getId());
         }
 
         public int getLimit() {
@@ -115,8 +137,8 @@ public class ItemShopRegistry {
         }
 
         public int getEffectivePrice(Player player) {
-            int total = price;
             ItemShopData shopData = ItemShopData.getInstance();
+            int total = shopData.getPrice(getId());
 
             for (String reqId : requiredItems) {
                 total += shopData.getPrice(reqId);

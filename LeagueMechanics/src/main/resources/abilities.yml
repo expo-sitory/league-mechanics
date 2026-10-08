@@ -1,0 +1,44 @@
+skills:
+  paranoia:
+    cooldown-seconds: 90
+    min-cooldown-seconds: 20.0
+    duration-seconds: 10
+    hunger-cost: 4
+    range: 25
+    require-pvp: true
+  riftwalk:
+    cooldown-seconds: 40
+    min-cooldown-seconds: 10.0
+    hunger-cost: 4
+    range: 17
+  shield-of-durand:
+    cooldown-seconds: 90
+    hunger-cost: 4
+    duration-seconds: 10
+    cooldown-after-effect: true
+    armor-percent: 60
+    range: 10
+    charge-start-range: 3
+    charge-range-step: 1
+    charge-step-seconds: 0.5
+    charge-slow-percent: 50
+    stun-seconds: 2
+    require-pvp: true
+  final-hour:
+    cooldown-seconds: 90
+    hunger-cost: 4
+    duration-seconds: 16
+    cooldown-after-effect: true
+    attack-speed: 20
+    vanish-seconds: 1.5
+  undying-rage:
+    cooldown-seconds: 90
+    hunger-cost: 0
+    duration-seconds: 7
+    cooldown-after-effect: true
+    min-health: 1
+  wish:
+    cooldown-seconds: 90
+    hunger-cost: 8
+    heal-percent: 70
+    range: 50
