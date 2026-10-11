@@ -10,7 +10,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
 
-public abstract class CooldownHandler {
+public class CooldownHandler {
     protected final String id;
     protected final RunePath path;
     protected final RuneSlot slot;
@@ -26,6 +26,10 @@ public abstract class CooldownHandler {
         this.slot = slot;
         this.hasStacking = false;
         this.maxStacks = 0;
+    }
+
+    public CooldownHandler(String id) {
+        this(id, null, null);
     }
 
     public String getId() {
@@ -44,7 +48,12 @@ public abstract class CooldownHandler {
         this.cooldownSeconds = seconds;
     }
 
+    protected double effectiveCooldownSeconds(Player player) {
+        return cooldownSeconds;
+    }
+
     public boolean isOnCooldown(Player player) {
+        double cooldownSeconds = effectiveCooldownSeconds(player);
         if (cooldownSeconds <= 0) {
             return false;
         }
@@ -62,6 +71,7 @@ public abstract class CooldownHandler {
     }
 
     public double getRemainingCooldown(Player player) {
+        double cooldownSeconds = effectiveCooldownSeconds(player);
         if (cooldownSeconds <= 0) {
             return 0;
         }
@@ -81,12 +91,24 @@ public abstract class CooldownHandler {
         return Math.max(0, remaining / 1000.0);
     }
 
+    public Long getLastActivation(Player player) {
+        return playerCooldowns.get(player.getUniqueId());
+    }
+
     public void resetCooldown(Player player) {
-        playerCooldowns.put(player.getUniqueId(), System.currentTimeMillis());
+        resetCooldown(player, System.currentTimeMillis());
+    }
+
+    public void resetCooldown(Player player, long startMillis) {
+        playerCooldowns.put(player.getUniqueId(), startMillis);
     }
 
     public void clearPlayerCooldown(Player player) {
-        playerCooldowns.remove(player.getUniqueId());
+        clearPlayerCooldown(player.getUniqueId());
+    }
+
+    public void clearPlayerCooldown(UUID uuid) {
+        playerCooldowns.remove(uuid);
     }
 
     public String getCooldownDisplay(Player player) {
@@ -97,11 +119,11 @@ public abstract class CooldownHandler {
         return String.format("§7%.1fs", remaining);
     }
 
-    public abstract void onEnable(Player player);
+    public void onEnable(Player player) {}
 
-    public abstract void onDisable(Player player);
+    public void onDisable(Player player) {}
 
-    public abstract void tick(Player player);
+    public void tick(Player player) {}
 
     public String getDisplaySection(Player player) {
         return "";

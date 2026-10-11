@@ -1,6 +1,7 @@
-package dev.ixpu.leaguemechanics.item.passives;
+package dev.ixpu.leaguemechanics.item.passives.epic;
 
 import dev.ixpu.leaguemechanics.LeagueMechanics;
+import dev.ixpu.leaguemechanics.item.passives.ItemPassive;
 import dev.ixpu.leaguemechanics.manager.DamageManager;
 import dev.ixpu.leaguemechanics.manager.DebuffManager;
 import dev.ixpu.leaguemechanics.manager.KillSourceTracker;

@@ -1,27 +1,27 @@
-package dev.ixpu.leaguemechanics.item.passives;
+package dev.ixpu.leaguemechanics.item.passives.epic;
 
 import dev.ixpu.leaguemechanics.LeagueMechanics;
+import dev.ixpu.leaguemechanics.item.passives.ItemPassive;
 import dev.ixpu.leaguemechanics.manager.DamageManager;
 import dev.ixpu.leaguemechanics.manager.ItemPassivesManager;
 import dev.ixpu.leaguemechanics.manager.KillSourceTracker;
 import dev.ixpu.leaguemechanics.util.DebugLogger;
 import dev.ixpu.leaguemechanics.util.Icons;
-import org.bukkit.entity.Entity;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
-public class scouts_slingshot implements ItemPassive {
-    private static final int BULLSYE_BONUS_MAGIC_DAMAGE = 40;
-    private static final int BULLSYE_COOLDOWN_TICKS = 800;
+public class hextech_alternator implements ItemPassive {
+    private static final int REVVED_BONUS_MAGIC_DAMAGE = 65;
+    private static final int REVVED_COOLDOWN_TICKS = 800;
     @Override
     public String getId() {
-        return "scouts-slingshot";
+        return "hextech-alternator";
     }
 
     @Override
     public String getDescription() {
-        return "§7ᴜɴɪQᴜᴇ – ʙᴜʟʟꜱᴇʏᴇ: §fDamaging a target deals §b" + Icons.get("stats.magic-damage") + " " + BULLSYE_BONUS_MAGIC_DAMAGE + " bonus magic damage\n\n§740s Cooldown";
+        return "§7ᴜɴɪQᴜᴇ – ʀᴇᴠᴠᴇᴅ: §fDamaging a target deals " + Icons.get("stats.magic-damage") + " §b" + REVVED_BONUS_MAGIC_DAMAGE + " bonus magic damage\n\n§740s Cooldown";
     }
 
     @Override
@@ -40,16 +40,15 @@ public class scouts_slingshot implements ItemPassive {
         }
         target.damage(damageToApply);
 
-        DebugLogger.debug(source, "§f[§dSource§f] §f[§6Scout's Slingshot§f] Proc Damage = §d" + Math.ceil(damageToApply * 100) / 100.0 + "§f | Type = §dMagic Damage");
-        manager.setCooldown(source, getId(), BULLSYE_COOLDOWN_TICKS);
+        DebugLogger.debug(source, "§f[§dSource§f] §f[§9Hextech Alternator§f] Proc Damage = §d" + Math.ceil(damageToApply * 100) / 100.0 + "§f | Type = §dMagic Damage");
+        manager.setCooldown(source, getId(), REVVED_COOLDOWN_TICKS);
     }
 
-    private double procDamage(Player player, Entity target) {
+    private double procDamage(Player player, LivingEntity target) {
         DamageManager damageManager = new DamageManager(LeagueMechanics.getInstance().getStatsManager());
         damageManager.enableOnlyAP();
         damageManager.enableItemProc();
-        double baseDamage = damageManager.DamageCalculation(player, target, 0, 0, 0, BULLSYE_BONUS_MAGIC_DAMAGE);
-
+        double baseDamage = damageManager.DamageCalculation(player, target, 0, 0, 0, REVVED_BONUS_MAGIC_DAMAGE);
         return baseDamage;
     }
 }

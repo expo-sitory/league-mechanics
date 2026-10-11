@@ -11,7 +11,7 @@ import dev.ixpu.leaguemechanics.manager.AbilityEffectManager;
 import dev.ixpu.leaguemechanics.manager.DebuffManager;
 import dev.ixpu.leaguemechanics.debuff.DebuffType;
 import dev.ixpu.leaguemechanics.item.passives.ItemPassivesRegistry;
-import dev.ixpu.leaguemechanics.item.passives.dark_seal;
+import dev.ixpu.leaguemechanics.item.passives.basic.dark_seal;
 import dev.ixpu.leaguemechanics.rune.shards.ShardStats;
 import dev.ixpu.leaguemechanics.rune.shards.RuneShard;
 
@@ -433,22 +433,22 @@ public class PlayerStats {
     public double getEffectiveHealingMultiplier(Player player) {
         double base = getHealingMultiplier(player);
         if (hasGrievousWounds(player)) {
-            base *= 0.6;
+            base *= 0.4;
         }
         return base;
     }
 
     public double getEffectiveLifeSteal(Player player, double baseLifeStealPercent) {
         if (hasGrievousWounds(player)) {
-            return baseLifeStealPercent * 0.6;
+            return baseLifeStealPercent * 0.4;
         }
         return baseLifeStealPercent;
     }
 
     public double getEffectiveHealthRegen(Player player, double baseRegen) {
-        double regen = baseRegen * BuffManager.getInstance().getHealingMultiplier(player);
+        double regen = baseRegen * getHealingMultiplier(player);
         if (hasGrievousWounds(player)) {
-            return regen * 0.6;
+            return regen * 0.4;
         }
         return regen;
     }

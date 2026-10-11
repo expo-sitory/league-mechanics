@@ -2722,6 +2722,105 @@
             "chars": [
                 "\ue41f"
             ]
+        },
+        {
+            "type": "bitmap",
+            "file": "minecraft:font/berserk_icon.png",
+            "ascent": 10,
+            "height": 12,
+            "chars": [
+                "\ue420"
+            ]
+        },
+        {
+            "type": "bitmap",
+            "file": "minecraft:font/black_cleaver_cleave_full_stack.png",
+            "ascent": 10,
+            "height": 12,
+            "chars": [
+                "\ue421"
+            ]
+        },
+        {
+            "type": "bitmap",
+            "file": "minecraft:font/black_cleaver_cleave_stack.png",
+            "ascent": 10,
+            "height": 12,
+            "chars": [
+                "\ue422"
+            ]
+        },
+        {
+            "type": "bitmap",
+            "file": "minecraft:font/chemtech_dragon_soul_buff.png",
+            "ascent": 10,
+            "height": 12,
+            "chars": [
+                "\ue423"
+            ]
+        },
+        {
+            "type": "bitmap",
+            "file": "minecraft:font/cloud_dragon_soul_buff.png",
+            "ascent": 10,
+            "height": 12,
+            "chars": [
+                "\ue424"
+            ]
+        },
+        {
+            "type": "bitmap",
+            "file": "minecraft:font/gold_icon.png",
+            "ascent": 10,
+            "height": 12,
+            "chars": [
+                "\ue425"
+            ]
+        },
+        {
+            "type": "bitmap",
+            "file": "minecraft:font/hextech_dragon_soul_buff.png",
+            "ascent": 10,
+            "height": 12,
+            "chars": [
+                "\ue426"
+            ]
+        },
+        {
+            "type": "bitmap",
+            "file": "minecraft:font/infernal_dragon_soul_buff.png",
+            "ascent": 10,
+            "height": 12,
+            "chars": [
+                "\ue427"
+            ]
+        },
+        {
+            "type": "bitmap",
+            "file": "minecraft:font/mountain_dragon_soul_buff.png",
+            "ascent": 10,
+            "height": 12,
+            "chars": [
+                "\ue428"
+            ]
+        },
+        {
+            "type": "bitmap",
+            "file": "minecraft:font/ocean_dragon_soul_buff.png",
+            "ascent": 10,
+            "height": 12,
+            "chars": [
+                "\ue429"
+            ]
+        },
+        {
+            "type": "bitmap",
+            "file": "minecraft:font/sleep_icon.png",
+            "ascent": 10,
+            "height": 12,
+            "chars": [
+                "\ue42a"
+            ]
         }
     ]
 }

@@ -1,15 +1,16 @@
-package dev.ixpu.leaguemechanics.item.passives;
+package dev.ixpu.leaguemechanics.item.passives.basic;
 
+import dev.ixpu.leaguemechanics.item.passives.ItemPassive;
 import dev.ixpu.leaguemechanics.util.Icons;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
-public class dorans_ring implements ItemPassive {
+public class dorans_shield implements ItemPassive {
     private static final int ONHIT_AD_BONUS = 10;
 
     @Override
     public String getId() {
-        return "dorans-ring";
+        return "dorans-shield";
     }
 
     @Override

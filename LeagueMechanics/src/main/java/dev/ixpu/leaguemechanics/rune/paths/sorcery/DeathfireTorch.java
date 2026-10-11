@@ -294,8 +294,8 @@ public class DeathfireTorch extends CooldownHandler {
 
     private String getRuneDisplay(RuneState state, int victimCount) {
         return switch (state) {
-            case ACTIVE -> Icons.get("keystones.deathfire-touch") + " §1(" + victimCount + ")";
-            case IDLE -> Icons.get("keystones.deathfire-touch");
+            case ACTIVE -> Icons.get("keystones.deathfire-torch") + " §1(" + victimCount + ")";
+            case IDLE -> Icons.get("keystones.deathfire-torch");
         };
     }
 

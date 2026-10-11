@@ -29,7 +29,7 @@ import org.bukkit.inventory.ItemStack;
 
 public class DarkHarvest extends StacksHandler {
 
-    private double BASE_ADAPTIVE_DAMAGE_PER_STACK;
+    private double BONUS_ADAPTIVE_DAMAGE_PER_STACK;
 
     int COOLDOWN_DURATION_SECONDS;
 
@@ -45,7 +45,7 @@ public class DarkHarvest extends StacksHandler {
         this.listener = listener;
         ConfigurationSection section = config.getConfigurationSection("runes.keystones.domination.dark-harvest");
         if (section != null) {
-            this.BASE_ADAPTIVE_DAMAGE_PER_STACK = section.getDouble("adaptive-damage-per-stack", this.BASE_ADAPTIVE_DAMAGE_PER_STACK);
+            this.BONUS_ADAPTIVE_DAMAGE_PER_STACK = section.getDouble("adaptive-damage-per-stack", this.BONUS_ADAPTIVE_DAMAGE_PER_STACK);
             this.COOLDOWN_DURATION_SECONDS = section.getInt("cooldown", COOLDOWN_DURATION_SECONDS);
         }
         this.setCooldownSeconds(COOLDOWN_DURATION_SECONDS);
@@ -122,7 +122,7 @@ public class DarkHarvest extends StacksHandler {
         DamageManager damageManager = new DamageManager(LeagueMechanics.getInstance().getStatsManager());
         damageManager.enableAdaptiveDamage();
         int currentStacks = getStacks(player) * 2;
-        double damage = damageManager.DamageCalculation(player, target, 0, BASE_ADAPTIVE_DAMAGE_PER_STACK + currentStacks, 0, 0);
+        double damage = damageManager.DamageCalculation(player, target, 0, BONUS_ADAPTIVE_DAMAGE_PER_STACK + currentStacks, 0, 0);
         this.lastDamageWasMagic = damageManager.isMagicDamage();
         return damage;
     }

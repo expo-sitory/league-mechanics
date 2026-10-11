@@ -66,7 +66,7 @@ public class DamageListener implements Listener, RuneCooldownGate {
     private static final Map<UUID, Integer> parryWindowTasks = new HashMap<>();
     private final Set<Entity> parriedProjectiles = ConcurrentHashMap.newKeySet();
     private static final long PARRY_WINDOW_MS = 700L;
-    private static final int PARRY_STUN_TICKS = 30;
+    private static final int PARRY_STUN_TICKS = 20;
 
     private final Map<UUID, Double> fallPeakY = new ConcurrentHashMap<>();
     private static final double FALL_DAMAGE_THRESHOLD_BLOCKS = 4.0;
@@ -349,6 +349,7 @@ public class DamageListener implements Listener, RuneCooldownGate {
                     attacker.sendTitlePart(TitlePart.TITLE, Component.text("ᴇɴᴇᴍʏ ᴘᴀʀʀɪᴇᴅ!!", NamedTextColor.RED));
                     DebuffManager.getInstance().applyDebuff(attacker, DebuffType.STUN, PARRY_STUN_TICKS, targetPlayer);
                     Bukkit.dispatchCommand(Bukkit.getConsoleSender(), "enemy-parried-sound " + attacker.getName());
+                    attacker.setFoodLevel(Math.max(0, attacker.getFoodLevel() - 6));
                 }
 
                 Bukkit.dispatchCommand(Bukkit.getConsoleSender(), "attack-parried-sound " + targetPlayer.getName());
@@ -511,16 +512,10 @@ public class DamageListener implements Listener, RuneCooldownGate {
 
         if (hasSword && mainhand != null) {
             mainhand.damage((short) toolDamage, targetPlayer);
-            if (mainhand.getDurability() <= 0) {
-                targetPlayer.getInventory().setItemInMainHand(new ItemStack(Material.AIR));
-            }
         }
 
         if (hasShield && offhand != null) {
             offhand.damage((short) toolDamage, targetPlayer);
-            if (offhand.getDurability() <= 0) {
-                targetPlayer.getInventory().setItemInOffHand(new ItemStack(Material.AIR));
-            }
         }
 
         targetPlayer.updateInventory();
@@ -646,11 +641,6 @@ public class DamageListener implements Listener, RuneCooldownGate {
             double healthRestored = totalDamage * (effectiveLifeSteal / 100.0) * healingMultiplier;
             if (healthRestored > 0) {
                 player.heal(healthRestored);
-            }
-        }
-        for (ItemStack armor : target.getEquipment().getArmorContents()) {
-            if (armor != null && !armor.getType().isAir()) {
-                armor.damage((short) 1, target);
             }
         }
         if (target instanceof Player targetPlayer) {

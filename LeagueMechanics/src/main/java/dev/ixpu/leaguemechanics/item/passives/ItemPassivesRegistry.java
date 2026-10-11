@@ -2,6 +2,12 @@ package dev.ixpu.leaguemechanics.item.passives;
 
 import dev.ixpu.leaguemechanics.item.ItemStatsData;
 import dev.ixpu.leaguemechanics.item.ItemStatsRegistry;
+import dev.ixpu.leaguemechanics.item.passives.basic.cull;
+import dev.ixpu.leaguemechanics.item.passives.basic.dark_seal;
+import dev.ixpu.leaguemechanics.item.passives.basic.dorans_ring;
+import dev.ixpu.leaguemechanics.item.passives.basic.dorans_shield;
+import dev.ixpu.leaguemechanics.item.passives.epic.*;
+import dev.ixpu.leaguemechanics.item.passives.legendary.PlaceholderPassive;
 
 import java.util.HashMap;
 import java.util.Map;

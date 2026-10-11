@@ -265,7 +265,6 @@ public class LeagueMechanics extends JavaPlugin {
         Objects.requireNonNull(getCommand("leaguemechanics")).setExecutor(commandHandler);
         Objects.requireNonNull(getCommand("leaguemechanics")).setTabCompleter(tabCompleter);
 
-        // /party runs the same code as /lm party
         org.bukkit.command.PluginCommand partyCommand = getCommand("party");
         if (partyCommand != null) {
             partyCommand.setExecutor((sender, command, label, args) ->
@@ -322,21 +321,6 @@ public class LeagueMechanics extends JavaPlugin {
                     if (saturationRegen > 0) {
                         player.addPotionEffect(new PotionEffect(PotionEffectType.SATURATION, 1, (int) saturationRegen, false, false));
                     }
-                    if (playerHasVerdantBarrier(player)) {
-                        dev.ixpu.leaguemechanics.item.passives.verdant_barrier passive =
-                                (dev.ixpu.leaguemechanics.item.passives.verdant_barrier)
-                                        dev.ixpu.leaguemechanics.item.passives.ItemPassivesRegistry.getInstance().getPassive("verdant-barrier");
-                        if (passive != null && !passive.isOnCooldown(player)) {
-                            passive.grantAbsorptionHeart(player);
-                        }
-                    } else {
-                        dev.ixpu.leaguemechanics.item.passives.verdant_barrier passive =
-                                (dev.ixpu.leaguemechanics.item.passives.verdant_barrier)
-                                        dev.ixpu.leaguemechanics.item.passives.ItemPassivesRegistry.getInstance().getPassive("verdant-barrier");
-                        if (passive != null) {
-                            passive.resetHearts(player);
-                        }
-                    }
                 }
             }
         }.runTaskTimer(this, 0, 100);
@@ -351,13 +335,11 @@ public class LeagueMechanics extends JavaPlugin {
                     for (int i = 0; i < 9; i++) {
                         ItemStack item = inventoryContents[i];
                         if (item != null && !item.getType().isAir() && ItemModifier.getItemId(item) != null) {
-                            playerEventListener.removeFromHotbar(player, item);
-                            player.getInventory().setItem(i, null);
+                            playerEventListener.removeFromHotbar(player, i);
                         }
                     }
                     if (inventoryContents[40] != null && !inventoryContents[40].getType().isAir() && ItemModifier.getItemId(inventoryContents[40]) != null) {
-                        playerEventListener.removeFromHotbar(player, inventoryContents[40]);
-                        player.getInventory().setItem(40, null);
+                        playerEventListener.removeFromHotbar(player, 40);
                     }
                 }
             }

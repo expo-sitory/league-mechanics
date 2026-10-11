@@ -7,9 +7,19 @@
                 "textures/items/abyssal_mask"
             ]
         },
+        "leaguemechanics.abyssal_mask_locked": {
+            "textures": [
+                "textures/items/abyssal_mask_locked"
+            ]
+        },
         "leaguemechanics.aether_wisp": {
             "textures": [
                 "textures/items/aether_wisp"
+            ]
+        },
+        "leaguemechanics.aether_wisp_locked": {
+            "textures": [
+                "textures/items/aether_wisp_locked"
             ]
         },
         "leaguemechanics.amplifying_tome": {
@@ -17,9 +27,19 @@
                 "textures/items/amplifying_tome"
             ]
         },
+        "leaguemechanics.amplifying_tome_locked": {
+            "textures": [
+                "textures/items/amplifying_tome_locked"
+            ]
+        },
         "leaguemechanics.ardent_censer": {
             "textures": [
                 "textures/items/ardent_censer"
+            ]
+        },
+        "leaguemechanics.ardent_censer_locked": {
+            "textures": [
+                "textures/items/ardent_censer_locked"
             ]
         },
         "leaguemechanics.atmas_reckoning": {
@@ -27,9 +47,19 @@
                 "textures/items/atmas_reckoning"
             ]
         },
+        "leaguemechanics.atmas_reckoning_locked": {
+            "textures": [
+                "textures/items/atmas_reckoning_locked"
+            ]
+        },
         "leaguemechanics.b_f_sword": {
             "textures": [
                 "textures/items/b_f_sword"
+            ]
+        },
+        "leaguemechanics.b_f_sword_locked": {
+            "textures": [
+                "textures/items/b_f_sword_locked"
             ]
         },
         "leaguemechanics.bamis_cinder": {
@@ -37,9 +67,19 @@
                 "textures/items/bamis_cinder"
             ]
         },
+        "leaguemechanics.bamis_cinder_locked": {
+            "textures": [
+                "textures/items/bamis_cinder_locked"
+            ]
+        },
         "leaguemechanics.bandleglass_mirror": {
             "textures": [
                 "textures/items/bandleglass_mirror"
+            ]
+        },
+        "leaguemechanics.bandleglass_mirror_locked": {
+            "textures": [
+                "textures/items/bandleglass_mirror_locked"
             ]
         },
         "leaguemechanics.bandlepipes": {
@@ -47,9 +87,19 @@
                 "textures/items/bandlepipes"
             ]
         },
+        "leaguemechanics.bandlepipes_locked": {
+            "textures": [
+                "textures/items/bandlepipes_locked"
+            ]
+        },
         "leaguemechanics.banshees_veil": {
             "textures": [
                 "textures/items/banshees_veil"
+            ]
+        },
+        "leaguemechanics.banshees_veil_locked": {
+            "textures": [
+                "textures/items/banshees_veil_locked"
             ]
         },
         "leaguemechanics.berserkers_greaves": {
@@ -57,9 +107,19 @@
                 "textures/items/berserkers_greaves"
             ]
         },
+        "leaguemechanics.berserkers_greaves_locked": {
+            "textures": [
+                "textures/items/berserkers_greaves_locked"
+            ]
+        },
         "leaguemechanics.black_cleaver": {
             "textures": [
                 "textures/items/black_cleaver"
+            ]
+        },
+        "leaguemechanics.black_cleaver_locked": {
+            "textures": [
+                "textures/items/black_cleaver_locked"
             ]
         },
         "leaguemechanics.blackfire_torch": {
@@ -67,9 +127,19 @@
                 "textures/items/blackfire_torch"
             ]
         },
+        "leaguemechanics.blackfire_torch_locked": {
+            "textures": [
+                "textures/items/blackfire_torch_locked"
+            ]
+        },
         "leaguemechanics.blade_of_the_ruined_king": {
             "textures": [
                 "textures/items/blade_of_the_ruined_king"
+            ]
+        },
+        "leaguemechanics.blade_of_the_ruined_king_locked": {
+            "textures": [
+                "textures/items/blade_of_the_ruined_king_locked"
             ]
         },
         "leaguemechanics.blasting_wand": {
@@ -77,9 +147,19 @@
                 "textures/items/blasting_wand"
             ]
         },
+        "leaguemechanics.blasting_wand_locked": {
+            "textures": [
+                "textures/items/blasting_wand_locked"
+            ]
+        },
         "leaguemechanics.blightting_jewel": {
             "textures": [
                 "textures/items/blightting_jewel"
+            ]
+        },
+        "leaguemechanics.blightting_jewel_locked": {
+            "textures": [
+                "textures/items/blightting_jewel_locked"
             ]
         },
         "leaguemechanics.bloodletters_curse": {
@@ -87,9 +167,19 @@
                 "textures/items/bloodletters_curse"
             ]
         },
+        "leaguemechanics.bloodletters_curse_locked": {
+            "textures": [
+                "textures/items/bloodletters_curse_locked"
+            ]
+        },
         "leaguemechanics.bloodthirster": {
             "textures": [
                 "textures/items/bloodthirster"
+            ]
+        },
+        "leaguemechanics.bloodthirster_locked": {
+            "textures": [
+                "textures/items/bloodthirster_locked"
             ]
         },
         "leaguemechanics.boots": {
@@ -97,9 +187,19 @@
                 "textures/items/boots"
             ]
         },
+        "leaguemechanics.boots_locked": {
+            "textures": [
+                "textures/items/boots_locked"
+            ]
+        },
         "leaguemechanics.bramble_vest": {
             "textures": [
                 "textures/items/bramble_vest"
+            ]
+        },
+        "leaguemechanics.bramble_vest_locked": {
+            "textures": [
+                "textures/items/bramble_vest_locked"
             ]
         },
         "leaguemechanics.caulfields_warhammer": {
@@ -107,9 +207,19 @@
                 "textures/items/caulfields_warhammer"
             ]
         },
+        "leaguemechanics.caulfields_warhammer_locked": {
+            "textures": [
+                "textures/items/caulfields_warhammer_locked"
+            ]
+        },
         "leaguemechanics.chain_vest": {
             "textures": [
                 "textures/items/chain_vest"
+            ]
+        },
+        "leaguemechanics.chain_vest_locked": {
+            "textures": [
+                "textures/items/chain_vest_locked"
             ]
         },
         "leaguemechanics.chempunk_chainsword": {
@@ -117,9 +227,19 @@
                 "textures/items/chempunk_chainsword"
             ]
         },
+        "leaguemechanics.chempunk_chainsword_locked": {
+            "textures": [
+                "textures/items/chempunk_chainsword_locked"
+            ]
+        },
         "leaguemechanics.cloak_of_agility": {
             "textures": [
                 "textures/items/cloak_of_agility"
+            ]
+        },
+        "leaguemechanics.cloak_of_agility_locked": {
+            "textures": [
+                "textures/items/cloak_of_agility_locked"
             ]
         },
         "leaguemechanics.cloth_armor": {
@@ -127,9 +247,19 @@
                 "textures/items/cloth_armor"
             ]
         },
+        "leaguemechanics.cloth_armor_locked": {
+            "textures": [
+                "textures/items/cloth_armor_locked"
+            ]
+        },
         "leaguemechanics.cosmic_drive": {
             "textures": [
                 "textures/items/cosmic_drive"
+            ]
+        },
+        "leaguemechanics.cosmic_drive_locked": {
+            "textures": [
+                "textures/items/cosmic_drive_locked"
             ]
         },
         "leaguemechanics.cryptbloom": {
@@ -137,9 +267,19 @@
                 "textures/items/cryptbloom"
             ]
         },
+        "leaguemechanics.cryptbloom_locked": {
+            "textures": [
+                "textures/items/cryptbloom_locked"
+            ]
+        },
         "leaguemechanics.crystalline_bracer": {
             "textures": [
                 "textures/items/crystalline_bracer"
+            ]
+        },
+        "leaguemechanics.crystalline_bracer_locked": {
+            "textures": [
+                "textures/items/crystalline_bracer_locked"
             ]
         },
         "leaguemechanics.cull": {
@@ -147,9 +287,19 @@
                 "textures/items/cull"
             ]
         },
+        "leaguemechanics.cull_locked": {
+            "textures": [
+                "textures/items/cull_locked"
+            ]
+        },
         "leaguemechanics.dagger": {
             "textures": [
                 "textures/items/dagger"
+            ]
+        },
+        "leaguemechanics.dagger_locked": {
+            "textures": [
+                "textures/items/dagger_locked"
             ]
         },
         "leaguemechanics.dark_seal": {
@@ -157,9 +307,19 @@
                 "textures/items/dark_seal"
             ]
         },
+        "leaguemechanics.dark_seal_locked": {
+            "textures": [
+                "textures/items/dark_seal_locked"
+            ]
+        },
         "leaguemechanics.dead_mans_plate": {
             "textures": [
                 "textures/items/dead_mans_plate"
+            ]
+        },
+        "leaguemechanics.dead_mans_plate_locked": {
+            "textures": [
+                "textures/items/dead_mans_plate_locked"
             ]
         },
         "leaguemechanics.death_surge": {
@@ -172,9 +332,19 @@
                 "textures/items/deaths_dance"
             ]
         },
+        "leaguemechanics.deaths_dance_locked": {
+            "textures": [
+                "textures/items/deaths_dance_locked"
+            ]
+        },
         "leaguemechanics.dorans_blade": {
             "textures": [
                 "textures/items/dorans_blade"
+            ]
+        },
+        "leaguemechanics.dorans_blade_locked": {
+            "textures": [
+                "textures/items/dorans_blade_locked"
             ]
         },
         "leaguemechanics.dorans_bow": {
@@ -182,9 +352,19 @@
                 "textures/items/dorans_bow"
             ]
         },
+        "leaguemechanics.dorans_bow_locked": {
+            "textures": [
+                "textures/items/dorans_bow_locked"
+            ]
+        },
         "leaguemechanics.dorans_helm": {
             "textures": [
                 "textures/items/dorans_helm"
+            ]
+        },
+        "leaguemechanics.dorans_helm_locked": {
+            "textures": [
+                "textures/items/dorans_helm_locked"
             ]
         },
         "leaguemechanics.dorans_ring": {
@@ -192,9 +372,19 @@
                 "textures/items/dorans_ring"
             ]
         },
+        "leaguemechanics.dorans_ring_locked": {
+            "textures": [
+                "textures/items/dorans_ring_locked"
+            ]
+        },
         "leaguemechanics.dorans_shield": {
             "textures": [
                 "textures/items/dorans_shield"
+            ]
+        },
+        "leaguemechanics.dorans_shield_locked": {
+            "textures": [
+                "textures/items/dorans_shield_locked"
             ]
         },
         "leaguemechanics.eclipse": {
@@ -202,9 +392,19 @@
                 "textures/items/eclipse"
             ]
         },
+        "leaguemechanics.eclipse_locked": {
+            "textures": [
+                "textures/items/eclipse_locked"
+            ]
+        },
         "leaguemechanics.edge_of_night": {
             "textures": [
                 "textures/items/edge_of_night"
+            ]
+        },
+        "leaguemechanics.edge_of_night_locked": {
+            "textures": [
+                "textures/items/edge_of_night_locked"
             ]
         },
         "leaguemechanics.endless_hunger": {
@@ -212,9 +412,19 @@
                 "textures/items/endless_hunger"
             ]
         },
+        "leaguemechanics.endless_hunger_locked": {
+            "textures": [
+                "textures/items/endless_hunger_locked"
+            ]
+        },
         "leaguemechanics.essence_reaver": {
             "textures": [
                 "textures/items/essence_reaver"
+            ]
+        },
+        "leaguemechanics.essence_reaver_locked": {
+            "textures": [
+                "textures/items/essence_reaver_locked"
             ]
         },
         "leaguemechanics.executioners_calling": {
@@ -222,9 +432,19 @@
                 "textures/items/executioners_calling"
             ]
         },
+        "leaguemechanics.executioners_calling_locked": {
+            "textures": [
+                "textures/items/executioners_calling_locked"
+            ]
+        },
         "leaguemechanics.experimental_hexplate": {
             "textures": [
                 "textures/items/experimental_hexplate"
+            ]
+        },
+        "leaguemechanics.experimental_hexplate_locked": {
+            "textures": [
+                "textures/items/experimental_hexplate_locked"
             ]
         },
         "leaguemechanics.faeri_charm": {
@@ -232,9 +452,19 @@
                 "textures/items/faeri_charm"
             ]
         },
+        "leaguemechanics.faeri_charm_locked": {
+            "textures": [
+                "textures/items/faeri_charm_locked"
+            ]
+        },
         "leaguemechanics.fated_ashes": {
             "textures": [
                 "textures/items/fated_ashes"
+            ]
+        },
+        "leaguemechanics.fated_ashes_locked": {
+            "textures": [
+                "textures/items/fated_ashes_locked"
             ]
         },
         "leaguemechanics.final_hour": {
@@ -247,14 +477,29 @@
                 "textures/items/flendish_codex"
             ]
         },
+        "leaguemechanics.flendish_codex_locked": {
+            "textures": [
+                "textures/items/flendish_codex_locked"
+            ]
+        },
         "leaguemechanics.forbidden_idol": {
             "textures": [
                 "textures/items/forbidden_idol"
             ]
         },
+        "leaguemechanics.forbidden_idol_locked": {
+            "textures": [
+                "textures/items/forbidden_idol_locked"
+            ]
+        },
         "leaguemechanics.force_of_nature": {
             "textures": [
                 "textures/items/force_of_nature"
+            ]
+        },
+        "leaguemechanics.force_of_nature_locked": {
+            "textures": [
+                "textures/items/force_of_nature_locked"
             ]
         },
         "leaguemechanics.frozen_heart": {
@@ -267,9 +512,19 @@
                 "textures/items/giants_belt"
             ]
         },
+        "leaguemechanics.giants_belt_locked": {
+            "textures": [
+                "textures/items/giants_belt_locked"
+            ]
+        },
         "leaguemechanics.glowing_mote": {
             "textures": [
                 "textures/items/glowing_mote"
+            ]
+        },
+        "leaguemechanics.glowing_mote_locked": {
+            "textures": [
+                "textures/items/glowing_mote_locked"
             ]
         },
         "leaguemechanics.guardian_angel": {
@@ -277,9 +532,19 @@
                 "textures/items/guardian_angel"
             ]
         },
+        "leaguemechanics.guardian_angel_locked": {
+            "textures": [
+                "textures/items/guardian_angel_locked"
+            ]
+        },
         "leaguemechanics.guinsoos_rageblade": {
             "textures": [
                 "textures/items/guinsoos_rageblade"
+            ]
+        },
+        "leaguemechanics.guinsoos_rageblade_locked": {
+            "textures": [
+                "textures/items/guinsoos_rageblade_locked"
             ]
         },
         "leaguemechanics.haunting_guise": {
@@ -287,9 +552,19 @@
                 "textures/items/haunting_guise"
             ]
         },
+        "leaguemechanics.haunting_guise_locked": {
+            "textures": [
+                "textures/items/haunting_guise_locked"
+            ]
+        },
         "leaguemechanics.hearthbound_axe": {
             "textures": [
                 "textures/items/hearthbound_axe"
+            ]
+        },
+        "leaguemechanics.hearthbound_axe_locked": {
+            "textures": [
+                "textures/items/hearthbound_axe_locked"
             ]
         },
         "leaguemechanics.heartsteel": {
@@ -297,9 +572,19 @@
                 "textures/items/heartsteel"
             ]
         },
+        "leaguemechanics.heartsteel_locked": {
+            "textures": [
+                "textures/items/heartsteel_locked"
+            ]
+        },
         "leaguemechanics.hexdrinker": {
             "textures": [
                 "textures/items/hexdrinker"
+            ]
+        },
+        "leaguemechanics.hexdrinker_locked": {
+            "textures": [
+                "textures/items/hexdrinker_locked"
             ]
         },
         "leaguemechanics.hexoptics_c44": {
@@ -307,9 +592,19 @@
                 "textures/items/hexoptics_c44"
             ]
         },
+        "leaguemechanics.hexoptics_c44_locked": {
+            "textures": [
+                "textures/items/hexoptics_c44_locked"
+            ]
+        },
         "leaguemechanics.hextech_alternator": {
             "textures": [
                 "textures/items/hextech_alternator"
+            ]
+        },
+        "leaguemechanics.hextech_alternator_locked": {
+            "textures": [
+                "textures/items/hextech_alternator_locked"
             ]
         },
         "leaguemechanics.horizon_focus": {
@@ -317,9 +612,19 @@
                 "textures/items/horizon_focus"
             ]
         },
+        "leaguemechanics.horizon_focus_locked": {
+            "textures": [
+                "textures/items/horizon_focus_locked"
+            ]
+        },
         "leaguemechanics.hubris": {
             "textures": [
                 "textures/items/hubris"
+            ]
+        },
+        "leaguemechanics.hubris_locked": {
+            "textures": [
+                "textures/items/hubris_locked"
             ]
         },
         "leaguemechanics.hullbreaker": {
@@ -327,9 +632,19 @@
                 "textures/items/hullbreaker"
             ]
         },
+        "leaguemechanics.hullbreaker_locked": {
+            "textures": [
+                "textures/items/hullbreaker_locked"
+            ]
+        },
         "leaguemechanics.iceborn_gauntlet": {
             "textures": [
                 "textures/items/iceborn_gauntlet"
+            ]
+        },
+        "leaguemechanics.iceborn_gauntlet_locked": {
+            "textures": [
+                "textures/items/iceborn_gauntlet_locked"
             ]
         },
         "leaguemechanics.immortal_shieldbow": {
@@ -337,9 +652,19 @@
                 "textures/items/immortal_shieldbow"
             ]
         },
+        "leaguemechanics.immortal_shieldbow_locked": {
+            "textures": [
+                "textures/items/immortal_shieldbow_locked"
+            ]
+        },
         "leaguemechanics.imperial_mandate": {
             "textures": [
                 "textures/items/imperial_mandate"
+            ]
+        },
+        "leaguemechanics.imperial_mandate_locked": {
+            "textures": [
+                "textures/items/imperial_mandate_locked"
             ]
         },
         "leaguemechanics.infinity_edge": {
@@ -347,9 +672,19 @@
                 "textures/items/infinity_edge"
             ]
         },
+        "leaguemechanics.infinity_edge_locked": {
+            "textures": [
+                "textures/items/infinity_edge_locked"
+            ]
+        },
         "leaguemechanics.jaksho_the_protean": {
             "textures": [
                 "textures/items/jaksho_the_protean"
+            ]
+        },
+        "leaguemechanics.jaksho_the_protean_locked": {
+            "textures": [
+                "textures/items/jaksho_the_protean_locked"
             ]
         },
         "leaguemechanics.kindlegem": {
@@ -357,9 +692,19 @@
                 "textures/items/kindlegem"
             ]
         },
+        "leaguemechanics.kindlegem_locked": {
+            "textures": [
+                "textures/items/kindlegem_locked"
+            ]
+        },
         "leaguemechanics.knights_vow": {
             "textures": [
                 "textures/items/knights_vow"
+            ]
+        },
+        "leaguemechanics.knights_vow_locked": {
+            "textures": [
+                "textures/items/knights_vow_locked"
             ]
         },
         "leaguemechanics.kraken_slayer": {
@@ -367,9 +712,19 @@
                 "textures/items/kraken_slayer"
             ]
         },
+        "leaguemechanics.kraken_slayer_locked": {
+            "textures": [
+                "textures/items/kraken_slayer_locked"
+            ]
+        },
         "leaguemechanics.last_whisper": {
             "textures": [
                 "textures/items/last_whisper"
+            ]
+        },
+        "leaguemechanics.last_whisper_locked": {
+            "textures": [
+                "textures/items/last_whisper_locked"
             ]
         },
         "leaguemechanics.liandrys_torment": {
@@ -377,9 +732,19 @@
                 "textures/items/liandrys_torment"
             ]
         },
+        "leaguemechanics.liandrys_torment_locked": {
+            "textures": [
+                "textures/items/liandrys_torment_locked"
+            ]
+        },
         "leaguemechanics.lich_bane": {
             "textures": [
                 "textures/items/lich_bane"
+            ]
+        },
+        "leaguemechanics.lich_bane_locked": {
+            "textures": [
+                "textures/items/lich_bane_locked"
             ]
         },
         "leaguemechanics.long_sword": {
@@ -387,9 +752,19 @@
                 "textures/items/long_sword"
             ]
         },
+        "leaguemechanics.long_sword_locked": {
+            "textures": [
+                "textures/items/long_sword_locked"
+            ]
+        },
         "leaguemechanics.lord_dominiks_regards": {
             "textures": [
                 "textures/items/lord_dominiks_regards"
+            ]
+        },
+        "leaguemechanics.lord_dominiks_regards_locked": {
+            "textures": [
+                "textures/items/lord_dominiks_regards_locked"
             ]
         },
         "leaguemechanics.lost_chapter": {
@@ -397,9 +772,19 @@
                 "textures/items/lost_chapter"
             ]
         },
+        "leaguemechanics.lost_chapter_locked": {
+            "textures": [
+                "textures/items/lost_chapter_locked"
+            ]
+        },
         "leaguemechanics.ludens_echo": {
             "textures": [
                 "textures/items/ludens_echo"
+            ]
+        },
+        "leaguemechanics.ludens_echo_locked": {
+            "textures": [
+                "textures/items/ludens_echo_locked"
             ]
         },
         "leaguemechanics.malignance": {
@@ -407,9 +792,19 @@
                 "textures/items/malignance"
             ]
         },
+        "leaguemechanics.malignance_locked": {
+            "textures": [
+                "textures/items/malignance_locked"
+            ]
+        },
         "leaguemechanics.maw_of_malmortius": {
             "textures": [
                 "textures/items/maw_of_malmortius"
+            ]
+        },
+        "leaguemechanics.maw_of_malmortius_locked": {
+            "textures": [
+                "textures/items/maw_of_malmortius_locked"
             ]
         },
         "leaguemechanics.mejais_soulstealer": {
@@ -417,14 +812,29 @@
                 "textures/items/mejais_soulstealer"
             ]
         },
+        "leaguemechanics.mejais_soulstealer_locked": {
+            "textures": [
+                "textures/items/mejais_soulstealer_locked"
+            ]
+        },
         "leaguemechanics.mercurial_scimitar": {
             "textures": [
                 "textures/items/mercurial_scimitar"
             ]
         },
+        "leaguemechanics.mercurial_scimitar_locked": {
+            "textures": [
+                "textures/items/mercurial_scimitar_locked"
+            ]
+        },
         "leaguemechanics.mercurys_treads": {
             "textures": [
                 "textures/items/mercurys_treads"
+            ]
+        },
+        "leaguemechanics.mercurys_treads_locked": {
+            "textures": [
+                "textures/items/mercurys_treads_locked"
             ]
         },
         "leaguemechanics.monsoon": {
@@ -437,9 +847,19 @@
                 "textures/items/morellonomicon"
             ]
         },
+        "leaguemechanics.morellonomicon_locked": {
+            "textures": [
+                "textures/items/morellonomicon_locked"
+            ]
+        },
         "leaguemechanics.mortal_reminder": {
             "textures": [
                 "textures/items/mortal_reminder"
+            ]
+        },
+        "leaguemechanics.mortal_reminder_locked": {
+            "textures": [
+                "textures/items/mortal_reminder_locked"
             ]
         },
         "leaguemechanics.nashors_tooth": {
@@ -447,9 +867,19 @@
                 "textures/items/nashors_tooth"
             ]
         },
+        "leaguemechanics.nashors_tooth_locked": {
+            "textures": [
+                "textures/items/nashors_tooth_locked"
+            ]
+        },
         "leaguemechanics.navori_flickerblade": {
             "textures": [
                 "textures/items/navori_flickerblade"
+            ]
+        },
+        "leaguemechanics.navori_flickerblade_locked": {
+            "textures": [
+                "textures/items/navori_flickerblade_locked"
             ]
         },
         "leaguemechanics.needlessly_large_rod": {
@@ -457,9 +887,19 @@
                 "textures/items/needlessly_large_rod"
             ]
         },
+        "leaguemechanics.needlessly_large_rod_locked": {
+            "textures": [
+                "textures/items/needlessly_large_rod_locked"
+            ]
+        },
         "leaguemechanics.negatron_cloak": {
             "textures": [
                 "textures/items/negatron_cloak"
+            ]
+        },
+        "leaguemechanics.negatron_cloak_locked": {
+            "textures": [
+                "textures/items/negatron_cloak_locked"
             ]
         },
         "leaguemechanics.noonquiver": {
@@ -467,9 +907,19 @@
                 "textures/items/noonquiver"
             ]
         },
+        "leaguemechanics.noonquiver_locked": {
+            "textures": [
+                "textures/items/noonquiver_locked"
+            ]
+        },
         "leaguemechanics.null_magic_mantle": {
             "textures": [
                 "textures/items/null_magic_mantle"
+            ]
+        },
+        "leaguemechanics.null_magic_mantle_locked": {
+            "textures": [
+                "textures/items/null_magic_mantle_locked"
             ]
         },
         "leaguemechanics.oblivion_orb": {
@@ -477,9 +927,19 @@
                 "textures/items/oblivion_orb"
             ]
         },
+        "leaguemechanics.oblivion_orb_locked": {
+            "textures": [
+                "textures/items/oblivion_orb_locked"
+            ]
+        },
         "leaguemechanics.overlords_bloodmail": {
             "textures": [
                 "textures/items/overlords_bloodmail"
+            ]
+        },
+        "leaguemechanics.overlords_bloodmail_locked": {
+            "textures": [
+                "textures/items/overlords_bloodmail_locked"
             ]
         },
         "leaguemechanics.paranoia": {
@@ -492,9 +952,19 @@
                 "textures/items/phage"
             ]
         },
+        "leaguemechanics.phage_locked": {
+            "textures": [
+                "textures/items/phage_locked"
+            ]
+        },
         "leaguemechanics.phantom_dancer": {
             "textures": [
                 "textures/items/phantom_dancer"
+            ]
+        },
+        "leaguemechanics.phantom_dancer_locked": {
+            "textures": [
+                "textures/items/phantom_dancer_locked"
             ]
         },
         "leaguemechanics.pickaxe": {
@@ -502,9 +972,19 @@
                 "textures/items/pickaxe"
             ]
         },
+        "leaguemechanics.pickaxe_locked": {
+            "textures": [
+                "textures/items/pickaxe_locked"
+            ]
+        },
         "leaguemechanics.plated_steelcaps": {
             "textures": [
                 "textures/items/plated_steelcaps"
+            ]
+        },
+        "leaguemechanics.plated_steelcaps_locked": {
+            "textures": [
+                "textures/items/plated_steelcaps_locked"
             ]
         },
         "leaguemechanics.rabadons_deathcap": {
@@ -512,9 +992,19 @@
                 "textures/items/rabadons_deathcap"
             ]
         },
+        "leaguemechanics.rabadons_deathcap_locked": {
+            "textures": [
+                "textures/items/rabadons_deathcap_locked"
+            ]
+        },
         "leaguemechanics.rapid_firecannon": {
             "textures": [
                 "textures/items/rapid_firecannon"
+            ]
+        },
+        "leaguemechanics.rapid_firecannon_locked": {
+            "textures": [
+                "textures/items/rapid_firecannon_locked"
             ]
         },
         "leaguemechanics.ravenous_hydra": {
@@ -522,9 +1012,19 @@
                 "textures/items/ravenous_hydra"
             ]
         },
+        "leaguemechanics.ravenous_hydra_locked": {
+            "textures": [
+                "textures/items/ravenous_hydra_locked"
+            ]
+        },
         "leaguemechanics.rectrix": {
             "textures": [
                 "textures/items/rectrix"
+            ]
+        },
+        "leaguemechanics.rectrix_locked": {
+            "textures": [
+                "textures/items/rectrix_locked"
             ]
         },
         "leaguemechanics.recurve_bow": {
@@ -532,9 +1032,19 @@
                 "textures/items/recurve_bow"
             ]
         },
+        "leaguemechanics.recurve_bow_locked": {
+            "textures": [
+                "textures/items/recurve_bow_locked"
+            ]
+        },
         "leaguemechanics.rejuvenation_bead": {
             "textures": [
                 "textures/items/rejuvenation_bead"
+            ]
+        },
+        "leaguemechanics.rejuvenation_bead_locked": {
+            "textures": [
+                "textures/items/rejuvenation_bead_locked"
             ]
         },
         "leaguemechanics.rend": {
@@ -550,6 +1060,11 @@
         "leaguemechanics.riftmaker": {
             "textures": [
                 "textures/items/riftmaker"
+            ]
+        },
+        "leaguemechanics.riftmaker_locked": {
+            "textures": [
+                "textures/items/riftmaker_locked"
             ]
         },
         "leaguemechanics.riftwalk": {
@@ -572,9 +1087,19 @@
                 "textures/items/ruby_crystal"
             ]
         },
+        "leaguemechanics.ruby_crystal_locked": {
+            "textures": [
+                "textures/items/ruby_crystal_locked"
+            ]
+        },
         "leaguemechanics.runaans_hurricane": {
             "textures": [
                 "textures/items/runaans_hurricane"
+            ]
+        },
+        "leaguemechanics.runaans_hurricane_locked": {
+            "textures": [
+                "textures/items/runaans_hurricane_locked"
             ]
         },
         "leaguemechanics.rylais_crystal_scepter": {
@@ -582,9 +1107,19 @@
                 "textures/items/rylais_crystal_scepter"
             ]
         },
+        "leaguemechanics.rylais_crystal_scepter_locked": {
+            "textures": [
+                "textures/items/rylais_crystal_scepter_locked"
+            ]
+        },
         "leaguemechanics.scouts_slingshot": {
             "textures": [
                 "textures/items/scouts_slingshot"
+            ]
+        },
+        "leaguemechanics.scouts_slingshot_locked": {
+            "textures": [
+                "textures/items/scouts_slingshot_locked"
             ]
         },
         "leaguemechanics.seraphs_embrace": {
@@ -597,9 +1132,19 @@
                 "textures/items/serpents_fang"
             ]
         },
+        "leaguemechanics.serpents_fang_locked": {
+            "textures": [
+                "textures/items/serpents_fang_locked"
+            ]
+        },
         "leaguemechanics.serrated_dirk": {
             "textures": [
                 "textures/items/serrated_dirk"
+            ]
+        },
+        "leaguemechanics.serrated_dirk_locked": {
+            "textures": [
+                "textures/items/serrated_dirk_locked"
             ]
         },
         "leaguemechanics.seryldas_grudge": {
@@ -607,14 +1152,29 @@
                 "textures/items/seryldas_grudge"
             ]
         },
+        "leaguemechanics.seryldas_grudge_locked": {
+            "textures": [
+                "textures/items/seryldas_grudge_locked"
+            ]
+        },
         "leaguemechanics.shadowflame": {
             "textures": [
                 "textures/items/shadowflame"
             ]
         },
+        "leaguemechanics.shadowflame_locked": {
+            "textures": [
+                "textures/items/shadowflame_locked"
+            ]
+        },
         "leaguemechanics.sheen": {
             "textures": [
                 "textures/items/sheen"
+            ]
+        },
+        "leaguemechanics.sheen_locked": {
+            "textures": [
+                "textures/items/sheen_locked"
             ]
         },
         "leaguemechanics.shield_of_durand": {
@@ -632,9 +1192,19 @@
                 "textures/items/sorcerers_shoes"
             ]
         },
+        "leaguemechanics.sorcerers_shoes_locked": {
+            "textures": [
+                "textures/items/sorcerers_shoes_locked"
+            ]
+        },
         "leaguemechanics.spear_of_shojin": {
             "textures": [
                 "textures/items/spear_of_shojin"
+            ]
+        },
+        "leaguemechanics.spear_of_shojin_locked": {
+            "textures": [
+                "textures/items/spear_of_shojin_locked"
             ]
         },
         "leaguemechanics.spectres_cowl": {
@@ -642,14 +1212,29 @@
                 "textures/items/spectres_cowl"
             ]
         },
+        "leaguemechanics.spectres_cowl_locked": {
+            "textures": [
+                "textures/items/spectres_cowl_locked"
+            ]
+        },
         "leaguemechanics.spirit_visage": {
             "textures": [
                 "textures/items/spirit_visage"
             ]
         },
+        "leaguemechanics.spirit_visage_locked": {
+            "textures": [
+                "textures/items/spirit_visage_locked"
+            ]
+        },
         "leaguemechanics.staff_of_flowing_water": {
             "textures": [
                 "textures/items/staff_of_flowing_water"
+            ]
+        },
+        "leaguemechanics.staff_of_flowing_water_locked": {
+            "textures": [
+                "textures/items/staff_of_flowing_water_locked"
             ]
         },
         "leaguemechanics.static_field": {
@@ -662,9 +1247,19 @@
                 "textures/items/statikk_shiv"
             ]
         },
+        "leaguemechanics.statikk_shiv_locked": {
+            "textures": [
+                "textures/items/statikk_shiv_locked"
+            ]
+        },
         "leaguemechanics.steel_sigil": {
             "textures": [
                 "textures/items/steel_sigil"
+            ]
+        },
+        "leaguemechanics.steel_sigil_locked": {
+            "textures": [
+                "textures/items/steel_sigil_locked"
             ]
         },
         "leaguemechanics.steraks_gage": {
@@ -672,9 +1267,19 @@
                 "textures/items/steraks_gage"
             ]
         },
+        "leaguemechanics.steraks_gage_locked": {
+            "textures": [
+                "textures/items/steraks_gage_locked"
+            ]
+        },
         "leaguemechanics.stormrazor": {
             "textures": [
                 "textures/items/stormrazor"
+            ]
+        },
+        "leaguemechanics.stormrazor_locked": {
+            "textures": [
+                "textures/items/stormrazor_locked"
             ]
         },
         "leaguemechanics.stormsurge": {
@@ -682,9 +1287,19 @@
                 "textures/items/stormsurge"
             ]
         },
+        "leaguemechanics.stormsurge_locked": {
+            "textures": [
+                "textures/items/stormsurge_locked"
+            ]
+        },
         "leaguemechanics.stridebreaker": {
             "textures": [
                 "textures/items/stridebreaker"
+            ]
+        },
+        "leaguemechanics.stridebreaker_locked": {
+            "textures": [
+                "textures/items/stridebreaker_locked"
             ]
         },
         "leaguemechanics.sundered_sky": {
@@ -692,9 +1307,19 @@
                 "textures/items/sundered_sky"
             ]
         },
+        "leaguemechanics.sundered_sky_locked": {
+            "textures": [
+                "textures/items/sundered_sky_locked"
+            ]
+        },
         "leaguemechanics.sunfire_aegis": {
             "textures": [
                 "textures/items/sunfire_aegis"
+            ]
+        },
+        "leaguemechanics.sunfire_aegis_locked": {
+            "textures": [
+                "textures/items/sunfire_aegis_locked"
             ]
         },
         "leaguemechanics.terminus": {
@@ -702,9 +1327,19 @@
                 "textures/items/terminus"
             ]
         },
+        "leaguemechanics.terminus_locked": {
+            "textures": [
+                "textures/items/terminus_locked"
+            ]
+        },
         "leaguemechanics.the_brutalizer": {
             "textures": [
                 "textures/items/the_brutalizer"
+            ]
+        },
+        "leaguemechanics.the_brutalizer_locked": {
+            "textures": [
+                "textures/items/the_brutalizer_locked"
             ]
         },
         "leaguemechanics.the_collector": {
@@ -712,9 +1347,19 @@
                 "textures/items/the_collector"
             ]
         },
+        "leaguemechanics.the_collector_locked": {
+            "textures": [
+                "textures/items/the_collector_locked"
+            ]
+        },
         "leaguemechanics.thornmail": {
             "textures": [
                 "textures/items/thornmail"
+            ]
+        },
+        "leaguemechanics.thornmail_locked": {
+            "textures": [
+                "textures/items/thornmail_locked"
             ]
         },
         "leaguemechanics.tiamat": {
@@ -722,9 +1367,19 @@
                 "textures/items/tiamat"
             ]
         },
+        "leaguemechanics.tiamat_locked": {
+            "textures": [
+                "textures/items/tiamat_locked"
+            ]
+        },
         "leaguemechanics.titanic_hydra": {
             "textures": [
                 "textures/items/titanic_hydra"
+            ]
+        },
+        "leaguemechanics.titanic_hydra_locked": {
+            "textures": [
+                "textures/items/titanic_hydra_locked"
             ]
         },
         "leaguemechanics.trinity_force": {
@@ -732,9 +1387,19 @@
                 "textures/items/trinity_force"
             ]
         },
+        "leaguemechanics.trinity_force_locked": {
+            "textures": [
+                "textures/items/trinity_force_locked"
+            ]
+        },
         "leaguemechanics.tunneler": {
             "textures": [
                 "textures/items/tunneler"
+            ]
+        },
+        "leaguemechanics.tunneler_locked": {
+            "textures": [
+                "textures/items/tunneler_locked"
             ]
         },
         "leaguemechanics.undying_rage": {
@@ -747,9 +1412,19 @@
                 "textures/items/unending_despair"
             ]
         },
+        "leaguemechanics.unending_despair_locked": {
+            "textures": [
+                "textures/items/unending_despair_locked"
+            ]
+        },
         "leaguemechanics.vampiric_scepter": {
             "textures": [
                 "textures/items/vampiric_scepter"
+            ]
+        },
+        "leaguemechanics.vampiric_scepter_locked": {
+            "textures": [
+                "textures/items/vampiric_scepter_locked"
             ]
         },
         "leaguemechanics.verdant_barrier": {
@@ -757,9 +1432,19 @@
                 "textures/items/verdant_barrier"
             ]
         },
+        "leaguemechanics.verdant_barrier_locked": {
+            "textures": [
+                "textures/items/verdant_barrier_locked"
+            ]
+        },
         "leaguemechanics.void_staff": {
             "textures": [
                 "textures/items/void_staff"
+            ]
+        },
+        "leaguemechanics.void_staff_locked": {
+            "textures": [
+                "textures/items/void_staff_locked"
             ]
         },
         "leaguemechanics.voltaic_cyclosword": {
@@ -767,9 +1452,19 @@
                 "textures/items/voltaic_cyclosword"
             ]
         },
+        "leaguemechanics.voltaic_cyclosword_locked": {
+            "textures": [
+                "textures/items/voltaic_cyclosword_locked"
+            ]
+        },
         "leaguemechanics.wardens_mail": {
             "textures": [
                 "textures/items/wardens_mail"
+            ]
+        },
+        "leaguemechanics.wardens_mail_locked": {
+            "textures": [
+                "textures/items/wardens_mail_locked"
             ]
         },
         "leaguemechanics.warmogs_armor": {
@@ -777,9 +1472,19 @@
                 "textures/items/warmogs_armor"
             ]
         },
+        "leaguemechanics.warmogs_armor_locked": {
+            "textures": [
+                "textures/items/warmogs_armor_locked"
+            ]
+        },
         "leaguemechanics.winged_moonplate": {
             "textures": [
                 "textures/items/winged_moonplate"
+            ]
+        },
+        "leaguemechanics.winged_moonplate_locked": {
+            "textures": [
+                "textures/items/winged_moonplate_locked"
             ]
         },
         "leaguemechanics.winters_approach": {
@@ -797,9 +1502,19 @@
                 "textures/items/wits_end"
             ]
         },
+        "leaguemechanics.wits_end_locked": {
+            "textures": [
+                "textures/items/wits_end_locked"
+            ]
+        },
         "leaguemechanics.youmuus_ghostblade": {
             "textures": [
                 "textures/items/youmuus_ghostblade"
+            ]
+        },
+        "leaguemechanics.youmuus_ghostblade_locked": {
+            "textures": [
+                "textures/items/youmuus_ghostblade_locked"
             ]
         },
         "leaguemechanics.yun_tal_wildarrows": {
@@ -807,14 +1522,29 @@
                 "textures/items/yun_tal_wildarrows"
             ]
         },
+        "leaguemechanics.yun_tal_wildarrows_locked": {
+            "textures": [
+                "textures/items/yun_tal_wildarrows_locked"
+            ]
+        },
         "leaguemechanics.zeal": {
             "textures": [
                 "textures/items/zeal"
             ]
         },
+        "leaguemechanics.zeal_locked": {
+            "textures": [
+                "textures/items/zeal_locked"
+            ]
+        },
         "leaguemechanics.zekes_convergence": {
             "textures": [
                 "textures/items/zekes_convergence"
+            ]
+        },
+        "leaguemechanics.zekes_convergence_locked": {
+            "textures": [
+                "textures/items/zekes_convergence_locked"
             ]
         },
         "leaguemechanics.zhonyas_hourglass": {

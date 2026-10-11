@@ -130,7 +130,7 @@ public class ItemStatsData {
         // LEGENDARY ITEMS
 
         addItem("infinity-edge", "Infinity Edge", 0.0, 0.0, 75.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 25.0, 0.0, 0.0,
-                true, "infinity-edge", 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 30.0, 0.0);
+                false, null, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 30.0, 0.0);
         addItem("ardent-censer", "Ardent Censer", 0.0, 0.0, 0.0, 45.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 4.0, 4.0,
                 true, "ardent-censer", 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 10.0);
         addItem("abyssal-mask", "Abyssal Mask", 88.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 45.0, 0.0, 0.0, 0.0, 0.0,

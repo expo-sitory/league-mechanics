@@ -1,6 +1,7 @@
-package dev.ixpu.leaguemechanics.item.passives;
+package dev.ixpu.leaguemechanics.item.passives.epic;
 
 import dev.ixpu.leaguemechanics.entity.player.PlayerStats;
+import dev.ixpu.leaguemechanics.item.passives.ItemPassive;
 import dev.ixpu.leaguemechanics.util.Icons;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;

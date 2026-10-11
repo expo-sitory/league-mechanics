@@ -3,14 +3,14 @@
   "header": {
     "name": "KU-PACK",
     "description": "Kupal Mc Server Resources",
-    "uuid": "2e8671be-1622-4668-b5ec-230727299ebf",
+    "uuid": "8288fb94-e238-4b7e-9db9-76431755967b",
     "version": [1, 0, 0],
     "min_engine_version": [1, 26, 0]
   },
   "modules": [
     {
       "type": "resources",
-      "uuid": "a9426db3-f56a-4182-9c86-2219e4aa2a86",
+      "uuid": "0f928610-1179-40d9-9652-ee5a571b0738",
       "version": [1, 0, 0]
     }
   ]

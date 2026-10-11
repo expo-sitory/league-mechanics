@@ -1,11 +1,20 @@
 package dev.ixpu.leaguemechanics.placeholder;
 
 import dev.ixpu.leaguemechanics.LeagueMechanics;
+import dev.ixpu.leaguemechanics.entity.player.ClassPassives;
 import dev.ixpu.leaguemechanics.entity.player.PlayerClass;
 import dev.ixpu.leaguemechanics.entity.player.PlayerClassType;
 import dev.ixpu.leaguemechanics.debuff.DebuffType;
 import dev.ixpu.leaguemechanics.entity.player.PlayerStats;
 import dev.ixpu.leaguemechanics.entity.player.abilities.ClassAbilitiesRegistry;
+import dev.ixpu.leaguemechanics.item.ItemStatsData;
+import dev.ixpu.leaguemechanics.item.ItemStatsRegistry;
+import dev.ixpu.leaguemechanics.item.passives.ItemPassive;
+import dev.ixpu.leaguemechanics.item.passives.ItemPassivesRegistry;
+import dev.ixpu.leaguemechanics.item.shop.ItemShopData;
+import dev.ixpu.leaguemechanics.item.shop.ItemShopRegistry;
+import dev.ixpu.leaguemechanics.util.ShopCurrency;
+import dev.ixpu.leaguemechanics.item.passives.epic.verdant_barrier;
 import dev.ixpu.leaguemechanics.manager.DebuffManager;
 import dev.ixpu.leaguemechanics.manager.PartyManager;
 import dev.ixpu.leaguemechanics.rune.paths.RunePath;
@@ -22,6 +31,7 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerQuitEvent;
 
 import java.util.Arrays;
+import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
@@ -88,6 +98,10 @@ public class PlaceholderRegistry extends PlaceholderExpansion {
 
         if (params == null || params.isEmpty()) {
             return "";
+        }
+
+        if (params.regionMatches(true, 0, "item-info_", 0, 10)) {
+            return getItemInfo(player, params.substring(10).toLowerCase());
         }
 
         PlayerStats stats = PlayerStats.getOrCreate(player);
@@ -260,7 +274,11 @@ public class PlaceholderRegistry extends PlaceholderExpansion {
         double absorption = target.getAbsorptionAmount();
 
         int barLength = 10;
+        verdant_barrier verdant = (verdant_barrier) ItemPassivesRegistry.getInstance().getPassive("verdant-barrier");
+        boolean shieldReady = (verdant != null && verdant.isReady(target)) || ClassPassives.isMageAbsorbReady(target);
+
         int absorptionHearts = Math.min(barLength - 1, (int) Math.ceil((absorption / (double) maxHealth) * barLength));
+        if (shieldReady) absorptionHearts = Math.max(1, absorptionHearts);
         int maxHealthBars = barLength - absorptionHearts;
         int currentHealthBars = Math.max(1, Math.min(maxHealthBars, (int) ((currentHealth / (double) maxHealth) * barLength)));
 
@@ -289,7 +307,7 @@ public class PlaceholderRegistry extends PlaceholderExpansion {
         StringBuilder bar = new StringBuilder();
         for (int i = 0; i < currentHealthBars; i++) bar.append("&c█");
         for (int i = 0; i < lostBars; i++) bar.append(isBlinking ? "&4█" : "&8█");
-        for (int i = 0; i < absorptionHearts; i++) bar.append("&f█");
+        for (int i = 0; i < absorptionHearts; i++) bar.append(shieldReady ? "&5█" : "&f█");
         for (int i = 0; i < emptyBars; i++) bar.append("&8█");
         return bar.toString();
     }
@@ -771,5 +789,131 @@ public class PlaceholderRegistry extends PlaceholderExpansion {
         double ms = stats.getPlayerMS(player);
         String ccFormatted = String.format("%.0f", cc) + "%";
         return "§0.§f" + Icons.get("stats.cc") + " §7" + String.format("%-4s", ccFormatted) + "  §f" + Icons.get("stats.ms") + " §7" + String.format("%-4.0f", ms);
+    }
+
+    // ---------- %leaguemechanics_item-info_<item-id>% ----------
+
+    private String getItemInfo(Player player, String itemId) {
+        ItemShopRegistry.ShopItem shopItem = ItemShopRegistry.getInstance().getShopItem(itemId);
+        if (shopItem == null) return "";
+
+        ItemStatsRegistry s = shopItem.getStats();
+        StringBuilder sb = new StringBuilder();
+
+        sb.append("<white>").append(shopItem.getDisplayName()).append(" ").append(Icons.get("stats.gold")).append("</white> ")
+                .append("<gold>").append(shopItem.getEffectivePrice(player)).append("</gold>");
+
+        String shortDesc = ItemShopData.getInstance().getShortDesc(itemId);
+        if (shortDesc != null && !shortDesc.isEmpty()) {
+            sb.append("\n\n<gray>").append(shortDesc).append("</gray>");
+        }
+
+        StringBuilder stats = new StringBuilder();
+        appendStat(stats, "stats.ad", s.getAd(), "", "Attack Damage");
+        appendStat(stats, "stats.ap", s.getAp(), "", "Ability Power");
+        appendStat(stats, "stats.ar", s.getAr(), "", "Armor");
+        appendStat(stats, "stats.mr", s.getMr(), "", "Magic Resist");
+        appendStat(stats, "stats.hp", s.getHp(), "", "Health");
+        appendStat(stats, "stats.hr", s.getHr(), "", "Health Regen per 5 sec.");
+        appendStat(stats, "stats.sr", s.getSr(), "", "Saturation Regen per 5 sec.");
+        appendStat(stats, "stats.as", s.getAs(), "%", "Attack Speed");
+        appendStat(stats, "stats.ls", s.getLs(), "%", "Life Steal");
+        appendStat(stats, "stats.cc", s.getCc(), "%", "Critical Chance");
+        appendStat(stats, "stats.apen-flat", s.getApenFlat(), "", "Lethality");
+        appendStat(stats, "stats.apen-percent", s.getApenPercent(), "%", "Armor Penetration");
+        appendStat(stats, "stats.mpen", s.getMpenFlat(), "", "Magic Penetration");
+        appendStat(stats, "stats.mpen", s.getMpenPercent(), "%", "Magic Penetration");
+        appendStat(stats, "stats.enhanced-critical-damage", s.getCsd(), "%", "Critical Damage");
+        appendStat(stats, "stats.heal-and-shield-power", s.getHm(), "%", "Healing Power");
+        appendStat(stats, "stats.ch", s.getCh(), "", "Ability Haste");
+        appendStat(stats, "stats.tn", s.getTn(), "", "Tenacity");
+        appendStat(stats, "stats.ms", s.getMs(), "%", "Movement Speed");
+        if (stats.length() > 0) sb.append("\n\n").append(stats);
+
+        if (s.hasPassive()) {
+            ItemPassive passive = ItemPassivesRegistry.getInstance().getPassive(s.getPassiveId());
+            if (passive != null) sb.append("\n\n").append(legacyToMiniMessage(passive.getDescription()));
+        }
+
+        List<String> required = shopItem.getRequiredItems();
+        if (!required.isEmpty()) {
+            sb.append("\n\n<gray>ᴄᴏᴍᴘᴏɴᴇɴᴛꜱ: ").append(formatComponents(player, required));
+        }
+        return sb.toString();
+    }
+
+    private static void appendStat(StringBuilder out, String iconKey, double value, String suffix, String name) {
+        if (value <= 0) return;
+        if (out.length() > 0) out.append("\n");
+        String v = value == (long) value ? String.valueOf((long) value) : String.format("%.1f", value);
+        out.append("<white>").append(Icons.get(iconKey)).append(" ").append(v).append(suffix).append("</white> <gray>").append(name).append("</gray>");
+    }
+
+    private String formatComponents(Player player, List<String> requiredIds) {
+        ItemStatsData statsData = ItemStatsData.getInstance();
+        ItemShopData shopData = ItemShopData.getInstance();
+        Map<String, Integer> requiredById = new java.util.LinkedHashMap<>();
+        for (String id : requiredIds) requiredById.merge(id, 1, Integer::sum);
+
+        StringBuilder sb = new StringBuilder();
+        boolean first = true;
+        for (var e : requiredById.entrySet()) {
+            if (!first) sb.append(" <gray>+ ");
+            first = false;
+            String id = e.getKey();
+            int total = e.getValue();
+            int owned = 0;
+            for (org.bukkit.inventory.ItemStack inv : player.getInventory().getContents()) {
+                if (inv != null && !inv.getType().isAir() && id.equals(ItemModifier.getItemId(inv))) owned++;
+            }
+            ItemStatsRegistry reg = statsData.getItem(id);
+            String name = reg != null ? reg.getName() : id;
+
+            String color = owned >= total ? "<green>" : ShopCurrency.has(player, shopData.getPrice(id)) ? "<yellow>" : "<red>";
+            sb.append(color).append(name);
+            if (total > 1) sb.append(" <gray>(").append(owned).append("/").append(total).append(")");
+        }
+        return sb.toString();
+    }
+
+    private static String legacyToMiniMessage(String legacy) {
+        StringBuilder out = new StringBuilder();
+        for (int i = 0; i < legacy.length(); i++) {
+            char c = legacy.charAt(i);
+            if ((c == '§' || c == '&') && i + 1 < legacy.length()) {
+                String tag = switch (Character.toLowerCase(legacy.charAt(i + 1))) {
+                    case '0' -> "<reset><black>";
+                    case '1' -> "<reset><dark_blue>";
+                    case '2' -> "<reset><dark_green>";
+                    case '3' -> "<reset><dark_aqua>";
+                    case '4' -> "<reset><dark_red>";
+                    case '5' -> "<reset><dark_purple>";
+                    case '6' -> "<reset><gold>";
+                    case '7' -> "<reset><gray>";
+                    case '8' -> "<reset><dark_gray>";
+                    case '9' -> "<reset><blue>";
+                    case 'a' -> "<reset><green>";
+                    case 'b' -> "<reset><aqua>";
+                    case 'c' -> "<reset><red>";
+                    case 'd' -> "<reset><light_purple>";
+                    case 'e' -> "<reset><yellow>";
+                    case 'f' -> "<reset><white>";
+                    case 'l' -> "<bold>";
+                    case 'o' -> "<italic>";
+                    case 'n' -> "<underlined>";
+                    case 'm' -> "<strikethrough>";
+                    case 'k' -> "<obfuscated>";
+                    case 'r' -> "<reset>";
+                    default -> null;
+                };
+                if (tag != null) {
+                    out.append(tag);
+                    i++;
+                    continue;
+                }
+            }
+            out.append(c);
+        }
+        return out.toString();
     }
 }

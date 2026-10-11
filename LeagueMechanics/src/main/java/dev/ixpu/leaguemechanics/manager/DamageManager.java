@@ -15,11 +15,10 @@ public class DamageManager {
     private final ItemStatsManager itemStatsManager;
     private ItemPassivesRegistry passiveRegistry;
 
-    private double DAMAGE_BALANCER_DIVISOR = 3.0;
+    private static final double DAMAGE_BALANCER_DIVISOR = 3.0;
 
     private double lastBonusMagicDamage = 0;
 
-    protected boolean isAdaptiveScaling = false;
     protected boolean isAdaptiveDamage = false;
     protected boolean isTrueDamage = false;
     protected boolean isPerStack = false;
@@ -43,9 +42,6 @@ public class DamageManager {
         this.passiveRegistry = ItemPassivesRegistry.getInstance();
     }
 
-    public void enableAdaptiveScaling() {
-        this.isAdaptiveScaling = true;
-    }
     public void enableAdaptiveDamage() {
         this.isAdaptiveDamage = true;
     }
@@ -94,12 +90,6 @@ public class DamageManager {
 
             itemAP = statsManager.getItemAP(player);
             itemAD = statsManager.getItemAD(player);
-
-            if (af <= ADAPTIVE_THRESHOLD) {
-                itemAD += itemAD * af;
-            } else {
-                itemAP += itemAP * af;
-            }
 
             rawAD = stats.getPlayerAD(player);
             rawAP = stats.getPlayerAP(player);
@@ -157,9 +147,6 @@ public class DamageManager {
 
         } else if (isAdaptiveDamage) {
             double adaptive = runesAdaptive * levelBasedBonusForLevel(leagueLevel);
-            if (isAdaptiveScaling) {
-                adaptive += adaptive + af;
-            }
             boolean preferMagic = itemAP > itemAD;
             this.prefersMagic = preferMagic;
             baseDamage = applyResistance(adaptive, preferMagic, targetAR, targetMR, apenFlat, apenPercent, mpenFlat, mpenPercent);
@@ -172,7 +159,7 @@ public class DamageManager {
         int stacks = isPerStack ? currentStacks : 1;
 
         if (isProjectileDamage && isPlayerSource) {
-            double bonusMagic = applyResistance(sourceAP * 0.6, true, targetAR, targetMR, itemAPen, itemAPenPercent, itemMPen, itemMPenPercent);
+            double bonusMagic = applyResistance(sourceAP * 0.8, true, targetAR, targetMR, itemAPen, itemAPenPercent, itemMPen, itemMPenPercent);
             lastBonusMagicDamage = bonusMagic;
             baseDamage += lastBonusMagicDamage;
         }

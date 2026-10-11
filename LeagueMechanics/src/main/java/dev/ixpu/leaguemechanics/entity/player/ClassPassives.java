@@ -6,6 +6,7 @@ import dev.ixpu.leaguemechanics.manager.CombatStateManager;
 import dev.ixpu.leaguemechanics.manager.DebuffManager;
 import dev.ixpu.leaguemechanics.manager.KillSourceTracker;
 import dev.ixpu.leaguemechanics.manager.PartyManager;
+import dev.ixpu.leaguemechanics.rune.CooldownHandler;
 import org.bukkit.Color;
 import org.bukkit.GameMode;
 import org.bukkit.Location;
@@ -63,14 +64,20 @@ public final class ClassPassives {
     private record ShadowMark(Location location, long expiresAt) {}
 
     private static final Map<UUID, ShadowMark> assassinMarks = new ConcurrentHashMap<>();
-    private static final Map<UUID, Long> assassinRecallCooldownUntil = new ConcurrentHashMap<>();
-    private static final Map<UUID, Long> supportTransferCooldown = new ConcurrentHashMap<>();
+    private static final CooldownHandler assassinRecallCooldown = cooldown("assassin-recall", ASSASSIN_RECALL_COOLDOWN_MS);
+    private static final CooldownHandler supportTransferCooldown = cooldown("support-transfer", SUPPORT_TRANSFER_COOLDOWN_MS);
     private static final Set<UUID> supportSpeedActive = ConcurrentHashMap.newKeySet();
     private static final Map<UUID, Long> mageLastDamage = new ConcurrentHashMap<>();
     private static final Map<UUID, Long> mageImmuneUntil = new ConcurrentHashMap<>();
-    private static final Map<UUID, Long> mageCooldownUntil = new ConcurrentHashMap<>();
+    private static final CooldownHandler mageCooldown = cooldown("mage-absorb", MAGE_IMMUNITY_MS + MAGE_COOLDOWN_MS);
 
     private ClassPassives() {}
+
+    private static CooldownHandler cooldown(String id, long durationMs) {
+        CooldownHandler handler = new CooldownHandler(id);
+        handler.setCooldownSeconds(durationMs / 1000.0);
+        return handler;
+    }
 
     private static boolean is(Player player, PlayerClassType type) {
         return player != null && PlayerClass.getCachedPlayerClass(player) == type;
@@ -155,10 +162,7 @@ public final class ClassPassives {
         }
     }
 
-    /**
-     * Forces a mob to focus the given player. Wardens ignore Mob#setTarget because their target is
-     * driven by their anger table, so for them we move the anger onto the taunter instead.
-     */
+
     public static void taunt(Mob mob, Player taunter) {
         if (mob == null || taunter == null || mob.isDead() || !taunter.isOnline()) return;
         if (mob instanceof Warden warden) {
@@ -234,10 +238,7 @@ public final class ClassPassives {
         if (!is(supporter, PlayerClassType.SUPPORT) || supporter == target) return;
         if (!PartyManager.getInstance().isSameParty(supporter, target)) return;
 
-        UUID uuid = supporter.getUniqueId();
-        long now = System.currentTimeMillis();
-        long readyAt = supportTransferCooldown.getOrDefault(uuid, 0L);
-        if (now < readyAt) {
+        if (supportTransferCooldown.isOnCooldown(supporter)) {
             return;
         }
 
@@ -258,7 +259,7 @@ public final class ClassPassives {
 
         supporter.setHealth(supporter.getHealth() - amount);
         target.setHealth(Math.min(target.getMaxHealth(), target.getHealth() + amount * multiplier));
-        supportTransferCooldown.put(uuid, now + SUPPORT_TRANSFER_COOLDOWN_MS);
+        supportTransferCooldown.resetCooldown(supporter);
 
         Location loc = target.getLocation().add(0, 1.0, 0);
         target.getWorld().spawnParticle(Particle.HEART, loc, 6, 0.4, 0.4, 0.4, 0.0);
@@ -274,11 +275,11 @@ public final class ClassPassives {
 
         if (now < mageImmuneUntil.getOrDefault(uuid, 0L)) return true;
 
-        boolean offCooldown = now >= mageCooldownEnd(player);
+        boolean offCooldown = !mageCooldown.isOnCooldown(player);
         boolean notRecentlyDamaged = now - mageLastDamage.getOrDefault(uuid, 0L) >= MAGE_RECENT_DAMAGE_MS;
         if (offCooldown && notRecentlyDamaged) {
             mageImmuneUntil.put(uuid, now + MAGE_IMMUNITY_MS);
-            mageCooldownUntil.put(uuid, now + MAGE_IMMUNITY_MS + MAGE_COOLDOWN_MS);
+            mageCooldown.resetCooldown(player, now);
 
             Location loc = player.getLocation().add(0, 1.0, 0);
             player.getWorld().playSound(loc, Sound.BLOCK_BEACON_ACTIVATE, 0.8f, 1.8f);
@@ -287,6 +288,11 @@ public final class ClassPassives {
 
         mageLastDamage.put(uuid, now);
         return false;
+    }
+
+    public static boolean isMageAbsorbReady(Player player) {
+        if (!is(player, PlayerClassType.MAGE) || mageCooldown.isOnCooldown(player)) return false;
+        return System.currentTimeMillis() - mageLastDamage.getOrDefault(player.getUniqueId(), 0L) >= MAGE_RECENT_DAMAGE_MS;
     }
 
     public static void tickMageRing(Player player) {
@@ -330,7 +336,7 @@ public final class ClassPassives {
     public static boolean recallToShadowMark(Player player) {
         ShadowMark mark = activeShadowMark(player);
         if (mark == null) return false;
-        if (assassinRecallReadyAt(player) > System.currentTimeMillis()) return false;
+        if (assassinRecallCooldown.isOnCooldown(player)) return false;
         assassinMarks.remove(player.getUniqueId());
 
         Location destination = mark.location();
@@ -350,7 +356,7 @@ public final class ClassPassives {
         player.setVelocity(new Vector(0, 0, 0));
         player.setFallDistance(0f);
         CombatStateManager.getInstance().markDashFallImmunity(player.getUniqueId(), ASSASSIN_RECALL_FALL_IMMUNITY_MS);
-        assassinRecallCooldownUntil.put(player.getUniqueId(), System.currentTimeMillis() + ASSASSIN_RECALL_COOLDOWN_MS);
+        assassinRecallCooldown.resetCooldown(player);
 
         spawnShadowPuff(target);
         target.getWorld().playSound(target, Sound.ENTITY_ENDERMAN_TELEPORT, 0.7f, 1.4f);
@@ -364,7 +370,7 @@ public final class ClassPassives {
         Location center = mark.location();
         if (center.getWorld() == null || !center.getWorld().equals(player.getWorld())) return;
 
-        boolean ready = assassinRecallReadyAt(player) <= System.currentTimeMillis();
+        boolean ready = !assassinRecallCooldown.isOnCooldown(player);
         Particle.DustOptions shade = new Particle.DustOptions(
                 ready ? Color.fromRGB(70, 0, 110) : Color.fromRGB(70, 70, 70), 1.2f);
         int points = 12;
@@ -395,13 +401,7 @@ public final class ClassPassives {
 
     public static double getAssassinRecallCooldownSeconds(Player player) {
         if (!is(player, PlayerClassType.ASSASSIN)) return 0;
-        return remainingSeconds(assassinRecallReadyAt(player));
-    }
-
-    private static long assassinRecallReadyAt(Player player) {
-        Long until = assassinRecallCooldownUntil.get(player.getUniqueId());
-        if (until == null) return 0L;
-        return until;
+        return assassinRecallCooldown.getRemainingCooldown(player);
     }
 
     private static boolean isStandable(Location location) {
@@ -419,35 +419,23 @@ public final class ClassPassives {
 
     public static double getSupportTransferCooldownSeconds(Player player) {
         if (!is(player, PlayerClassType.SUPPORT)) return 0;
-        return remainingSeconds(supportTransferCooldown.get(player.getUniqueId()));
+        return supportTransferCooldown.getRemainingCooldown(player);
     }
 
     public static double getMageAbsorbCooldownSeconds(Player player) {
         if (!is(player, PlayerClassType.MAGE)) return 0;
         Long immuneUntil = mageImmuneUntil.get(player.getUniqueId());
         if (immuneUntil != null && System.currentTimeMillis() < immuneUntil) return 0;
-        return remainingSeconds(mageCooldownEnd(player));
-    }
-
-    private static long mageCooldownEnd(Player player) {
-        Long until = mageCooldownUntil.get(player.getUniqueId());
-        if (until == null) return 0L;
-        return until;
-    }
-
-    private static double remainingSeconds(Long readyAt) {
-        if (readyAt == null) return 0;
-        long remaining = readyAt - System.currentTimeMillis();
-        return remaining > 0 ? remaining / 1000.0 : 0;
+        return mageCooldown.getRemainingCooldown(player);
     }
 
     public static void cleanup(UUID uuid) {
-        supportTransferCooldown.remove(uuid);
+        supportTransferCooldown.clearPlayerCooldown(uuid);
         supportSpeedActive.remove(uuid);
         mageLastDamage.remove(uuid);
         mageImmuneUntil.remove(uuid);
-        mageCooldownUntil.remove(uuid);
+        mageCooldown.clearPlayerCooldown(uuid);
         assassinMarks.remove(uuid);
-        assassinRecallCooldownUntil.remove(uuid);
+        assassinRecallCooldown.clearPlayerCooldown(uuid);
     }
 }

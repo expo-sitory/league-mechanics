@@ -7,6 +7,7 @@ import org.bukkit.boss.BossBar;
 import org.bukkit.entity.Player;
 import dev.ixpu.leaguemechanics.LeagueMechanics;
 import dev.ixpu.leaguemechanics.entity.player.ClassPassives;
+import dev.ixpu.leaguemechanics.rune.CooldownHandler;
 
 import java.util.HashMap;
 import java.util.Locale;
@@ -14,7 +15,12 @@ import java.util.Map;
 import java.util.UUID;
 
 public class DoubleJump {
-    private final Map<UUID, Long> playerCooldowns = new HashMap<>();
+    private final CooldownHandler cooldown = new CooldownHandler("double-jump") {
+        @Override
+        protected double effectiveCooldownSeconds(Player player) {
+            return cooldownMs(player) / 1000.0;
+        }
+    };
     private final Map<UUID, BossBar> doubleJumpBars = new HashMap<>();
 
     private static final long BASE_COOLDOWN_MS = 7000L;
@@ -24,18 +30,11 @@ public class DoubleJump {
     }
 
     public boolean isOnCooldown(Player player) {
-        UUID uuid = player.getUniqueId();
-        Long lastActivation = playerCooldowns.get(uuid);
-        if (lastActivation == null) {
-            return false;
-        }
-        long elapsed = System.currentTimeMillis() - lastActivation;
-        return elapsed < cooldownMs(player);
+        return cooldown.isOnCooldown(player);
     }
 
     public void startCooldown(Player player) {
-        UUID uuid = player.getUniqueId();
-        playerCooldowns.put(uuid, System.currentTimeMillis());
+        cooldown.resetCooldown(player);
         showCooldownBar(player);
     }
 
@@ -94,6 +93,6 @@ public class DoubleJump {
         if (bar != null) {
             bar.removeAll();
         }
-        playerCooldowns.remove(uuid);
+        cooldown.clearPlayerCooldown(player);
     }
 }

@@ -1,6 +1,7 @@
-package dev.ixpu.leaguemechanics.item.passives;
+package dev.ixpu.leaguemechanics.item.passives.basic;
 
 import dev.ixpu.leaguemechanics.LeagueMechanics;
+import dev.ixpu.leaguemechanics.item.passives.ItemPassive;
 import dev.ixpu.leaguemechanics.manager.ItemPassivesManager;
 import org.bukkit.NamespacedKey;
 import org.bukkit.Sound;

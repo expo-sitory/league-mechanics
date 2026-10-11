@@ -9,17 +9,17 @@ runes:
     domination:
 
       dark-harvest:
-        base-adaptive-damage-per-stack: 2.5 # hardcoded max stack: 20
+        adaptive-damage-per-stack: 7 # hardcoded max stack: 20
         cooldown: 60 # seconds - Cooldown before next soul reap
 
       electrocute:
-        base-adaptive-damage: 24.5
+        base-adaptive-damage: 34.5
         cooldown: 25 # seconds
 
       hail-of-blades:
         base-attack-speed: 40.0
-        base-true-damage: 8.0
-        cooldown: 60 # seconds
+        base-true-damage: 24.0
+        cooldown: 45 # seconds
 
 
     # ============================= #
@@ -28,7 +28,7 @@ runes:
 
     precision:
       conqueror:
-        base-adaptive-damage-per-stack: 1.2 # hard coded max stack: 12
+        base-adaptive-damage-per-stack: 0.8 # hard coded max stack: 12
 
       fleet-footwork:
         blocks-per-stack: 10.0
@@ -43,7 +43,7 @@ runes:
         cooldown: 30 # seconds
 
       press-the-attack:
-        base-adaptive-damage: 9.5
+        base-adaptive-damage: 12.5
         cooldown: 6 # seconds
 
     # ============================= #
@@ -63,7 +63,7 @@ runes:
         ad-percentage-multiplier: 7.0
         ap-percentage-multiplier: 4.0
         buff-duration: 3 #seconds
-        true-damage-amount: 4.0 # while on active state
+        true-damage-amount: 14.0 # while on active state
         cooldown: 25 # seconds
 
     # ============================= #
@@ -76,8 +76,8 @@ runes:
         countdown-seconds: 2.5
         bonus-armor: 55.0
         bonus-magic-resist: 55.0
-        base-shockwave-damage: 12.5
-        shockwave-bonus-hp-percent: 25.0
+        base-shockwave-damage: 6.0
+        shockwave-bonus-hp-percent: 5.0
         cooldown: 20 # seconds
 
       grasp-of-the-undying:
@@ -100,12 +100,12 @@ runes:
 
       arcane-comet:
         base-adaptive-damage: 17.5
-        ad-percentage-multiplier: 5.0
-        ap-percentage-multiplier: 7.0
+        ad-percentage-multiplier: 3.0
+        ap-percentage-multiplier: 4.0
         cooldown: 20 # seconds
 
       deathfire-torch:
-        base-magic-damage: 0.5
+        base-magic-damage: 0.7
         ad-percentage-multiplier: 2.0
         ap-percentage-multiplier: 4.0
 

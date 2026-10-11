@@ -7,6 +7,7 @@ import dev.ixpu.leaguemechanics.entity.player.PlayerClassType;
 import dev.ixpu.leaguemechanics.entity.player.PlayerStats;
 import dev.ixpu.leaguemechanics.entity.player.abilities.ClassAbilities;
 import dev.ixpu.leaguemechanics.entity.player.abilities.ClassAbilitiesRegistry;
+import dev.ixpu.leaguemechanics.rune.CooldownHandler;
 import dev.ixpu.leaguemechanics.util.ItemModifier;
 import net.kyori.adventure.text.Component;
 import org.bukkit.Bukkit;
@@ -40,9 +41,8 @@ public class ClassAbilitiesManager {
     private final NamespacedKey selectedKey;
     private final NamespacedKey itemKey;
 
-    private final Map<UUID, Map<String, Long>> cooldownUntil = new ConcurrentHashMap<>();
+    private final Map<String, CooldownHandler> abilityCooldowns = new ConcurrentHashMap<>();
     private final Map<UUID, Map<String, Long>> effectUntil = new ConcurrentHashMap<>();
-    private final Map<UUID, Map<String, Long>> cooldownDurationMs = new ConcurrentHashMap<>();
     private final Map<UUID, Integer> lastAttemptTick = new HashMap<>();
     private static final int HOLD_GAP_TICKS = 6;
 
@@ -285,6 +285,19 @@ public class ClassAbilitiesManager {
         }
     }
 
+    private CooldownHandler cooldownFor(ClassAbilities skill) {
+        return abilityCooldowns.computeIfAbsent(skill.getId(), id -> new CooldownHandler(id) {
+            @Override
+            protected double effectiveCooldownSeconds(Player player) {
+                double duration = cooldownSeconds;
+                if (duration <= 0) return duration;
+                double ch = Math.min(100.0, Math.max(0.0, PlayerStats.getOrCreate(player).getPlayerCH(player)));
+                double maxReduction = Math.max(0.0, duration - skill.getMinCooldownSeconds());
+                return duration - Math.min(duration * (ch / 100.0), maxReduction);
+            }
+        });
+    }
+
     public void startCooldown(Player player, ClassAbilities skill) {
         consumeHunger(player, skill);
         long now = System.currentTimeMillis();
@@ -292,12 +305,11 @@ public class ClassAbilitiesManager {
         if (skill.startsCooldownAfterEffect()) {
             effectEnd += (long) (skill.getEffectSeconds() * 1000.0);
         }
-        long cooldownMs = (long) (skill.getCooldownSeconds() * 1000.0);
-        long until = effectEnd + cooldownMs;
 
         UUID uuid = player.getUniqueId();
-        cooldownUntil.computeIfAbsent(uuid, k -> new ConcurrentHashMap<>()).put(skill.getId(), until);
-        cooldownDurationMs.computeIfAbsent(uuid, k -> new ConcurrentHashMap<>()).put(skill.getId(), cooldownMs);
+        CooldownHandler cooldown = cooldownFor(skill);
+        cooldown.setCooldownSeconds(skill.getCooldownSeconds());
+        cooldown.resetCooldown(player, effectEnd);
 
         if (effectEnd > now) {
             effectUntil.computeIfAbsent(uuid, k -> new ConcurrentHashMap<>()).put(skill.getId(), effectEnd);
@@ -320,29 +332,7 @@ public class ClassAbilitiesManager {
     }
 
     public double getRemainingLockSeconds(Player player, ClassAbilities skill) {
-        Map<String, Long> map = cooldownUntil.get(player.getUniqueId());
-        if (map == null) return 0;
-        Long until = map.get(skill.getId());
-        if (until == null) return 0;
-        long remaining = until - cooldownHasteReductionMs(player, skill) - System.currentTimeMillis();
-        if (remaining <= 0) {
-            map.remove(skill.getId());
-            return 0;
-        }
-        return remaining / 1000.0;
-    }
-
-    private long cooldownHasteReductionMs(Player player, ClassAbilities skill) {
-        Map<String, Long> durations = cooldownDurationMs.get(player.getUniqueId());
-        if (durations == null) return 0;
-        Long durationMs = durations.get(skill.getId());
-        if (durationMs == null || durationMs <= 0) return 0;
-        double ch = Math.min(100.0, Math.max(0.0, PlayerStats.getOrCreate(player).getPlayerCH(player)));
-        long reduction = (long) (durationMs * (ch / 100.0));
-
-        long minMs = (long) (skill.getMinCooldownSeconds() * 1000.0);
-        long maxReduction = Math.max(0L, durationMs - minMs);
-        return Math.min(reduction, maxReduction);
+        return cooldownFor(skill).getRemainingCooldown(player);
     }
 
     public double getRemainingCooldownSeconds(Player player, ClassAbilities skill) {
@@ -353,16 +343,13 @@ public class ClassAbilitiesManager {
     }
 
     public void endEffects(Player player) {
-        UUID uuid = player.getUniqueId();
-        Map<String, Long> effects = effectUntil.remove(uuid);
+        Map<String, Long> effects = effectUntil.remove(player.getUniqueId());
         if (effects == null) return;
-        Map<String, Long> cooldowns = cooldownUntil.get(uuid);
-        if (cooldowns == null) return;
         long now = System.currentTimeMillis();
         for (Map.Entry<String, Long> entry : effects.entrySet()) {
-            long cut = entry.getValue() - now;
-            if (cut <= 0) continue;
-            cooldowns.computeIfPresent(entry.getKey(), (k, v) -> v - cut);
+            if (entry.getValue() <= now) continue;
+            CooldownHandler cooldown = abilityCooldowns.get(entry.getKey());
+            if (cooldown != null) cooldown.resetCooldown(player);
         }
     }
 

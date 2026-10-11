@@ -110,7 +110,6 @@ public class Conqueror extends StacksHandler {
     private double keystoneDamage(Player player, Entity target, int currentStacks) {
         DamageManager damageManager = new DamageManager(LeagueMechanics.getInstance().getStatsManager());
         damageManager.enableAdaptiveDamage();
-        damageManager.enableAdaptiveScaling();
         damageManager.enablePerStackScaling();
         double damage = damageManager.DamageCalculation(player, target, currentStacks, BASE_ADAPTIVE_DAMAGE_PER_STACK, 0, 0);
         this.lastDamageWasMagic = damageManager.isMagicDamage();

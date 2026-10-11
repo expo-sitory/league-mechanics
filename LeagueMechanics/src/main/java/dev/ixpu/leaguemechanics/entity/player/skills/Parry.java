@@ -7,6 +7,7 @@ import org.bukkit.boss.BossBar;
 import org.bukkit.entity.Player;
 import dev.ixpu.leaguemechanics.LeagueMechanics;
 import dev.ixpu.leaguemechanics.entity.player.ClassPassives;
+import dev.ixpu.leaguemechanics.rune.CooldownHandler;
 
 import java.util.HashMap;
 import java.util.Locale;
@@ -14,8 +15,8 @@ import java.util.Map;
 import java.util.UUID;
 
 public class Parry {
-    private final Map<UUID, Long> playerCooldowns = new HashMap<>();
-    private final Map<UUID, Long> cooldownDurations = new HashMap<>();
+    private final CooldownHandler successfulCooldown = scaledCooldown("parry-successful", SUCCESSFUL_COOLDOWN_MS);
+    private final CooldownHandler missedCooldown = scaledCooldown("parry-missed", MISSED_COOLDOWN_MS);
     private final Map<UUID, BossBar> parryBars = new HashMap<>();
 
     private static final long MISSED_COOLDOWN_MS = 7000L;
@@ -23,19 +24,17 @@ public class Parry {
     private static final long PARRY_WINDOW_MS = 700L;
 
     public void resetCooldown(Player player) {
-        UUID uuid = player.getUniqueId();
-        playerCooldowns.put(uuid, System.currentTimeMillis());
+        missedCooldown.clearPlayerCooldown(player);
+        successfulCooldown.resetCooldown(player);
         long cooldownMs = scaled(player, SUCCESSFUL_COOLDOWN_MS);
-        cooldownDurations.put(uuid, cooldownMs);
         Bukkit.dispatchCommand(Bukkit.getConsoleSender(), "lp user " + player.getName() + " permission unset oldcombatmechanics.swordblock");
         showSuccessfulCooldownBar(player, cooldownMs);
     }
 
     public void startMissedCooldown(Player player) {
-        UUID uuid = player.getUniqueId();
-        playerCooldowns.put(uuid, System.currentTimeMillis());
+        successfulCooldown.clearPlayerCooldown(player);
+        missedCooldown.resetCooldown(player);
         long cooldownMs = scaled(player, MISSED_COOLDOWN_MS);
-        cooldownDurations.put(uuid, cooldownMs);
         Bukkit.dispatchCommand(Bukkit.getConsoleSender(), "lp user " + player.getName() + " permission unset oldcombatmechanics.swordblock");
         showMissedCooldownBar(player, cooldownMs);
     }
@@ -44,15 +43,17 @@ public class Parry {
         return (long) (baseMs * ClassPassives.getParryCooldownMultiplier(player));
     }
 
+    private static CooldownHandler scaledCooldown(String id, long baseMs) {
+        return new CooldownHandler(id) {
+            @Override
+            protected double effectiveCooldownSeconds(Player player) {
+                return scaled(player, baseMs) / 1000.0;
+            }
+        };
+    }
+
     public boolean isOnCooldown(Player player) {
-        UUID uuid = player.getUniqueId();
-        Long lastActivation = playerCooldowns.get(uuid);
-        Long duration = cooldownDurations.get(uuid);
-        if (lastActivation == null || duration == null) {
-            return false;
-        }
-        long elapsed = System.currentTimeMillis() - lastActivation;
-        return elapsed < duration;
+        return successfulCooldown.isOnCooldown(player) || missedCooldown.isOnCooldown(player);
     }
 
     private static String formatSeconds(long remainingMs) {
@@ -140,7 +141,6 @@ public class Parry {
                 task.cancel();
                 BossBar bar = parryBars.remove(uuid);
                 if (bar != null) bar.removeAll();
-                cooldownDurations.remove(uuid);
                 return;
             }
 
@@ -159,7 +159,6 @@ public class Parry {
                 task.cancel();
                 bar.removeAll();
                 parryBars.remove(uuid);
-                cooldownDurations.remove(uuid);
                 Bukkit.dispatchCommand(Bukkit.getConsoleSender(), "lp user " + player.getName() + " permission set oldcombatmechanics.swordblock true");
             }
         }, 0L, 1L);
@@ -173,8 +172,8 @@ public class Parry {
             bar.removeAll();
         }
 
-        playerCooldowns.remove(uuid);
-        cooldownDurations.remove(uuid);
+        successfulCooldown.clearPlayerCooldown(player);
+        missedCooldown.clearPlayerCooldown(player);
         Bukkit.dispatchCommand(Bukkit.getConsoleSender(), "lp user " + player.getName() + " permission set oldcombatmechanics.swordblock true");
     }
 }

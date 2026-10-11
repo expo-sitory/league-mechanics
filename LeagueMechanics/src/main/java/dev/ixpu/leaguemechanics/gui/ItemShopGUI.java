@@ -6,6 +6,7 @@ import dev.ixpu.leaguemechanics.item.shop.ItemShopData;
 import dev.ixpu.leaguemechanics.item.shop.ItemShopRegistry;
 import dev.ixpu.leaguemechanics.util.Icons;
 import dev.ixpu.leaguemechanics.util.ItemModifier;
+import dev.ixpu.leaguemechanics.util.ShopCurrency;
 
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
@@ -309,7 +310,7 @@ public class ItemShopGUI {
             String itemName = shopItem.getDisplayName();
             int price = shopItem.getEffectivePrice(player);
 
-            String displayName = "§f" + itemName + " §a◎ " + price;
+            String displayName = "§f" + itemName + " §f" + Icons.get("stats.gold") + " §e" + price;
             meta.setDisplayName(displayName);
 
             boolean canBuy = canPlayerBuyItem(player, shopItem);
@@ -414,7 +415,7 @@ public class ItemShopGUI {
 
             String status;
             String statusColor;
-            boolean canAfford = player.getLevel() >= price;
+            boolean canAfford = ShopCurrency.has(player, price);
 
             if (isGroupedItem && (ownsThisItem || isComponentOfOwned)) {
                 status = "ᴏᴡɴᴇᴅ";
@@ -463,7 +464,9 @@ public class ItemShopGUI {
             item.setItemMeta(meta);
 
             if (shopData.hasCustomModel(shopItem.getId())) {
-                ItemModifier.setItemModel(item, shopData.getModel(shopItem.getId()));
+                String model = shopData.getModel(shopItem.getId());
+                boolean grayedOut = status.equals("ʟᴏᴄᴋᴇᴅ") || status.equals("ᴜɴᴀᴠᴀɪʟᴀʙʟᴇ") || status.equals("ᴏᴡɴᴇᴅ");
+                ItemModifier.setItemModel(item, grayedOut ? model + "_locked" : model);
             }
         }
         return item;
@@ -588,12 +591,11 @@ public class ItemShopGUI {
 
     private boolean playerHasRequiredItemsOrCanAfford(Player player, List<String> requiredIds) {
         ItemShopData shopData = ItemShopData.getInstance();
-        int playerLevel = player.getLevel();
         for (String requiredId : requiredIds) {
             int required = countRequiredOccurrences(requiredIds, requiredId, requiredIds.lastIndexOf(requiredId));
             int owned = countOwnedLeagueItems(player, requiredId);
             if (owned >= required) continue;
-            if (playerLevel >= shopData.getPrice(requiredId)) continue;
+            if (ShopCurrency.has(player, shopData.getPrice(requiredId))) continue;
             return false;
         }
         return true;
@@ -628,7 +630,6 @@ public class ItemShopGUI {
     private String formatRequiredItemNamesWithCount(Player player, List<String> requiredIds) {
         ItemStatsData statsData = ItemStatsData.getInstance();
         ItemShopData shopData = ItemShopData.getInstance();
-        int playerLevel = player.getLevel();
         java.util.LinkedHashMap<String, Integer> requiredById = new java.util.LinkedHashMap<>();
         for (String id : requiredIds) requiredById.merge(id, 1, Integer::sum);
         StringBuilder sb = new StringBuilder();
@@ -646,7 +647,7 @@ public class ItemShopGUI {
             String color;
             if (owned >= total) {
                 color = "§a";
-            } else if (playerLevel >= shopData.getPrice(id)) {
+            } else if (ShopCurrency.has(player, shopData.getPrice(id))) {
                 color = "§e";
             } else {
                 color = "§c";

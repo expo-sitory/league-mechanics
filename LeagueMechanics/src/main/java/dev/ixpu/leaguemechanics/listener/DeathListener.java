@@ -4,6 +4,7 @@ import dev.ixpu.leaguemechanics.LeagueMechanics;
 
 import dev.ixpu.leaguemechanics.entity.player.PlayerRuneData;
 
+import dev.ixpu.leaguemechanics.item.passives.basic.dark_seal;
 import dev.ixpu.leaguemechanics.util.DebugLogger;
 import dev.ixpu.leaguemechanics.util.ItemModifier;
 
@@ -65,8 +66,8 @@ public class DeathListener implements Listener {
         return playerInventoryListener.findItemSlot(player, target);
     }
 
-    public void removeFromHotbar(Player player, ItemStack item) {
-        playerInventoryListener.removeFromHotbar(player, item);
+    public void removeFromHotbar(Player player, int slot) {
+        playerInventoryListener.removeFromHotbar(player, slot);
     }
 
     @EventHandler(priority = EventPriority.NORMAL)
@@ -212,7 +213,7 @@ public class DeathListener implements Listener {
                 continue;
             }
 
-            if (ItemPassivesRegistry.getInstance().getPassive("dark-seal") instanceof dev.ixpu.leaguemechanics.item.passives.dark_seal darkSeal) {
+            if (ItemPassivesRegistry.getInstance().getPassive("dark-seal") instanceof dark_seal darkSeal) {
                 int currentStacks = darkSeal.getStacks(player);
                 int newStacks = Math.max(currentStacks - 2, 0);
                 ItemPassivesManager.getInstance().setKillCount(player, "dark-seal", newStacks);
