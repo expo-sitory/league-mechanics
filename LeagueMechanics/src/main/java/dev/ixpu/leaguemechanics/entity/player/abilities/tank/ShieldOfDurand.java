@@ -127,14 +127,14 @@ public class ShieldOfDurand extends ClassAbilities {
         double armor = effects.getConfiguredArmorPercent();
         double seconds = effects.getDurationSeconds(AbilityEffectType.SHIELD_OF_DURAND);
         return List.of(
-                "§7Hold to charge from §f" + trim(getStartRange()) + " blocks§7, growing §f+" + trim(getRangeStep())
-                        + " block§7 every §f" + trim(getStepSeconds()) + "s§7 (max §f" + trim(getRange()) + "§7),",
-                "§7slowing you by §f" + trim(getChargeSlowPercent()) + "%§7. Release to gain §f+" + trim(armor)
-                        + "% armor§7 for §f" + trim(seconds) + " seconds§7,",
-                "§7taunt all mobs in range and stun non-partied",
-                "§7players for §f" + trim(getStunSeconds()) + " seconds§7."
+                "§7You hold to charge a defensive stance, slowing yourself by §f",
+                trim(getChargeSlowPercent()) + ". §7Your range grows from §f" + trim(getStartRange()) + "§7 to a max of §f" + trim(getRange()) + " blocks§7. Release to",
+                "§7gain §f+" + trim(armor) + "% armor§7 for §f" + trim(seconds) + "s§7, taunt mobs,§7 and stun",
+                "§7non-partied players for §f" + trim(getStunSeconds()) + " seconds§7."
         );
     }
+
+
 
     @Override
     public boolean isChargeable() {

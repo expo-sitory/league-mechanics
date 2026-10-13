@@ -10,7 +10,10 @@ import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Particle;
 import org.bukkit.Sound;
+import org.bukkit.entity.Entity;
+import org.bukkit.entity.Mob;
 import org.bukkit.entity.Player;
+import org.bukkit.entity.Warden;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
 import org.bukkit.scheduler.BukkitTask;
@@ -30,6 +33,7 @@ public class FinalHour extends ClassAbilities {
     private static final double DEFAULT_VANISH_SECONDS = 1.5;
 
     private static final int NIGHT_VISION_BUFFER_TICKS = 400;
+    private static final double UNTRACK_RADIUS = 48.0;
 
     private static final Map<UUID, BukkitTask> vanishTasks = new ConcurrentHashMap<>();
     private static final Set<UUID> nightVisionGranted = ConcurrentHashMap.newKeySet();
@@ -69,11 +73,12 @@ public class FinalHour extends ClassAbilities {
         double attackSpeed = effects.getConfiguredAttackSpeed();
         double seconds = effects.getDurationSeconds(AbilityEffectType.FINAL_HOUR);
         return List.of(
-                "§7Gain §f+" + trim(attackSpeed) + "% attack speed§7 for §f" + trim(seconds) + " seconds§7.",
-                "§7Dashing or double jumping vanishes you",
-                "§7from enemies for §f" + trim(getVanishSeconds()) + " seconds§7."
+                "§7Readying yourself for confrontation, you gain §f+" + trim(attackSpeed) + "% attack speed§7",
+                "§7for §f" + trim(seconds) + " seconds§7. Dashing or double jumping vanishes you from",
+                "§7enemies for §f" + trim(getVanishSeconds()) + " second§7 during this duration."
         );
     }
+
 
     @Override
     public boolean cast(Player caster) {
@@ -104,6 +109,7 @@ public class FinalHour extends ClassAbilities {
             viewer.hideEntity(plugin, player);
         }
 
+        dropMobTargets(player);
         grantNightVision(player, ticks);
 
         Location loc = player.getLocation().add(0, 1.0, 0);
@@ -114,6 +120,18 @@ public class FinalHour extends ClassAbilities {
             reveal(plugin, player);
         }, ticks);
         vanishTasks.put(uuid, task);
+    }
+
+    public static boolean isVanished(Player player) {
+        return player != null && vanishTasks.containsKey(player.getUniqueId());
+    }
+
+    private static void dropMobTargets(Player player) {
+        for (Entity entity : player.getNearbyEntities(UNTRACK_RADIUS, UNTRACK_RADIUS, UNTRACK_RADIUS)) {
+            if (!(entity instanceof Mob mob)) continue;
+            if (player.equals(mob.getTarget())) mob.setTarget(null);
+            if (mob instanceof Warden warden) warden.clearAnger(player);
+        }
     }
 
     private static void grantNightVision(Player player, int vanishTicks) {

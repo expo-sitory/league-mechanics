@@ -73,6 +73,10 @@ public abstract class ClassAbilities {
 
     public abstract List<String> getDescription();
 
+    public boolean canCastWhileCrowdControlled() {
+        return false;
+    }
+
     public boolean isChargeable() {
         return false;
     }

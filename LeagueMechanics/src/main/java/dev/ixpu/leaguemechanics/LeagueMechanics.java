@@ -29,12 +29,24 @@ import dev.ixpu.leaguemechanics.listener.RuneListener;
 import dev.ixpu.leaguemechanics.entity.mob.MobStats;
 import dev.ixpu.leaguemechanics.listener.ClassAbilitiesListener;
 import dev.ixpu.leaguemechanics.entity.player.abilities.ClassAbilitiesRegistry;
+import dev.ixpu.leaguemechanics.entity.player.abilities.assassin.BattleRoar;
+import dev.ixpu.leaguemechanics.entity.player.abilities.tank.CosmicRadiance;
+import dev.ixpu.leaguemechanics.entity.player.abilities.tank.SeismicBastion;
+import dev.ixpu.leaguemechanics.entity.player.abilities.assassin.Meditate;
 import dev.ixpu.leaguemechanics.entity.player.abilities.assassin.Paranoia;
 import dev.ixpu.leaguemechanics.entity.player.abilities.mage.Riftwalk;
 import dev.ixpu.leaguemechanics.entity.player.abilities.tank.ShieldOfDurand;
 import dev.ixpu.leaguemechanics.entity.player.abilities.marksman.FinalHour;
 import dev.ixpu.leaguemechanics.entity.player.abilities.fighter.UndyingRage;
+import dev.ixpu.leaguemechanics.entity.player.abilities.fighter.Ragnarok;
+import dev.ixpu.leaguemechanics.entity.player.abilities.fighter.HollowedMist;
+import dev.ixpu.leaguemechanics.entity.player.abilities.mage.PetrifyingGaze;
+import dev.ixpu.leaguemechanics.entity.player.abilities.mage.SanguinePool;
+import dev.ixpu.leaguemechanics.entity.player.abilities.marksman.LambsRespite;
 import dev.ixpu.leaguemechanics.entity.player.abilities.support.Wish;
+import dev.ixpu.leaguemechanics.entity.player.abilities.support.SurroundSound;
+import dev.ixpu.leaguemechanics.entity.player.abilities.support.Inspire;
+import dev.ixpu.leaguemechanics.entity.player.abilities.marksman.SprayAndPray;
 
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
@@ -119,9 +131,21 @@ public class LeagueMechanics extends JavaPlugin {
         ClassAbilitiesRegistry.getInstance().register(new Paranoia(this));
         ClassAbilitiesRegistry.getInstance().register(new Riftwalk(this));
         ClassAbilitiesRegistry.getInstance().register(new ShieldOfDurand(this));
+        ClassAbilitiesRegistry.getInstance().register(new CosmicRadiance(this));
+        ClassAbilitiesRegistry.getInstance().register(new SeismicBastion(this));
         ClassAbilitiesRegistry.getInstance().register(new FinalHour(this));
         ClassAbilitiesRegistry.getInstance().register(new UndyingRage(this));
         ClassAbilitiesRegistry.getInstance().register(new Wish(this));
+        ClassAbilitiesRegistry.getInstance().register(new Ragnarok(this));
+        ClassAbilitiesRegistry.getInstance().register(new HollowedMist(this));
+        ClassAbilitiesRegistry.getInstance().register(new PetrifyingGaze(this));
+        ClassAbilitiesRegistry.getInstance().register(new SanguinePool(this));
+        ClassAbilitiesRegistry.getInstance().register(new LambsRespite(this));
+        ClassAbilitiesRegistry.getInstance().register(new SprayAndPray(this));
+        ClassAbilitiesRegistry.getInstance().register(new SurroundSound(this));
+        ClassAbilitiesRegistry.getInstance().register(new Inspire(this));
+        ClassAbilitiesRegistry.getInstance().register(new Meditate(this));
+        ClassAbilitiesRegistry.getInstance().register(new BattleRoar(this));
         registerRunes();
         registerCommands();
         registerRegenTask();
@@ -153,6 +177,9 @@ public class LeagueMechanics extends JavaPlugin {
             for (Player player : Bukkit.getOnlinePlayers()) {
                 playerEventListener.removeAllAttributeModifiers(player);
             }
+        }
+        for (Player player : Bukkit.getOnlinePlayers()) {
+            SanguinePool.cleanup(player);
         }
 
         dev.ixpu.leaguemechanics.manager.PartyManager.getInstance().disable();

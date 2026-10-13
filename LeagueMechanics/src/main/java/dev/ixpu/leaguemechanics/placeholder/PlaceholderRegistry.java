@@ -15,6 +15,7 @@ import dev.ixpu.leaguemechanics.item.shop.ItemShopData;
 import dev.ixpu.leaguemechanics.item.shop.ItemShopRegistry;
 import dev.ixpu.leaguemechanics.util.ShopCurrency;
 import dev.ixpu.leaguemechanics.item.passives.epic.verdant_barrier;
+import dev.ixpu.leaguemechanics.manager.AbilityEffectManager;
 import dev.ixpu.leaguemechanics.manager.DebuffManager;
 import dev.ixpu.leaguemechanics.manager.PartyManager;
 import dev.ixpu.leaguemechanics.rune.paths.RunePath;
@@ -304,8 +305,9 @@ public class PlaceholderRegistry extends PlaceholderExpansion {
         lostBars = Math.min(lostBars, barLength - currentHealthBars - absorptionHearts);
         int emptyBars = Math.max(0, barLength - currentHealthBars - absorptionHearts - lostBars);
 
+        String healthColor = AbilityEffectManager.getInstance().isInvulnerable(target) ? "&e" : "&c";
         StringBuilder bar = new StringBuilder();
-        for (int i = 0; i < currentHealthBars; i++) bar.append("&c█");
+        for (int i = 0; i < currentHealthBars; i++) bar.append(healthColor).append("█");
         for (int i = 0; i < lostBars; i++) bar.append(isBlinking ? "&4█" : "&8█");
         for (int i = 0; i < absorptionHearts; i++) bar.append(shieldReady ? "&5█" : "&f█");
         for (int i = 0; i < emptyBars; i++) bar.append("&8█");
@@ -688,6 +690,12 @@ public class PlaceholderRegistry extends PlaceholderExpansion {
             String name = DebuffManager.getCrowdControlName(type);
             return icon.isEmpty() ? name : "§f" + icon + " " + name;
         }
+        if (AbilityEffectManager.getInstance().isInvulnerable(player)) return "";
+        AbilityEffectManager.ActiveStatus abilityStatus = AbilityEffectManager.getInstance().getActiveStatus(player);
+        if (abilityStatus != null) {
+            String icon = Icons.get(abilityStatus.iconKey());
+            return icon.isEmpty() ? abilityStatus.name() : "§f" + icon + " " + abilityStatus.name();
+        }
         if (ClassAbilitiesRegistry.getInstance().isChanneling(player)) {
             String icon = Icons.get("status.channeling");
             return icon.isEmpty() ? "CHANNELING" : "§f" + icon + " CHANNELING";
@@ -698,7 +706,11 @@ public class PlaceholderRegistry extends PlaceholderExpansion {
     private String getLatestStatusDuration(Player player) {
         DebuffManager debuffs = DebuffManager.getInstance();
         DebuffType type = debuffs.getLatestCrowdControl(player);
-        if (type == null) return "";
+        if (type == null) {
+            if (AbilityEffectManager.getInstance().isInvulnerable(player)) return "";
+            AbilityEffectManager.ActiveStatus abilityStatus = AbilityEffectManager.getInstance().getActiveStatus(player);
+            return abilityStatus != null ? String.format("%.1f", abilityStatus.remainingSeconds()) : "";
+        }
         return String.format("%.1f", debuffs.getRemainingSeconds(player, type));
     }
 

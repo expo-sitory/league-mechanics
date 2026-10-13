@@ -50,10 +50,12 @@ public class UndyingRage extends ClassAbilities {
     public List<String> getDescription() {
         double seconds = AbilityEffectManager.getInstance().getDurationSeconds(AbilityEffectType.UNDYING_RAGE);
         return List.of(
-                "§7Become unable to die for §f" + trim(seconds) + " seconds§7.",
-                "§7You cannot be healed while it lasts."
+                "§7Your lust for battle becomes so strong that you§7",
+                "§7are unable to die for §f" + trim(seconds) + " seconds§7, no matter§7",
+                "§7how wounded you become during this time."
         );
     }
+
 
     @Override
     public boolean cast(Player caster) {

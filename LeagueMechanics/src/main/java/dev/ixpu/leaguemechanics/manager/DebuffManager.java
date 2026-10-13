@@ -2,6 +2,9 @@ package dev.ixpu.leaguemechanics.manager;
 
 import dev.ixpu.leaguemechanics.LeagueMechanics;
 import dev.ixpu.leaguemechanics.debuff.DebuffType;
+import dev.ixpu.leaguemechanics.entity.player.ClassPassives;
+import dev.ixpu.leaguemechanics.item.passives.ItemPassivesRegistry;
+import dev.ixpu.leaguemechanics.item.passives.epic.verdant_barrier;
 import dev.ixpu.leaguemechanics.util.ActionBarEntry;
 import dev.ixpu.leaguemechanics.util.Icons;
 import org.bukkit.entity.Player;
@@ -47,13 +50,13 @@ public class DebuffManager {
         applyDebuff(target, type, durationTicks, 0.0, source);
     }
 
-    /**
-     * Applies a debuff and, when it is crowd control applied by another player, notifies that
-     * player's runes (see {@link dev.ixpu.leaguemechanics.rune.CooldownHandler#onCrowdControl}).
-     */
+
     public void applyDebuff(Player target, DebuffType type, int durationTicks, double strength, Player source) {
-        applyDebuff(target, type, durationTicks, strength);
-        if (target == null || source == null || source.equals(target) || !isCrowdControl(type)) return;
+        if (target == null) return;
+        if (isImmuneTo(target, type)) return;
+        if (!target.equals(source) && absorbCrowdControl(target, type)) return;
+        applyDebuffUnchecked(target, type, durationTicks, strength);
+        if (source == null || source.equals(target) || !isCrowdControl(type)) return;
 
         LeagueMechanics plugin = LeagueMechanics.getInstance();
         if (plugin == null || plugin.getRuneManager() == null) return;
@@ -66,8 +69,25 @@ public class DebuffManager {
         }
     }
 
+    private boolean isImmuneTo(Player target, DebuffType type) {
+        return target != null && isCrowdControl(type)
+                && AbilityEffectManager.getInstance().isCrowdControlImmune(target);
+    }
+
+    private boolean absorbCrowdControl(Player target, DebuffType type) {
+        if (target == null || !isCrowdControl(type)) return false;
+        verdant_barrier verdant = (verdant_barrier) ItemPassivesRegistry.getInstance().getPassive("verdant-barrier");
+        return (verdant != null && verdant.absorbDamage(target)) || ClassPassives.absorbMageCrowdControl(target);
+    }
+
     public void applyDebuff(Player target, DebuffType type, int durationTicks, double strength) {
         if (target == null) return;
+        if (isImmuneTo(target, type)) return;
+        if (absorbCrowdControl(target, type)) return;
+        applyDebuffUnchecked(target, type, durationTicks, strength);
+    }
+
+    private void applyDebuffUnchecked(Player target, DebuffType type, int durationTicks, double strength) {
         long durationMs = durationTicks * 50L;
         long expiry = System.currentTimeMillis() + durationMs;
         UUID uuid = target.getUniqueId();
@@ -230,6 +250,21 @@ public class DebuffManager {
         debuffDurationsMs.remove(uuid);
         debuffStrengths.remove(uuid);
         latestCrowdControl.remove(uuid);
+    }
+
+    public void clearCrowdControl(Player player) {
+        if (player == null) return;
+        UUID uuid = player.getUniqueId();
+        removeCrowdControl(playerDebuffs.get(uuid));
+        removeCrowdControl(debuffDurationsMs.get(uuid));
+        removeCrowdControl(debuffStrengths.get(uuid));
+        latestCrowdControl.remove(uuid);
+        player.removePotionEffect(PotionEffectType.SLOWNESS);
+        player.removePotionEffect(PotionEffectType.DARKNESS);
+    }
+
+    private static void removeCrowdControl(Map<DebuffType, ?> map) {
+        if (map != null) map.keySet().removeIf(CROWD_CONTROL::contains);
     }
 
     public void tickAll() {

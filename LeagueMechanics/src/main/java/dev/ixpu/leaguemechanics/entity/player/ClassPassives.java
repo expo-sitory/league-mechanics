@@ -3,6 +3,7 @@ package dev.ixpu.leaguemechanics.entity.player;
 import dev.ixpu.leaguemechanics.LeagueMechanics;
 import dev.ixpu.leaguemechanics.debuff.DebuffType;
 import dev.ixpu.leaguemechanics.manager.CombatStateManager;
+import dev.ixpu.leaguemechanics.manager.AbilityEffectManager;
 import dev.ixpu.leaguemechanics.manager.DebuffManager;
 import dev.ixpu.leaguemechanics.manager.KillSourceTracker;
 import dev.ixpu.leaguemechanics.manager.PartyManager;
@@ -146,7 +147,9 @@ public final class ClassPassives {
                     dx = Math.random() - 0.5;
                     dz = Math.random() - 0.5;
                 }
-                entity.knockback(TANK_SLAM_KNOCKBACK, dx, dz);
+                if (!(entity instanceof Player slammed && AbilityEffectManager.getInstance().isKnockbackImmune(slammed))) {
+                    entity.knockback(TANK_SLAM_KNOCKBACK, dx, dz);
+                }
             }
         }
 
@@ -177,6 +180,7 @@ public final class ClassPassives {
 
     public static void onProjectileHit(Player shooter, LivingEntity target, Vector velocity) {
         if (!is(shooter, PlayerClassType.MARKSMAN) || target.isDead()) return;
+        if (target instanceof Player targetPlayer && AbilityEffectManager.getInstance().isKnockbackImmune(targetPlayer)) return;
 
         double x = velocity.getX();
         double z = velocity.getZ();
@@ -191,18 +195,12 @@ public final class ClassPassives {
         double pushX = x / length;
         double pushZ = z / length;
 
-        if (target instanceof Player) {
-            target.knockback(MARKSMAN_KNOCKBACK_STRENGTH, -pushX, -pushZ);
-            return;
-        }
-
+        // Horizontal only: vanilla knockback() adds upward velocity, so set the velocity directly
+        // and leave Y exactly as it was.
         Vector current = target.getVelocity();
-        double pushY = target.isOnGround()
-                ? Math.min(0.4, current.getY() / 2.0 + MARKSMAN_KNOCKBACK_STRENGTH)
-                : current.getY();
         target.setVelocity(new Vector(
                 current.getX() / 2.0 + pushX * MARKSMAN_KNOCKBACK_STRENGTH,
-                pushY,
+                current.getY(),
                 current.getZ() / 2.0 + pushZ * MARKSMAN_KNOCKBACK_STRENGTH));
     }
 
@@ -268,6 +266,15 @@ public final class ClassPassives {
     }
 
     public static boolean absorbMageDamage(Player player) {
+        return absorbMage(player, true);
+    }
+
+    /** Same shield as {@link #absorbMageDamage}, but a failed absorb doesn't count as taking damage. */
+    public static boolean absorbMageCrowdControl(Player player) {
+        return absorbMage(player, false);
+    }
+
+    private static boolean absorbMage(Player player, boolean recordAsDamage) {
         if (!is(player, PlayerClassType.MAGE)) return false;
 
         UUID uuid = player.getUniqueId();
@@ -286,7 +293,7 @@ public final class ClassPassives {
             return true;
         }
 
-        mageLastDamage.put(uuid, now);
+        if (recordAsDamage) mageLastDamage.put(uuid, now);
         return false;
     }
 

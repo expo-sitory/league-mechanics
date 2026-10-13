@@ -38,6 +38,7 @@ public class PartyGlow {
                 if (viewer == null) return;
                 int entityId = event.getPacket().getIntegers().read(0);
                 if (!parties.isPartyMateEntity(viewer, entityId)) return;
+                if (parties.isGlowSuppressed(viewer)) return;
 
                 PacketContainer packet = event.getPacket().deepClone();
                 List<WrappedDataValue> values = packet.getDataValueCollectionModifier().read(0);

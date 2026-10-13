@@ -4,6 +4,8 @@ import dev.ixpu.leaguemechanics.LeagueMechanics;
 import dev.ixpu.leaguemechanics.entity.player.ClassPassives;
 import dev.ixpu.leaguemechanics.item.passives.ItemPassivesRegistry;
 import dev.ixpu.leaguemechanics.item.passives.epic.verdant_barrier;
+import dev.ixpu.leaguemechanics.manager.AbilityEffectManager;
+import io.papermc.paper.event.entity.EntityKnockbackEvent;
 import org.bukkit.Bukkit;
 import org.bukkit.Color;
 import org.bukkit.Particle;
@@ -88,6 +90,12 @@ public class ClassPassiveListener implements Listener {
         }
         verdant_barrier verdant = (verdant_barrier) ItemPassivesRegistry.getInstance().getPassive("verdant-barrier");
         if ((verdant != null && verdant.absorbDamage(player)) || ClassPassives.absorbMageDamage(player)) {
+            event.setCancelled(true);
+        }
+    }
+    @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
+    public void onRagnarokKnockback(EntityKnockbackEvent event) {
+        if (event.getEntity() instanceof Player player && AbilityEffectManager.getInstance().isKnockbackImmune(player)) {
             event.setCancelled(true);
         }
     }

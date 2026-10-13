@@ -213,7 +213,7 @@ public class PlayerStats {
         double asRatio = getPlayerClassAttackSpeedRatio(player);
         double buffAS = BuffManager.getInstance().getBonus(player, BuffManager.Stat.AS)
                 + AbilityEffectManager.getInstance().getAttackSpeedBonus(player);
-        double bonusASMultiplier = (itemAS + weaponAS + asRatio + shardsAS + buffAS) / 100.0;
+        double bonusASMultiplier = (itemAS + runeAS + weaponAS + asRatio + shardsAS + buffAS) / 100.0;
         return asRatio * bonusASMultiplier + baseAS;
     }
 
@@ -278,6 +278,7 @@ public class PlayerStats {
             totalMS += temporaryMSModification;
             totalMS += BuffManager.getInstance().getBonus(player, BuffManager.Stat.MS);
             totalMS += ClassPassives.getMovementSpeedBonus(player);
+            totalMS += AbilityEffectManager.getInstance().getMovementSpeedBonus(player);
 
             return totalMS;
         } catch (Exception e) {

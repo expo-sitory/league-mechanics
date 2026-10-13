@@ -240,7 +240,8 @@ public class ClassAbilitiesManager {
         }
 
         DebuffManager debuffs = DebuffManager.getInstance();
-        if (debuffs.hasDebuff(player, DebuffType.STUN) || debuffs.hasDebuff(player, DebuffType.GROUNDED)) {
+        if ((debuffs.hasDebuff(player, DebuffType.STUN) || debuffs.hasDebuff(player, DebuffType.GROUNDED))
+                && !skill.canCastWhileCrowdControlled()) {
             player.sendMessage(Component.text("§cYou can't cast " + skill.getDisplayName() + " right now."));
             return;
         }
@@ -329,6 +330,13 @@ public class ClassAbilitiesManager {
             return false;
         }
         return true;
+    }
+
+    public void refreshEffect(Player player, ClassAbilities skill) {
+        if (!isEffectActive(player, skill)) return;
+        long effectEnd = System.currentTimeMillis() + (long) (skill.getEffectSeconds() * 1000.0);
+        effectUntil.get(player.getUniqueId()).put(skill.getId(), effectEnd);
+        cooldownFor(skill).resetCooldown(player, effectEnd);
     }
 
     public double getRemainingLockSeconds(Player player, ClassAbilities skill) {

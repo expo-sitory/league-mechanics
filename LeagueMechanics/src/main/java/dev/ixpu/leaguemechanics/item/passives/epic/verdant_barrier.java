@@ -28,7 +28,7 @@ public class verdant_barrier implements ItemPassive {
 
     @Override
     public String getDescription() {
-        return "§7ᴜɴɪQᴜᴇ – ᴀɴɴᴜʟ: §fGrants a spell shield that blocks the next hostile attack.\n\n§790s Cooldown";
+        return "§7ᴜɴɪQᴜᴇ – ᴀɴɴᴜʟ: §fGrants a spell shield that blocks the next hostile attack\n\n§790s Cooldown";
     }
 
     @Override

@@ -13,6 +13,7 @@ import dev.ixpu.leaguemechanics.manager.*;
 
 import dev.ixpu.leaguemechanics.rune.CooldownHandler;
 import dev.ixpu.leaguemechanics.entity.player.ClassPassives;
+import dev.ixpu.leaguemechanics.entity.player.abilities.fighter.HollowedMist;
 import dev.ixpu.leaguemechanics.entity.player.skills.Parry;
 import dev.ixpu.leaguemechanics.rune.RuneCooldownGate;
 import dev.ixpu.leaguemechanics.debuff.DebuffType;
@@ -176,7 +177,7 @@ public class DamageListener implements Listener, RuneCooldownGate {
         if (tier >= 1) {
             double strength = Math.min(100.0, FALL_SLOW_BASE_STRENGTH * Math.pow(1.0 + FALL_SLOW_STRENGTH_GROWTH, tier - 1));
             int durationTicks = (int) Math.round(FALL_SLOW_BASE_DURATION_TICKS * Math.pow(1.0 + FALL_SLOW_DURATION_GROWTH, tier - 1));
-            DebuffManager.getInstance().applyDebuff(player, DebuffType.SLOW, durationTicks, strength);
+            DebuffManager.getInstance().applyDebuff(player, DebuffType.SLOW, durationTicks, strength, player);
         }
 
         ClassPassives.onFallLanding(player, fallBlocks);
@@ -243,6 +244,10 @@ public class DamageListener implements Listener, RuneCooldownGate {
         if (!(event.getEntity().getShooter() instanceof Player shooter)) {
             if (event.getEntity().getShooter() instanceof LivingEntity shooterEntity &&
                     event.getHitEntity() instanceof LivingEntity targetEntity) {
+                if (targetEntity instanceof Player mistedTarget && HollowedMist.blocks(mistedTarget, event.getEntity())) {
+                    event.setCancelled(true);
+                    return;
+                }
                 entityDamageEvent(shooterEntity, targetEntity, "Projectile", 1);
             }
             return;
@@ -260,6 +265,12 @@ public class DamageListener implements Listener, RuneCooldownGate {
             return;
         }
         if (event.getHitEntity() == null || !(event.getHitEntity() instanceof LivingEntity target)) {
+            return;
+        }
+
+        boolean sprayPierce = dev.ixpu.leaguemechanics.entity.player.abilities.marksman.SprayAndPray.isPiercing(event.getEntity());
+        if (sprayPierce && !dev.ixpu.leaguemechanics.entity.player.abilities.marksman.SprayAndPray.registerPierceHit(event.getEntity(), target)) {
+            event.setCancelled(true);
             return;
         }
 
@@ -301,6 +312,10 @@ public class DamageListener implements Listener, RuneCooldownGate {
                 event.setCancelled(true);
                 return;
             }
+            if (HollowedMist.blocks(targetPlayer, event.getEntity())) {
+                event.setCancelled(true);
+                return;
+            }
             if (event.getEntity().getShooter() instanceof Player blindAttacker
                     && DebuffManager.getInstance().hasDebuff(blindAttacker, DebuffType.BLIND)) {
                 event.setCancelled(true);
@@ -311,7 +326,7 @@ public class DamageListener implements Listener, RuneCooldownGate {
 
         shooter.playSound(shooter.getLocation(), Sound.ENTITY_ARROW_HIT_PLAYER, 1.0f, 1.0f);
 
-        if (!(event.getEntity() instanceof Trident)) {
+        if (!(event.getEntity() instanceof Trident) && !sprayPierce) {
             event.getEntity().remove();
         }
 
@@ -330,12 +345,29 @@ public class DamageListener implements Listener, RuneCooldownGate {
                 rune.onProjectileHit(shooter, target);
             }
         }
+
+        if (sprayPierce) {
+            dev.ixpu.leaguemechanics.entity.player.abilities.marksman.SprayAndPray.onHit(event.getEntity(), target);
+            event.setCancelled(true);
+        }
     }
 
     @EventHandler (priority = EventPriority.HIGHEST)
     public void onAttack(EntityDamageByEntityEvent event) {
 
         if (!(event.getEntity() instanceof LivingEntity target)) {
+            return;
+        }
+
+        if (event.getDamager() instanceof Player sanguineAttacker
+                && dev.ixpu.leaguemechanics.entity.player.abilities.mage.SanguinePool.isActive(sanguineAttacker)) {
+            event.setCancelled(true);
+            return;
+        }
+
+        if (event.getDamager() instanceof Player meditator
+                && dev.ixpu.leaguemechanics.manager.AbilityEffectManager.getInstance().isMeditating(meditator)) {
+            event.setCancelled(true);
             return;
         }
 
@@ -369,6 +401,11 @@ public class DamageListener implements Listener, RuneCooldownGate {
                 event.setCancelled(true);
                 return;
             }
+        }
+
+        if (target instanceof Player mistedTarget && HollowedMist.blocks(mistedTarget, event.getDamager())) {
+            event.setCancelled(true);
+            return;
         }
 
         if (!(event.getDamager() instanceof Player attacker)) {
@@ -561,9 +598,13 @@ public class DamageListener implements Listener, RuneCooldownGate {
 
         double totalDamage = damage.DamageCalculation(source, target, 0, 0, 0, 0);
 
-        for (ItemStack armor : target.getEquipment().getArmorContents()) {
-            if (armor != null && !armor.getType().isAir()) {
-                armor.damage((short) 1, target);
+        boolean armorProtected = target instanceof Player protectedPlayer
+                && dev.ixpu.leaguemechanics.manager.AbilityEffectManager.getInstance().isArmorDurabilityProtected(protectedPlayer);
+        if (!armorProtected) {
+            for (ItemStack armor : target.getEquipment().getArmorContents()) {
+                if (armor != null && !armor.getType().isAir()) {
+                    armor.damage((short) 1, target);
+                }
             }
         }
 

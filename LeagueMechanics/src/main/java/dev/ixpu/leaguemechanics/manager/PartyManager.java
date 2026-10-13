@@ -66,6 +66,7 @@ public class PartyManager implements Listener {
     private final Map<UUID, LinkedList<Invite>> invites = new ConcurrentHashMap<>();
 
     private PartyGlow glow;
+    private final Map<UUID, Long> glowSuppressedUntil = new ConcurrentHashMap<>();
 
     private PartyManager() {
     }
@@ -527,6 +528,34 @@ public class PartyManager implements Listener {
         return online;
     }
 
+    public boolean isGlowSuppressed(Player viewer) {
+        Long until = glowSuppressedUntil.get(viewer.getUniqueId());
+        return until != null && System.currentTimeMillis() < until;
+    }
+
+    public void suppressGlow(Player viewer, int ticks) {
+        UUID uuid = viewer.getUniqueId();
+        glowSuppressedUntil.merge(uuid, System.currentTimeMillis() + ticks * 50L, Math::max);
+        refreshViewerGlow(viewer);
+        Bukkit.getScheduler().runTaskLater(LeagueMechanics.getInstance(), () -> {
+            Long until = glowSuppressedUntil.get(uuid);
+            if (until == null || System.currentTimeMillis() < until) return;
+            glowSuppressedUntil.remove(uuid);
+            if (viewer.isOnline()) refreshViewerGlow(viewer);
+        }, ticks + 1L);
+    }
+
+    private void refreshViewerGlow(Player viewer) {
+        if (glow == null) return;
+        Party party = partyByPlayer.get(viewer.getUniqueId());
+        if (party == null) return;
+        for (Player member : onlineMembers(party)) {
+            if (member != viewer && member.getWorld().equals(viewer.getWorld())) {
+                glow.refresh(viewer, member);
+            }
+        }
+    }
+
     private void glowPair(Player a, Player b) {
         if (glow == null) return;
         glow.refresh(a, b);
@@ -552,6 +581,7 @@ public class PartyManager implements Listener {
     @EventHandler
     public void onQuit(PlayerQuitEvent event) {
         Player player = event.getPlayer();
+        glowSuppressedUntil.remove(player.getUniqueId());
         invites.remove(player.getUniqueId());
         for (Iterator<LinkedList<Invite>> it = invites.values().iterator(); it.hasNext(); ) {
             LinkedList<Invite> queue = it.next();

@@ -2821,6 +2821,366 @@
             "chars": [
                 "\ue42a"
             ]
+        },
+        {
+            "type": "bitmap",
+            "file": "minecraft:font/battle_roar.png",
+            "ascent": 10,
+            "height": 12,
+            "chars": [
+                "\ue42b"
+            ]
+        },
+        {
+            "type": "bitmap",
+            "file": "minecraft:font/cosmic_radiance.png",
+            "ascent": 10,
+            "height": 12,
+            "chars": [
+                "\ue42c"
+            ]
+        },
+        {
+            "type": "bitmap",
+            "file": "minecraft:font/hollowed_mist.png",
+            "ascent": 10,
+            "height": 12,
+            "chars": [
+                "\ue42d"
+            ]
+        },
+        {
+            "type": "bitmap",
+            "file": "minecraft:font/inspire.png",
+            "ascent": 10,
+            "height": 12,
+            "chars": [
+                "\ue42e"
+            ]
+        },
+        {
+            "type": "bitmap",
+            "file": "minecraft:font/lambs_sprite.png",
+            "ascent": 10,
+            "height": 12,
+            "chars": [
+                "\ue42f"
+            ]
+        },
+        {
+            "type": "bitmap",
+            "file": "minecraft:font/meditate.png",
+            "ascent": 10,
+            "height": 12,
+            "chars": [
+                "\ue430"
+            ]
+        },
+        {
+            "type": "bitmap",
+            "file": "minecraft:font/petrifying_gaze.png",
+            "ascent": 10,
+            "height": 12,
+            "chars": [
+                "\ue431"
+            ]
+        },
+        {
+            "type": "bitmap",
+            "file": "minecraft:font/ragnarok.png",
+            "ascent": 10,
+            "height": 12,
+            "chars": [
+                "\ue432"
+            ]
+        },
+        {
+            "type": "bitmap",
+            "file": "minecraft:font/saguine_pool.png",
+            "ascent": 10,
+            "height": 12,
+            "chars": [
+                "\ue433"
+            ]
+        },
+        {
+            "type": "bitmap",
+            "file": "minecraft:font/seismic_field.png",
+            "ascent": 10,
+            "height": 12,
+            "chars": [
+                "\ue434"
+            ]
+        },
+        {
+            "type": "bitmap",
+            "file": "minecraft:font/spray_and_pray.png",
+            "ascent": 10,
+            "height": 12,
+            "chars": [
+                "\ue435"
+            ]
+        },
+        {
+            "type": "bitmap",
+            "file": "minecraft:font/surround_sounds.png",
+            "ascent": 10,
+            "height": 12,
+            "chars": [
+                "\ue436"
+            ]
+        },
+        {
+            "type": "bitmap",
+            "file": "minecraft:font/world_ender.png",
+            "ascent": 10,
+            "height": 12,
+            "chars": [
+                "\ue437"
+            ]
+        },
+        {
+            "type": "bitmap",
+            "file": "minecraft:font/perfect_execution.png",
+            "ascent": 10,
+            "height": 12,
+            "chars": [
+                "\ue438"
+            ]
+        },
+        {
+            "type": "bitmap",
+            "file": "minecraft:font/curse_of_the_sad_mummy.png",
+            "ascent": 10,
+            "height": 12,
+            "chars": [
+                "\ue439"
+            ]
+        },
+        {
+            "type": "bitmap",
+            "file": "minecraft:font/rangers_focus_2.png",
+            "ascent": 10,
+            "height": 12,
+            "chars": [
+                "\ue43a"
+            ]
+        },
+        {
+            "type": "bitmap",
+            "file": "minecraft:font/grandmaster_at_arms.png",
+            "ascent": 10,
+            "height": 12,
+            "chars": [
+                "\ue43b"
+            ]
+        },
+        {
+            "type": "bitmap",
+            "file": "minecraft:font/divine_judgment.png",
+            "ascent": 10,
+            "height": 12,
+            "chars": [
+                "\ue43c"
+            ]
+        },
+        {
+            "type": "bitmap",
+            "file": "minecraft:font/solar_flare.png",
+            "ascent": 10,
+            "height": 12,
+            "chars": [
+                "\ue43d"
+            ]
+        },
+        {
+            "type": "bitmap",
+            "file": "minecraft:font/final_spark.png",
+            "ascent": 10,
+            "height": 12,
+            "chars": [
+                "\ue43e"
+            ]
+        },
+        {
+            "type": "bitmap",
+            "file": "minecraft:font/warm_hugs.png",
+            "ascent": 10,
+            "height": 12,
+            "chars": [
+                "\ue43f"
+            ]
+        },
+        {
+            "type": "bitmap",
+            "file": "minecraft:font/black_shield.png",
+            "ascent": 10,
+            "height": 12,
+            "chars": [
+                "\ue440"
+            ]
+        },
+        {
+            "type": "bitmap",
+            "file": "minecraft:font/fury_of_the_sands.png",
+            "ascent": 10,
+            "height": 12,
+            "chars": [
+                "\ue441"
+            ]
+        },
+        {
+            "type": "bitmap",
+            "file": "minecraft:font/pop_blossom.png",
+            "ascent": 10,
+            "height": 12,
+            "chars": [
+                "\ue442"
+            ]
+        },
+        {
+            "type": "bitmap",
+            "file": "minecraft:font/absolute_zero.png",
+            "ascent": 10,
+            "height": 12,
+            "chars": [
+                "\ue443"
+            ]
+        },
+        {
+            "type": "bitmap",
+            "file": "minecraft:font/phantom_undertow.png",
+            "ascent": 10,
+            "height": 12,
+            "chars": [
+                "\ue444"
+            ]
+        },
+        {
+            "type": "bitmap",
+            "file": "minecraft:font/dominus.png",
+            "ascent": 10,
+            "height": 12,
+            "chars": [
+                "\ue445"
+            ]
+        },
+        {
+            "type": "bitmap",
+            "file": "minecraft:font/stand_united.png",
+            "ascent": 10,
+            "height": 12,
+            "chars": [
+                "\ue446"
+            ]
+        },
+        {
+            "type": "bitmap",
+            "file": "minecraft:font/demonic_ascension.png",
+            "ascent": 10,
+            "height": 12,
+            "chars": [
+                "\ue447"
+            ]
+        },
+        {
+            "type": "bitmap",
+            "file": "minecraft:font/hijack.png",
+            "ascent": 10,
+            "height": 12,
+            "chars": [
+                "\ue448"
+            ]
+        },
+        {
+            "type": "bitmap",
+            "file": "minecraft:font/shadow_assault.png",
+            "ascent": 10,
+            "height": 12,
+            "chars": [
+                "\ue449"
+            ]
+        },
+        {
+            "type": "bitmap",
+            "file": "minecraft:font/wingborne_storm.png",
+            "ascent": 10,
+            "height": 12,
+            "chars": [
+                "\ue44a"
+            ]
+        },
+        {
+            "type": "bitmap",
+            "file": "minecraft:font/chain_of_corruption.png",
+            "ascent": 10,
+            "height": 12,
+            "chars": [
+                "\ue44b"
+            ]
+        },
+        {
+            "type": "bitmap",
+            "file": "minecraft:font/life_form_disintegration_ray.png",
+            "ascent": 10,
+            "height": 12,
+            "chars": [
+                "\ue44c"
+            ]
+        },
+        {
+            "type": "bitmap",
+            "file": "minecraft:font/tides_of_blood.png",
+            "ascent": 10,
+            "height": 12,
+            "chars": [
+                "\ue44d"
+            ]
+        },
+        {
+            "type": "bitmap",
+            "file": "minecraft:font/stormbringer.png",
+            "ascent": 10,
+            "height": 12,
+            "chars": [
+                "\ue44e"
+            ]
+        },
+        {
+            "type": "bitmap",
+            "file": "minecraft:font/fate_sealed.png",
+            "ascent": 10,
+            "height": 12,
+            "chars": [
+                "\ue44f"
+            ]
+        },
+        {
+            "type": "bitmap",
+            "file": "minecraft:font/transcend_ones_self.png",
+            "ascent": 10,
+            "height": 12,
+            "chars": [
+                "\ue450"
+            ]
+        },
+        {
+            "type": "bitmap",
+            "file": "minecraft:font/lightning_crash.png",
+            "ascent": 10,
+            "height": 12,
+            "chars": [
+                "\ue451"
+            ]
+        },
+        {
+            "type": "bitmap",
+            "file": "minecraft:font/lightning_bolt.png",
+            "ascent": 10,
+            "height": 12,
+            "chars": [
+                "\ue452"
+            ]
         }
     ]
 }

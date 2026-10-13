@@ -57,10 +57,12 @@ public class Paranoia extends ClassAbilities {
     @Override
     public List<String> getDescription() {
         return List.of(
-                "§7Reduce the sight of every non-partied",
-                "§7players within §f" + trim(getRange()) + " blocks§7 for §f" + trim(getDurationSeconds()) + " seconds§7."
+                "§7You reduce the sight radius of all enemy players and§7",
+                "§7remove their ally vision within §f" + trim(getRange()) + " blocks§7",
+                "§7for §f" + trim(getDurationSeconds()) + " seconds§7."
         );
     }
+
 
     @Override
     public boolean cast(Player caster) {
@@ -91,6 +93,7 @@ public class Paranoia extends ClassAbilities {
         DebuffManager debuffs = DebuffManager.getInstance();
         for (Player target : targets) {
             debuffs.applyDebuff(target, DebuffType.NEARSIGHTED, durationTicks);
+            parties.suppressGlow(target, durationTicks);
             Location eyes = target.getEyeLocation();
             target.getWorld().spawnParticle(Particle.SQUID_INK, eyes, 20, 0.3, 0.3, 0.3, 0.02);
             target.playSound(eyes, Sound.ENTITY_WARDEN_HEARTBEAT, 1.0f, 0.7f);

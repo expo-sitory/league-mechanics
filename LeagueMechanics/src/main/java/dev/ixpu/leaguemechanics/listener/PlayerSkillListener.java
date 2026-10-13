@@ -8,6 +8,7 @@ import dev.ixpu.leaguemechanics.entity.player.skills.Dash;
 import dev.ixpu.leaguemechanics.entity.player.skills.DoubleJump;
 import dev.ixpu.leaguemechanics.debuff.DebuffType;
 import dev.ixpu.leaguemechanics.manager.CombatStateManager;
+import dev.ixpu.leaguemechanics.manager.AbilityEffectManager;
 import dev.ixpu.leaguemechanics.manager.DebuffManager;
 import org.bukkit.GameMode;
 import org.bukkit.Input;
@@ -92,7 +93,8 @@ public class PlayerSkillListener implements Listener {
             return;
         }
         if (DebuffManager.getInstance().hasDebuff(player, DebuffType.GROUNDED)
-                || DebuffManager.getInstance().hasDebuff(player, DebuffType.STUN)) {
+                || DebuffManager.getInstance().hasDebuff(player, DebuffType.STUN)
+                || AbilityEffectManager.getInstance().isRooted(player)) {
             return;
         }
 
@@ -142,7 +144,8 @@ public class PlayerSkillListener implements Listener {
     @EventHandler(ignoreCancelled = true)
     public void onPlayerJump(PlayerJumpEvent event) {
         DebuffManager debuffs = DebuffManager.getInstance();
-        if (debuffs.hasDebuff(event.getPlayer(), DebuffType.GROUNDED) || debuffs.hasDebuff(event.getPlayer(), DebuffType.STUN)) {
+        if (debuffs.hasDebuff(event.getPlayer(), DebuffType.GROUNDED) || debuffs.hasDebuff(event.getPlayer(), DebuffType.STUN)
+                || AbilityEffectManager.getInstance().isRooted(event.getPlayer())) {
             event.setCancelled(true);
         }
     }
@@ -153,7 +156,8 @@ public class PlayerSkillListener implements Listener {
         Location to = event.getTo();
         if (to == null) return;
         if (from.getX() == to.getX() && from.getZ() == to.getZ() && to.getY() <= from.getY()) return;
-        if (!DebuffManager.getInstance().hasDebuff(event.getPlayer(), DebuffType.STUN)) return;
+        if (!DebuffManager.getInstance().hasDebuff(event.getPlayer(), DebuffType.STUN)
+                && !AbilityEffectManager.getInstance().isRooted(event.getPlayer())) return;
 
         Location locked = to.clone();
         locked.setX(from.getX());
