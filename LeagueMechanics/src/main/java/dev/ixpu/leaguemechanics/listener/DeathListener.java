@@ -18,6 +18,7 @@ import dev.ixpu.leaguemechanics.manager.*;
 import dev.ixpu.leaguemechanics.rune.CooldownHandler;
 import dev.ixpu.leaguemechanics.util.RuneRegistry;
 import dev.ixpu.leaguemechanics.rune.paths.sorcery.DeathfireTorch;
+import dev.ixpu.leaguemechanics.rune.slots.primary.domination.BountyHunterTracker;
 
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerRespawnEvent;
@@ -310,6 +311,9 @@ public class DeathListener implements Listener {
             } else {
                 dev.ixpu.leaguemechanics.entity.player.PlayerKDA.getInstance().recordAssist(attacker);
             }
+
+            // Add Bounty Hunter stack from takedown
+            dev.ixpu.leaguemechanics.rune.slots.primary.domination.BountyHunterTracker.addStackFromTakedown(attacker);
 
             onTakedown(attacker, victim, isKill);
         }
