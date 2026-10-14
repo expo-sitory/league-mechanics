@@ -3181,6 +3181,411 @@
             "chars": [
                 "\ue452"
             ]
+        },
+        {
+            "type": "bitmap",
+            "file": "minecraft:font/absolute_focus_rune.png",
+            "ascent": 10,
+            "height": 12,
+            "chars": [
+                "\ue453"
+            ]
+        },
+        {
+            "type": "bitmap",
+            "file": "minecraft:font/absorb_life_rune.png",
+            "ascent": 10,
+            "height": 12,
+            "chars": [
+                "\ue454"
+            ]
+        },
+        {
+            "type": "bitmap",
+            "file": "minecraft:font/approach_velocity_rune.png",
+            "ascent": 10,
+            "height": 12,
+            "chars": [
+                "\ue455"
+            ]
+        },
+        {
+            "type": "bitmap",
+            "file": "minecraft:font/axiom_arcanist_rune.png",
+            "ascent": 10,
+            "height": 12,
+            "chars": [
+                "\ue456"
+            ]
+        },
+        {
+            "type": "bitmap",
+            "file": "minecraft:font/biscuit_delivery_rune.png",
+            "ascent": 10,
+            "height": 12,
+            "chars": [
+                "\ue457"
+            ]
+        },
+        {
+            "type": "bitmap",
+            "file": "minecraft:font/bone_plating_rune.png",
+            "ascent": 10,
+            "height": 12,
+            "chars": [
+                "\ue458"
+            ]
+        },
+        {
+            "type": "bitmap",
+            "file": "minecraft:font/cash_back_rune.png",
+            "ascent": 10,
+            "height": 12,
+            "chars": [
+                "\ue459"
+            ]
+        },
+        {
+            "type": "bitmap",
+            "file": "minecraft:font/celerity_rune.png",
+            "ascent": 10,
+            "height": 12,
+            "chars": [
+                "\ue45a"
+            ]
+        },
+        {
+            "type": "bitmap",
+            "file": "minecraft:font/cheap_shot_rune.png",
+            "ascent": 10,
+            "height": 12,
+            "chars": [
+                "\ue45b"
+            ]
+        },
+        {
+            "type": "bitmap",
+            "file": "minecraft:font/conditioning_rune.png",
+            "ascent": 10,
+            "height": 12,
+            "chars": [
+                "\ue45c"
+            ]
+        },
+        {
+            "type": "bitmap",
+            "file": "minecraft:font/cosmic_insight_rune.png",
+            "ascent": 10,
+            "height": 12,
+            "chars": [
+                "\ue45d"
+            ]
+        },
+        {
+            "type": "bitmap",
+            "file": "minecraft:font/coup_de_grace_rune.png",
+            "ascent": 10,
+            "height": 12,
+            "chars": [
+                "\ue45e"
+            ]
+        },
+        {
+            "type": "bitmap",
+            "file": "minecraft:font/cut_down_rune.png",
+            "ascent": 10,
+            "height": 12,
+            "chars": [
+                "\ue45f"
+            ]
+        },
+        {
+            "type": "bitmap",
+            "file": "minecraft:font/deep_ward_rune.png",
+            "ascent": 10,
+            "height": 12,
+            "chars": [
+                "\ue460"
+            ]
+        },
+        {
+            "type": "bitmap",
+            "file": "minecraft:font/demolish_rune.png",
+            "ascent": 10,
+            "height": 12,
+            "chars": [
+                "\ue461"
+            ]
+        },
+        {
+            "type": "bitmap",
+            "file": "minecraft:font/font_of_life_rune.png",
+            "ascent": 10,
+            "height": 12,
+            "chars": [
+                "\ue462"
+            ]
+        },
+        {
+            "type": "bitmap",
+            "file": "minecraft:font/gathering_storm_rune.png",
+            "ascent": 10,
+            "height": 12,
+            "chars": [
+                "\ue463"
+            ]
+        },
+        {
+            "type": "bitmap",
+            "file": "minecraft:font/grisly_mementos_rune.png",
+            "ascent": 10,
+            "height": 12,
+            "chars": [
+                "\ue464"
+            ]
+        },
+        {
+            "type": "bitmap",
+            "file": "minecraft:font/hextech_flashtraption_rune.png",
+            "ascent": 10,
+            "height": 12,
+            "chars": [
+                "\ue465"
+            ]
+        },
+        {
+            "type": "bitmap",
+            "file": "minecraft:font/jack_of_all_trades_rune.png",
+            "ascent": 10,
+            "height": 12,
+            "chars": [
+                "\ue466"
+            ]
+        },
+        {
+            "type": "bitmap",
+            "file": "minecraft:font/last_stand_rune.png",
+            "ascent": 10,
+            "height": 12,
+            "chars": [
+                "\ue467"
+            ]
+        },
+        {
+            "type": "bitmap",
+            "file": "minecraft:font/legend_alacrity_rune.png",
+            "ascent": 10,
+            "height": 12,
+            "chars": [
+                "\ue468"
+            ]
+        },
+        {
+            "type": "bitmap",
+            "file": "minecraft:font/legend_bloodline_rune.png",
+            "ascent": 10,
+            "height": 12,
+            "chars": [
+                "\ue469"
+            ]
+        },
+        {
+            "type": "bitmap",
+            "file": "minecraft:font/legend_haste_rune.png",
+            "ascent": 10,
+            "height": 12,
+            "chars": [
+                "\ue46a"
+            ]
+        },
+        {
+            "type": "bitmap",
+            "file": "minecraft:font/magical_footwear_rune.png",
+            "ascent": 10,
+            "height": 12,
+            "chars": [
+                "\ue46b"
+            ]
+        },
+        {
+            "type": "bitmap",
+            "file": "minecraft:font/manaflow_band_rune.png",
+            "ascent": 10,
+            "height": 12,
+            "chars": [
+                "\ue46c"
+            ]
+        },
+        {
+            "type": "bitmap",
+            "file": "minecraft:font/nimbus_cloak_rune.png",
+            "ascent": 10,
+            "height": 12,
+            "chars": [
+                "\ue46d"
+            ]
+        },
+        {
+            "type": "bitmap",
+            "file": "minecraft:font/overgrowth_rune.png",
+            "ascent": 10,
+            "height": 12,
+            "chars": [
+                "\ue46e"
+            ]
+        },
+        {
+            "type": "bitmap",
+            "file": "minecraft:font/presence_of_mind_rune.png",
+            "ascent": 10,
+            "height": 12,
+            "chars": [
+                "\ue46f"
+            ]
+        },
+        {
+            "type": "bitmap",
+            "file": "minecraft:font/relentless_hunter_rune.png",
+            "ascent": 10,
+            "height": 12,
+            "chars": [
+                "\ue470"
+            ]
+        },
+        {
+            "type": "bitmap",
+            "file": "minecraft:font/revitalize_rune.png",
+            "ascent": 10,
+            "height": 12,
+            "chars": [
+                "\ue471"
+            ]
+        },
+        {
+            "type": "bitmap",
+            "file": "minecraft:font/scorch_rune.png",
+            "ascent": 10,
+            "height": 12,
+            "chars": [
+                "\ue472"
+            ]
+        },
+        {
+            "type": "bitmap",
+            "file": "minecraft:font/second_wind_rune.png",
+            "ascent": 10,
+            "height": 12,
+            "chars": [
+                "\ue473"
+            ]
+        },
+        {
+            "type": "bitmap",
+            "file": "minecraft:font/shield_bash_rune.png",
+            "ascent": 10,
+            "height": 12,
+            "chars": [
+                "\ue474"
+            ]
+        },
+        {
+            "type": "bitmap",
+            "file": "minecraft:font/sixth_sense_rune.png",
+            "ascent": 10,
+            "height": 12,
+            "chars": [
+                "\ue475"
+            ]
+        },
+        {
+            "type": "bitmap",
+            "file": "minecraft:font/sudden_impact_rune.png",
+            "ascent": 10,
+            "height": 12,
+            "chars": [
+                "\ue476"
+            ]
+        },
+        {
+            "type": "bitmap",
+            "file": "minecraft:font/taste_of_blood_rune.png",
+            "ascent": 10,
+            "height": 12,
+            "chars": [
+                "\ue477"
+            ]
+        },
+        {
+            "type": "bitmap",
+            "file": "minecraft:font/time_warp_tonic_rune.png",
+            "ascent": 10,
+            "height": 12,
+            "chars": [
+                "\ue478"
+            ]
+        },
+        {
+            "type": "bitmap",
+            "file": "minecraft:font/transcendence_rune.png",
+            "ascent": 10,
+            "height": 12,
+            "chars": [
+                "\ue479"
+            ]
+        },
+        {
+            "type": "bitmap",
+            "file": "minecraft:font/treasure_hunter_rune.png",
+            "ascent": 10,
+            "height": 12,
+            "chars": [
+                "\ue47a"
+            ]
+        },
+        {
+            "type": "bitmap",
+            "file": "minecraft:font/triple_tonic_rune.png",
+            "ascent": 10,
+            "height": 12,
+            "chars": [
+                "\ue47b"
+            ]
+        },
+        {
+            "type": "bitmap",
+            "file": "minecraft:font/triumph_rune.png",
+            "ascent": 10,
+            "height": 12,
+            "chars": [
+                "\ue47c"
+            ]
+        },
+        {
+            "type": "bitmap",
+            "file": "minecraft:font/ultimate_hunter_rune.png",
+            "ascent": 10,
+            "height": 12,
+            "chars": [
+                "\ue47d"
+            ]
+        },
+        {
+            "type": "bitmap",
+            "file": "minecraft:font/unflinching_rune.png",
+            "ascent": 10,
+            "height": 12,
+            "chars": [
+                "\ue47e"
+            ]
+        },
+        {
+            "type": "bitmap",
+            "file": "minecraft:font/waterwalking_rune.png",
+            "ascent": 10,
+            "height": 12,
+            "chars": [
+                "\ue47f"
+            ]
         }
     ]
 }
