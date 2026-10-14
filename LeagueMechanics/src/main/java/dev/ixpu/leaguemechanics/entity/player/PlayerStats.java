@@ -44,6 +44,8 @@ public class PlayerStats {
     private double temporaryMSModification = 0.0;
     private double temporaryASModification = 0.0;
     private double temporaryCritDamageModification = 0.0;
+    private double temporaryHealingModification = 0.0;
+    private double temporaryAbsorptionModification = 0.0;
 
     private double LEVEL_18_BONUS_TRUE_DAMAGE = 3.5;
     private double LEVEL_13_BONUS_TRUE_DAMAGE = 2.7;
