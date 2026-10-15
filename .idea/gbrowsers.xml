@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="GBrowserService"><![CDATA[{
+  "history": [
+    {
+      "name": "GBrowser - IntelliJ IDEs Plugin | Marketplace",
+      "url": "https://plugins.jetbrains.com/plugin/14458-gbrowser"
+    },
+    {
+      "name": "Empower Servers",
+      "url": "https://gp.empowerservers.com/server/ca80db5e/console/popup"
+    },
+    {
+      "name": "Empower Servers",
+      "url": "https://gp.empowerservers.com/auth/login"
+    },
+    {
+      "name": "Dashboard",
+      "url": "https://gp.empowerservers.com/"
+    },
+    {
+      "name": "Dark Mode (WebExtension) – Get this Extension for 🦊 Firefox (en-US)",
+      "url": "https://addons.mozilla.org/en-US/firefox/addon/dark-mode-webextension/"
+    },
+    {
+      "name": "Get Firefox for desktop by Mozilla (US)",
+      "url": "https://www.firefox.com/en-US/thanks/?s=direct&utm_campaign=amo-fx-cta-786990&utm_content=rta%3AezE3NGIyZDU4LWI5ODMtNDUwMS1hYjRiLTA3ZTcxMjAzY2I0M30&utm_medium=referral&utm_source=addons.mozilla.org&_gl=1%2Av51osr%2A_ga%2AMTIzNjg0NzkzOC4xNzg5ODcyNzI3%2A_ga_B9CY1C9VBC%2AczE3ODk4NzI3MjckbzEkZzAkdDE3ODk4NzI3MjckajYwJGwwJGgw"
+    },
+    {
+      "name": "plugins.jetbrains.com/auth#access_token=eyJraWQiOiIyIiwiYWxnIjoiUlMyNTYifQ.eyJjb250ZXh0X3ByaW5jaXBhbCI6ImV5SnJhV1FpT2lJeUlpd2lZV3huSWpvaVVsTXlOVFlpZlEuZXlKbmJHOWlZV3hmZFhObGNsOXBaQ0k2SWpjek16Umpaak5tTFRFd1lqUXRORGRoTkMwNVpUYzNMVEEzWlRNNE1qYzNOVGs1T1NJc0ltbHpjeUk2SW1oMGRIQnpPaTh2YUhWaUxtcGxkR0p5WVdsdWN5NWpiMjBpTENKemRXSWlPaUkzTXpNMFkyWXpaaTB4TUdJMExUUTNZVFF0T1dVM055MHdOMlV6T0RJM056VTVPVGtpTENKbGVIQWlPakUzT1RBeU1qRXhPVGdzSW1Oc2FXVnVkRjlwWkNJNkltMWhjbXRsZEhCc1lXTmxJbjAuTDlVSUEtN0k1Ym8tbVk0MTE0NlpVQTB4YXpKdnh3QlRBVFdjMVpVNjJ3MElkSlQyY3dNMW1IR1REWmlxcjdVZGM0ZzduV2RuTmRON2JIbEM1cU0xRXkzZXRBUGpycFBiRGZEY1E3cjBDOHdaR1FJVFl0dXJGa05wU3FFS1JmbGVSZmFfN3BBcEdET0N0bFo1M2FOOWM4ZUZWSF9MUXdIQnc0amF4VGR3VXlVIiwic3ViIjoiNzMzNGNmM2YtMTBiNC00N2E0LTllNzctMDdlMzgyNzc1OTk5IiwiYXVkIjpbIjAtMC0wLTAtMCIsIm1hcmtldHBsYWNlIl0sInNjb3BlIjoiMC0wLTAtMC0wIiwiaXNzIjoiaHR0cHM6Ly9odWIuamV0YnJhaW5zLmNvbSIsImV4cCI6MTc5MDIyMTE5OCwiaWF0IjoxNzkwMjE3NTk4LCJjbGllbnRfaWQiOiJtYXJrZXRwbGFjZSJ9.cC8L0-9gS0HUNXahhgnJzHKLIglJtN5BgqCLnIvxff0O2wfk6QXfQf9Fg_9WNGVuowa-A04DKdmJ3p36syXEI7E0hqMqnUNyHcbc_GfN3nfdNs4K4NVZPOeMTXbgvaKHJk2dScUdwzQZZ4rtcjO8E8JjGV_iY66Dxh5ae-vqM3Q&token_type=Bearer&expires_in=3600&scope=0-0-0-0-0+marketplace&state=b016e5fb-6567-4e16-b895-2d1fe3bf4c16",
+      "url": "https://plugins.jetbrains.com/auth#access_token=eyJraWQiOiIyIiwiYWxnIjoiUlMyNTYifQ.eyJjb250ZXh0X3ByaW5jaXBhbCI6ImV5SnJhV1FpT2lJeUlpd2lZV3huSWpvaVVsTXlOVFlpZlEuZXlKbmJHOWlZV3hmZFhObGNsOXBaQ0k2SWpjek16Umpaak5tTFRFd1lqUXRORGRoTkMwNVpUYzNMVEEzWlRNNE1qYzNOVGs1T1NJc0ltbHpjeUk2SW1oMGRIQnpPaTh2YUhWaUxtcGxkR0p5WVdsdWN5NWpiMjBpTENKemRXSWlPaUkzTXpNMFkyWXpaaTB4TUdJMExUUTNZVFF0T1dVM055MHdOMlV6T0RJM056VTVPVGtpTENKbGVIQWlPakUzT1RBeU1qRXhPVGdzSW1Oc2FXVnVkRjlwWkNJNkltMWhjbXRsZEhCc1lXTmxJbjAuTDlVSUEtN0k1Ym8tbVk0MTE0NlpVQTB4YXpKdnh3QlRBVFdjMVpVNjJ3MElkSlQyY3dNMW1IR1REWmlxcjdVZGM0ZzduV2RuTmRON2JIbEM1cU0xRXkzZXRBUGpycFBiRGZEY1E3cjBDOHdaR1FJVFl0dXJGa05wU3FFS1JmbGVSZmFfN3BBcEdET0N0bFo1M2FOOWM4ZUZWSF9MUXdIQnc0amF4VGR3VXlVIiwic3ViIjoiNzMzNGNmM2YtMTBiNC00N2E0LTllNzctMDdlMzgyNzc1OTk5IiwiYXVkIjpbIjAtMC0wLTAtMCIsIm1hcmtldHBsYWNlIl0sInNjb3BlIjoiMC0wLTAtMC0wIiwiaXNzIjoiaHR0cHM6Ly9odWIuamV0YnJhaW5zLmNvbSIsImV4cCI6MTc5MDIyMTE5OCwiaWF0IjoxNzkwMjE3NTk4LCJjbGllbnRfaWQiOiJtYXJrZXRwbGFjZSJ9.cC8L0-9gS0HUNXahhgnJzHKLIglJtN5BgqCLnIvxff0O2wfk6QXfQf9Fg_9WNGVuowa-A04DKdmJ3p36syXEI7E0hqMqnUNyHcbc_GfN3nfdNs4K4NVZPOeMTXbgvaKHJk2dScUdwzQZZ4rtcjO8E8JjGV_iY66Dxh5ae-vqM3Q&token_type=Bearer&expires_in=3600&scope=0-0-0-0-0+marketplace&state=b016e5fb-6567-4e16-b895-2d1fe3bf4c16"
+    },
+    {
+      "name": "Empower Servers",
+      "url": "https://gp.empowerservers.com/server/51eda0ea/console/popup"
+    },
+    {
+      "name": "PRODUCTION SERVER | HUB | Dashboard",
+      "url": "https://gp.empowerservers.com/server/51eda0ea"
+    },
+    {
+      "name": "PRODUCTION SERVER | HUB | Console",
+      "url": "https://gp.empowerservers.com/server/51eda0ea/console"
+    },
+    {
+      "name": "plugins.jetbrains.com/auth#access_token=eyJraWQiOiIyIiwiYWxnIjoiUlMyNTYifQ.eyJjb250ZXh0X3ByaW5jaXBhbCI6ImV5SnJhV1FpT2lJeUlpd2lZV3huSWpvaVVsTXlOVFlpZlEuZXlKbmJHOWlZV3hmZFhObGNsOXBaQ0k2SWpjek16Umpaak5tTFRFd1lqUXRORGRoTkMwNVpUYzNMVEEzWlRNNE1qYzNOVGs1T1NJc0ltbHpjeUk2SW1oMGRIQnpPaTh2YUhWaUxtcGxkR0p5WVdsdWN5NWpiMjBpTENKemRXSWlPaUkzTXpNMFkyWXpaaTB4TUdJMExUUTNZVFF0T1dVM055MHdOMlV6T0RJM056VTVPVGtpTENKbGVIQWlPakUzT1RBM056VTJNVEFzSW1Oc2FXVnVkRjlwWkNJNkltMWhjbXRsZEhCc1lXTmxJbjAuazBaNVpQemdnNlNUZlk0VHN0N29HYnZzWXg3bEJTX2gzZmdGdVp1eE92aWZ0aldmLUhlVV9kNVFmUFZjTHF1OV9Wb0YwM09KOXMtbC1qcXBUXzI0YmJEOThzak9FRjY5djliSGkxaTk3MHZyNmJwbGNFUzZVRGlVbG8wWjdSUHJLRk5kVHl3Z19WWWE5d0dmMWs2VEpyRkh3QnE4T3hsYjRhVW1xV3hBdTFjIiwic3ViIjoiNzMzNGNmM2YtMTBiNC00N2E0LTllNzctMDdlMzgyNzc1OTk5IiwiYXVkIjpbIjAtMC0wLTAtMCIsIm1hcmtldHBsYWNlIl0sInNjb3BlIjoiMC0wLTAtMC0wIiwiaXNzIjoiaHR0cHM6Ly9odWIuamV0YnJhaW5zLmNvbSIsImV4cCI6MTc5MDc3NTYxMCwiaWF0IjoxNzkwNzcyMDEwLCJjbGllbnRfaWQiOiJtYXJrZXRwbGFjZSJ9.hk1PjtLqs5w2_FHptrGLwv18q7hC2q_mTTXqTqQLvwJce_qXdoyMhuJSsf6TuOnh9LYR9SbyFelmJI4WTNf5dEgzDcgNRzeTfYUgQ7Zeq2CgqNnvWKJm7hzcqojCXE-gd3WH1nr1mpdFm4KYN7BF5oz2cLIoAFOU_WH2H6EgsPI&token_type=Bearer&expires_in=3600&scope=0-0-0-0-0+marketplace&state=2b53c2cb-8c91-44a6-96b5-ae6588828645",
+      "url": "https://plugins.jetbrains.com/auth#access_token=eyJraWQiOiIyIiwiYWxnIjoiUlMyNTYifQ.eyJjb250ZXh0X3ByaW5jaXBhbCI6ImV5SnJhV1FpT2lJeUlpd2lZV3huSWpvaVVsTXlOVFlpZlEuZXlKbmJHOWlZV3hmZFhObGNsOXBaQ0k2SWpjek16Umpaak5tTFRFd1lqUXRORGRoTkMwNVpUYzNMVEEzWlRNNE1qYzNOVGs1T1NJc0ltbHpjeUk2SW1oMGRIQnpPaTh2YUhWaUxtcGxkR0p5WVdsdWN5NWpiMjBpTENKemRXSWlPaUkzTXpNMFkyWXpaaTB4TUdJMExUUTNZVFF0T1dVM055MHdOMlV6T0RJM056VTVPVGtpTENKbGVIQWlPakUzT1RBM056VTJNVEFzSW1Oc2FXVnVkRjlwWkNJNkltMWhjbXRsZEhCc1lXTmxJbjAuazBaNVpQemdnNlNUZlk0VHN0N29HYnZzWXg3bEJTX2gzZmdGdVp1eE92aWZ0aldmLUhlVV9kNVFmUFZjTHF1OV9Wb0YwM09KOXMtbC1qcXBUXzI0YmJEOThzak9FRjY5djliSGkxaTk3MHZyNmJwbGNFUzZVRGlVbG8wWjdSUHJLRk5kVHl3Z19WWWE5d0dmMWs2VEpyRkh3QnE4T3hsYjRhVW1xV3hBdTFjIiwic3ViIjoiNzMzNGNmM2YtMTBiNC00N2E0LTllNzctMDdlMzgyNzc1OTk5IiwiYXVkIjpbIjAtMC0wLTAtMCIsIm1hcmtldHBsYWNlIl0sInNjb3BlIjoiMC0wLTAtMC0wIiwiaXNzIjoiaHR0cHM6Ly9odWIuamV0YnJhaW5zLmNvbSIsImV4cCI6MTc5MDc3NTYxMCwiaWF0IjoxNzkwNzcyMDEwLCJjbGllbnRfaWQiOiJtYXJrZXRwbGFjZSJ9.hk1PjtLqs5w2_FHptrGLwv18q7hC2q_mTTXqTqQLvwJce_qXdoyMhuJSsf6TuOnh9LYR9SbyFelmJI4WTNf5dEgzDcgNRzeTfYUgQ7Zeq2CgqNnvWKJm7hzcqojCXE-gd3WH1nr1mpdFm4KYN7BF5oz2cLIoAFOU_WH2H6EgsPI&token_type=Bearer&expires_in=3600&scope=0-0-0-0-0+marketplace&state=2b53c2cb-8c91-44a6-96b5-ae6588828645"
+    },
+    {
+      "name": "plugins.jetbrains.com/auth#access_token=eyJraWQiOiIyIiwiYWxnIjoiUlMyNTYifQ.eyJjb250ZXh0X3ByaW5jaXBhbCI6ImV5SnJhV1FpT2lJeUlpd2lZV3huSWpvaVVsTXlOVFlpZlEuZXlKbmJHOWlZV3hmZFhObGNsOXBaQ0k2SWpjek16Umpaak5tTFRFd1lqUXRORGRoTkMwNVpUYzNMVEEzWlRNNE1qYzNOVGs1T1NJc0ltbHpjeUk2SW1oMGRIQnpPaTh2YUhWaUxtcGxkR0p5WVdsdWN5NWpiMjBpTENKemRXSWlPaUkzTXpNMFkyWXpaaTB4TUdJMExUUTNZVFF0T1dVM055MHdOMlV6T0RJM056VTVPVGtpTENKbGVIQWlPakUzT1RFd09UYzJOallzSW1Oc2FXVnVkRjlwWkNJNkltMWhjbXRsZEhCc1lXTmxJbjAuZWtBLXQ3ZHcxZmttNnRKYUtWTEVaeTNGR0RBOVd1dnlLLTNYYUhjRFdDMnpQY01iTmJhRkJxS2RlZkI4TVRaWXctS0ZfX1ZUS01wckdJOUp3UVpERmVpcjl6MW9tTi1oT3p0SmNkVWdvZFVaV3dpUF9VN19sMzg0RHkyU0NLdWdiMTlqMjk5bXJlUV9sZEVySnJKMFpSdzc5OUJMenVtQTAwOXRpZXpqLUg0Iiwic3ViIjoiNzMzNGNmM2YtMTBiNC00N2E0LTllNzctMDdlMzgyNzc1OTk5IiwiYXVkIjpbIjAtMC0wLTAtMCIsIm1hcmtldHBsYWNlIl0sInNjb3BlIjoiMC0wLTAtMC0wIiwiaXNzIjoiaHR0cHM6Ly9odWIuamV0YnJhaW5zLmNvbSIsImV4cCI6MTc5MTA5NzY2NiwiaWF0IjoxNzkxMDk0MDY2LCJjbGllbnRfaWQiOiJtYXJrZXRwbGFjZSJ9.QCUqYMgj8IJe7hFvIkd9eGe17wlJeeEfrZEM9rQWJ7uOljxzzbgPDIWWGoTq0e8GbQTAXtQiLuevYFNp5qoMkCHByxcLFQt8haK6WrQ2ivOJ5Uv-rOz7P8-xv8DRr8AGyclfjc__WODDeD9mL-nhB3zZzMCUVpWTTxsLvqlMSv0&token_type=Bearer&expires_in=3600&scope=0-0-0-0-0+marketplace&state=1e46ab72-7355-45de-a0e2-b75d60c2050f",
+      "url": "https://plugins.jetbrains.com/auth#access_token=eyJraWQiOiIyIiwiYWxnIjoiUlMyNTYifQ.eyJjb250ZXh0X3ByaW5jaXBhbCI6ImV5SnJhV1FpT2lJeUlpd2lZV3huSWpvaVVsTXlOVFlpZlEuZXlKbmJHOWlZV3hmZFhObGNsOXBaQ0k2SWpjek16Umpaak5tTFRFd1lqUXRORGRoTkMwNVpUYzNMVEEzWlRNNE1qYzNOVGs1T1NJc0ltbHpjeUk2SW1oMGRIQnpPaTh2YUhWaUxtcGxkR0p5WVdsdWN5NWpiMjBpTENKemRXSWlPaUkzTXpNMFkyWXpaaTB4TUdJMExUUTNZVFF0T1dVM055MHdOMlV6T0RJM056VTVPVGtpTENKbGVIQWlPakUzT1RFd09UYzJOallzSW1Oc2FXVnVkRjlwWkNJNkltMWhjbXRsZEhCc1lXTmxJbjAuZWtBLXQ3ZHcxZmttNnRKYUtWTEVaeTNGR0RBOVd1dnlLLTNYYUhjRFdDMnpQY01iTmJhRkJxS2RlZkI4TVRaWXctS0ZfX1ZUS01wckdJOUp3UVpERmVpcjl6MW9tTi1oT3p0SmNkVWdvZFVaV3dpUF9VN19sMzg0RHkyU0NLdWdiMTlqMjk5bXJlUV9sZEVySnJKMFpSdzc5OUJMenVtQTAwOXRpZXpqLUg0Iiwic3ViIjoiNzMzNGNmM2YtMTBiNC00N2E0LTllNzctMDdlMzgyNzc1OTk5IiwiYXVkIjpbIjAtMC0wLTAtMCIsIm1hcmtldHBsYWNlIl0sInNjb3BlIjoiMC0wLTAtMC0wIiwiaXNzIjoiaHR0cHM6Ly9odWIuamV0YnJhaW5zLmNvbSIsImV4cCI6MTc5MTA5NzY2NiwiaWF0IjoxNzkxMDk0MDY2LCJjbGllbnRfaWQiOiJtYXJrZXRwbGFjZSJ9.QCUqYMgj8IJe7hFvIkd9eGe17wlJeeEfrZEM9rQWJ7uOljxzzbgPDIWWGoTq0e8GbQTAXtQiLuevYFNp5qoMkCHByxcLFQt8haK6WrQ2ivOJ5Uv-rOz7P8-xv8DRr8AGyclfjc__WODDeD9mL-nhB3zZzMCUVpWTTxsLvqlMSv0&token_type=Bearer&expires_in=3600&scope=0-0-0-0-0+marketplace&state=1e46ab72-7355-45de-a0e2-b75d60c2050f"
+    }
+  ],
+  "bookmarks": [
+    {
+      "url": "https://gp.empowerservers.com/server/5db4f43d/console/popup",
+      "name": "Empower Servers"
+    }
+  ]
+}]]></component>
+</project>

@@ -7,12 +7,24 @@ authors:
   - Ixpu
 softdepend:
   - PlaceholderAPI
+  - Vault
 
 commands:
   leaguemechanics:
     description: League of Legends mechanics — shop, class, runes, shards, stats, debuffs
-    usage: /<leaguemechanics|lm> <shop|class|runes|reload>
+    usage: /<leaguemechanics|lm> <shop|class|skills|runes|reload>
     aliases: [lm, league]
+  party:
+    description: Create and manage your party
+    usage: /party
+  force-channel:
+    description: Force a player into the channeling state
+    usage: /force-channel <player> <seconds>
+    permission: leaguemechanics.admin
+  force-stop-channel:
+    description: Stop a player's channeling state
+    usage: /force-stop-channel <player>
+    permission: leaguemechanics.admin
 
 permissions:
   leaguemechanics.admin:

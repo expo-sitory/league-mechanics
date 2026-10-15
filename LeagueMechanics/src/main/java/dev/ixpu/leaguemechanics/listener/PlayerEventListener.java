@@ -2,6 +2,7 @@ package dev.ixpu.leaguemechanics.listener;
 
 import dev.ixpu.leaguemechanics.LeagueMechanics;
 import dev.ixpu.leaguemechanics.item.passives.ItemPassivesRegistry;
+import dev.ixpu.leaguemechanics.item.passives.basic.dark_seal;
 import dev.ixpu.leaguemechanics.manager.CombatStateManager;
 import dev.ixpu.leaguemechanics.manager.ItemStatsManager;
 import dev.ixpu.leaguemechanics.manager.RuneManager;
@@ -12,8 +13,8 @@ import dev.ixpu.leaguemechanics.entity.player.PlayerStats;
 
 import dev.ixpu.leaguemechanics.rune.CooldownHandler;
 import dev.ixpu.leaguemechanics.rune.RuneCooldownGate;
-import dev.ixpu.leaguemechanics.rune.RuneRegistry;
-import dev.ixpu.leaguemechanics.rune.RuneShard;
+import dev.ixpu.leaguemechanics.util.RuneRegistry;
+import dev.ixpu.leaguemechanics.rune.shards.RuneShard;
 
 import org.bukkit.entity.*;
 import org.bukkit.event.EventHandler;
@@ -73,8 +74,8 @@ public class PlayerEventListener implements Listener, RuneCooldownGate {
         return damageListener.isAnyHotbarOnCooldown(player);
     }
 
-    public void removeFromHotbar(Player player, ItemStack item) {
-        playerInventoryListener.removeFromHotbar(player, item);
+    public void removeFromHotbar(Player player, int slot) {
+        playerInventoryListener.removeFromHotbar(player, slot);
     }
 
     @EventHandler(priority = EventPriority.NORMAL)
@@ -109,7 +110,7 @@ public class PlayerEventListener implements Listener, RuneCooldownGate {
         player.setHealth(targetHealth);
 
         CooldownHandler glacial = runeRegistry.getRune("glacial-augment");
-        if (glacial instanceof dev.ixpu.leaguemechanics.rune.keystones.inspiration.GlacialAugment glacialAugment) {
+        if (glacial instanceof dev.ixpu.leaguemechanics.rune.paths.inspiration.GlacialAugment glacialAugment) {
             glacialAugment.reapplyDebuffsForRejoin(player);
         }
     }
@@ -129,7 +130,7 @@ public class PlayerEventListener implements Listener, RuneCooldownGate {
         combatState.clearPlayer(uuid);
         dev.ixpu.leaguemechanics.entity.player.PlayerKDA.getInstance().saveForPlayer(uuid);
 
-        if (ItemPassivesRegistry.getInstance().getPassive("dark-seal") instanceof dev.ixpu.leaguemechanics.item.passives.dark_seal darkSeal) {
+        if (ItemPassivesRegistry.getInstance().getPassive("dark-seal") instanceof dark_seal darkSeal) {
             darkSeal.clearStacks(player);
         }
 
@@ -145,12 +146,16 @@ public class PlayerEventListener implements Listener, RuneCooldownGate {
 
     @EventHandler
     public void onHealthRegen(EntityRegainHealthEvent event) {
-        if (!(event.getEntity() instanceof Player)) {
+        if (!(event.getEntity() instanceof Player player)) {
             return;
         }
         if (event.getRegainReason() == EntityRegainHealthEvent.RegainReason.EATING ||
                 event.getRegainReason() == EntityRegainHealthEvent.RegainReason.SATIATED) {
             event.setCancelled(true);
+            return;
+        }
+        if (event.getRegainReason() != EntityRegainHealthEvent.RegainReason.CUSTOM) {
+            event.setAmount(event.getAmount() * PlayerStats.getOrCreate(player).getEffectiveHealingMultiplier(player));
         }
     }
 

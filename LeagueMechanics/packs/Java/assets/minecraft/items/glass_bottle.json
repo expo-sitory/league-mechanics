@@ -1,0 +1,90 @@
+{
+	"model": {
+	  "type": "select",
+	  "property": "custom_model_data",
+	  "fallback": {
+		"type": "model",
+		"model": "item/glass_bottle"
+	  },
+	  "cases": [
+		{
+		  "when": "db_drinks.ship_in_bottle",
+		  "model": {
+			"type": "minecraft:model",
+			"model": "minecraft:item/ship_in_bottle"
+		  }
+		},
+		{
+		  "when": "db_drinks.glass_bottle.cup",
+		  "model": {
+			"type": "minecraft:model",
+			"model": "minecraft:item/3d_glass/cup"
+		  }
+		},
+		{
+		  "when": "db_drinks.glass_bottle.glass_mug",
+		  "model": {
+			"type": "minecraft:model",
+			"model": "minecraft:item/3d_glass/glass_mug"
+		  }
+		},
+    {
+		  "when": "db_drinks.glass_bottle.skull_mug",
+		  "model": {
+			"type": "minecraft:model",
+			"model": "minecraft:item/3d_glass/skull_mug"
+		  }
+		},
+    {
+		  "when": "db_drinks.glass_bottle.goblet",
+		  "model": {
+			"type": "minecraft:model",
+			"model": "minecraft:item/3d_glass/goblet"
+		  }
+		},
+    {
+		  "when": "db_drinks.glass_bottle.claw",
+		  "model": {
+			"type": "minecraft:model",
+			"model": "minecraft:item/3d_glass/claw"
+		  }
+		},
+    {
+		  "when": "db_drinks.glass_bottle.horn",
+		  "model": {
+			"type": "minecraft:model",
+			"model": "minecraft:item/3d_glass/horn"
+		  }
+		},
+    {
+		  "when": "db_drinks.glass_bottle.glass",
+		  "model": {
+			"type": "minecraft:model",
+			"model": "minecraft:item/3d_glass/glass"
+		  }
+		},
+    {
+		  "when": "db_drinks.glass_bottle.iron_mug",
+		  "model": {
+			"type": "minecraft:model",
+			"model": "minecraft:item/3d_glass/iron_mug"
+		  }
+		},
+    {
+		  "when": "db_drinks.glass_bottle.mug",
+		  "model": {
+			"type": "minecraft:model",
+			"model": "minecraft:item/3d_glass/mug"
+		  }
+		},
+    {
+		  "when": "db_drinks.glass_bottle.shot",
+		  "model": {
+			"type": "minecraft:model",
+			"model": "minecraft:item/3d_glass/shot"
+		  }
+		}
+	  ]
+	},
+	"oversized_in_gui": true
+  }

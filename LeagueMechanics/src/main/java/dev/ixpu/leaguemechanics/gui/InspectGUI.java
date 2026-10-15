@@ -5,7 +5,7 @@ import dev.ixpu.leaguemechanics.entity.player.PlayerClass;
 import dev.ixpu.leaguemechanics.entity.player.PlayerClassType;
 import dev.ixpu.leaguemechanics.entity.player.PlayerRuneData;
 import dev.ixpu.leaguemechanics.rune.CooldownHandler;
-import dev.ixpu.leaguemechanics.rune.RunePath;
+import dev.ixpu.leaguemechanics.rune.paths.RunePath;
 import dev.ixpu.leaguemechanics.util.ItemModifier;
 
 import org.bukkit.Bukkit;

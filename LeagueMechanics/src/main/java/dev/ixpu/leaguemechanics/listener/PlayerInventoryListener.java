@@ -136,12 +136,33 @@ public class PlayerInventoryListener implements Listener {
         if (pendingStatUpdates.add(uuid)) {
             scheduleTask(uuid, () -> {
                 try {
+                    itemStatsManager.enforceItemLimit(player);
                     applyPlayerStats(player);
                 } finally {
                     pendingStatUpdates.remove(uuid);
                 }
             }, 1L);
         }
+    }
+
+    @EventHandler
+    public void onJoinEnforce(org.bukkit.event.player.PlayerJoinEvent event) {
+        Player player = event.getPlayer();
+        scheduleTask(player.getUniqueId(), () -> itemStatsManager.enforceItemLimit(player), 20L);
+    }
+
+    @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
+    public void onPickup(org.bukkit.event.entity.EntityPickupItemEvent event) {
+        if (!(event.getEntity() instanceof Player player)) {
+            return;
+        }
+        if (ItemModifier.getItemId(event.getItem().getItemStack()) == null) {
+            return;
+        }
+        scheduleTask(player.getUniqueId(), () -> {
+            itemStatsManager.enforceItemLimit(player);
+            applyPlayerStats(player);
+        }, 1L);
     }
 
     public boolean checkItemLimit(InventoryClickEvent event, Player player, ItemStack currentItem) {
@@ -367,15 +388,26 @@ public class PlayerInventoryListener implements Listener {
         return false;
     }
 
-    public void removeFromHotbar(Player player, ItemStack item) {
+    public void removeFromHotbar(Player player, int slot) {
+        ItemStack item = player.getInventory().getItem(slot);
         if (item == null || item.getType().isAir()) {
             return;
         }
 
         for (int i = 9; i <= 35; i++) {
-            ItemStack slot = player.getInventory().getItem(i);
-            if (slot == null || slot.getType().isAir()) {
+            ItemStack other = player.getInventory().getItem(i);
+            if (other == null || other.getType().isAir()) {
                 player.getInventory().setItem(i, item);
+                player.getInventory().setItem(slot, null);
+                return;
+            }
+        }
+
+        for (int i = 9; i <= 35; i++) {
+            ItemStack other = player.getInventory().getItem(i);
+            if (other != null && !isLeagueItem(other)) {
+                player.getInventory().setItem(i, item);
+                player.getInventory().setItem(slot, other);
                 return;
             }
         }

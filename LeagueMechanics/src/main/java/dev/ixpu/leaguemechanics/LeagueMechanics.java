@@ -1,13 +1,18 @@
 package dev.ixpu.leaguemechanics;
 
+import dev.ixpu.leaguemechanics.debuff.DebuffTicker;
 import dev.ixpu.leaguemechanics.placeholder.PlaceholderRegistry;
 import dev.ixpu.leaguemechanics.entity.player.PlayerStats;
+import dev.ixpu.leaguemechanics.item.ItemStatsData;
+import dev.ixpu.leaguemechanics.item.shop.ItemShopData;
+import dev.ixpu.leaguemechanics.util.ConfigFiles;
 import dev.ixpu.leaguemechanics.util.ItemModifier;
 import dev.ixpu.leaguemechanics.util.RunePersistence;
 
 import dev.ixpu.leaguemechanics.command.CommandHandler;
 import dev.ixpu.leaguemechanics.command.CommandTabCompletions;
 
+import dev.ixpu.leaguemechanics.manager.BuffManager;
 import dev.ixpu.leaguemechanics.manager.DebuffManager;
 import dev.ixpu.leaguemechanics.manager.MySQLManager;
 import dev.ixpu.leaguemechanics.manager.RuneManager;
@@ -22,6 +27,26 @@ import dev.ixpu.leaguemechanics.listener.PlayerStatsListener;
 import dev.ixpu.leaguemechanics.listener.PlayerInventoryListener;
 import dev.ixpu.leaguemechanics.listener.RuneListener;
 import dev.ixpu.leaguemechanics.entity.mob.MobStats;
+import dev.ixpu.leaguemechanics.listener.ClassAbilitiesListener;
+import dev.ixpu.leaguemechanics.entity.player.abilities.ClassAbilitiesRegistry;
+import dev.ixpu.leaguemechanics.entity.player.abilities.assassin.BattleRoar;
+import dev.ixpu.leaguemechanics.entity.player.abilities.tank.CosmicRadiance;
+import dev.ixpu.leaguemechanics.entity.player.abilities.tank.SeismicBastion;
+import dev.ixpu.leaguemechanics.entity.player.abilities.assassin.Meditate;
+import dev.ixpu.leaguemechanics.entity.player.abilities.assassin.Paranoia;
+import dev.ixpu.leaguemechanics.entity.player.abilities.mage.Riftwalk;
+import dev.ixpu.leaguemechanics.entity.player.abilities.tank.ShieldOfDurand;
+import dev.ixpu.leaguemechanics.entity.player.abilities.marksman.FinalHour;
+import dev.ixpu.leaguemechanics.entity.player.abilities.fighter.UndyingRage;
+import dev.ixpu.leaguemechanics.entity.player.abilities.fighter.Ragnarok;
+import dev.ixpu.leaguemechanics.entity.player.abilities.fighter.HollowedMist;
+import dev.ixpu.leaguemechanics.entity.player.abilities.mage.PetrifyingGaze;
+import dev.ixpu.leaguemechanics.entity.player.abilities.mage.SanguinePool;
+import dev.ixpu.leaguemechanics.entity.player.abilities.marksman.LambsRespite;
+import dev.ixpu.leaguemechanics.entity.player.abilities.support.Wish;
+import dev.ixpu.leaguemechanics.entity.player.abilities.support.SurroundSound;
+import dev.ixpu.leaguemechanics.entity.player.abilities.support.Inspire;
+import dev.ixpu.leaguemechanics.entity.player.abilities.marksman.SprayAndPray;
 
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
@@ -33,27 +58,27 @@ import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.configuration.file.FileConfiguration;
 
 import dev.ixpu.leaguemechanics.rune.CooldownHandler;
-import dev.ixpu.leaguemechanics.rune.RuneRegistry;
+import dev.ixpu.leaguemechanics.util.RuneRegistry;
 
-import dev.ixpu.leaguemechanics.rune.keystones.precision.Conqueror;
-import dev.ixpu.leaguemechanics.rune.keystones.precision.FleetFootwork;
-import dev.ixpu.leaguemechanics.rune.keystones.precision.LethalTempo;
-import dev.ixpu.leaguemechanics.rune.keystones.precision.PressTheAttack;
+import dev.ixpu.leaguemechanics.rune.paths.precision.Conqueror;
+import dev.ixpu.leaguemechanics.rune.paths.precision.FleetFootwork;
+import dev.ixpu.leaguemechanics.rune.paths.precision.LethalTempo;
+import dev.ixpu.leaguemechanics.rune.paths.precision.PressTheAttack;
 
-import dev.ixpu.leaguemechanics.rune.keystones.domination.DarkHarvest;
-import dev.ixpu.leaguemechanics.rune.keystones.domination.Electrocute;
-import dev.ixpu.leaguemechanics.rune.keystones.domination.HailOfBlades;
+import dev.ixpu.leaguemechanics.rune.paths.domination.DarkHarvest;
+import dev.ixpu.leaguemechanics.rune.paths.domination.Electrocute;
+import dev.ixpu.leaguemechanics.rune.paths.domination.HailOfBlades;
 
-import dev.ixpu.leaguemechanics.rune.keystones.resolve.GraspOfTheUndying;
-import dev.ixpu.leaguemechanics.rune.keystones.resolve.AfterShock;
-import dev.ixpu.leaguemechanics.rune.keystones.resolve.Guardian;
+import dev.ixpu.leaguemechanics.rune.paths.resolve.GraspOfTheUndying;
+import dev.ixpu.leaguemechanics.rune.paths.resolve.AfterShock;
+import dev.ixpu.leaguemechanics.rune.paths.resolve.Guardian;
 
-import dev.ixpu.leaguemechanics.rune.keystones.sorcery.ArcaneComet;
-import dev.ixpu.leaguemechanics.rune.keystones.sorcery.StormRaiderSurge;
-import dev.ixpu.leaguemechanics.rune.keystones.sorcery.DeathfireTorch;
+import dev.ixpu.leaguemechanics.rune.paths.sorcery.ArcaneComet;
+import dev.ixpu.leaguemechanics.rune.paths.sorcery.StormRaiderSurge;
+import dev.ixpu.leaguemechanics.rune.paths.sorcery.DeathfireTorch;
 
-import dev.ixpu.leaguemechanics.rune.keystones.inspiration.GlacialAugment;
-import dev.ixpu.leaguemechanics.rune.keystones.inspiration.FirstStrike;
+import dev.ixpu.leaguemechanics.rune.paths.inspiration.GlacialAugment;
+import dev.ixpu.leaguemechanics.rune.paths.inspiration.FirstStrike;
 
 import java.util.Objects;
 
@@ -95,12 +120,32 @@ public class LeagueMechanics extends JavaPlugin {
         getLogger().info("League Mechanics is starting...");
 
         saveDefaultConfig();
-        reloadConfig();
+        ConfigFiles.saveDefaults(this);
+        loadConfigs();
         debugMode = getConfig().getBoolean("general-settings.debug", false);
+        BuffManager.getInstance().reload(getConfig());
 
         MobStats.initialize(this);
 
         ItemModifier.initialize(this);
+        ClassAbilitiesRegistry.getInstance().register(new Paranoia(this));
+        ClassAbilitiesRegistry.getInstance().register(new Riftwalk(this));
+        ClassAbilitiesRegistry.getInstance().register(new ShieldOfDurand(this));
+        ClassAbilitiesRegistry.getInstance().register(new CosmicRadiance(this));
+        ClassAbilitiesRegistry.getInstance().register(new SeismicBastion(this));
+        ClassAbilitiesRegistry.getInstance().register(new FinalHour(this));
+        ClassAbilitiesRegistry.getInstance().register(new UndyingRage(this));
+        ClassAbilitiesRegistry.getInstance().register(new Wish(this));
+        ClassAbilitiesRegistry.getInstance().register(new Ragnarok(this));
+        ClassAbilitiesRegistry.getInstance().register(new HollowedMist(this));
+        ClassAbilitiesRegistry.getInstance().register(new PetrifyingGaze(this));
+        ClassAbilitiesRegistry.getInstance().register(new SanguinePool(this));
+        ClassAbilitiesRegistry.getInstance().register(new LambsRespite(this));
+        ClassAbilitiesRegistry.getInstance().register(new SprayAndPray(this));
+        ClassAbilitiesRegistry.getInstance().register(new SurroundSound(this));
+        ClassAbilitiesRegistry.getInstance().register(new Inspire(this));
+        ClassAbilitiesRegistry.getInstance().register(new Meditate(this));
+        ClassAbilitiesRegistry.getInstance().register(new BattleRoar(this));
         registerRunes();
         registerCommands();
         registerRegenTask();
@@ -113,7 +158,10 @@ public class LeagueMechanics extends JavaPlugin {
         Bukkit.getPluginManager().registerEvents(playerInventoryListener, this);
         Bukkit.getPluginManager().registerEvents(runeListener, this);
         Bukkit.getPluginManager().registerEvents(dashListener, this);
+        Bukkit.getPluginManager().registerEvents(new dev.ixpu.leaguemechanics.listener.ClassPassiveListener(this), this);
+        Bukkit.getPluginManager().registerEvents(new ClassAbilitiesListener(this), this);
         Bukkit.getPluginManager().registerEvents(ItemShopManager.getInstance(), this);
+        dev.ixpu.leaguemechanics.manager.PartyManager.getInstance().enable(this);
 
         startRuneTicker();
         registerPlaceholders();
@@ -130,12 +178,17 @@ public class LeagueMechanics extends JavaPlugin {
                 playerEventListener.removeAllAttributeModifiers(player);
             }
         }
+        for (Player player : Bukkit.getOnlinePlayers()) {
+            SanguinePool.cleanup(player);
+        }
+
+        dev.ixpu.leaguemechanics.manager.PartyManager.getInstance().disable();
 
         dev.ixpu.leaguemechanics.entity.player.PlayerKDA.getInstance().saveAll();
         dev.ixpu.leaguemechanics.entity.player.PlayerKDA.getInstance().close();
 
         CooldownHandler glacial = runeRegistry != null ? runeRegistry.getRune("glacial-augment") : null;
-        if (glacial instanceof dev.ixpu.leaguemechanics.rune.keystones.inspiration.GlacialAugment glacialAugment) {
+        if (glacial instanceof dev.ixpu.leaguemechanics.rune.paths.inspiration.GlacialAugment glacialAugment) {
             glacialAugment.clearAllSnowBlocks();
         }
 
@@ -202,6 +255,13 @@ public class LeagueMechanics extends JavaPlugin {
         return mySQLManager;
     }
 
+    private void loadConfigs() {
+        reloadConfig();
+        ConfigFiles.merge(this, getConfig());
+        ItemStatsData.getInstance().applyConfig(getConfig().getConfigurationSection("item-stats"));
+        ItemShopData.getInstance().applyPrices(getConfig().getConfigurationSection("item-prices"));
+    }
+
     public boolean isDebugMode() {
         return debugMode;
     }
@@ -209,8 +269,9 @@ public class LeagueMechanics extends JavaPlugin {
     public void reloadPlugin() {
         getLogger().info("Reloading LeagueMechanics configuration...");
 
-        reloadConfig();
+        loadConfigs();
         debugMode = getConfig().getBoolean("debug", false);
+        BuffManager.getInstance().reload(getConfig());
 
         if (runeRegistry != null) {
             runeRegistry.clearRegistry();
@@ -230,7 +291,36 @@ public class LeagueMechanics extends JavaPlugin {
         CommandTabCompletions tabCompleter = new CommandTabCompletions(runeRegistry);
         Objects.requireNonNull(getCommand("leaguemechanics")).setExecutor(commandHandler);
         Objects.requireNonNull(getCommand("leaguemechanics")).setTabCompleter(tabCompleter);
+
+        org.bukkit.command.PluginCommand partyCommand = getCommand("party");
+        if (partyCommand != null) {
+            partyCommand.setExecutor((sender, command, label, args) ->
+                    commandHandler.onCommand(sender, command, label, prependArg("party", args)));
+            partyCommand.setTabCompleter((sender, command, alias, args) ->
+                    tabCompleter.onTabComplete(sender, command, alias, prependArg("party", args)));
+        }
+        org.bukkit.command.PluginCommand forceChannelCommand = getCommand("force-channel");
+        if (forceChannelCommand != null) {
+            forceChannelCommand.setExecutor((sender, command, label, args) ->
+                    commandHandler.onCommand(sender, command, label, prependArg("forcechannel", args)));
+            forceChannelCommand.setTabCompleter((sender, command, alias, args) ->
+                    tabCompleter.onTabComplete(sender, command, alias, prependArg("forcechannel", args)));
+        }
+        org.bukkit.command.PluginCommand forceStopChannelCommand = getCommand("force-stop-channel");
+        if (forceStopChannelCommand != null) {
+            forceStopChannelCommand.setExecutor((sender, command, label, args) ->
+                    commandHandler.onCommand(sender, command, label, prependArg("forcestopchannel", args)));
+            forceStopChannelCommand.setTabCompleter((sender, command, alias, args) ->
+                    tabCompleter.onTabComplete(sender, command, alias, prependArg("forcestopchannel", args)));
+        }
         getLogger().info("Commands registered!");
+    }
+
+    private static String[] prependArg(String first, String[] args) {
+        String[] result = new String[args.length + 1];
+        result[0] = first;
+        System.arraycopy(args, 0, result, 1, args.length);
+        return result;
     }
 
     public void registerRegenTask() {
@@ -245,33 +335,18 @@ public class LeagueMechanics extends JavaPlugin {
                     }
 
                     double healthRegen = PlayerStats.getOrCreate(player).getPlayerHR(player);
-                    double saturationRegen = itemStatsManager.getItemSR(player);
+                    double saturationRegen = itemStatsManager.getItemSR(player) + BuffManager.getInstance().getBonus(player, BuffManager.Stat.SR);
 
                     dev.ixpu.leaguemechanics.entity.player.PlayerStats ps = dev.ixpu.leaguemechanics.entity.player.PlayerStats.getOrCreate(player);
                     double effectiveHR = ps.getEffectiveHealthRegen(player, healthRegen);
 
-                    if (effectiveHR > 0) {
+                    if (effectiveHR > 0 && !UndyingRage.isActive(player)) {
                         double newHealth = Math.min(player.getHealth() + effectiveHR, player.getMaxHealth());
                         player.setHealth(newHealth);
                     }
 
                     if (saturationRegen > 0) {
                         player.addPotionEffect(new PotionEffect(PotionEffectType.SATURATION, 1, (int) saturationRegen, false, false));
-                    }
-                    if (playerHasVerdantBarrier(player)) {
-                        dev.ixpu.leaguemechanics.item.passives.verdant_barrier passive =
-                                (dev.ixpu.leaguemechanics.item.passives.verdant_barrier)
-                                        dev.ixpu.leaguemechanics.item.passives.ItemPassivesRegistry.getInstance().getPassive("verdant-barrier");
-                        if (passive != null && !passive.isOnCooldown(player)) {
-                            passive.grantAbsorptionHeart(player);
-                        }
-                    } else {
-                        dev.ixpu.leaguemechanics.item.passives.verdant_barrier passive =
-                                (dev.ixpu.leaguemechanics.item.passives.verdant_barrier)
-                                        dev.ixpu.leaguemechanics.item.passives.ItemPassivesRegistry.getInstance().getPassive("verdant-barrier");
-                        if (passive != null) {
-                            passive.resetHearts(player);
-                        }
                     }
                 }
             }
@@ -287,13 +362,11 @@ public class LeagueMechanics extends JavaPlugin {
                     for (int i = 0; i < 9; i++) {
                         ItemStack item = inventoryContents[i];
                         if (item != null && !item.getType().isAir() && ItemModifier.getItemId(item) != null) {
-                            playerEventListener.removeFromHotbar(player, item);
-                            player.getInventory().setItem(i, null);
+                            playerEventListener.removeFromHotbar(player, i);
                         }
                     }
                     if (inventoryContents[40] != null && !inventoryContents[40].getType().isAir() && ItemModifier.getItemId(inventoryContents[40]) != null) {
-                        playerEventListener.removeFromHotbar(player, inventoryContents[40]);
-                        player.getInventory().setItem(40, null);
+                        playerEventListener.removeFromHotbar(player, 40);
                     }
                 }
             }
@@ -302,11 +375,12 @@ public class LeagueMechanics extends JavaPlugin {
 
     public void registerDebuffTicker() {
         DebuffManager.getInstance();
-        dev.ixpu.leaguemechanics.rune.DebuffTicker ticker = new dev.ixpu.leaguemechanics.rune.DebuffTicker();
+        DebuffTicker ticker = new DebuffTicker();
         new BukkitRunnable() {
             @Override
             public void run() {
                 DebuffManager.getInstance().tickAll();
+                BuffManager.getInstance().tickAll();
                 for (Player player : Bukkit.getOnlinePlayers()) {
                     ticker.tick(player, null);
                 }

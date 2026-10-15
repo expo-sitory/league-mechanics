@@ -154,13 +154,13 @@ public class ItemModifier {
             lore.add("§f" + Icons.get("stats.mpen") + " §f" + formatStat(statData.getMpenPercent()) + "% §7Magic Penetration");
         }
         if (statData.getCsd() > 0) {
-            lore.add("§f" + Icons.get("stats.critical-damage") + " §f" + formatStat(statData.getCsd()) + "% §7Critical Damage");
+            lore.add("§f" + Icons.get("stats.enhanced-critical-damage") + " §f" + formatStat(statData.getCsd()) + "% §7Critical Damage");
         }
         if (statData.getHm() > 0) {
-            lore.add("§f" + Icons.get("spells.heal") + " §f" + formatStat(statData.getHm()) + "% §7Healing Power");
+            lore.add("§f" + Icons.get("stats.heal-and-shield-power") + " §f" + formatStat(statData.getHm()) + "% §7Healing Power");
         }
         if (statData.getCh() > 0) {
-            lore.add("§f" + Icons.get("stats.ch") + " §f" + formatStat(statData.getCh()) + " §7Cooldown Haste");
+            lore.add("§f" + Icons.get("stats.ch") + " §f" + formatStat(statData.getCh()) + " §7Ability Haste");
         }
         if (statData.getTn() > 0) {
             lore.add("§f" + Icons.get("stats.tn") + " §f" + formatStat(statData.getTn()) + " §7Tenacity");

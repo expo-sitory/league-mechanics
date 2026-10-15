@@ -6,6 +6,8 @@ import org.bukkit.boss.BarStyle;
 import org.bukkit.boss.BossBar;
 import org.bukkit.entity.Player;
 import dev.ixpu.leaguemechanics.LeagueMechanics;
+import dev.ixpu.leaguemechanics.entity.player.ClassPassives;
+import dev.ixpu.leaguemechanics.rune.CooldownHandler;
 
 import java.util.HashMap;
 import java.util.Locale;
@@ -13,24 +15,26 @@ import java.util.Map;
 import java.util.UUID;
 
 public class DoubleJump {
-    private final Map<UUID, Long> playerCooldowns = new HashMap<>();
+    private final CooldownHandler cooldown = new CooldownHandler("double-jump") {
+        @Override
+        protected double effectiveCooldownSeconds(Player player) {
+            return cooldownMs(player) / 1000.0;
+        }
+    };
     private final Map<UUID, BossBar> doubleJumpBars = new HashMap<>();
 
-    private static final long COOLDOWN_MS = 7000L;
+    private static final long BASE_COOLDOWN_MS = 7000L;
+
+    private static long cooldownMs(Player player) {
+        return (long) (BASE_COOLDOWN_MS * ClassPassives.getMobilityCooldownMultiplier(player));
+    }
 
     public boolean isOnCooldown(Player player) {
-        UUID uuid = player.getUniqueId();
-        Long lastActivation = playerCooldowns.get(uuid);
-        if (lastActivation == null) {
-            return false;
-        }
-        long elapsed = System.currentTimeMillis() - lastActivation;
-        return elapsed < COOLDOWN_MS;
+        return cooldown.isOnCooldown(player);
     }
 
     public void startCooldown(Player player) {
-        UUID uuid = player.getUniqueId();
-        playerCooldowns.put(uuid, System.currentTimeMillis());
+        cooldown.resetCooldown(player);
         showCooldownBar(player);
     }
 
@@ -42,7 +46,7 @@ public class DoubleJump {
         UUID uuid = player.getUniqueId();
         BossBar bar = doubleJumpBars.get(uuid);
         if (bar == null) {
-            bar = Bukkit.createBossBar("§bDouble Jump §f" + formatSeconds(COOLDOWN_MS), BarColor.BLUE, BarStyle.SOLID);
+            bar = Bukkit.createBossBar("§bDouble Jump §f" + formatSeconds(cooldownMs(player)), BarColor.BLUE, BarStyle.SOLID);
             bar.addPlayer(player);
             doubleJumpBars.put(uuid, bar);
         }
@@ -54,6 +58,7 @@ public class DoubleJump {
     private void startCooldownAnimation(Player player) {
         UUID uuid = player.getUniqueId();
         long startTime = System.currentTimeMillis();
+        long cooldownMs = cooldownMs(player);
 
         Bukkit.getScheduler().runTaskTimer(LeagueMechanics.getInstance(), task -> {
             if (!player.isOnline()) {
@@ -70,11 +75,11 @@ public class DoubleJump {
             }
 
             long elapsed = System.currentTimeMillis() - startTime;
-            double progress = Math.min(1.0, (double) elapsed / COOLDOWN_MS);
+            double progress = Math.min(1.0, (double) elapsed / cooldownMs);
             bar.setProgress(progress);
-            bar.setTitle("§bDouble Jump §f" + formatSeconds(COOLDOWN_MS - elapsed));
+            bar.setTitle("§bDouble Jump §f" + formatSeconds(cooldownMs - elapsed));
 
-            if (elapsed >= COOLDOWN_MS) {
+            if (elapsed >= cooldownMs) {
                 task.cancel();
                 bar.removeAll();
                 doubleJumpBars.remove(uuid);
@@ -88,6 +93,6 @@ public class DoubleJump {
         if (bar != null) {
             bar.removeAll();
         }
-        playerCooldowns.remove(uuid);
+        cooldown.clearPlayerCooldown(player);
     }
 }

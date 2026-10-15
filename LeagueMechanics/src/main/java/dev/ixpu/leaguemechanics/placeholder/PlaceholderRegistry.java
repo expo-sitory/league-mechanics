@@ -1,22 +1,43 @@
 package dev.ixpu.leaguemechanics.placeholder;
 
 import dev.ixpu.leaguemechanics.LeagueMechanics;
+import dev.ixpu.leaguemechanics.entity.player.ClassPassives;
 import dev.ixpu.leaguemechanics.entity.player.PlayerClass;
 import dev.ixpu.leaguemechanics.entity.player.PlayerClassType;
+import dev.ixpu.leaguemechanics.debuff.DebuffType;
 import dev.ixpu.leaguemechanics.entity.player.PlayerStats;
-import dev.ixpu.leaguemechanics.rune.RunePath;
-import dev.ixpu.leaguemechanics.rune.RuneShard;
+import dev.ixpu.leaguemechanics.entity.player.abilities.ClassAbilitiesRegistry;
+import dev.ixpu.leaguemechanics.item.ItemStatsData;
+import dev.ixpu.leaguemechanics.item.ItemStatsRegistry;
+import dev.ixpu.leaguemechanics.item.passives.ItemPassive;
+import dev.ixpu.leaguemechanics.item.passives.ItemPassivesRegistry;
+import dev.ixpu.leaguemechanics.item.shop.ItemShopData;
+import dev.ixpu.leaguemechanics.item.shop.ItemShopRegistry;
+import dev.ixpu.leaguemechanics.util.ShopCurrency;
+import dev.ixpu.leaguemechanics.item.passives.epic.verdant_barrier;
+import dev.ixpu.leaguemechanics.manager.AbilityEffectManager;
+import dev.ixpu.leaguemechanics.manager.DebuffManager;
+import dev.ixpu.leaguemechanics.manager.PartyManager;
+import dev.ixpu.leaguemechanics.rune.paths.RunePath;
+import dev.ixpu.leaguemechanics.rune.shards.RuneShard;
 import dev.ixpu.leaguemechanics.rune.shards.ShardStats;
 import dev.ixpu.leaguemechanics.util.Icons;
 import dev.ixpu.leaguemechanics.util.ItemModifier;
+import me.clip.placeholderapi.PlaceholderAPI;
 import me.clip.placeholderapi.expansion.PlaceholderExpansion;
 import org.bukkit.attribute.Attribute;
 import org.bukkit.entity.Player;
+import org.bukkit.event.EventHandler;
+import org.bukkit.event.Listener;
+import org.bukkit.event.player.PlayerQuitEvent;
 
 import java.util.Arrays;
-import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.UUID;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 public class PlaceholderRegistry extends PlaceholderExpansion {
@@ -48,8 +69,27 @@ public class PlaceholderRegistry extends PlaceholderExpansion {
     }
 
 
-    private final Map<UUID, Integer> lastHealthBars = new HashMap<>();
-    private final Map<UUID, Long> healthBlinkStartTime = new HashMap<>();
+    private record BarKey(UUID viewer, UUID target) {}
+
+    private final Map<BarKey, Integer> lastHealthBars = new ConcurrentHashMap<>();
+    private final Map<BarKey, Long> healthBlinkStartTime = new ConcurrentHashMap<>();
+
+    @Override
+    public boolean register() {
+        boolean ok = super.register();
+        plugin.getServer().getPluginManager().registerEvents(new Listener() {
+            @EventHandler
+            public void onQuit(PlayerQuitEvent event) {
+                clearBarState(event.getPlayer().getUniqueId());
+            }
+        }, plugin);
+        return ok;
+    }
+
+    private void clearBarState(UUID uuid) {
+        lastHealthBars.keySet().removeIf(k -> k.viewer().equals(uuid) || k.target().equals(uuid));
+        healthBlinkStartTime.keySet().removeIf(k -> k.viewer().equals(uuid) || k.target().equals(uuid));
+    }
 
     @Override
     public String onPlaceholderRequest(Player player, String params) {
@@ -59,6 +99,10 @@ public class PlaceholderRegistry extends PlaceholderExpansion {
 
         if (params == null || params.isEmpty()) {
             return "";
+        }
+
+        if (params.regionMatches(true, 0, "item-info_", 0, 10)) {
+            return getItemInfo(player, params.substring(10).toLowerCase());
         }
 
         PlayerStats stats = PlayerStats.getOrCreate(player);
@@ -126,9 +170,42 @@ public class PlaceholderRegistry extends PlaceholderExpansion {
             case "class" -> getClass(player);
             case "class_mm" -> getClassMM(player);
 
+            case "latest_status", "latest_cc" -> getLatestStatus(player);
+            case "latest_status_duration", "latest_cc_duration" -> getLatestStatusDuration(player);
+
             case "level" -> String.valueOf(stats.getLeagueLevel());
             case "item_count" -> String.valueOf(plugin.getStatsManager().countLeagueItems(player));
             case "kda" -> dev.ixpu.leaguemechanics.entity.player.PlayerKDA.getInstance().getFormattedKDA(player.getUniqueId());
+
+            case "party_leader" -> PartyManager.getInstance().getLeaderName(player);
+            case "party_member_1" -> PartyManager.getInstance().getMemberName(player, 1);
+            case "party_member_2" -> PartyManager.getInstance().getMemberName(player, 2);
+            case "party_member_3" -> PartyManager.getInstance().getMemberName(player, 3);
+            case "party_member_4" -> PartyManager.getInstance().getMemberName(player, 4);
+
+            case "party_leader_name" -> PartyManager.getInstance().getPartyMemberName(player, 0);
+            case "party_leader_level" -> getPartyMemberLevel(player, 0);
+            case "party_leader_class_icon" -> getPartyMemberClassIcon(player, 0, false);
+
+            case "party_member_1_name" -> PartyManager.getInstance().getPartyMemberName(player, 1);
+            case "party_member_2_name" -> PartyManager.getInstance().getPartyMemberName(player, 2);
+            case "party_member_3_name" -> PartyManager.getInstance().getPartyMemberName(player, 3);
+            case "party_member_4_name" -> PartyManager.getInstance().getPartyMemberName(player, 4);
+            case "party_member_5_name" -> PartyManager.getInstance().getPartyMemberName(player, 5);
+
+            case "party_member_1_class_icon" -> getPartyMemberClassIcon(player, 1, false);
+            case "party_member_2_class_icon" -> getPartyMemberClassIcon(player, 2, false);
+            case "party_member_3_class_icon" -> getPartyMemberClassIcon(player, 3, false);
+            case "party_member_4_class_icon" -> getPartyMemberClassIcon(player, 4, false);
+            case "party_member_5_class_icon" -> getPartyMemberClassIcon(player, 5, false);
+
+            case "party_member_1_level" -> getPartyMemberLevel(player, 1);
+            case "party_member_2_level" -> getPartyMemberLevel(player, 2);
+            case "party_member_3_level" -> getPartyMemberLevel(player, 3);
+            case "party_member_4_level" -> getPartyMemberLevel(player, 4);
+            case "party_member_5_level" -> getPartyMemberLevel(player, 5);
+
+            case "party_inviter" -> PartyManager.getInstance().getInviterName(player);
 
             case "line1" -> getLine1(player, stats);
             case "line2" -> getLine2(player, stats);
@@ -143,53 +220,98 @@ public class PlaceholderRegistry extends PlaceholderExpansion {
             case "league_item_6" -> getLeagueItemIcon(player, 6);
             case "league_items" -> String.join("", collectLeagueItemIcons(player));
 
-            case "health_absorption_bar" -> {
-                UUID uuid = player.getUniqueId();
-                int maxHealth = (int) player.getAttribute(Attribute.MAX_HEALTH).getValue();
-                int currentHealth = (int) player.getHealth();
-                double absorption = player.getAbsorptionAmount();
-
-                int barLength = 10;
-                int absorptionHearts = Math.min(barLength - 1, (int) Math.ceil((absorption / (double) maxHealth) * barLength));
-                int maxHealthBars = barLength - absorptionHearts;
-                int currentHealthBars = Math.max(1, Math.min(maxHealthBars, (int) ((currentHealth / (double) maxHealth) * barLength)));
-
-                Integer prevHealthBars = lastHealthBars.getOrDefault(uuid, currentHealthBars);
-                if (currentHealthBars < prevHealthBars) {
-                    healthBlinkStartTime.put(uuid, System.currentTimeMillis());
-                }
-                lastHealthBars.put(uuid, currentHealthBars);
-
-                boolean isBlinking = false;
-                long now = System.currentTimeMillis();
-                Long blinkStart = healthBlinkStartTime.get(uuid);
-
-                if (blinkStart != null) {
-                    if (now - blinkStart < 700) {
-                        isBlinking = true;
-                    } else {
-                        healthBlinkStartTime.remove(uuid);
-                    }
-                }
-
-                int lostBars = Math.max(0, prevHealthBars - currentHealthBars);
-                lostBars = Math.min(lostBars, barLength - currentHealthBars - absorptionHearts);
-                int emptyBars = Math.max(0, barLength - currentHealthBars - absorptionHearts - lostBars);
-
-                StringBuilder bar = new StringBuilder();
-                for (int i = 0; i < currentHealthBars; i++) bar.append("&c█");
-                if (isBlinking) {
-                    for (int i = 0; i < lostBars; i++) bar.append("&4█");
-                } else {
-                    for (int i = 0; i < lostBars; i++) bar.append("&8█");
-                }
-                for (int i = 0; i < absorptionHearts; i++) bar.append("&f█");
-                for (int i = 0; i < emptyBars; i++) bar.append("&8█");
-
-                yield bar.toString();
+            case "health_absorption_bar" -> getHealthAbsorptionBar(player, player);
+            default -> {
+                Matcher m = PARTY_MEMBER_STAT.matcher(params);
+                yield m.matches()
+                        ? getPartyMemberStat(player, Integer.parseInt(m.group(1)), m.group(2))
+                        : getRegionIcon(params);
             }
-            default -> getRegionIcon(params);
         };
+    }
+
+    private static final Pattern PARTY_MEMBER_STAT =
+            Pattern.compile("party_member_([1-4])_(level|class|current-hp|max-hp|health_absorption_bar)", Pattern.CASE_INSENSITIVE);
+
+    private String getPartyMemberStat(Player viewer, int index, String stat) {
+        Player member = PartyManager.getInstance().getMemberPlayer(viewer, index);
+        if (member == null) return "";
+
+        return switch (stat.toLowerCase()) {
+            case "level" -> String.valueOf(PlayerStats.getOrCreate(member).getLeagueLevel());
+            case "class" -> {
+                PlayerClassType type = PlayerClass.getPlayerClass(member);
+                yield type == null ? "" : Icons.get("classes." + type.getId());
+            }
+            case "current-hp" -> String.valueOf((int) Math.ceil(member.getHealth()));
+            case "health_absorption_bar" -> getHealthAbsorptionBar(viewer, member);
+            case "max-hp" -> {
+                var attr = member.getAttribute(Attribute.MAX_HEALTH);
+                yield attr == null ? "" : String.valueOf((int) Math.round(attr.getValue()));
+            }
+            default -> "";
+        };
+    }
+
+    private String getPartyMemberClassIcon(Player player, int index, boolean minimessage) {
+        PlayerClassType ct = PartyManager.getInstance().getPartyMemberClass(player, index);
+        if (ct == null) return "";
+        String key = "classes." + ct.getId();
+        return minimessage ? icon(key) : "<white>" + Icons.get(key);
+    }
+
+    private String getPartyMemberLevel(Player player, int index) {
+        int level = PartyManager.getInstance().getPartyMemberLevel(player, index);
+        return level > 0 ? String.valueOf(level) : "";
+    }
+
+    private String getHealthAbsorptionBar(Player viewer, Player target) {
+        var attr = target.getAttribute(Attribute.MAX_HEALTH);
+        if (attr == null) return "";
+
+        BarKey key = new BarKey(viewer.getUniqueId(), target.getUniqueId());
+        int maxHealth = (int) attr.getValue();
+        int currentHealth = (int) target.getHealth();
+        double absorption = target.getAbsorptionAmount();
+
+        int barLength = 10;
+        verdant_barrier verdant = (verdant_barrier) ItemPassivesRegistry.getInstance().getPassive("verdant-barrier");
+        boolean shieldReady = (verdant != null && verdant.isReady(target)) || ClassPassives.isMageAbsorbReady(target);
+
+        int absorptionHearts = Math.min(barLength - 1, (int) Math.ceil((absorption / (double) maxHealth) * barLength));
+        if (shieldReady) absorptionHearts = Math.max(1, absorptionHearts);
+        int maxHealthBars = barLength - absorptionHearts;
+        int currentHealthBars = Math.max(1, Math.min(maxHealthBars, (int) ((currentHealth / (double) maxHealth) * barLength)));
+
+        Integer prevHealthBars = lastHealthBars.getOrDefault(key, currentHealthBars);
+        if (currentHealthBars < prevHealthBars) {
+            healthBlinkStartTime.put(key, System.currentTimeMillis());
+        }
+        lastHealthBars.put(key, currentHealthBars);
+
+        boolean isBlinking = false;
+        long now = System.currentTimeMillis();
+        Long blinkStart = healthBlinkStartTime.get(key);
+
+        if (blinkStart != null) {
+            if (now - blinkStart < 700) {
+                isBlinking = true;
+            } else {
+                healthBlinkStartTime.remove(key);
+            }
+        }
+
+        int lostBars = Math.max(0, prevHealthBars - currentHealthBars);
+        lostBars = Math.min(lostBars, barLength - currentHealthBars - absorptionHearts);
+        int emptyBars = Math.max(0, barLength - currentHealthBars - absorptionHearts - lostBars);
+
+        String healthColor = AbilityEffectManager.getInstance().isInvulnerable(target) ? "&e" : "&c";
+        StringBuilder bar = new StringBuilder();
+        for (int i = 0; i < currentHealthBars; i++) bar.append(healthColor).append("█");
+        for (int i = 0; i < lostBars; i++) bar.append(isBlinking ? "&4█" : "&8█");
+        for (int i = 0; i < absorptionHearts; i++) bar.append(shieldReady ? "&5█" : "&f█");
+        for (int i = 0; i < emptyBars; i++) bar.append("&8█");
+        return bar.toString();
     }
 
     private java.util.List<String> collectLeagueItemIcons(Player player) {
@@ -554,12 +676,43 @@ public class PlaceholderRegistry extends PlaceholderExpansion {
         return display(CLASS_DISPLAY, "classes", ct.getId(), "§7⚔ No Class Selected");
     }
     private String getClassMM(Player player) {
-        if (player == null) return "⚔ No Class Selected";
+        if (player == null) return "";
         PlayerClassType ct = PlayerClass.getPlayerClass(player);
-        if (ct == null) return "⚔ No Class Selected";
-        return display(CLASS_DISPLAY_MINIMESSAGE, "classes", ct.getId(), "⚔ No Class Selected");
+        if (ct == null) return "";
+        return icon("classes." + ct.getId());
     }
 
+
+    private String getLatestStatus(Player player) {
+        DebuffType type = DebuffManager.getInstance().getLatestCrowdControl(player);
+        if (type != null) {
+            String icon = Icons.get(DebuffManager.getCrowdControlIconKey(type));
+            String name = DebuffManager.getCrowdControlName(type);
+            return icon.isEmpty() ? name : "§f" + icon + " " + name;
+        }
+        if (AbilityEffectManager.getInstance().isInvulnerable(player)) return "";
+        AbilityEffectManager.ActiveStatus abilityStatus = AbilityEffectManager.getInstance().getActiveStatus(player);
+        if (abilityStatus != null) {
+            String icon = Icons.get(abilityStatus.iconKey());
+            return icon.isEmpty() ? abilityStatus.name() : "§f" + icon + " " + abilityStatus.name();
+        }
+        if (ClassAbilitiesRegistry.getInstance().isChanneling(player)) {
+            String icon = Icons.get("status.channeling");
+            return icon.isEmpty() ? "CHANNELING" : "§f" + icon + " CHANNELING";
+        }
+        return PlaceholderAPI.setPlaceholders(player, "%luckperms_prefix%%luckperms_suffix_element_lowest_inherited%%essentials_nickname%");
+    }
+
+    private String getLatestStatusDuration(Player player) {
+        DebuffManager debuffs = DebuffManager.getInstance();
+        DebuffType type = debuffs.getLatestCrowdControl(player);
+        if (type == null) {
+            if (AbilityEffectManager.getInstance().isInvulnerable(player)) return "";
+            AbilityEffectManager.ActiveStatus abilityStatus = AbilityEffectManager.getInstance().getActiveStatus(player);
+            return abilityStatus != null ? String.format("%.1f", abilityStatus.remainingSeconds()) : "";
+        }
+        return String.format("%.1f", debuffs.getRemainingSeconds(player, type));
+    }
 
     private static String icon(String key) {
         String glyph = Icons.get(key);
@@ -575,18 +728,18 @@ public class PlaceholderRegistry extends PlaceholderExpansion {
     }
 
     private static final java.util.Map<String, String> KEYSTONE_COLORS = java.util.Map.of(
-            "domination", "<red>",
-            "precision", "<yellow>",
-            "resolve", "<green>",
-            "inspiration", "<aqua>",
-            "sorcery", "<blue>"
+            "domination", "<white>",
+            "precision", "<white>",
+            "resolve", "<white>",
+            "inspiration", "<white>",
+            "sorcery", "<white>"
     );
 
     private static final java.util.Map<String, String> PATH_DISPLAY = java.util.Map.of(
             "domination",   "§f{icon} §4Domination",
             "precision",    "§f{icon} §6Precision",
             "resolve",     "§f{icon} §2Resolve",
-            "sorcery",     "§f{icon} §1Sorcery",
+            "sorcery",     "§f{icon} §9Sorcery",
             "inspiration", "§f{icon} §3Inspiration"
     );
 
@@ -595,16 +748,16 @@ public class PlaceholderRegistry extends PlaceholderExpansion {
             "mage",     "§f{icon} §7Mage",
             "tank",     "§f{icon} §7Tank",
             "marksman", "§f{icon} §7Marksman",
-            "assassin", "§f{icon} §7Assasin",
+            "assassin", "§f{icon} §7Assassin",
             "support",  "§f{icon} §7Support"
     );
 
     private static final java.util.Map<String, String> PATH_DISPLAY_MINIMESSAGE = java.util.Map.of(
-            "domination",   "{font}<dark_red> Domination</dark_red>",
-            "precision",    "{font}<gold> Precision</gold>",
-            "resolve",     "{font}<dark_green> Resolve</dark_green>",
-            "sorcery",     "{font}<dark_blue> Sorcery</dark_blue>",
-            "inspiration", "{font}<dark_aqua> Inspiration</dark_aqua>"
+            "domination",   "{font}<white> Domination</white>",
+            "precision",    "{font}<white> Precision</white>",
+            "resolve",     "{font}<white> Resolve</white>",
+            "sorcery",     "{font}<white> Sorcery</white>",
+            "inspiration", "{font}<white> Inspiration</white>"
     );
 
     private static final java.util.Map<String, String> CLASS_DISPLAY_MINIMESSAGE = java.util.Map.of(
@@ -612,7 +765,7 @@ public class PlaceholderRegistry extends PlaceholderExpansion {
             "mage",     "{font}<gray> Mage</gray>",
             "tank",     "{font}<gray> Tank</gray>",
             "marksman", "{icon}<gray> Marksman</gray>",
-            "assassin", "{font}<gray> Assasin</gray>",
+            "assassin", "{font}<gray> Assassin</gray>",
             "support",  "{font}<gray> Support</gray>"
     );
 
@@ -624,8 +777,8 @@ public class PlaceholderRegistry extends PlaceholderExpansion {
     }
 
     private String getLine1(Player player, PlayerStats stats) {
-        double ad = stats.getPlayerAD(player) * stats.getDamageBalancer();
-        double ap = stats.getPlayerAP(player) * stats.getDamageBalancer();
+        double ad = stats.getPlayerAD(player);
+        double ap = stats.getPlayerAP(player);
         return "§f" + Icons.get("stats.ad") + " §7" + String.format("%-4.0f", ad) + "  §f" + Icons.get("stats.ap") + " §7" + String.format("%-4.0f", ap);
     }
 
@@ -648,5 +801,131 @@ public class PlaceholderRegistry extends PlaceholderExpansion {
         double ms = stats.getPlayerMS(player);
         String ccFormatted = String.format("%.0f", cc) + "%";
         return "§0.§f" + Icons.get("stats.cc") + " §7" + String.format("%-4s", ccFormatted) + "  §f" + Icons.get("stats.ms") + " §7" + String.format("%-4.0f", ms);
+    }
+
+    // ---------- %leaguemechanics_item-info_<item-id>% ----------
+
+    private String getItemInfo(Player player, String itemId) {
+        ItemShopRegistry.ShopItem shopItem = ItemShopRegistry.getInstance().getShopItem(itemId);
+        if (shopItem == null) return "";
+
+        ItemStatsRegistry s = shopItem.getStats();
+        StringBuilder sb = new StringBuilder();
+
+        sb.append("<white>").append(shopItem.getDisplayName()).append(" ").append(Icons.get("stats.gold")).append("</white> ")
+                .append("<gold>").append(shopItem.getEffectivePrice(player)).append("</gold>");
+
+        String shortDesc = ItemShopData.getInstance().getShortDesc(itemId);
+        if (shortDesc != null && !shortDesc.isEmpty()) {
+            sb.append("\n\n<gray>").append(shortDesc).append("</gray>");
+        }
+
+        StringBuilder stats = new StringBuilder();
+        appendStat(stats, "stats.ad", s.getAd(), "", "Attack Damage");
+        appendStat(stats, "stats.ap", s.getAp(), "", "Ability Power");
+        appendStat(stats, "stats.ar", s.getAr(), "", "Armor");
+        appendStat(stats, "stats.mr", s.getMr(), "", "Magic Resist");
+        appendStat(stats, "stats.hp", s.getHp(), "", "Health");
+        appendStat(stats, "stats.hr", s.getHr(), "", "Health Regen per 5 sec.");
+        appendStat(stats, "stats.sr", s.getSr(), "", "Saturation Regen per 5 sec.");
+        appendStat(stats, "stats.as", s.getAs(), "%", "Attack Speed");
+        appendStat(stats, "stats.ls", s.getLs(), "%", "Life Steal");
+        appendStat(stats, "stats.cc", s.getCc(), "%", "Critical Chance");
+        appendStat(stats, "stats.apen-flat", s.getApenFlat(), "", "Lethality");
+        appendStat(stats, "stats.apen-percent", s.getApenPercent(), "%", "Armor Penetration");
+        appendStat(stats, "stats.mpen", s.getMpenFlat(), "", "Magic Penetration");
+        appendStat(stats, "stats.mpen", s.getMpenPercent(), "%", "Magic Penetration");
+        appendStat(stats, "stats.enhanced-critical-damage", s.getCsd(), "%", "Critical Damage");
+        appendStat(stats, "stats.heal-and-shield-power", s.getHm(), "%", "Healing Power");
+        appendStat(stats, "stats.ch", s.getCh(), "", "Ability Haste");
+        appendStat(stats, "stats.tn", s.getTn(), "", "Tenacity");
+        appendStat(stats, "stats.ms", s.getMs(), "%", "Movement Speed");
+        if (stats.length() > 0) sb.append("\n\n").append(stats);
+
+        if (s.hasPassive()) {
+            ItemPassive passive = ItemPassivesRegistry.getInstance().getPassive(s.getPassiveId());
+            if (passive != null) sb.append("\n\n").append(legacyToMiniMessage(passive.getDescription()));
+        }
+
+        List<String> required = shopItem.getRequiredItems();
+        if (!required.isEmpty()) {
+            sb.append("\n\n<gray>ᴄᴏᴍᴘᴏɴᴇɴᴛꜱ: ").append(formatComponents(player, required));
+        }
+        return sb.toString();
+    }
+
+    private static void appendStat(StringBuilder out, String iconKey, double value, String suffix, String name) {
+        if (value <= 0) return;
+        if (out.length() > 0) out.append("\n");
+        String v = value == (long) value ? String.valueOf((long) value) : String.format("%.1f", value);
+        out.append("<white>").append(Icons.get(iconKey)).append(" ").append(v).append(suffix).append("</white> <gray>").append(name).append("</gray>");
+    }
+
+    private String formatComponents(Player player, List<String> requiredIds) {
+        ItemStatsData statsData = ItemStatsData.getInstance();
+        ItemShopData shopData = ItemShopData.getInstance();
+        Map<String, Integer> requiredById = new java.util.LinkedHashMap<>();
+        for (String id : requiredIds) requiredById.merge(id, 1, Integer::sum);
+
+        StringBuilder sb = new StringBuilder();
+        boolean first = true;
+        for (var e : requiredById.entrySet()) {
+            if (!first) sb.append(" <gray>+ ");
+            first = false;
+            String id = e.getKey();
+            int total = e.getValue();
+            int owned = 0;
+            for (org.bukkit.inventory.ItemStack inv : player.getInventory().getContents()) {
+                if (inv != null && !inv.getType().isAir() && id.equals(ItemModifier.getItemId(inv))) owned++;
+            }
+            ItemStatsRegistry reg = statsData.getItem(id);
+            String name = reg != null ? reg.getName() : id;
+
+            String color = owned >= total ? "<green>" : ShopCurrency.has(player, shopData.getPrice(id)) ? "<yellow>" : "<red>";
+            sb.append(color).append(name);
+            if (total > 1) sb.append(" <gray>(").append(owned).append("/").append(total).append(")");
+        }
+        return sb.toString();
+    }
+
+    private static String legacyToMiniMessage(String legacy) {
+        StringBuilder out = new StringBuilder();
+        for (int i = 0; i < legacy.length(); i++) {
+            char c = legacy.charAt(i);
+            if ((c == '§' || c == '&') && i + 1 < legacy.length()) {
+                String tag = switch (Character.toLowerCase(legacy.charAt(i + 1))) {
+                    case '0' -> "<reset><black>";
+                    case '1' -> "<reset><dark_blue>";
+                    case '2' -> "<reset><dark_green>";
+                    case '3' -> "<reset><dark_aqua>";
+                    case '4' -> "<reset><dark_red>";
+                    case '5' -> "<reset><dark_purple>";
+                    case '6' -> "<reset><gold>";
+                    case '7' -> "<reset><gray>";
+                    case '8' -> "<reset><dark_gray>";
+                    case '9' -> "<reset><blue>";
+                    case 'a' -> "<reset><green>";
+                    case 'b' -> "<reset><aqua>";
+                    case 'c' -> "<reset><red>";
+                    case 'd' -> "<reset><light_purple>";
+                    case 'e' -> "<reset><yellow>";
+                    case 'f' -> "<reset><white>";
+                    case 'l' -> "<bold>";
+                    case 'o' -> "<italic>";
+                    case 'n' -> "<underlined>";
+                    case 'm' -> "<strikethrough>";
+                    case 'k' -> "<obfuscated>";
+                    case 'r' -> "<reset>";
+                    default -> null;
+                };
+                if (tag != null) {
+                    out.append(tag);
+                    i++;
+                    continue;
+                }
+            }
+            out.append(c);
+        }
+        return out.toString();
     }
 }

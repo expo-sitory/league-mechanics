@@ -9,6 +9,8 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.util.HashSet;
+import java.util.Set;
 import java.util.UUID;
 import java.util.logging.Level;
 
@@ -31,10 +33,10 @@ public class MySQLManager {
 
             HikariConfig config = new HikariConfig();
             config.setJdbcUrl(String.format(
-                "jdbc:mysql://%s:%d/%s?useSSL=false&allowPublicKeyRetrieval=true&autoReconnect=true",
-                plugin.getConfig().getString("general-settings.mysql.host", "localhost"),
-                plugin.getConfig().getInt("general-settings.mysql.port", 3306),
-                plugin.getConfig().getString("general-settings.mysql.database", "leaguemechanics")
+                    "jdbc:mysql://%s:%d/%s?useSSL=false&allowPublicKeyRetrieval=true&autoReconnect=true",
+                    plugin.getConfig().getString("general-settings.mysql.host", "localhost"),
+                    plugin.getConfig().getInt("general-settings.mysql.port", 3306),
+                    plugin.getConfig().getString("general-settings.mysql.database", "leaguemechanics")
             ));
             config.setUsername(plugin.getConfig().getString("general-settings.mysql.username", "root"));
             config.setPassword(plugin.getConfig().getString("general-settings.mysql.password", ""));
@@ -73,29 +75,40 @@ public class MySQLManager {
 
     private void initializeTables() {
         String[] tableCreationQueries = {
-            "CREATE TABLE IF NOT EXISTS leaguemechanics_player_runes (" +
-            "uuid VARCHAR(36) PRIMARY KEY," +
-            "primary_path VARCHAR(50)," +
-            "secondary_path VARCHAR(50)," +
-            "keystone_rune VARCHAR(50)," +
-            "primary_slot_1_rune VARCHAR(50)," +
-            "primary_slot_2_rune VARCHAR(50)," +
-            "primary_slot_3_rune VARCHAR(50)," +
-            "secondary_slot_1_rune VARCHAR(50)," +
-            "secondary_slot_2_rune VARCHAR(50)," +
-            "rune_shards_row1 VARCHAR(50)," +
-            "rune_shards_row2 VARCHAR(50)," +
-            "rune_shards_row3 VARCHAR(50)," +
-            "player_class VARCHAR(50)," +
-            "league_level INT DEFAULT 0" +
-            ")",
+                "CREATE TABLE IF NOT EXISTS leaguemechanics_player_runes (" +
+                        "uuid VARCHAR(36) PRIMARY KEY," +
+                        "primary_path VARCHAR(50)," +
+                        "secondary_path VARCHAR(50)," +
+                        "keystone_rune VARCHAR(50)," +
+                        "primary_slot_1_rune VARCHAR(50)," +
+                        "primary_slot_2_rune VARCHAR(50)," +
+                        "primary_slot_3_rune VARCHAR(50)," +
+                        "secondary_slot_1_rune VARCHAR(50)," +
+                        "secondary_slot_2_rune VARCHAR(50)," +
+                        "rune_shards_row1 VARCHAR(50)," +
+                        "rune_shards_row2 VARCHAR(50)," +
+                        "rune_shards_row3 VARCHAR(50)," +
+                        "player_class VARCHAR(50)," +
+                        "league_level INT DEFAULT 0" +
+                        ")",
 
-            "CREATE TABLE IF NOT EXISTS leaguemechanics_player_kda (" +
-            "uuid VARCHAR(36) PRIMARY KEY," +
-            "kills INT DEFAULT 0," +
-            "deaths INT DEFAULT 0," +
-            "assists INT DEFAULT 0" +
-            ")"
+                "CREATE TABLE IF NOT EXISTS leaguemechanics_player_kda (" +
+                        "uuid VARCHAR(36) PRIMARY KEY," +
+                        "kills INT DEFAULT 0," +
+                        "deaths INT DEFAULT 0," +
+                        "assists INT DEFAULT 0" +
+                        ")",
+
+                "CREATE TABLE IF NOT EXISTS leaguemechanics_party_members (" +
+                        "player_uuid VARCHAR(36) PRIMARY KEY," +
+                        "party_id VARCHAR(36) NOT NULL," +
+                        "INDEX idx_party_id (party_id)" +
+                        ")",
+
+                "CREATE TABLE IF NOT EXISTS leaguemechanics_parties (" +
+                        "party_id VARCHAR(36) PRIMARY KEY," +
+                        "owner_uuid VARCHAR(36) NOT NULL" +
+                        ")"
         };
 
         try (Connection connection = dataSource.getConnection();
@@ -160,29 +173,29 @@ public class MySQLManager {
     }
 
     public void savePlayerRunes(UUID uuid, String primaryPath, String secondaryPath,
-                               String keystoneRune, String primarySlot1, String primarySlot2,
-                               String primarySlot3, String secondarySlot1, String secondarySlot2,
-                               String shardsRow1, String shardsRow2, String shardsRow3,
-                               String playerClass, int leagueLevel) {
+                                String keystoneRune, String primarySlot1, String primarySlot2,
+                                String primarySlot3, String secondarySlot1, String secondarySlot2,
+                                String shardsRow1, String shardsRow2, String shardsRow3,
+                                String playerClass, int leagueLevel) {
         String query = "INSERT INTO leaguemechanics_player_runes (uuid, primary_path, secondary_path, keystone_rune, " +
-                      "primary_slot_1_rune, primary_slot_2_rune, primary_slot_3_rune, " +
-                      "secondary_slot_1_rune, secondary_slot_2_rune, rune_shards_row1, " +
-                      "rune_shards_row2, rune_shards_row3, player_class, league_level) " +
-                      "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?) " +
-                      "ON DUPLICATE KEY UPDATE " +
-                      "primary_path = VALUES(primary_path), " +
-                      "secondary_path = VALUES(secondary_path), " +
-                      "keystone_rune = VALUES(keystone_rune), " +
-                      "primary_slot_1_rune = VALUES(primary_slot_1_rune), " +
-                      "primary_slot_2_rune = VALUES(primary_slot_2_rune), " +
-                      "primary_slot_3_rune = VALUES(primary_slot_3_rune), " +
-                      "secondary_slot_1_rune = VALUES(secondary_slot_1_rune), " +
-                      "secondary_slot_2_rune = VALUES(secondary_slot_2_rune), " +
-                      "rune_shards_row1 = VALUES(rune_shards_row1), " +
-                      "rune_shards_row2 = VALUES(rune_shards_row2), " +
-                      "rune_shards_row3 = VALUES(rune_shards_row3), " +
-                      "player_class = VALUES(player_class), " +
-                      "league_level = VALUES(league_level)";
+                "primary_slot_1_rune, primary_slot_2_rune, primary_slot_3_rune, " +
+                "secondary_slot_1_rune, secondary_slot_2_rune, rune_shards_row1, " +
+                "rune_shards_row2, rune_shards_row3, player_class, league_level) " +
+                "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?) " +
+                "ON DUPLICATE KEY UPDATE " +
+                "primary_path = VALUES(primary_path), " +
+                "secondary_path = VALUES(secondary_path), " +
+                "keystone_rune = VALUES(keystone_rune), " +
+                "primary_slot_1_rune = VALUES(primary_slot_1_rune), " +
+                "primary_slot_2_rune = VALUES(primary_slot_2_rune), " +
+                "primary_slot_3_rune = VALUES(primary_slot_3_rune), " +
+                "secondary_slot_1_rune = VALUES(secondary_slot_1_rune), " +
+                "secondary_slot_2_rune = VALUES(secondary_slot_2_rune), " +
+                "rune_shards_row1 = VALUES(rune_shards_row1), " +
+                "rune_shards_row2 = VALUES(rune_shards_row2), " +
+                "rune_shards_row3 = VALUES(rune_shards_row3), " +
+                "player_class = VALUES(player_class), " +
+                "league_level = VALUES(league_level)";
 
         try (Connection connection = getConnection();
              PreparedStatement statement = connection.prepareStatement(query)) {
@@ -211,11 +224,11 @@ public class MySQLManager {
 
     public String[] loadPlayerRunes(UUID uuid) {
         String query = "SELECT primary_path, secondary_path, keystone_rune, " +
-                      "primary_slot_1_rune, primary_slot_2_rune, primary_slot_3_rune, " +
-                      "secondary_slot_1_rune, secondary_slot_2_rune, " +
-                      "rune_shards_row1, rune_shards_row2, rune_shards_row3, " +
-                      "player_class, league_level " +
-                      "FROM leaguemechanics_player_runes WHERE uuid = ?";
+                "primary_slot_1_rune, primary_slot_2_rune, primary_slot_3_rune, " +
+                "secondary_slot_1_rune, secondary_slot_2_rune, " +
+                "rune_shards_row1, rune_shards_row2, rune_shards_row3, " +
+                "player_class, league_level " +
+                "FROM leaguemechanics_player_runes WHERE uuid = ?";
 
         try (Connection connection = getConnection();
              PreparedStatement statement = connection.prepareStatement(query)) {
@@ -225,19 +238,19 @@ public class MySQLManager {
             try (ResultSet resultSet = statement.executeQuery()) {
                 if (resultSet.next()) {
                     return new String[]{
-                        resultSet.getString("primary_path"),
-                        resultSet.getString("secondary_path"),
-                        resultSet.getString("keystone_rune"),
-                        resultSet.getString("primary_slot_1_rune"),
-                        resultSet.getString("primary_slot_2_rune"),
-                        resultSet.getString("primary_slot_3_rune"),
-                        resultSet.getString("secondary_slot_1_rune"),
-                        resultSet.getString("secondary_slot_2_rune"),
-                        resultSet.getString("rune_shards_row1"),
-                        resultSet.getString("rune_shards_row2"),
-                        resultSet.getString("rune_shards_row3"),
-                        resultSet.getString("player_class"),
-                        String.valueOf(resultSet.getInt("league_level"))
+                            resultSet.getString("primary_path"),
+                            resultSet.getString("secondary_path"),
+                            resultSet.getString("keystone_rune"),
+                            resultSet.getString("primary_slot_1_rune"),
+                            resultSet.getString("primary_slot_2_rune"),
+                            resultSet.getString("primary_slot_3_rune"),
+                            resultSet.getString("secondary_slot_1_rune"),
+                            resultSet.getString("secondary_slot_2_rune"),
+                            resultSet.getString("rune_shards_row1"),
+                            resultSet.getString("rune_shards_row2"),
+                            resultSet.getString("rune_shards_row3"),
+                            resultSet.getString("player_class"),
+                            String.valueOf(resultSet.getInt("league_level"))
                     };
                 }
             }
@@ -249,13 +262,146 @@ public class MySQLManager {
         return null;
     }
 
+    public UUID loadPartyId(UUID player) {
+        String query = "SELECT party_id FROM leaguemechanics_party_members WHERE player_uuid = ?";
+
+        try (Connection connection = getConnection();
+             PreparedStatement statement = connection.prepareStatement(query)) {
+
+            statement.setString(1, player.toString());
+
+            try (ResultSet resultSet = statement.executeQuery()) {
+                if (resultSet.next()) {
+                    return UUID.fromString(resultSet.getString("party_id"));
+                }
+            }
+
+        } catch (SQLException | IllegalArgumentException e) {
+            plugin.getLogger().warning("Failed to load party for " + player + ": " + e.getMessage());
+        }
+
+        return null;
+    }
+
+    public Set<UUID> loadPartyMembers(UUID partyId) {
+        String query = "SELECT player_uuid FROM leaguemechanics_party_members WHERE party_id = ?";
+        Set<UUID> members = new HashSet<>();
+
+        try (Connection connection = getConnection();
+             PreparedStatement statement = connection.prepareStatement(query)) {
+
+            statement.setString(1, partyId.toString());
+
+            try (ResultSet resultSet = statement.executeQuery()) {
+                while (resultSet.next()) {
+                    members.add(UUID.fromString(resultSet.getString("player_uuid")));
+                }
+            }
+
+        } catch (SQLException | IllegalArgumentException e) {
+            plugin.getLogger().warning("Failed to load party members for " + partyId + ": " + e.getMessage());
+        }
+
+        return members;
+    }
+
+    public void savePartyMember(UUID partyId, UUID player) {
+        String query = "INSERT INTO leaguemechanics_party_members (player_uuid, party_id) " +
+                "VALUES (?, ?) " +
+                "ON DUPLICATE KEY UPDATE party_id = VALUES(party_id)";
+
+        try (Connection connection = getConnection();
+             PreparedStatement statement = connection.prepareStatement(query)) {
+
+            statement.setString(1, player.toString());
+            statement.setString(2, partyId.toString());
+
+            statement.executeUpdate();
+
+        } catch (SQLException e) {
+            plugin.getLogger().warning("Failed to save party member " + player + ": " + e.getMessage());
+        }
+    }
+
+    public void deletePartyMember(UUID player) {
+        String query = "DELETE FROM leaguemechanics_party_members WHERE player_uuid = ?";
+
+        try (Connection connection = getConnection();
+             PreparedStatement statement = connection.prepareStatement(query)) {
+
+            statement.setString(1, player.toString());
+
+            statement.executeUpdate();
+
+        } catch (SQLException e) {
+            plugin.getLogger().warning("Failed to delete party member " + player + ": " + e.getMessage());
+        }
+    }
+
+    public void deleteParty(UUID partyId) {
+        String[] queries = {
+                "DELETE FROM leaguemechanics_party_members WHERE party_id = ?",
+                "DELETE FROM leaguemechanics_parties WHERE party_id = ?"
+        };
+
+        try (Connection connection = getConnection()) {
+            for (String query : queries) {
+                try (PreparedStatement statement = connection.prepareStatement(query)) {
+                    statement.setString(1, partyId.toString());
+                    statement.executeUpdate();
+                }
+            }
+        } catch (SQLException e) {
+            plugin.getLogger().warning("Failed to delete party " + partyId + ": " + e.getMessage());
+        }
+    }
+
+    public void savePartyOwner(UUID partyId, UUID owner) {
+        String query = "INSERT INTO leaguemechanics_parties (party_id, owner_uuid) " +
+                "VALUES (?, ?) " +
+                "ON DUPLICATE KEY UPDATE owner_uuid = VALUES(owner_uuid)";
+
+        try (Connection connection = getConnection();
+             PreparedStatement statement = connection.prepareStatement(query)) {
+
+            statement.setString(1, partyId.toString());
+            statement.setString(2, owner.toString());
+
+            statement.executeUpdate();
+
+        } catch (SQLException e) {
+            plugin.getLogger().warning("Failed to save party owner for " + partyId + ": " + e.getMessage());
+        }
+    }
+
+    public UUID loadPartyOwner(UUID partyId) {
+        String query = "SELECT owner_uuid FROM leaguemechanics_parties WHERE party_id = ?";
+
+        try (Connection connection = getConnection();
+             PreparedStatement statement = connection.prepareStatement(query)) {
+
+            statement.setString(1, partyId.toString());
+
+            try (ResultSet resultSet = statement.executeQuery()) {
+                if (resultSet.next()) {
+                    return UUID.fromString(resultSet.getString("owner_uuid"));
+                }
+            }
+
+        } catch (SQLException | IllegalArgumentException e) {
+            plugin.getLogger().warning("Failed to load party owner for " + partyId + ": " + e.getMessage());
+        }
+
+        return null;
+    }
+
     public void savePlayerKDA(UUID uuid, int kills, int deaths, int assists) {
         String query = "INSERT INTO leaguemechanics_player_kda (uuid, kills, deaths, assists) " +
-                      "VALUES (?, ?, ?, ?) " +
-                      "ON DUPLICATE KEY UPDATE " +
-                      "kills = VALUES(kills), " +
-                      "deaths = VALUES(deaths), " +
-                      "assists = VALUES(assists)";
+                "VALUES (?, ?, ?, ?) " +
+                "ON DUPLICATE KEY UPDATE " +
+                "kills = VALUES(kills), " +
+                "deaths = VALUES(deaths), " +
+                "assists = VALUES(assists)";
 
         try (Connection connection = getConnection();
              PreparedStatement statement = connection.prepareStatement(query)) {
@@ -283,9 +429,9 @@ public class MySQLManager {
             try (ResultSet resultSet = statement.executeQuery()) {
                 if (resultSet.next()) {
                     return new int[]{
-                        resultSet.getInt("kills"),
-                        resultSet.getInt("deaths"),
-                        resultSet.getInt("assists")
+                            resultSet.getInt("kills"),
+                            resultSet.getInt("deaths"),
+                            resultSet.getInt("assists")
                     };
                 }
             }
@@ -299,9 +445,9 @@ public class MySQLManager {
 
     public void savePlayerHealthPercentage(UUID uuid, float healthPercentage) {
         String query = "INSERT INTO leaguemechanics_player_kda (uuid, health_percentage) " +
-                      "VALUES (?, ?) " +
-                      "ON DUPLICATE KEY UPDATE " +
-                      "health_percentage = VALUES(health_percentage)";
+                "VALUES (?, ?) " +
+                "ON DUPLICATE KEY UPDATE " +
+                "health_percentage = VALUES(health_percentage)";
 
         try (Connection connection = getConnection();
              PreparedStatement statement = connection.prepareStatement(query)) {

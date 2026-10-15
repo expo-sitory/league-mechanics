@@ -1,0 +1,477 @@
+item-stats:
+  dorans-blade:
+    hp: 20
+    ad: 10
+  dorans-bow:
+    ad: 8
+    as: 15
+  dorans-helm:
+    hp: 38
+    ap: 8
+    ar: 8
+    mr: 8
+  dorans-ring:
+    hp: 23
+    ap: 18
+  dorans-shield:
+    hp: 27
+    hr: 4
+  dark-seal:
+    hp: 12
+    ap: 15
+  amplifying-tome:
+    ap: 20
+  blasting-wand:
+    ap: 45
+  needlessly-large-rod:
+    ap: 65
+  cull:
+    ad: 7
+  long-sword:
+    ad: 10
+  pickaxe:
+    ad: 25
+  b-f-sword:
+    ad: 40
+  cloth-armor:
+    ar: 15
+  chain-vest:
+    ar: 75
+  null-magic-mantle:
+    mr: 20
+  negatron-cloak:
+    mr: 85
+  ruby-crystal:
+    hp: 38
+  rejuvenation-bead:
+    hr: 4
+  faeri-charm:
+    sr: 1
+  dagger:
+    as: 10
+  zeal:
+    as: 15
+    cc: 15
+    ms: 4
+  tunneler:
+    hp: 62
+    ad: 15
+  cloak-of-agility:
+    cc: 15
+  glowing-mote:
+    ch: 5
+  boots:
+    ms: 8
+  berserkers-greaves:
+    as: 30
+    ms: 15
+  mercurys-treads:
+    mr: 20
+    ms: 15
+    tn: 30
+  plated-steelcaps:
+    ar: 25
+    ms: 15
+  sorcerers-shoes:
+    ms: 15
+    mpen-flat: 12
+  blightting-jewel:
+    ap: 25
+    mpen-percent: 13
+  flendish-codex:
+    ap: 25
+    ch: 10
+  lost-chapter:
+    ap: 40
+    ch: 10
+  fated-ashes:
+    ap: 20
+  hextech-alternator:
+    ap: 45
+  oblivion-orb:
+    ap: 25
+  executioners-calling:
+    ad: 15
+  caulfields-warhammer:
+    ad: 20
+    ch: 10
+  hexdrinker:
+    ad: 25
+    mr: 25
+  serrated-dirk:
+    ad: 20
+    apen-flat: 10
+  phage:
+    hp: 50
+    ad: 15
+  crystalline-bracer:
+    hp: 50
+    hr: 20
+  giants-belt:
+    hp: 88
+  kindlegem:
+    hp: 50
+    ch: 10
+  bramble-vest:
+    ar: 30
+  noonquiver:
+    ad: 15
+    cc: 20
+  rectrix:
+    ad: 15
+    ms: 4
+  recurve-bow:
+    as: 15
+  scouts-slingshot:
+    as: 20
+  last-whisper:
+    ad: 20
+    apen-percent: 18
+  hearthbound-axe:
+    ad: 20
+    as: 20
+  spectres-cowl:
+    hp: 50
+    hr: 20
+    mr: 35
+  winged-moonplate:
+    hp: 50
+    ms: 4
+  wardens-mail:
+    ar: 40
+  bamis-cinder:
+    hp: 38
+    ch: 5
+  verdant-barrier:
+    ap: 40
+    mr: 25
+  aether-wisp:
+    ap: 30
+    ms: 4
+  bandleglass-mirror:
+    ap: 20
+    sr: 1
+    ch: 10
+  vampiric-scepter:
+    ad: 15
+    ls: 12
+  the-brutalizer:
+    ad: 25
+    apen-flat: 5
+    ch: 10
+  steel-sigil:
+    ad: 15
+    ar: 30
+  forbidden-idol:
+    sr: 4
+    hm: 8
+  haunting-guise:
+    hp: 50
+    ap: 30
+  sheen:
+    ch: 10
+  tiamat:
+    ad: 25
+  infinity-edge:
+    ad: 75
+    cc: 25
+    csd: 30
+  ardent-censer:
+    ap: 45
+    sr: 4
+    ms: 4
+    hm: 10
+  abyssal-mask:
+    hp: 88
+    mr: 45
+    ch: 15
+  atmas-reckoning:
+    hp: 175
+    cc: 20
+  bandlepipes:
+    hp: 50
+    ar: 20
+    mr: 20
+    ch: 15
+  banshees-veil:
+    ap: 105
+    mr: 40
+  black-cleaver:
+    hp: 100
+    ad: 45
+    ch: 20
+  blackfire-torch:
+    ap: 80
+    ch: 20
+  blade-of-the-ruined-king:
+    ad: 40
+    as: 25
+    ls: 15
+  bloodletters-curse:
+    hp: 100
+    ap: 65
+    ch: 15
+  bloodthirster:
+    ad: 80
+    ls: 17
+  chempunk-chainsword:
+    hp: 112
+    ad: 45
+    ch: 15
+  cosmic-drive:
+    hp: 88
+    ap: 70
+    ms: 4
+    ch: 25
+  cryptbloom:
+    ap: 75
+    mpen-percent: 30
+    ch: 20
+  dead-mans-plate:
+    hp: 88
+    ar: 55
+    ms: 4
+  deaths-dance:
+    ad: 60
+    ar: 50
+    ch: 15
+  eclipse:
+    ad: 60
+    ch: 15
+  edge-of-night:
+    hp: 64
+    ad: 50
+    apen-flat: 15
+  endless-hunger:
+    ad: 65
+    tn: 20
+  essence-reaver:
+    ad: 50
+    cc: 25
+    ch: 20
+  experimental-hexplate:
+    hp: 88
+    ad: 40
+    as: 20
+  force-of-nature:
+    hp: 100
+    mr: 55
+    ms: 4
+  guardian-angel:
+    ad: 55
+    ar: 45
+  guinsoos-rageblade:
+    ad: 30
+    ap: 30
+    as: 25
+  heartsteel:
+    hp: 225
+    hr: 20
+  hexoptics-c44:
+    ad: 55
+    cc: 25
+  horizon-focus:
+    ap: 75
+    ch: 25
+  hubris:
+    ad: 55
+    apen-flat: 18
+    ch: 10
+  hullbreaker:
+    hp: 125
+    ad: 40
+    ms: 4
+  iceborn-gauntlet:
+    hp: 75
+    ar: 50
+    ch: 15
+  immortal-shieldbow:
+    ad: 55
+    cc: 25
+  imperial-mandate:
+    ap: 60
+    sr: 4
+    ch: 15
+  jaksho-the-protean:
+    hp: 88
+    ar: 45
+    mr: 45
+  knights-vow:
+    hp: 50
+    hr: 10
+    ch: 10
+  kraken-slayer:
+    ad: 45
+    as: 40
+    ms: 4
+  liandrys-torment:
+    hp: 75
+    ap: 60
+  lich-bane:
+    ap: 100
+    ms: 6
+    ch: 10
+  lord-dominiks-regards:
+    ad: 35
+    cc: 25
+    apen-percent: 35
+  ludens-echo:
+    ap: 100
+    ch: 10
+  malignance:
+    ap: 90
+    ch: 15
+  maw-of-malmortius:
+    ad: 60
+    mr: 40
+    ch: 15
+  mejais-soulstealer:
+    hp: 25
+    ap: 20
+  mercurial-scimitar:
+    ad: 50
+    mr: 35
+    ls: 15
+  morellonomicon:
+    hp: 88
+    ap: 75
+    ch: 15
+  mortal-reminder:
+    ad: 35
+    cc: 25
+    apen-percent: 30
+  nashors-tooth:
+    ap: 80
+    as: 50
+    ch: 15
+  navori-flickerblade:
+    as: 40
+    cc: 25
+    ms: 4
+  overlords-bloodmail:
+    hp: 137
+    ad: 30
+  phantom-dancer:
+    as: 65
+    cc: 25
+    ms: 10
+  rabadons-deathcap:
+    ap: 130
+  rapid-firecannon:
+    as: 35
+    cc: 25
+    ms: 4
+  ravenous-hydra:
+    ad: 65
+    ls: 17
+    ch: 15
+  riftmaker:
+    hp: 75
+    ap: 70
+    ch: 15
+  runaans-hurricane:
+    as: 40
+    cc: 25
+    ms: 5
+  rylais-crystal-scepter:
+    hp: 100
+    ap: 65
+  serpents-fang:
+    ad: 55
+    apen-flat: 15
+  seryldas-grudge:
+    ad: 45
+    apen-percent: 35
+    ch: 15
+  shadowflame:
+    ap: 110
+    mpen-flat: 15
+  spear-of-shojin:
+    hp: 112
+    ad: 45
+  spirit-visage:
+    hp: 50
+    hr: 20
+    mr: 50
+    ch: 10
+  staff-of-flowing-water:
+    ap: 35
+    sr: 4
+    ch: 10
+    hm: 10
+  statikk-shiv:
+    ad: 45
+    ap: 45
+    as: 30
+    ms: 4
+  steraks-gage:
+    hp: 100
+    tn: 20
+  stormrazor:
+    ad: 50
+    as: 25
+    cc: 25
+  stormsurge:
+    ap: 90
+    ms: 6
+    mpen-flat: 15
+  stridebreaker:
+    hp: 112
+    ad: 40
+    as: 25
+  sundered-sky:
+    hp: 100
+    ad: 40
+    ch: 10
+  sunfire-aegis:
+    hp: 88
+    ar: 50
+    ch: 10
+  terminus:
+    ad: 30
+    as: 35
+  the-collector:
+    ad: 50
+    cc: 25
+    apen-flat: 10
+  thornmail:
+    hp: 38
+    ar: 75
+  titanic-hydra:
+    hp: 150
+    ad: 40
+  trinity-force:
+    hp: 83
+    ad: 36
+    as: 30
+    ch: 15
+  unending-despair:
+    hp: 100
+    ar: 50
+    ch: 15
+  void-staff:
+    ap: 95
+    mpen-percent: 40
+  voltaic-cyclosword:
+    ad: 55
+    apen-flat: 10
+    ch: 10
+  warmogs-armor:
+    hp: 250
+    hr: 20
+  wits-end:
+    as: 50
+    mr: 45
+    tn: 20
+  youmuus-ghostblade:
+    ad: 55
+    ms: 4
+    apen-flat: 18
+  yun-tal-wildarrows:
+    ad: 50
+    ms: 45
+  zekes-convergence:
+    hp: 75
+    ar: 25
+    mr: 25
+    ch: 10

@@ -1,0 +1,33 @@
+{
+	"model": {
+	  "type": "select",
+	  "property": "custom_model_data",
+	  "fallback": {
+		"type": "model",
+		"model": "item/rabbit_spawn_egg"
+	  },
+	  "cases": [
+		{
+		  "when": "db_drinks.aging_barrel",
+		  "model": {
+			"type": "minecraft:model",
+			"model": "minecraft:item/aging_barrel",
+			"tints": [
+            {
+              "type": "minecraft:potion",
+              "default": -13083194
+            }
+          ]
+		  }
+		},
+		{
+		  "when": "db_drinks.aging_barrel.gui",
+		  "model": {
+			"type": "minecraft:model",
+			"model": "minecraft:item/gui/aging_barrel"
+		  }
+		}
+	  ]
+	},
+	"oversized_in_gui": true
+  }

@@ -5,7 +5,9 @@ import dev.ixpu.leaguemechanics.item.shop.ItemShopData;
 import dev.ixpu.leaguemechanics.gui.ItemShopGUI;
 import dev.ixpu.leaguemechanics.item.shop.ItemShopRegistry;
 import dev.ixpu.leaguemechanics.item.ItemStatsData;
+import dev.ixpu.leaguemechanics.util.Icons;
 import dev.ixpu.leaguemechanics.util.ItemModifier;
+import dev.ixpu.leaguemechanics.util.ShopCurrency;
 import net.kyori.adventure.text.Component;
 import org.bukkit.Material;
 import org.bukkit.Sound;
@@ -107,15 +109,9 @@ public class ItemShopManager implements Listener {
         List<String> required = shopItem.getRequiredItems();
 
         int price = shopItem.getEffectivePrice(player);
-        int playerLevel = player.getLevel();
         int currentCount = itemStatsManager.countLeagueItems(player);
 
-        int requiredOwned = 0;
-        for (String reqId : required) {
-            if (hasLeagueItemInInventory(player, reqId)) {
-                requiredOwned++;
-            }
-        }
+        int requiredOwned = shopItem.countOwnedComponents(player);
         int netChange = 1 - requiredOwned;
         if (currentCount + netChange > 6) {
             player.sendMessage(Component.text("§cLeague Items Count: " + currentCount + "/6"));
@@ -127,8 +123,8 @@ public class ItemShopManager implements Listener {
             return false;
         }
 
-        if (playerLevel < price) {
-            player.sendMessage(Component.text("§cInsufficient XP."));
+        if (!ShopCurrency.has(player, price)) {
+            player.sendMessage(Component.text("§cInsufficient funds."));
             return false;
         }
         if (playerOwnsConflictingItem(player, shopItem)) {
@@ -148,8 +144,11 @@ public class ItemShopManager implements Listener {
             }
         }
 
+        if (!ShopCurrency.withdraw(player, price)) {
+            player.sendMessage(Component.text("§cInsufficient funds."));
+            return false;
+        }
         player.playSound(player.getLocation(), Sound.ENTITY_EXPERIENCE_ORB_PICKUP, 1.0f, 1.5f);
-        player.setLevel(playerLevel - price);
         ItemStack purchasedItem = createPurchaseItem(player, shopItem);
         consumeRequiredItems(player, required);
         addItemToInventory(player, purchasedItem);
@@ -160,7 +159,6 @@ public class ItemShopManager implements Listener {
 
     private boolean playerHasRequiredItemsOrCanAfford(Player player, List<String> requiredIds) {
         ItemShopData shopData = ItemShopData.getInstance();
-        int playerLevel = player.getLevel();
         java.util.Map<String, Integer> requiredCounts = new java.util.LinkedHashMap<>();
         for (String id : requiredIds) requiredCounts.merge(id, 1, Integer::sum);
         for (var e : requiredCounts.entrySet()) {
@@ -171,7 +169,7 @@ public class ItemShopManager implements Listener {
                 }
             }
             if (owned >= e.getValue()) continue;
-            if (playerLevel >= shopData.getPrice(e.getKey())) continue;
+            if (ShopCurrency.has(player, shopData.getPrice(e.getKey()))) continue;
             return false;
         }
         return true;
@@ -209,7 +207,6 @@ public class ItemShopManager implements Listener {
     private String formatRequiredItemNames(Player player, List<String> requiredIds) {
         ItemStatsData statsData = ItemStatsData.getInstance();
         ItemShopData shopData = ItemShopData.getInstance();
-        int playerLevel = player.getLevel();
         java.util.LinkedHashMap<String, Integer> requiredCounts = new java.util.LinkedHashMap<>();
         for (String id : requiredIds) requiredCounts.merge(id, 1, Integer::sum);
         StringBuilder sb = new StringBuilder();
@@ -232,7 +229,7 @@ public class ItemShopManager implements Listener {
             String color;
             if (owned >= total) {
                 color = "§a";
-            } else if (playerLevel >= shopData.getPrice(id)) {
+            } else if (ShopCurrency.has(player, shopData.getPrice(id))) {
                 color = "§e";
             } else {
                 color = "§c";
@@ -252,7 +249,8 @@ public class ItemShopManager implements Listener {
         if (!shopData.hasCustomModel(itemId)) {
             return null;
         }
-        boolean hasPack = player.getResourcePackStatus() == PlayerResourcePackStatusEvent.Status.SUCCESSFULLY_LOADED;
+        boolean hasPack = LeagueMechanics.getInstance().getConfig().getBoolean("general-settings.assume-client-pack", false)
+                || player.getResourcePackStatus() == PlayerResourcePackStatusEvent.Status.SUCCESSFULLY_LOADED;
         return hasPack ? shopData.getModel(itemId) : shopData.getFallbackModel(itemId);
     }
 
@@ -402,9 +400,9 @@ public class ItemShopManager implements Listener {
             }
         }
 
-        player.setLevel(player.getLevel() + refundAmount);
+        ShopCurrency.deposit(player, refundAmount);
         player.playSound(player.getLocation(), Sound.ENTITY_EXPERIENCE_ORB_PICKUP, 1.0f, 1.0f);
-        player.sendMessage(Component.text("§fSold §e" + shopItem.getDisplayName() + " §ffor §a◎" + refundAmount + " §fXP (70%)"));
+        player.sendMessage(Component.text("§fSold §e" + shopItem.getDisplayName() + " §ffor §f" + Icons.get("stats.gold") + " §e" + refundAmount + " §f(70%)"));
 
         LeagueMechanics plugin = LeagueMechanics.getInstance();
         if (plugin != null) {

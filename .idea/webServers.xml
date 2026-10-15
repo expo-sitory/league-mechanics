@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="WebServers">
+    <option name="servers">
+      <webServer id="ab678a8f-5a1c-4b62-94fa-21200931522a" name="KUPAL MC">
+        <fileTransfer accessType="SFTP" host="as02.empowerservers.network" port="2022" sshConfigId="d0476e71-2615-4718-ba60-9c3fdb12f1e4" sshConfig="KUPAL MC">
+          <advancedOptions>
+            <advancedOptions dataProtectionLevel="Private" passiveMode="true" shareSSLContext="true" />
+          </advancedOptions>
+        </fileTransfer>
+      </webServer>
+    </option>
+  </component>
+</project>

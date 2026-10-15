@@ -1,5 +1,7 @@
 package dev.ixpu.leaguemechanics.item;
 
+import org.bukkit.configuration.ConfigurationSection;
+
 public class ItemStatsRegistry {
     private String id;
     private String name;
@@ -91,6 +93,29 @@ public class ItemStatsRegistry {
         this.csd = csd;
         this.hm = hm;
     }
+    public void applyConfig(ConfigurationSection s) {
+        hp = s.getDouble("hp", hp);
+        hr = s.getDouble("hr", hr);
+        ad = s.getDouble("ad", ad);
+        ap = s.getDouble("ap", ap);
+        td = s.getDouble("td", td);
+        as = s.getDouble("as", as);
+        ar = s.getDouble("ar", ar);
+        mr = s.getDouble("mr", mr);
+        ls = s.getDouble("ls", ls);
+        cc = s.getDouble("cc", cc);
+        sr = s.getDouble("sr", sr);
+        ms = s.getDouble("ms", ms);
+        apenFlat = s.getDouble("apen-flat", apenFlat);
+        apenPercent = s.getDouble("apen-percent", apenPercent);
+        mpenFlat = s.getDouble("mpen-flat", mpenFlat);
+        mpenPercent = s.getDouble("mpen-percent", mpenPercent);
+        ch = s.getDouble("ch", ch);
+        tn = s.getDouble("tn", tn);
+        csd = s.getDouble("csd", csd);
+        hm = s.getDouble("hm", hm);
+    }
+
     public String getId() {
         return id;
     }

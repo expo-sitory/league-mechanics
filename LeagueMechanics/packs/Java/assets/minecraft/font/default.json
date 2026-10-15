@@ -1,0 +1,3591 @@
+{
+    "providers": [
+        {
+            "type": "bitmap",
+            "file": "minecraft:font/emojis/aaaa.png",
+            "ascent": 10,
+            "height": 12,
+            "chars": [
+                "\uE300"
+            ]
+        },
+        {
+            "type": "bitmap",
+            "file": "minecraft:font/emojis/akulamaw.png",
+            "ascent": 10,
+            "height": 12,
+            "chars": [
+                "\uE301"
+            ]
+        },
+        {
+            "type": "bitmap",
+            "file": "minecraft:font/emojis/akulove.png",
+            "ascent": 10,
+            "height": 12,
+            "chars": [
+                "\uE302"
+            ]
+        },
+        {
+            "type": "bitmap",
+            "file": "minecraft:font/emojis/akusob.png",
+            "ascent": 10,
+            "height": 12,
+            "chars": [
+                "\uE303"
+            ]
+        },
+        {
+            "type": "bitmap",
+            "file": "minecraft:font/emojis/angry.png",
+            "ascent": 10,
+            "height": 12,
+            "chars": [
+                "\uE304"
+            ]
+        },
+        {
+            "type": "bitmap",
+            "file": "minecraft:font/emojis/bru.png",
+            "ascent": 10,
+            "height": 12,
+            "chars": [
+                "\uE305"
+            ]
+        },
+        {
+            "type": "bitmap",
+            "file": "minecraft:font/emojis/cringe.png",
+            "ascent": 10,
+            "height": 12,
+            "chars": [
+                "\uE306"
+            ]
+        },
+        {
+            "type": "bitmap",
+            "file": "minecraft:font/emojis/extreme_blush.png",
+            "ascent": 10,
+            "height": 12,
+            "chars": [
+                "\uE307"
+            ]
+        },
+        {
+            "type": "bitmap",
+            "file": "minecraft:font/emojis/gamba.png",
+            "ascent": 10,
+            "height": 12,
+            "chars": [
+                "\uE308"
+            ]
+        },
+        {
+            "type": "bitmap",
+            "file": "minecraft:font/emojis/gooner.png",
+            "ascent": 10,
+            "height": 12,
+            "chars": [
+                "\uE309"
+            ]
+        },
+        {
+            "type": "bitmap",
+            "file": "minecraft:font/emojis/korvella.png",
+            "ascent": 10,
+            "height": 12,
+            "chars": [
+                "\uE30A"
+            ]
+        },
+        {
+            "type": "bitmap",
+            "file": "minecraft:font/emojis/lamaw.png",
+            "ascent": 10,
+            "height": 12,
+            "chars": [
+                "\uE30B"
+            ]
+        },
+        {
+            "type": "bitmap",
+            "file": "minecraft:font/emojis/lumbay.png",
+            "ascent": 10,
+            "height": 12,
+            "chars": [
+                "\uE30C"
+            ]
+        },
+        {
+            "type": "bitmap",
+            "file": "minecraft:font/emojis/pakyu.png",
+            "ascent": 10,
+            "height": 12,
+            "chars": [
+                "\uE30D"
+            ]
+        },
+        {
+            "type": "bitmap",
+            "file": "minecraft:font/emojis/pakyuu.png",
+            "ascent": 10,
+            "height": 12,
+            "chars": [
+                "\uE30E"
+            ]
+        },
+        {
+            "type": "bitmap",
+            "file": "minecraft:font/emojis/ringo_sob.png",
+            "ascent": 10,
+            "height": 12,
+            "chars": [
+                "\uE30F"
+            ]
+        },
+        {
+            "type": "bitmap",
+            "file": "minecraft:font/emojis/skull2.png",
+            "ascent": 10,
+            "height": 12,
+            "chars": [
+                "\uE310"
+            ]
+        },
+        {
+            "type": "bitmap",
+            "file": "minecraft:font/emojis/sob.png",
+            "ascent": 10,
+            "height": 12,
+            "chars": [
+                "\uE311"
+            ]
+        },
+        {
+            "type": "bitmap",
+            "file": "minecraft:font/emojis/sob_praying.png",
+            "ascent": 10,
+            "height": 12,
+            "chars": [
+                "\uE312"
+            ]
+        },
+        {
+            "type": "bitmap",
+            "file": "minecraft:font/emojis/talong.png",
+            "ascent": 10,
+            "height": 12,
+            "chars": [
+                "\uE313"
+            ]
+        },
+        {
+            "type": "bitmap",
+            "file": "minecraft:font/emojis/timeless_kalbo.png",
+            "ascent": 10,
+            "height": 12,
+            "chars": [
+                "\uE314"
+            ]
+        },
+        {
+            "type": "bitmap",
+            "file": "minecraft:font/emojis/troll.png",
+            "ascent": 10,
+            "height": 12,
+            "chars": [
+                "\uE315"
+            ]
+        },
+        {
+            "type": "bitmap",
+            "file": "minecraft:font/emojis/tulogakoboss.png",
+            "ascent": 10,
+            "height": 12,
+            "chars": [
+                "\uE316"
+            ]
+        },
+        {
+            "type": "bitmap",
+            "file": "minecraft:font/emojis/w_speed.png",
+            "ascent": 10,
+            "height": 12,
+            "chars": [
+                "\uE317"
+            ]
+        },
+        {
+            "type": "bitmap",
+            "file": "minecraft:font/emojis/wilted_flower.png",
+            "ascent": 10,
+            "height": 12,
+            "chars": [
+                "\uE318"
+            ]
+        },
+        {
+            "type": "bitmap",
+            "file": "minecraft:font/emojis/wowtol.png",
+            "ascent": 10,
+            "height": 12,
+            "chars": [
+                "\uE319"
+            ]
+        },
+
+
+
+
+
+        {
+            "type": "bitmap",
+            "file": "minecraft:font/soraka_astral_infusion_hd.png",
+            "ascent": 10,
+            "height": 12,
+            "chars": [
+                "\uE40b"
+            ]
+        },
+        {
+            "type": "bitmap",
+            "file": "minecraft:font/shadow_recall.png",
+            "ascent": 10,
+            "height": 12,
+            "chars": [
+                "\ue40c"
+            ]
+        },
+        {
+            "type": "bitmap",
+            "file": "minecraft:font/riftwalk.png",
+            "ascent": 10,
+            "height": 12,
+            "chars": [
+                "\ue40d"
+            ]
+        },
+        {
+            "type": "bitmap",
+            "file": "minecraft:font/nocturne_paranoia.png",
+            "ascent": 10,
+            "height": 12,
+            "chars": [
+                "\uE400"
+            ]
+        },
+        {
+            "type": "bitmap",
+            "file": "minecraft:font/galio_shield_of_durand_hd.png",
+            "ascent": 10,
+            "height": 12,
+            "chars": [
+                "\uE401"
+            ]
+        },
+        {
+            "type": "bitmap",
+            "file": "minecraft:font/vayne_final_hour_hd.png",
+            "ascent": 10,
+            "height": 12,
+            "chars": [
+                "\uE402"
+            ]
+        },
+        {
+            "type": "bitmap",
+            "file": "minecraft:font/tryndamere_undying_rage_hd.png",
+            "ascent": 10,
+            "height": 12,
+            "chars": [
+                "\uE403"
+            ]
+        },
+        {
+            "type": "bitmap",
+            "file": "minecraft:font/soraka_wish_hd.png",
+            "ascent": 10,
+            "height": 12,
+            "chars": [
+                "\uE404"
+            ]
+        },
+        {
+            "type": "bitmap",
+            "file": "minecraft:font/malzahar_void_shift_hd.png",
+            "ascent": 10,
+            "height": 12,
+            "chars": [
+                "\uE405"
+            ]
+        },
+        {
+            "type": "bitmap",
+            "file": "minecraft:font/blitzcrank_static_field.png",
+            "ascent": 10,
+            "height": 12,
+            "chars": [
+                "\uE406"
+            ]
+        },
+        {
+            "type": "bitmap",
+            "file": "minecraft:font/karthus_requiem_hd.png",
+            "ascent": 10,
+            "height": 12,
+            "chars": [
+                "\uE407"
+            ]
+        },
+        {
+            "type": "bitmap",
+            "file": "minecraft:font/janna_monsoon.png",
+            "ascent": 10,
+            "height": 12,
+            "chars": [
+                "\uE408"
+            ]
+        },
+        {
+            "type": "bitmap",
+            "file": "minecraft:font/kalista_rend.png",
+            "ascent": 10,
+            "height": 12,
+            "chars": [
+                "\uE409"
+            ]
+        },
+        {
+            "type": "bitmap",
+            "file": "minecraft:font/sion_death_surge.png",
+            "ascent": 10,
+            "height": 12,
+            "chars": [
+                "\uE40a"
+            ]
+        },
+        {
+            "type": "bitmap",
+            "file": "minecraft:font/suppression_icon.png",
+            "ascent": 10,
+            "height": 12,
+            "chars": [
+                "\uE233"
+            ]
+        },
+        {
+            "type": "bitmap",
+            "file": "minecraft:font/stun_icon.png",
+            "ascent": 10,
+            "height": 12,
+            "chars": [
+                "\uE234"
+            ]
+        },
+        {
+            "type": "bitmap",
+            "file": "minecraft:font/grounded_icon.png",
+            "ascent": 10,
+            "height": 12,
+            "chars": [
+                "\uE235"
+            ]
+        },
+        {
+            "type": "bitmap",
+            "file": "minecraft:font/hold_ping.png",
+            "ascent": 10,
+            "height": 12,
+            "chars": [
+                "\uE236"
+            ]
+        },
+        {
+            "type": "bitmap",
+            "file": "minecraft:font/caution_ping.png",
+            "ascent": 10,
+            "height": 12,
+            "chars": [
+                "\uE237"
+            ]
+        },
+        {
+            "type": "bitmap",
+            "file": "minecraft:font/bait_ping.png",
+            "ascent": 10,
+            "height": 12,
+            "chars": [
+                "\uE238"
+            ]
+        },
+        {
+            "type": "bitmap",
+            "file": "minecraft:font/all_in_ping.png",
+            "ascent": 10,
+            "height": 12,
+            "chars": [
+                "\uE239"
+            ]
+        },
+        {
+            "type": "bitmap",
+            "file": "minecraft:font/retreat_ping.png",
+            "ascent": 10,
+            "height": 12,
+            "chars": [
+                "\uE23a"
+            ]
+        },
+        {
+            "type": "bitmap",
+            "file": "minecraft:font/assist_me_ping.png",
+            "ascent": 10,
+            "height": 12,
+            "chars": [
+                "\uE23b"
+            ]
+        },
+        {
+            "type": "bitmap",
+            "file": "minecraft:font/enemy_missing_ping.png",
+            "ascent": 10,
+            "height": 12,
+            "chars": [
+                "\uE23c"
+            ]
+        },
+        {
+            "type": "bitmap",
+            "file": "minecraft:font/ocean_dragon_buff.png",
+            "ascent": 10,
+            "height": 12,
+            "chars": [
+                "\uE256"
+            ]
+        },
+        {
+            "type": "bitmap",
+            "file": "minecraft:font/mountain_dragon_buff.png",
+            "ascent": 10,
+            "height": 12,
+            "chars": [
+                "\uE257"
+            ]
+        },
+        {
+            "type": "bitmap",
+            "file": "minecraft:font/hextech_dragon_buff.png",
+            "ascent": 10,
+            "height": 12,
+            "chars": [
+                "\uE258"
+            ]
+        },
+        {
+            "type": "bitmap",
+            "file": "minecraft:font/chemtech_dragon_buff.png",
+            "ascent": 10,
+            "height": 12,
+            "chars": [
+                "\uE259"
+            ]
+        },
+        {
+            "type": "bitmap",
+            "file": "minecraft:font/cloud_dragon_buff.png",
+            "ascent": 10,
+            "height": 12,
+            "chars": [
+                "\uE25A"
+            ]
+        },
+        {
+            "type": "bitmap",
+            "file": "minecraft:font/infernal_dragon_buff.png",
+            "ascent": 10,
+            "height": 12,
+            "chars": [
+                "\uE25B"
+            ]
+        },
+        {
+            "type": "bitmap",
+            "file": "minecraft:font/crest_of_insight_buff.png",
+            "ascent": 10,
+            "height": 12,
+            "chars": [
+                "\uE25C"
+            ]
+        },
+        {
+            "type": "bitmap",
+            "file": "minecraft:font/crest_of_cinders_buff.png",
+            "ascent": 10,
+            "height": 12,
+            "chars": [
+                "\uE25D"
+            ]
+        },
+        {
+            "type": "bitmap",
+            "file": "minecraft:font/domination_icon.png",
+            "ascent": 10,
+            "height": 12,
+            "chars": [
+                "\ue200"
+            ]
+        },
+        {
+            "type": "bitmap",
+            "file": "minecraft:font/inspiration_icon.png",
+            "ascent": 10,
+            "height": 12,
+            "chars": [
+                "\ue203"
+            ]
+        },
+        {
+            "type": "bitmap",
+            "file": "minecraft:font/precision_icon.png",
+            "ascent": 10,
+            "height": 12,
+            "chars": [
+                "\ue204"
+            ]
+        },
+        {
+            "type": "bitmap",
+            "file": "minecraft:font/resolve_icon.png",
+            "ascent": 10,
+            "height": 12,
+            "chars": [
+                "\ue202"
+            ]
+        },
+        {
+            "type": "bitmap",
+            "file": "minecraft:font/sorcery_icon.png",
+            "ascent": 10,
+            "height": 12,
+            "chars": [
+                "\ue201"
+            ]
+        },
+        {
+            "type": "bitmap",
+            "file": "minecraft:font/aftershock_rune.png",
+            "ascent": 10,
+            "height": 12,
+            "chars": [
+                "\ue209"
+            ]
+        },
+        {
+            "type": "bitmap",
+            "file": "minecraft:font/arcane_comet_rune.png",
+            "ascent": 10,
+            "height": 12,
+            "chars": [
+                "\ue20d"
+            ]
+        },
+        {
+            "type": "bitmap",
+            "file": "minecraft:font/conqueror_rune.png",
+            "ascent": 10,
+            "height": 12,
+            "chars": [
+                "\ue211"
+            ]
+        },
+        {
+            "type": "bitmap",
+            "file": "minecraft:font/dark_harvest_rune.png",
+            "ascent": 10,
+            "height": 12,
+            "chars": [
+                "\ue20f"
+            ]
+        },
+        {
+            "type": "bitmap",
+            "file": "minecraft:font/deathfire_touch_rune.png",
+            "ascent": 10,
+            "height": 12,
+            "chars": [
+                "\ue20b"
+            ]
+        },
+        {
+            "type": "bitmap",
+            "file": "minecraft:font/electrocute_rune.png",
+            "ascent": 10,
+            "height": 12,
+            "chars": [
+                "\ue210"
+            ]
+        },
+        {
+            "type": "bitmap",
+            "file": "minecraft:font/first_strike_rune.png",
+            "ascent": 10,
+            "height": 12,
+            "chars": [
+                "\ue206"
+            ]
+        },
+        {
+            "type": "bitmap",
+            "file": "minecraft:font/fleet_footwork_rune.png",
+            "ascent": 10,
+            "height": 12,
+            "chars": [
+                "\ue212"
+            ]
+        },
+        {
+            "type": "bitmap",
+            "file": "minecraft:font/glacial_augment_rune.png",
+            "ascent": 10,
+            "height": 12,
+            "chars": [
+                "\ue207"
+            ]
+        },
+        {
+            "type": "bitmap",
+            "file": "minecraft:font/grasp_of_the_undying_rune.png",
+            "ascent": 10,
+            "height": 12,
+            "chars": [
+                "\ue20a"
+            ]
+        },
+        {
+            "type": "bitmap",
+            "file": "minecraft:font/guardian_rune.png",
+            "ascent": 10,
+            "height": 12,
+            "chars": [
+                "\ue208"
+            ]
+        },
+        {
+            "type": "bitmap",
+            "file": "minecraft:font/hail_of_blades_rune.png",
+            "ascent": 10,
+            "height": 12,
+            "chars": [
+                "\ue20e"
+            ]
+        },
+        {
+            "type": "bitmap",
+            "file": "minecraft:font/lethal_tempo_rune.png",
+            "ascent": 10,
+            "height": 12,
+            "chars": [
+                "\ue213"
+            ]
+        },
+        {
+            "type": "bitmap",
+            "file": "minecraft:font/press_the_attack_rune.png",
+            "ascent": 10,
+            "height": 12,
+            "chars": [
+                "\ue214"
+            ]
+        },
+        {
+            "type": "bitmap",
+            "file": "minecraft:font/stormraiders_surge_rune.png",
+            "ascent": 10,
+            "height": 12,
+            "chars": [
+                "\ue20c"
+            ]
+        },
+        {
+            "type": "bitmap",
+            "file": "minecraft:font/unsealed_spellbook_rune.png",
+            "ascent": 10,
+            "height": 12,
+            "chars": [
+                "\ue205"
+            ]
+        },
+        {
+            "type": "bitmap",
+            "file": "minecraft:font/bandle_city_lor_region.png",
+            "ascent": 10,
+            "height": 12,
+            "chars": [
+                "\ue220"
+            ]
+        },
+        {
+            "type": "bitmap",
+            "file": "minecraft:font/bilgewater_lor_alpha_region.png",
+            "ascent": 10,
+            "height": 12,
+            "chars": [
+                "\ue21f"
+            ]
+        },
+        {
+            "type": "bitmap",
+            "file": "minecraft:font/demacia_lor_region.png",
+            "ascent": 10,
+            "height": 12,
+            "chars": [
+                "\ue21e"
+            ]
+        },
+        {
+            "type": "bitmap",
+            "file": "minecraft:font/freljord_lor_region.png",
+            "ascent": 10,
+            "height": 12,
+            "chars": [
+                "\ue21d"
+            ]
+        },
+        {
+            "type": "bitmap",
+            "file": "minecraft:font/ionia_lor_region.png",
+            "ascent": 10,
+            "height": 12,
+            "chars": [
+                "\ue21c"
+            ]
+        },
+        {
+            "type": "bitmap",
+            "file": "minecraft:font/noxus_lor_region.png",
+            "ascent": 10,
+            "height": 12,
+            "chars": [
+                "\ue21b"
+            ]
+        },
+        {
+            "type": "bitmap",
+            "file": "minecraft:font/piltover_zaun_lor_region.png",
+            "ascent": 10,
+            "height": 12,
+            "chars": [
+                "\ue21a"
+            ]
+        },
+        {
+            "type": "bitmap",
+            "file": "minecraft:font/shadow_isles_lor_region.png",
+            "ascent": 10,
+            "height": 12,
+            "chars": [
+                "\ue219"
+            ]
+        },
+        {
+            "type": "bitmap",
+            "file": "minecraft:font/shurima_lor_alpha_region.png",
+            "ascent": 10,
+            "height": 12,
+            "chars": [
+                "\ue215"
+            ]
+        },
+        {
+            "type": "bitmap",
+            "file": "minecraft:font/targon_lor_region.png",
+            "ascent": 10,
+            "height": 12,
+            "chars": [
+                "\ue218"
+            ]
+        },
+        {
+            "type": "bitmap",
+            "file": "minecraft:font/void_lor_alpha_region.png",
+            "ascent": 10,
+            "height": 12,
+            "chars": [
+                "\ue216"
+            ]
+        },
+        {
+            "type": "bitmap",
+            "file": "minecraft:font/zaun_lor_alpha_region.png",
+            "ascent": 10,
+            "height": 12,
+            "chars": [
+                "\ue217"
+            ]
+        },
+        {
+            "type": "bitmap",
+            "file": "minecraft:font/ability_haste_colored_icon.png",
+            "ascent": 10,
+            "height": 12,
+            "chars": [
+                "\ue221"
+            ]
+        },
+        {
+            "type": "bitmap",
+            "file": "minecraft:font/ability_power_colored_icon.png",
+            "ascent": 10,
+            "height": 12,
+            "chars": [
+                "\ue222"
+            ]
+        },
+        {
+            "type": "bitmap",
+            "file": "minecraft:font/adaptive_force_icon.png",
+            "ascent": 10,
+            "height": 12,
+            "chars": [
+                "\ue223"
+            ]
+        },
+        {
+            "type": "bitmap",
+            "file": "minecraft:font/armor_colored_icon.png",
+            "ascent": 10,
+            "height": 12,
+            "chars": [
+                "\ue224"
+            ]
+        },
+        {
+            "type": "bitmap",
+            "file": "minecraft:font/armor_penetration_colored_icon.png",
+            "ascent": 10,
+            "height": 12,
+            "chars": [
+                "\ue225"
+            ]
+        },
+        {
+            "type": "bitmap",
+            "file": "minecraft:font/armor_penetration_icon.png",
+            "ascent": 10,
+            "height": 12,
+            "chars": [
+                "\ue226"
+            ]
+        },
+        {
+            "type": "bitmap",
+            "file": "minecraft:font/attack_damage.png",
+            "ascent": 10,
+            "height": 12,
+            "chars": [
+                "\ue227"
+            ]
+        },
+        {
+            "type": "bitmap",
+            "file": "minecraft:font/attack_damage_colored_icon.png",
+            "ascent": 10,
+            "height": 12,
+            "chars": [
+                "\ue228"
+            ]
+        },
+        {
+            "type": "bitmap",
+            "file": "minecraft:font/attack_speed_colored_icon_old.png",
+            "ascent": 10,
+            "height": 12,
+            "chars": [
+                "\ue229"
+            ]
+        },
+        {
+            "type": "bitmap",
+            "file": "minecraft:font/critical_strike_chance_colored_icon.png",
+            "ascent": 10,
+            "height": 12,
+            "chars": [
+                "\ue22a"
+            ]
+        },
+        {
+            "type": "bitmap",
+            "file": "minecraft:font/health_colored_icon.png",
+            "ascent": 10,
+            "height": 12,
+            "chars": [
+                "\ue22b"
+            ]
+        },
+        {
+            "type": "bitmap",
+            "file": "minecraft:font/health_regeneration_colored_icon.png",
+            "ascent": 10,
+            "height": 12,
+            "chars": [
+                "\ue22c"
+            ]
+        },
+        {
+            "type": "bitmap",
+            "file": "minecraft:font/life_steal_colored_icon.png",
+            "ascent": 10,
+            "height": 12,
+            "chars": [
+                "\ue22d"
+            ]
+        },
+        {
+            "type": "bitmap",
+            "file": "minecraft:font/magic_damage.png",
+            "ascent": 10,
+            "height": 12,
+            "chars": [
+                "\ue22e"
+            ]
+        },
+        {
+            "type": "bitmap",
+            "file": "minecraft:font/magic_penetration_colored_icon.png",
+            "ascent": 10,
+            "height": 12,
+            "chars": [
+                "\ue22f"
+            ]
+        },
+        {
+            "type": "bitmap",
+            "file": "minecraft:font/magic_resistance_colored_icon.png",
+            "ascent": 10,
+            "height": 12,
+            "chars": [
+                "\ue230"
+            ]
+        },
+        {
+            "type": "bitmap",
+            "file": "minecraft:font/movement_speed_colored_icon.png",
+            "ascent": 10,
+            "height": 12,
+            "chars": [
+                "\ue231"
+            ]
+        },
+        {
+            "type": "bitmap",
+            "file": "minecraft:font/tenacity_colored_icon.png",
+            "ascent": 10,
+            "height": 12,
+            "chars": [
+                "\ue232"
+            ]
+        },
+        {
+            "type": "bitmap",
+            "file": "leaguemechanics:item/aether-wisp.png",
+            "ascent": 10,
+            "height": 12,
+            "chars": [
+                "\ue260"
+            ]
+        },
+        {
+            "type": "bitmap",
+            "file": "leaguemechanics:item/amplifying-tome.png",
+            "ascent": 10,
+            "height": 12,
+            "chars": [
+                "\ue261"
+            ]
+        },
+        {
+            "type": "bitmap",
+            "file": "leaguemechanics:item/b.f-sword.png",
+            "ascent": 10,
+            "height": 12,
+            "chars": [
+                "\ue262"
+            ]
+        },
+        {
+            "type": "bitmap",
+            "file": "leaguemechanics:item/bamis-cinder.png",
+            "ascent": 10,
+            "height": 12,
+            "chars": [
+                "\ue263"
+            ]
+        },
+        {
+            "type": "bitmap",
+            "file": "leaguemechanics:item/bandleglass-mirror.png",
+            "ascent": 10,
+            "height": 12,
+            "chars": [
+                "\ue264"
+            ]
+        },
+        {
+            "type": "bitmap",
+            "file": "leaguemechanics:item/berserkers-greaves.png",
+            "ascent": 10,
+            "height": 12,
+            "chars": [
+                "\ue265"
+            ]
+        },
+        {
+            "type": "bitmap",
+            "file": "leaguemechanics:item/blasting-wand.png",
+            "ascent": 10,
+            "height": 12,
+            "chars": [
+                "\ue266"
+            ]
+        },
+        {
+            "type": "bitmap",
+            "file": "leaguemechanics:item/blightting-jewel.png",
+            "ascent": 10,
+            "height": 12,
+            "chars": [
+                "\ue267"
+            ]
+        },
+        {
+            "type": "bitmap",
+            "file": "leaguemechanics:item/boots.png",
+            "ascent": 10,
+            "height": 12,
+            "chars": [
+                "\ue268"
+            ]
+        },
+        {
+            "type": "bitmap",
+            "file": "leaguemechanics:item/bramble-vest.png",
+            "ascent": 10,
+            "height": 12,
+            "chars": [
+                "\ue269"
+            ]
+        },
+        {
+            "type": "bitmap",
+            "file": "leaguemechanics:item/caulfields-warhammer.png",
+            "ascent": 10,
+            "height": 12,
+            "chars": [
+                "\ue26a"
+            ]
+        },
+        {
+            "type": "bitmap",
+            "file": "leaguemechanics:item/chain-vest.png",
+            "ascent": 10,
+            "height": 12,
+            "chars": [
+                "\ue26b"
+            ]
+        },
+        {
+            "type": "bitmap",
+            "file": "leaguemechanics:item/cloak-of-agility.png",
+            "ascent": 10,
+            "height": 12,
+            "chars": [
+                "\ue26c"
+            ]
+        },
+        {
+            "type": "bitmap",
+            "file": "leaguemechanics:item/cloth-armor.png",
+            "ascent": 10,
+            "height": 12,
+            "chars": [
+                "\ue26d"
+            ]
+        },
+        {
+            "type": "bitmap",
+            "file": "leaguemechanics:item/crystalline-bracer.png",
+            "ascent": 10,
+            "height": 12,
+            "chars": [
+                "\ue26e"
+            ]
+        },
+        {
+            "type": "bitmap",
+            "file": "leaguemechanics:item/cull.png",
+            "ascent": 10,
+            "height": 12,
+            "chars": [
+                "\ue26f"
+            ]
+        },
+        {
+            "type": "bitmap",
+            "file": "leaguemechanics:item/dagger.png",
+            "ascent": 10,
+            "height": 12,
+            "chars": [
+                "\ue270"
+            ]
+        },
+        {
+            "type": "bitmap",
+            "file": "leaguemechanics:item/dark-seal.png",
+            "ascent": 10,
+            "height": 12,
+            "chars": [
+                "\ue271"
+            ]
+        },
+        {
+            "type": "bitmap",
+            "file": "leaguemechanics:item/dorans-blade.png",
+            "ascent": 10,
+            "height": 12,
+            "chars": [
+                "\ue272"
+            ]
+        },
+        {
+            "type": "bitmap",
+            "file": "leaguemechanics:item/dorans-bow.png",
+            "ascent": 10,
+            "height": 12,
+            "chars": [
+                "\ue273"
+            ]
+        },
+        {
+            "type": "bitmap",
+            "file": "leaguemechanics:item/dorans-helm.png",
+            "ascent": 10,
+            "height": 12,
+            "chars": [
+                "\ue274"
+            ]
+        },
+        {
+            "type": "bitmap",
+            "file": "leaguemechanics:item/dorans-ring.png",
+            "ascent": 10,
+            "height": 12,
+            "chars": [
+                "\ue275"
+            ]
+        },
+        {
+            "type": "bitmap",
+            "file": "leaguemechanics:item/dorans-shield.png",
+            "ascent": 10,
+            "height": 12,
+            "chars": [
+                "\ue276"
+            ]
+        },
+        {
+            "type": "bitmap",
+            "file": "leaguemechanics:item/executioners-calling.png",
+            "ascent": 10,
+            "height": 12,
+            "chars": [
+                "\ue277"
+            ]
+        },
+        {
+            "type": "bitmap",
+            "file": "leaguemechanics:item/faeri-charm.png",
+            "ascent": 10,
+            "height": 12,
+            "chars": [
+                "\ue278"
+            ]
+        },
+        {
+            "type": "bitmap",
+            "file": "leaguemechanics:item/fated-ashes.png",
+            "ascent": 10,
+            "height": 12,
+            "chars": [
+                "\ue279"
+            ]
+        },
+        {
+            "type": "bitmap",
+            "file": "leaguemechanics:item/flendish-codex.png",
+            "ascent": 10,
+            "height": 12,
+            "chars": [
+                "\ue27a"
+            ]
+        },
+        {
+            "type": "bitmap",
+            "file": "leaguemechanics:item/giants-belt.png",
+            "ascent": 10,
+            "height": 12,
+            "chars": [
+                "\ue27b"
+            ]
+        },
+        {
+            "type": "bitmap",
+            "file": "leaguemechanics:item/glowing-mote.png",
+            "ascent": 10,
+            "height": 12,
+            "chars": [
+                "\ue27c"
+            ]
+        },
+        {
+            "type": "bitmap",
+            "file": "leaguemechanics:item/hearthbound-axe.png",
+            "ascent": 10,
+            "height": 12,
+            "chars": [
+                "\ue27d"
+            ]
+        },
+        {
+            "type": "bitmap",
+            "file": "leaguemechanics:item/hexdrinker.png",
+            "ascent": 10,
+            "height": 12,
+            "chars": [
+                "\ue27e"
+            ]
+        },
+        {
+            "type": "bitmap",
+            "file": "leaguemechanics:item/hextech-alternator.png",
+            "ascent": 10,
+            "height": 12,
+            "chars": [
+                "\ue27f"
+            ]
+        },
+        {
+            "type": "bitmap",
+            "file": "leaguemechanics:item/kindlegem.png",
+            "ascent": 10,
+            "height": 12,
+            "chars": [
+                "\ue280"
+            ]
+        },
+        {
+            "type": "bitmap",
+            "file": "leaguemechanics:item/last-whisper.png",
+            "ascent": 10,
+            "height": 12,
+            "chars": [
+                "\ue281"
+            ]
+        },
+        {
+            "type": "bitmap",
+            "file": "leaguemechanics:item/long-sword.png",
+            "ascent": 10,
+            "height": 12,
+            "chars": [
+                "\ue282"
+            ]
+        },
+        {
+            "type": "bitmap",
+            "file": "leaguemechanics:item/lost-chapter.png",
+            "ascent": 10,
+            "height": 12,
+            "chars": [
+                "\ue283"
+            ]
+        },
+        {
+            "type": "bitmap",
+            "file": "leaguemechanics:item/mercurys-treads.png",
+            "ascent": 10,
+            "height": 12,
+            "chars": [
+                "\ue284"
+            ]
+        },
+        {
+            "type": "bitmap",
+            "file": "leaguemechanics:item/needlessly-large-rod.png",
+            "ascent": 10,
+            "height": 12,
+            "chars": [
+                "\ue285"
+            ]
+        },
+        {
+            "type": "bitmap",
+            "file": "leaguemechanics:item/negatron-cloak.png",
+            "ascent": 10,
+            "height": 12,
+            "chars": [
+                "\ue286"
+            ]
+        },
+        {
+            "type": "bitmap",
+            "file": "leaguemechanics:item/noonquiver.png",
+            "ascent": 10,
+            "height": 12,
+            "chars": [
+                "\ue287"
+            ]
+        },
+        {
+            "type": "bitmap",
+            "file": "leaguemechanics:item/null-magic-mantle.png",
+            "ascent": 10,
+            "height": 12,
+            "chars": [
+                "\ue288"
+            ]
+        },
+        {
+            "type": "bitmap",
+            "file": "leaguemechanics:item/oblivion-orb.png",
+            "ascent": 10,
+            "height": 12,
+            "chars": [
+                "\ue289"
+            ]
+        },
+        {
+            "type": "bitmap",
+            "file": "leaguemechanics:item/phage.png",
+            "ascent": 10,
+            "height": 12,
+            "chars": [
+                "\ue28a"
+            ]
+        },
+        {
+            "type": "bitmap",
+            "file": "leaguemechanics:item/pickaxe.png",
+            "ascent": 10,
+            "height": 12,
+            "chars": [
+                "\ue28b"
+            ]
+        },
+        {
+            "type": "bitmap",
+            "file": "leaguemechanics:item/plated-steelcaps.png",
+            "ascent": 10,
+            "height": 12,
+            "chars": [
+                "\ue28c"
+            ]
+        },
+        {
+            "type": "bitmap",
+            "file": "leaguemechanics:item/rectrix.png",
+            "ascent": 10,
+            "height": 12,
+            "chars": [
+                "\ue28d"
+            ]
+        },
+        {
+            "type": "bitmap",
+            "file": "leaguemechanics:item/recurve-bow.png",
+            "ascent": 10,
+            "height": 12,
+            "chars": [
+                "\ue28e"
+            ]
+        },
+        {
+            "type": "bitmap",
+            "file": "leaguemechanics:item/rejuvenation-bead.png",
+            "ascent": 10,
+            "height": 12,
+            "chars": [
+                "\ue28f"
+            ]
+        },
+        {
+            "type": "bitmap",
+            "file": "leaguemechanics:item/ruby-crystal.png",
+            "ascent": 10,
+            "height": 12,
+            "chars": [
+                "\ue290"
+            ]
+        },
+        {
+            "type": "bitmap",
+            "file": "leaguemechanics:item/scouts-slingshot.png",
+            "ascent": 10,
+            "height": 12,
+            "chars": [
+                "\ue291"
+            ]
+        },
+        {
+            "type": "bitmap",
+            "file": "leaguemechanics:item/serrated-dirk.png",
+            "ascent": 10,
+            "height": 12,
+            "chars": [
+                "\ue292"
+            ]
+        },
+        {
+            "type": "bitmap",
+            "file": "leaguemechanics:item/sorcerers-shoes.png",
+            "ascent": 10,
+            "height": 12,
+            "chars": [
+                "\ue293"
+            ]
+        },
+        {
+            "type": "bitmap",
+            "file": "leaguemechanics:item/spectres-cowl.png",
+            "ascent": 10,
+            "height": 12,
+            "chars": [
+                "\ue294"
+            ]
+        },
+        {
+            "type": "bitmap",
+            "file": "leaguemechanics:item/steel-sigil.png",
+            "ascent": 10,
+            "height": 12,
+            "chars": [
+                "\ue295"
+            ]
+        },
+        {
+            "type": "bitmap",
+            "file": "leaguemechanics:item/the-brutalizer.png",
+            "ascent": 10,
+            "height": 12,
+            "chars": [
+                "\ue296"
+            ]
+        },
+        {
+            "type": "bitmap",
+            "file": "leaguemechanics:item/tunneler.png",
+            "ascent": 10,
+            "height": 12,
+            "chars": [
+                "\ue297"
+            ]
+        },
+        {
+            "type": "bitmap",
+            "file": "leaguemechanics:item/vampiric-scepter.png",
+            "ascent": 10,
+            "height": 12,
+            "chars": [
+                "\ue298"
+            ]
+        },
+        {
+            "type": "bitmap",
+            "file": "leaguemechanics:item/verdant-barrier.png",
+            "ascent": 10,
+            "height": 12,
+            "chars": [
+                "\ue299"
+            ]
+        },
+        {
+            "type": "bitmap",
+            "file": "leaguemechanics:item/wardens-mail.png",
+            "ascent": 10,
+            "height": 12,
+            "chars": [
+                "\ue29a"
+            ]
+        },
+        {
+            "type": "bitmap",
+            "file": "leaguemechanics:item/winged-moonplate.png",
+            "ascent": 10,
+            "height": 12,
+            "chars": [
+                "\ue29b"
+            ]
+        },
+        {
+            "type": "bitmap",
+            "file": "leaguemechanics:item/zeal.png",
+            "ascent": 10,
+            "height": 12,
+            "chars": [
+                "\ue29c"
+            ]
+        },
+        {
+            "type": "bitmap",
+            "file": "minecraft:font/assasin_icon.png",
+            "ascent": 10,
+            "height": 12,
+            "chars": [
+                "\ue240"
+            ]
+        },
+        {
+            "type": "bitmap",
+            "file": "minecraft:font/fighter_icon.png",
+            "ascent": 10,
+            "height": 12,
+            "chars": [
+                "\ue241"
+            ]
+        },
+        {
+            "type": "bitmap",
+            "file": "minecraft:font/mage_icon.png",
+            "ascent": 10,
+            "height": 12,
+            "chars": [
+                "\ue242"
+            ]
+        },
+        {
+            "type": "bitmap",
+            "file": "minecraft:font/marksman_icon.png",
+            "ascent": 10,
+            "height": 12,
+            "chars": [
+                "\ue243"
+            ]
+        },
+        {
+            "type": "bitmap",
+            "file": "minecraft:font/support_icon.png",
+            "ascent": 10,
+            "height": 12,
+            "chars": [
+                "\ue244"
+            ]
+        },
+        {
+            "type": "bitmap",
+            "file": "minecraft:font/tank_icon.png",
+            "ascent": 10,
+            "height": 12,
+            "chars": [
+                "\ue245"
+            ]
+        },
+        {
+            "type": "bitmap",
+            "file": "minecraft:font/barrier.png",
+            "ascent": 10,
+            "height": 12,
+            "chars": [
+                "\ue246"
+            ]
+        },
+        {
+            "type": "bitmap",
+            "file": "minecraft:font/cleanse.png",
+            "ascent": 10,
+            "height": 12,
+            "chars": [
+                "\ue247"
+            ]
+        },
+        {
+            "type": "bitmap",
+            "file": "minecraft:font/exhaust.png",
+            "ascent": 10,
+            "height": 12,
+            "chars": [
+                "\ue248"
+            ]
+        },
+        {
+            "type": "bitmap",
+            "file": "minecraft:font/ghost.png",
+            "ascent": 10,
+            "height": 12,
+            "chars": [
+                "\ue249"
+            ]
+        },
+        {
+            "type": "bitmap",
+            "file": "minecraft:font/heal.png",
+            "ascent": 10,
+            "height": 12,
+            "chars": [
+                "\ue24a"
+            ]
+        },
+        {
+            "type": "bitmap",
+            "file": "minecraft:font/ignite.png",
+            "ascent": 10,
+            "height": 12,
+            "chars": [
+                "\ue24b"
+            ]
+        },
+        {
+            "type": "bitmap",
+            "file": "minecraft:font/smite.png",
+            "ascent": 10,
+            "height": 12,
+            "chars": [
+                "\ue24c"
+            ]
+        },
+        {
+            "type": "bitmap",
+            "file": "minecraft:font/blind_icon.png",
+            "ascent": 10,
+            "height": 12,
+            "chars": [
+                "\ue24d"
+            ]
+        },
+        {
+            "type": "bitmap",
+            "file": "minecraft:font/channeling_icon.png",
+            "ascent": 10,
+            "height": 12,
+            "chars": [
+                "\ue24e"
+            ]
+        },
+        {
+            "type": "bitmap",
+            "file": "minecraft:font/silenced_icon_wr.png",
+            "ascent": 10,
+            "height": 12,
+            "chars": [
+                "\ue24f"
+            ]
+        },
+        {
+            "type": "bitmap",
+            "file": "minecraft:font/slowed_icon.png",
+            "ascent": 10,
+            "height": 12,
+            "chars": [
+                "\ue250"
+            ]
+        },
+        {
+            "type": "bitmap",
+            "file": "minecraft:font/grievous_wounds_icon.png",
+            "ascent": 10,
+            "height": 12,
+            "chars": [
+                "\ue251"
+            ]
+        },
+        {
+            "type": "bitmap",
+            "file": "minecraft:font/burn_icon.png",
+            "ascent": 10,
+            "height": 12,
+            "chars": [
+                "\ue254"
+            ]
+        },
+        {
+            "type": "bitmap",
+            "file": "minecraft:font/critical_damage_magic_icon.png",
+            "ascent": 10,
+            "height": 12,
+            "chars": [
+                "\ue252"
+            ]
+        },
+        {
+            "type": "bitmap",
+            "file": "minecraft:font/critical_damage_physical_icon.png",
+            "ascent": 10,
+            "height": 12,
+            "chars": [
+                "\ue253"
+            ]
+        },
+        {
+            "type": "bitmap",
+            "file": "minecraft:font/critical_damage.png",
+            "ascent": 10,
+            "height": 12,
+            "chars": [
+                "\ue255"
+            ]
+        },
+        {
+            "type": "bitmap",
+            "file": "leaguemechanics:item/abyssal-mask.png",
+            "ascent": 10,
+            "height": 12,
+            "chars": [
+                "\ue2a0"
+            ]
+        },
+        {
+            "type": "bitmap",
+            "file": "leaguemechanics:item/ardent-censer.png",
+            "ascent": 10,
+            "height": 12,
+            "chars": [
+                "\ue2a1"
+            ]
+        },
+        {
+            "type": "bitmap",
+            "file": "leaguemechanics:item/atmas-reckoning.png",
+            "ascent": 10,
+            "height": 12,
+            "chars": [
+                "\ue2a2"
+            ]
+        },
+        {
+            "type": "bitmap",
+            "file": "leaguemechanics:item/bandlepipes.png",
+            "ascent": 10,
+            "height": 12,
+            "chars": [
+                "\ue2a3"
+            ]
+        },
+        {
+            "type": "bitmap",
+            "file": "leaguemechanics:item/banshees-veil.png",
+            "ascent": 10,
+            "height": 12,
+            "chars": [
+                "\ue2a4"
+            ]
+        },
+        {
+            "type": "bitmap",
+            "file": "leaguemechanics:item/black-cleaver.png",
+            "ascent": 10,
+            "height": 12,
+            "chars": [
+                "\ue2a5"
+            ]
+        },
+        {
+            "type": "bitmap",
+            "file": "leaguemechanics:item/blackfire-torch.png",
+            "ascent": 10,
+            "height": 12,
+            "chars": [
+                "\ue2a6"
+            ]
+        },
+        {
+            "type": "bitmap",
+            "file": "leaguemechanics:item/blade-of-the-ruined-king.png",
+            "ascent": 10,
+            "height": 12,
+            "chars": [
+                "\ue2a7"
+            ]
+        },
+        {
+            "type": "bitmap",
+            "file": "leaguemechanics:item/bloodletters-curse.png",
+            "ascent": 10,
+            "height": 12,
+            "chars": [
+                "\ue2a8"
+            ]
+        },
+        {
+            "type": "bitmap",
+            "file": "leaguemechanics:item/bloodthirster.png",
+            "ascent": 10,
+            "height": 12,
+            "chars": [
+                "\ue2a9"
+            ]
+        },
+        {
+            "type": "bitmap",
+            "file": "leaguemechanics:item/chempunk-chainsword.png",
+            "ascent": 10,
+            "height": 12,
+            "chars": [
+                "\ue2aa"
+            ]
+        },
+        {
+            "type": "bitmap",
+            "file": "leaguemechanics:item/cosmic-drive.png",
+            "ascent": 10,
+            "height": 12,
+            "chars": [
+                "\ue2ab"
+            ]
+        },
+        {
+            "type": "bitmap",
+            "file": "leaguemechanics:item/cryptbloom.png",
+            "ascent": 10,
+            "height": 12,
+            "chars": [
+                "\ue2ac"
+            ]
+        },
+        {
+            "type": "bitmap",
+            "file": "leaguemechanics:item/dead-mans-plate.png",
+            "ascent": 10,
+            "height": 12,
+            "chars": [
+                "\ue2ad"
+            ]
+        },
+        {
+            "type": "bitmap",
+            "file": "leaguemechanics:item/deaths-dance.png",
+            "ascent": 10,
+            "height": 12,
+            "chars": [
+                "\ue2ae"
+            ]
+        },
+        {
+            "type": "bitmap",
+            "file": "leaguemechanics:item/eclipse.png",
+            "ascent": 10,
+            "height": 12,
+            "chars": [
+                "\ue2af"
+            ]
+        },
+        {
+            "type": "bitmap",
+            "file": "leaguemechanics:item/edge-of-night.png",
+            "ascent": 10,
+            "height": 12,
+            "chars": [
+                "\ue2b0"
+            ]
+        },
+        {
+            "type": "bitmap",
+            "file": "leaguemechanics:item/endless-hunger.png",
+            "ascent": 10,
+            "height": 12,
+            "chars": [
+                "\ue2b1"
+            ]
+        },
+        {
+            "type": "bitmap",
+            "file": "leaguemechanics:item/essence-reaver.png",
+            "ascent": 10,
+            "height": 12,
+            "chars": [
+                "\ue2b2"
+            ]
+        },
+        {
+            "type": "bitmap",
+            "file": "leaguemechanics:item/experimental-hexplate.png",
+            "ascent": 10,
+            "height": 12,
+            "chars": [
+                "\ue2b3"
+            ]
+        },
+        {
+            "type": "bitmap",
+            "file": "leaguemechanics:item/force-of-nature.png",
+            "ascent": 10,
+            "height": 12,
+            "chars": [
+                "\ue2b4"
+            ]
+        },
+        {
+            "type": "bitmap",
+            "file": "leaguemechanics:item/frozen-heart.png",
+            "ascent": 10,
+            "height": 12,
+            "chars": [
+                "\ue2b5"
+            ]
+        },
+        {
+            "type": "bitmap",
+            "file": "leaguemechanics:item/guardian-angel.png",
+            "ascent": 10,
+            "height": 12,
+            "chars": [
+                "\ue2b6"
+            ]
+        },
+        {
+            "type": "bitmap",
+            "file": "leaguemechanics:item/guinsoos-rageblade.png",
+            "ascent": 10,
+            "height": 12,
+            "chars": [
+                "\ue2b7"
+            ]
+        },
+        {
+            "type": "bitmap",
+            "file": "leaguemechanics:item/heartsteel.png",
+            "ascent": 10,
+            "height": 12,
+            "chars": [
+                "\ue2b8"
+            ]
+        },
+        {
+            "type": "bitmap",
+            "file": "leaguemechanics:item/hexoptics-c44.png",
+            "ascent": 10,
+            "height": 12,
+            "chars": [
+                "\ue2b9"
+            ]
+        },
+        {
+            "type": "bitmap",
+            "file": "leaguemechanics:item/horizon-focus.png",
+            "ascent": 10,
+            "height": 12,
+            "chars": [
+                "\ue2ba"
+            ]
+        },
+        {
+            "type": "bitmap",
+            "file": "leaguemechanics:item/hubris.png",
+            "ascent": 10,
+            "height": 12,
+            "chars": [
+                "\ue2bb"
+            ]
+        },
+        {
+            "type": "bitmap",
+            "file": "leaguemechanics:item/hullbreaker.png",
+            "ascent": 10,
+            "height": 12,
+            "chars": [
+                "\ue2bc"
+            ]
+        },
+        {
+            "type": "bitmap",
+            "file": "leaguemechanics:item/iceborn-gauntlet.png",
+            "ascent": 10,
+            "height": 12,
+            "chars": [
+                "\ue2bd"
+            ]
+        },
+        {
+            "type": "bitmap",
+            "file": "leaguemechanics:item/immortal-shieldbow.png",
+            "ascent": 10,
+            "height": 12,
+            "chars": [
+                "\ue2be"
+            ]
+        },
+        {
+            "type": "bitmap",
+            "file": "leaguemechanics:item/imperial-mandate.png",
+            "ascent": 10,
+            "height": 12,
+            "chars": [
+                "\ue2bf"
+            ]
+        },
+        {
+            "type": "bitmap",
+            "file": "leaguemechanics:item/infinity-edge.png",
+            "ascent": 10,
+            "height": 12,
+            "chars": [
+                "\ue2c0"
+            ]
+        },
+        {
+            "type": "bitmap",
+            "file": "leaguemechanics:item/jaksho-the-protean.png",
+            "ascent": 10,
+            "height": 12,
+            "chars": [
+                "\ue2c1"
+            ]
+        },
+        {
+            "type": "bitmap",
+            "file": "leaguemechanics:item/knights-vow.png",
+            "ascent": 10,
+            "height": 12,
+            "chars": [
+                "\ue2c2"
+            ]
+        },
+        {
+            "type": "bitmap",
+            "file": "leaguemechanics:item/kraken-slayer.png",
+            "ascent": 10,
+            "height": 12,
+            "chars": [
+                "\ue2c3"
+            ]
+        },
+        {
+            "type": "bitmap",
+            "file": "leaguemechanics:item/liandrys-torment.png",
+            "ascent": 10,
+            "height": 12,
+            "chars": [
+                "\ue2c4"
+            ]
+        },
+        {
+            "type": "bitmap",
+            "file": "leaguemechanics:item/lich-bane.png",
+            "ascent": 10,
+            "height": 12,
+            "chars": [
+                "\ue2c5"
+            ]
+        },
+        {
+            "type": "bitmap",
+            "file": "leaguemechanics:item/lord-dominiks-regards.png",
+            "ascent": 10,
+            "height": 12,
+            "chars": [
+                "\ue2c6"
+            ]
+        },
+        {
+            "type": "bitmap",
+            "file": "leaguemechanics:item/ludens-echo.png",
+            "ascent": 10,
+            "height": 12,
+            "chars": [
+                "\ue2c7"
+            ]
+        },
+        {
+            "type": "bitmap",
+            "file": "leaguemechanics:item/malignance.png",
+            "ascent": 10,
+            "height": 12,
+            "chars": [
+                "\ue2c8"
+            ]
+        },
+        {
+            "type": "bitmap",
+            "file": "leaguemechanics:item/maw-of-malmortius.png",
+            "ascent": 10,
+            "height": 12,
+            "chars": [
+                "\ue2c9"
+            ]
+        },
+        {
+            "type": "bitmap",
+            "file": "leaguemechanics:item/mejais-soulstealer.png",
+            "ascent": 10,
+            "height": 12,
+            "chars": [
+                "\ue2ca"
+            ]
+        },
+        {
+            "type": "bitmap",
+            "file": "leaguemechanics:item/mercurial-scimitar.png",
+            "ascent": 10,
+            "height": 12,
+            "chars": [
+                "\ue2cb"
+            ]
+        },
+        {
+            "type": "bitmap",
+            "file": "leaguemechanics:item/morellonomicon.png",
+            "ascent": 10,
+            "height": 12,
+            "chars": [
+                "\ue2cc"
+            ]
+        },
+        {
+            "type": "bitmap",
+            "file": "leaguemechanics:item/mortal-reminder.png",
+            "ascent": 10,
+            "height": 12,
+            "chars": [
+                "\ue2cd"
+            ]
+        },
+        {
+            "type": "bitmap",
+            "file": "leaguemechanics:item/nashors-tooth.png",
+            "ascent": 10,
+            "height": 12,
+            "chars": [
+                "\ue2ce"
+            ]
+        },
+        {
+            "type": "bitmap",
+            "file": "leaguemechanics:item/navori-flickerblade.png",
+            "ascent": 10,
+            "height": 12,
+            "chars": [
+                "\ue2cf"
+            ]
+        },
+        {
+            "type": "bitmap",
+            "file": "leaguemechanics:item/overlords-bloodmail.png",
+            "ascent": 10,
+            "height": 12,
+            "chars": [
+                "\ue2d0"
+            ]
+        },
+        {
+            "type": "bitmap",
+            "file": "leaguemechanics:item/phantom-dancer.png",
+            "ascent": 10,
+            "height": 12,
+            "chars": [
+                "\ue2d1"
+            ]
+        },
+        {
+            "type": "bitmap",
+            "file": "leaguemechanics:item/rabadons-deathcap.png",
+            "ascent": 10,
+            "height": 12,
+            "chars": [
+                "\ue2d2"
+            ]
+        },
+        {
+            "type": "bitmap",
+            "file": "leaguemechanics:item/rapid-firecannon.png",
+            "ascent": 10,
+            "height": 12,
+            "chars": [
+                "\ue2d3"
+            ]
+        },
+        {
+            "type": "bitmap",
+            "file": "leaguemechanics:item/ravenous-hydra.png",
+            "ascent": 10,
+            "height": 12,
+            "chars": [
+                "\ue2d4"
+            ]
+        },
+        {
+            "type": "bitmap",
+            "file": "leaguemechanics:item/riftmaker.png",
+            "ascent": 10,
+            "height": 12,
+            "chars": [
+                "\ue2d5"
+            ]
+        },
+        {
+            "type": "bitmap",
+            "file": "leaguemechanics:item/rite-of-ruin.png",
+            "ascent": 10,
+            "height": 12,
+            "chars": [
+                "\ue2d6"
+            ]
+        },
+        {
+            "type": "bitmap",
+            "file": "leaguemechanics:item/rod-of-ages.png",
+            "ascent": 10,
+            "height": 12,
+            "chars": [
+                "\ue2d7"
+            ]
+        },
+        {
+            "type": "bitmap",
+            "file": "leaguemechanics:item/runaans-hurricane.png",
+            "ascent": 10,
+            "height": 12,
+            "chars": [
+                "\ue2d8"
+            ]
+        },
+        {
+            "type": "bitmap",
+            "file": "leaguemechanics:item/rylais-crystal-scepter.png",
+            "ascent": 10,
+            "height": 12,
+            "chars": [
+                "\ue2d9"
+            ]
+        },
+        {
+            "type": "bitmap",
+            "file": "leaguemechanics:item/seraphs-embrace.png",
+            "ascent": 10,
+            "height": 12,
+            "chars": [
+                "\ue2da"
+            ]
+        },
+        {
+            "type": "bitmap",
+            "file": "leaguemechanics:item/serpents-fang.png",
+            "ascent": 10,
+            "height": 12,
+            "chars": [
+                "\ue2db"
+            ]
+        },
+        {
+            "type": "bitmap",
+            "file": "leaguemechanics:item/seryldas-grudge.png",
+            "ascent": 10,
+            "height": 12,
+            "chars": [
+                "\ue2dc"
+            ]
+        },
+        {
+            "type": "bitmap",
+            "file": "leaguemechanics:item/shadowflame.png",
+            "ascent": 10,
+            "height": 12,
+            "chars": [
+                "\ue2dd"
+            ]
+        },
+        {
+            "type": "bitmap",
+            "file": "leaguemechanics:item/shurelyas-battlesong.png",
+            "ascent": 10,
+            "height": 12,
+            "chars": [
+                "\ue2de"
+            ]
+        },
+        {
+            "type": "bitmap",
+            "file": "leaguemechanics:item/spear-of-shojin.png",
+            "ascent": 10,
+            "height": 12,
+            "chars": [
+                "\ue2df"
+            ]
+        },
+        {
+            "type": "bitmap",
+            "file": "leaguemechanics:item/spirit-visage.png",
+            "ascent": 10,
+            "height": 12,
+            "chars": [
+                "\ue2e0"
+            ]
+        },
+        {
+            "type": "bitmap",
+            "file": "leaguemechanics:item/staff-of-flowing-water.png",
+            "ascent": 10,
+            "height": 12,
+            "chars": [
+                "\ue2e1"
+            ]
+        },
+        {
+            "type": "bitmap",
+            "file": "leaguemechanics:item/statikk-shiv.png",
+            "ascent": 10,
+            "height": 12,
+            "chars": [
+                "\ue2e2"
+            ]
+        },
+        {
+            "type": "bitmap",
+            "file": "leaguemechanics:item/steraks-gage.png",
+            "ascent": 10,
+            "height": 12,
+            "chars": [
+                "\ue2e3"
+            ]
+        },
+        {
+            "type": "bitmap",
+            "file": "leaguemechanics:item/stormrazor.png",
+            "ascent": 10,
+            "height": 12,
+            "chars": [
+                "\ue2e4"
+            ]
+        },
+        {
+            "type": "bitmap",
+            "file": "leaguemechanics:item/stormsurge.png",
+            "ascent": 10,
+            "height": 12,
+            "chars": [
+                "\ue2e5"
+            ]
+        },
+        {
+            "type": "bitmap",
+            "file": "leaguemechanics:item/stridebreaker.png",
+            "ascent": 10,
+            "height": 12,
+            "chars": [
+                "\ue2e6"
+            ]
+        },
+        {
+            "type": "bitmap",
+            "file": "leaguemechanics:item/sundered-sky.png",
+            "ascent": 10,
+            "height": 12,
+            "chars": [
+                "\ue2e7"
+            ]
+        },
+        {
+            "type": "bitmap",
+            "file": "leaguemechanics:item/sunfire-aegis.png",
+            "ascent": 10,
+            "height": 12,
+            "chars": [
+                "\ue2e8"
+            ]
+        },
+        {
+            "type": "bitmap",
+            "file": "leaguemechanics:item/terminus.png",
+            "ascent": 10,
+            "height": 12,
+            "chars": [
+                "\ue2e9"
+            ]
+        },
+        {
+            "type": "bitmap",
+            "file": "leaguemechanics:item/the-collector.png",
+            "ascent": 10,
+            "height": 12,
+            "chars": [
+                "\ue2ea"
+            ]
+        },
+        {
+            "type": "bitmap",
+            "file": "leaguemechanics:item/thornmail.png",
+            "ascent": 10,
+            "height": 12,
+            "chars": [
+                "\ue2eb"
+            ]
+        },
+        {
+            "type": "bitmap",
+            "file": "leaguemechanics:item/titanic-hydra.png",
+            "ascent": 10,
+            "height": 12,
+            "chars": [
+                "\ue2ec"
+            ]
+        },
+        {
+            "type": "bitmap",
+            "file": "leaguemechanics:item/trinity-force.png",
+            "ascent": 10,
+            "height": 12,
+            "chars": [
+                "\ue2ed"
+            ]
+        },
+        {
+            "type": "bitmap",
+            "file": "leaguemechanics:item/unending-despair.png",
+            "ascent": 10,
+            "height": 12,
+            "chars": [
+                "\ue2ee"
+            ]
+        },
+        {
+            "type": "bitmap",
+            "file": "leaguemechanics:item/void-staff.png",
+            "ascent": 10,
+            "height": 12,
+            "chars": [
+                "\ue2ef"
+            ]
+        },
+        {
+            "type": "bitmap",
+            "file": "leaguemechanics:item/voltaic-cyclosword.png",
+            "ascent": 10,
+            "height": 12,
+            "chars": [
+                "\ue2f0"
+            ]
+        },
+        {
+            "type": "bitmap",
+            "file": "leaguemechanics:item/warmogs-armor.png",
+            "ascent": 10,
+            "height": 12,
+            "chars": [
+                "\ue2f1"
+            ]
+        },
+        {
+            "type": "bitmap",
+            "file": "leaguemechanics:item/winters-approach.png",
+            "ascent": 10,
+            "height": 12,
+            "chars": [
+                "\ue2f2"
+            ]
+        },
+        {
+            "type": "bitmap",
+            "file": "leaguemechanics:item/wits-end.png",
+            "ascent": 10,
+            "height": 12,
+            "chars": [
+                "\ue2f3"
+            ]
+        },
+        {
+            "type": "bitmap",
+            "file": "leaguemechanics:item/youmuus-ghostblade.png",
+            "ascent": 10,
+            "height": 12,
+            "chars": [
+                "\ue2f4"
+            ]
+        },
+        {
+            "type": "bitmap",
+            "file": "leaguemechanics:item/yun-tal-wildarrows.png",
+            "ascent": 10,
+            "height": 12,
+            "chars": [
+                "\ue2f5"
+            ]
+        },
+        {
+            "type": "bitmap",
+            "file": "leaguemechanics:item/zekes-convergence.png",
+            "ascent": 10,
+            "height": 12,
+            "chars": [
+                "\ue2f6"
+            ]
+        },
+        {
+            "type": "bitmap",
+            "file": "leaguemechanics:item/zhonyas-hourglass.png",
+            "ascent": 10,
+            "height": 12,
+            "chars": [
+                "\ue2f7"
+            ]
+        },
+        {
+            "type": "bitmap",
+            "file": "leaguemechanics:item/forbidden-idol.png",
+            "ascent": 10,
+            "height": 12,
+            "chars": [
+                "\ue2f8"
+            ]
+        },
+        {
+            "type": "bitmap",
+            "file": "leaguemechanics:item/haunting-guise.png",
+            "ascent": 10,
+            "height": 12,
+            "chars": [
+                "\ue2f9"
+            ]
+        },
+        {
+            "type": "bitmap",
+            "file": "leaguemechanics:item/sheen.png",
+            "ascent": 10,
+            "height": 12,
+            "chars": [
+                "\ue2fa"
+            ]
+        },
+        {
+            "type": "bitmap",
+            "file": "leaguemechanics:item/tiamat.png",
+            "ascent": 10,
+            "height": 12,
+            "chars": [
+                "\ue2fb"
+            ]
+        },
+        {
+            "type": "bitmap",
+            "file": "minecraft:font/airborne_icon.png",
+            "ascent": 10,
+            "height": 12,
+            "chars": [
+                "\ue40e"
+            ]
+        },
+        {
+            "type": "bitmap",
+            "file": "minecraft:font/be_icon.png",
+            "ascent": 10,
+            "height": 12,
+            "chars": [
+                "\ue40f"
+            ]
+        },
+        {
+            "type": "bitmap",
+            "file": "minecraft:font/cc_immune_icon.png",
+            "ascent": 10,
+            "height": 12,
+            "chars": [
+                "\ue410"
+            ]
+        },
+        {
+            "type": "bitmap",
+            "file": "minecraft:font/charm_icon.png",
+            "ascent": 10,
+            "height": 12,
+            "chars": [
+                "\ue411"
+            ]
+        },
+        {
+            "type": "bitmap",
+            "file": "minecraft:font/cripple_icon.png",
+            "ascent": 10,
+            "height": 12,
+            "chars": [
+                "\ue412"
+            ]
+        },
+        {
+            "type": "bitmap",
+            "file": "minecraft:font/death.png",
+            "ascent": 10,
+            "height": 12,
+            "chars": [
+                "\ue413"
+            ]
+        },
+        {
+            "type": "bitmap",
+            "file": "minecraft:font/disarm_icon.png",
+            "ascent": 10,
+            "height": 12,
+            "chars": [
+                "\ue414"
+            ]
+        },
+        {
+            "type": "bitmap",
+            "file": "minecraft:font/enhanced_critical_damage_icon.png",
+            "ascent": 10,
+            "height": 12,
+            "chars": [
+                "\ue415"
+            ]
+        },
+        {
+            "type": "bitmap",
+            "file": "minecraft:font/fear_icon.png",
+            "ascent": 10,
+            "height": 12,
+            "chars": [
+                "\ue416"
+            ]
+        },
+        {
+            "type": "bitmap",
+            "file": "minecraft:font/fear_icon_wr.png",
+            "ascent": 10,
+            "height": 12,
+            "chars": [
+                "\ue417"
+            ]
+        },
+        {
+            "type": "bitmap",
+            "file": "minecraft:font/heal_and_shield_power_icon.png",
+            "ascent": 10,
+            "height": 12,
+            "chars": [
+                "\ue418"
+            ]
+        },
+        {
+            "type": "bitmap",
+            "file": "minecraft:font/oe_icon.png",
+            "ascent": 10,
+            "height": 12,
+            "chars": [
+                "\ue419"
+            ]
+        },
+        {
+            "type": "bitmap",
+            "file": "minecraft:font/omnivamp_colored_icon.png",
+            "ascent": 10,
+            "height": 12,
+            "chars": [
+                "\ue41a"
+            ]
+        },
+        {
+            "type": "bitmap",
+            "file": "minecraft:font/physical_damage_shield.png",
+            "ascent": 10,
+            "height": 12,
+            "chars": [
+                "\ue41b"
+            ]
+        },
+        {
+            "type": "bitmap",
+            "file": "minecraft:font/root_icon.png",
+            "ascent": 10,
+            "height": 12,
+            "chars": [
+                "\ue41c"
+            ]
+        },
+        {
+            "type": "bitmap",
+            "file": "minecraft:font/taunt_icon.png",
+            "ascent": 10,
+            "height": 12,
+            "chars": [
+                "\ue41d"
+            ]
+        },
+        {
+            "type": "bitmap",
+            "file": "minecraft:font/unkillable_icon.png",
+            "ascent": 10,
+            "height": 12,
+            "chars": [
+                "\ue41e"
+            ]
+        },
+        {
+            "type": "bitmap",
+            "file": "minecraft:font/untargetable_icon.png",
+            "ascent": 10,
+            "height": 12,
+            "chars": [
+                "\ue41f"
+            ]
+        },
+        {
+            "type": "bitmap",
+            "file": "minecraft:font/berserk_icon.png",
+            "ascent": 10,
+            "height": 12,
+            "chars": [
+                "\ue420"
+            ]
+        },
+        {
+            "type": "bitmap",
+            "file": "minecraft:font/black_cleaver_cleave_full_stack.png",
+            "ascent": 10,
+            "height": 12,
+            "chars": [
+                "\ue421"
+            ]
+        },
+        {
+            "type": "bitmap",
+            "file": "minecraft:font/black_cleaver_cleave_stack.png",
+            "ascent": 10,
+            "height": 12,
+            "chars": [
+                "\ue422"
+            ]
+        },
+        {
+            "type": "bitmap",
+            "file": "minecraft:font/chemtech_dragon_soul_buff.png",
+            "ascent": 10,
+            "height": 12,
+            "chars": [
+                "\ue423"
+            ]
+        },
+        {
+            "type": "bitmap",
+            "file": "minecraft:font/cloud_dragon_soul_buff.png",
+            "ascent": 10,
+            "height": 12,
+            "chars": [
+                "\ue424"
+            ]
+        },
+        {
+            "type": "bitmap",
+            "file": "minecraft:font/gold_icon.png",
+            "ascent": 10,
+            "height": 12,
+            "chars": [
+                "\ue425"
+            ]
+        },
+        {
+            "type": "bitmap",
+            "file": "minecraft:font/hextech_dragon_soul_buff.png",
+            "ascent": 10,
+            "height": 12,
+            "chars": [
+                "\ue426"
+            ]
+        },
+        {
+            "type": "bitmap",
+            "file": "minecraft:font/infernal_dragon_soul_buff.png",
+            "ascent": 10,
+            "height": 12,
+            "chars": [
+                "\ue427"
+            ]
+        },
+        {
+            "type": "bitmap",
+            "file": "minecraft:font/mountain_dragon_soul_buff.png",
+            "ascent": 10,
+            "height": 12,
+            "chars": [
+                "\ue428"
+            ]
+        },
+        {
+            "type": "bitmap",
+            "file": "minecraft:font/ocean_dragon_soul_buff.png",
+            "ascent": 10,
+            "height": 12,
+            "chars": [
+                "\ue429"
+            ]
+        },
+        {
+            "type": "bitmap",
+            "file": "minecraft:font/sleep_icon.png",
+            "ascent": 10,
+            "height": 12,
+            "chars": [
+                "\ue42a"
+            ]
+        },
+        {
+            "type": "bitmap",
+            "file": "minecraft:font/battle_roar.png",
+            "ascent": 10,
+            "height": 12,
+            "chars": [
+                "\ue42b"
+            ]
+        },
+        {
+            "type": "bitmap",
+            "file": "minecraft:font/cosmic_radiance.png",
+            "ascent": 10,
+            "height": 12,
+            "chars": [
+                "\ue42c"
+            ]
+        },
+        {
+            "type": "bitmap",
+            "file": "minecraft:font/hollowed_mist.png",
+            "ascent": 10,
+            "height": 12,
+            "chars": [
+                "\ue42d"
+            ]
+        },
+        {
+            "type": "bitmap",
+            "file": "minecraft:font/inspire.png",
+            "ascent": 10,
+            "height": 12,
+            "chars": [
+                "\ue42e"
+            ]
+        },
+        {
+            "type": "bitmap",
+            "file": "minecraft:font/lambs_sprite.png",
+            "ascent": 10,
+            "height": 12,
+            "chars": [
+                "\ue42f"
+            ]
+        },
+        {
+            "type": "bitmap",
+            "file": "minecraft:font/meditate.png",
+            "ascent": 10,
+            "height": 12,
+            "chars": [
+                "\ue430"
+            ]
+        },
+        {
+            "type": "bitmap",
+            "file": "minecraft:font/petrifying_gaze.png",
+            "ascent": 10,
+            "height": 12,
+            "chars": [
+                "\ue431"
+            ]
+        },
+        {
+            "type": "bitmap",
+            "file": "minecraft:font/ragnarok.png",
+            "ascent": 10,
+            "height": 12,
+            "chars": [
+                "\ue432"
+            ]
+        },
+        {
+            "type": "bitmap",
+            "file": "minecraft:font/saguine_pool.png",
+            "ascent": 10,
+            "height": 12,
+            "chars": [
+                "\ue433"
+            ]
+        },
+        {
+            "type": "bitmap",
+            "file": "minecraft:font/seismic_field.png",
+            "ascent": 10,
+            "height": 12,
+            "chars": [
+                "\ue434"
+            ]
+        },
+        {
+            "type": "bitmap",
+            "file": "minecraft:font/spray_and_pray.png",
+            "ascent": 10,
+            "height": 12,
+            "chars": [
+                "\ue435"
+            ]
+        },
+        {
+            "type": "bitmap",
+            "file": "minecraft:font/surround_sounds.png",
+            "ascent": 10,
+            "height": 12,
+            "chars": [
+                "\ue436"
+            ]
+        },
+        {
+            "type": "bitmap",
+            "file": "minecraft:font/world_ender.png",
+            "ascent": 10,
+            "height": 12,
+            "chars": [
+                "\ue437"
+            ]
+        },
+        {
+            "type": "bitmap",
+            "file": "minecraft:font/perfect_execution.png",
+            "ascent": 10,
+            "height": 12,
+            "chars": [
+                "\ue438"
+            ]
+        },
+        {
+            "type": "bitmap",
+            "file": "minecraft:font/curse_of_the_sad_mummy.png",
+            "ascent": 10,
+            "height": 12,
+            "chars": [
+                "\ue439"
+            ]
+        },
+        {
+            "type": "bitmap",
+            "file": "minecraft:font/rangers_focus_2.png",
+            "ascent": 10,
+            "height": 12,
+            "chars": [
+                "\ue43a"
+            ]
+        },
+        {
+            "type": "bitmap",
+            "file": "minecraft:font/grandmaster_at_arms.png",
+            "ascent": 10,
+            "height": 12,
+            "chars": [
+                "\ue43b"
+            ]
+        },
+        {
+            "type": "bitmap",
+            "file": "minecraft:font/divine_judgment.png",
+            "ascent": 10,
+            "height": 12,
+            "chars": [
+                "\ue43c"
+            ]
+        },
+        {
+            "type": "bitmap",
+            "file": "minecraft:font/solar_flare.png",
+            "ascent": 10,
+            "height": 12,
+            "chars": [
+                "\ue43d"
+            ]
+        },
+        {
+            "type": "bitmap",
+            "file": "minecraft:font/final_spark.png",
+            "ascent": 10,
+            "height": 12,
+            "chars": [
+                "\ue43e"
+            ]
+        },
+        {
+            "type": "bitmap",
+            "file": "minecraft:font/warm_hugs.png",
+            "ascent": 10,
+            "height": 12,
+            "chars": [
+                "\ue43f"
+            ]
+        },
+        {
+            "type": "bitmap",
+            "file": "minecraft:font/black_shield.png",
+            "ascent": 10,
+            "height": 12,
+            "chars": [
+                "\ue440"
+            ]
+        },
+        {
+            "type": "bitmap",
+            "file": "minecraft:font/fury_of_the_sands.png",
+            "ascent": 10,
+            "height": 12,
+            "chars": [
+                "\ue441"
+            ]
+        },
+        {
+            "type": "bitmap",
+            "file": "minecraft:font/pop_blossom.png",
+            "ascent": 10,
+            "height": 12,
+            "chars": [
+                "\ue442"
+            ]
+        },
+        {
+            "type": "bitmap",
+            "file": "minecraft:font/absolute_zero.png",
+            "ascent": 10,
+            "height": 12,
+            "chars": [
+                "\ue443"
+            ]
+        },
+        {
+            "type": "bitmap",
+            "file": "minecraft:font/phantom_undertow.png",
+            "ascent": 10,
+            "height": 12,
+            "chars": [
+                "\ue444"
+            ]
+        },
+        {
+            "type": "bitmap",
+            "file": "minecraft:font/dominus.png",
+            "ascent": 10,
+            "height": 12,
+            "chars": [
+                "\ue445"
+            ]
+        },
+        {
+            "type": "bitmap",
+            "file": "minecraft:font/stand_united.png",
+            "ascent": 10,
+            "height": 12,
+            "chars": [
+                "\ue446"
+            ]
+        },
+        {
+            "type": "bitmap",
+            "file": "minecraft:font/demonic_ascension.png",
+            "ascent": 10,
+            "height": 12,
+            "chars": [
+                "\ue447"
+            ]
+        },
+        {
+            "type": "bitmap",
+            "file": "minecraft:font/hijack.png",
+            "ascent": 10,
+            "height": 12,
+            "chars": [
+                "\ue448"
+            ]
+        },
+        {
+            "type": "bitmap",
+            "file": "minecraft:font/shadow_assault.png",
+            "ascent": 10,
+            "height": 12,
+            "chars": [
+                "\ue449"
+            ]
+        },
+        {
+            "type": "bitmap",
+            "file": "minecraft:font/wingborne_storm.png",
+            "ascent": 10,
+            "height": 12,
+            "chars": [
+                "\ue44a"
+            ]
+        },
+        {
+            "type": "bitmap",
+            "file": "minecraft:font/chain_of_corruption.png",
+            "ascent": 10,
+            "height": 12,
+            "chars": [
+                "\ue44b"
+            ]
+        },
+        {
+            "type": "bitmap",
+            "file": "minecraft:font/life_form_disintegration_ray.png",
+            "ascent": 10,
+            "height": 12,
+            "chars": [
+                "\ue44c"
+            ]
+        },
+        {
+            "type": "bitmap",
+            "file": "minecraft:font/tides_of_blood.png",
+            "ascent": 10,
+            "height": 12,
+            "chars": [
+                "\ue44d"
+            ]
+        },
+        {
+            "type": "bitmap",
+            "file": "minecraft:font/stormbringer.png",
+            "ascent": 10,
+            "height": 12,
+            "chars": [
+                "\ue44e"
+            ]
+        },
+        {
+            "type": "bitmap",
+            "file": "minecraft:font/fate_sealed.png",
+            "ascent": 10,
+            "height": 12,
+            "chars": [
+                "\ue44f"
+            ]
+        },
+        {
+            "type": "bitmap",
+            "file": "minecraft:font/transcend_ones_self.png",
+            "ascent": 10,
+            "height": 12,
+            "chars": [
+                "\ue450"
+            ]
+        },
+        {
+            "type": "bitmap",
+            "file": "minecraft:font/lightning_crash.png",
+            "ascent": 10,
+            "height": 12,
+            "chars": [
+                "\ue451"
+            ]
+        },
+        {
+            "type": "bitmap",
+            "file": "minecraft:font/lightning_bolt.png",
+            "ascent": 10,
+            "height": 12,
+            "chars": [
+                "\ue452"
+            ]
+        },
+        {
+            "type": "bitmap",
+            "file": "minecraft:font/absolute_focus_rune.png",
+            "ascent": 10,
+            "height": 12,
+            "chars": [
+                "\ue453"
+            ]
+        },
+        {
+            "type": "bitmap",
+            "file": "minecraft:font/absorb_life_rune.png",
+            "ascent": 10,
+            "height": 12,
+            "chars": [
+                "\ue454"
+            ]
+        },
+        {
+            "type": "bitmap",
+            "file": "minecraft:font/approach_velocity_rune.png",
+            "ascent": 10,
+            "height": 12,
+            "chars": [
+                "\ue455"
+            ]
+        },
+        {
+            "type": "bitmap",
+            "file": "minecraft:font/axiom_arcanist_rune.png",
+            "ascent": 10,
+            "height": 12,
+            "chars": [
+                "\ue456"
+            ]
+        },
+        {
+            "type": "bitmap",
+            "file": "minecraft:font/biscuit_delivery_rune.png",
+            "ascent": 10,
+            "height": 12,
+            "chars": [
+                "\ue457"
+            ]
+        },
+        {
+            "type": "bitmap",
+            "file": "minecraft:font/bone_plating_rune.png",
+            "ascent": 10,
+            "height": 12,
+            "chars": [
+                "\ue458"
+            ]
+        },
+        {
+            "type": "bitmap",
+            "file": "minecraft:font/cash_back_rune.png",
+            "ascent": 10,
+            "height": 12,
+            "chars": [
+                "\ue459"
+            ]
+        },
+        {
+            "type": "bitmap",
+            "file": "minecraft:font/celerity_rune.png",
+            "ascent": 10,
+            "height": 12,
+            "chars": [
+                "\ue45a"
+            ]
+        },
+        {
+            "type": "bitmap",
+            "file": "minecraft:font/cheap_shot_rune.png",
+            "ascent": 10,
+            "height": 12,
+            "chars": [
+                "\ue45b"
+            ]
+        },
+        {
+            "type": "bitmap",
+            "file": "minecraft:font/conditioning_rune.png",
+            "ascent": 10,
+            "height": 12,
+            "chars": [
+                "\ue45c"
+            ]
+        },
+        {
+            "type": "bitmap",
+            "file": "minecraft:font/cosmic_insight_rune.png",
+            "ascent": 10,
+            "height": 12,
+            "chars": [
+                "\ue45d"
+            ]
+        },
+        {
+            "type": "bitmap",
+            "file": "minecraft:font/coup_de_grace_rune.png",
+            "ascent": 10,
+            "height": 12,
+            "chars": [
+                "\ue45e"
+            ]
+        },
+        {
+            "type": "bitmap",
+            "file": "minecraft:font/cut_down_rune.png",
+            "ascent": 10,
+            "height": 12,
+            "chars": [
+                "\ue45f"
+            ]
+        },
+        {
+            "type": "bitmap",
+            "file": "minecraft:font/deep_ward_rune.png",
+            "ascent": 10,
+            "height": 12,
+            "chars": [
+                "\ue460"
+            ]
+        },
+        {
+            "type": "bitmap",
+            "file": "minecraft:font/demolish_rune.png",
+            "ascent": 10,
+            "height": 12,
+            "chars": [
+                "\ue461"
+            ]
+        },
+        {
+            "type": "bitmap",
+            "file": "minecraft:font/font_of_life_rune.png",
+            "ascent": 10,
+            "height": 12,
+            "chars": [
+                "\ue462"
+            ]
+        },
+        {
+            "type": "bitmap",
+            "file": "minecraft:font/gathering_storm_rune.png",
+            "ascent": 10,
+            "height": 12,
+            "chars": [
+                "\ue463"
+            ]
+        },
+        {
+            "type": "bitmap",
+            "file": "minecraft:font/grisly_mementos_rune.png",
+            "ascent": 10,
+            "height": 12,
+            "chars": [
+                "\ue464"
+            ]
+        },
+        {
+            "type": "bitmap",
+            "file": "minecraft:font/hextech_flashtraption_rune.png",
+            "ascent": 10,
+            "height": 12,
+            "chars": [
+                "\ue465"
+            ]
+        },
+        {
+            "type": "bitmap",
+            "file": "minecraft:font/jack_of_all_trades_rune.png",
+            "ascent": 10,
+            "height": 12,
+            "chars": [
+                "\ue466"
+            ]
+        },
+        {
+            "type": "bitmap",
+            "file": "minecraft:font/last_stand_rune.png",
+            "ascent": 10,
+            "height": 12,
+            "chars": [
+                "\ue467"
+            ]
+        },
+        {
+            "type": "bitmap",
+            "file": "minecraft:font/legend_alacrity_rune.png",
+            "ascent": 10,
+            "height": 12,
+            "chars": [
+                "\ue468"
+            ]
+        },
+        {
+            "type": "bitmap",
+            "file": "minecraft:font/legend_bloodline_rune.png",
+            "ascent": 10,
+            "height": 12,
+            "chars": [
+                "\ue469"
+            ]
+        },
+        {
+            "type": "bitmap",
+            "file": "minecraft:font/legend_haste_rune.png",
+            "ascent": 10,
+            "height": 12,
+            "chars": [
+                "\ue46a"
+            ]
+        },
+        {
+            "type": "bitmap",
+            "file": "minecraft:font/magical_footwear_rune.png",
+            "ascent": 10,
+            "height": 12,
+            "chars": [
+                "\ue46b"
+            ]
+        },
+        {
+            "type": "bitmap",
+            "file": "minecraft:font/manaflow_band_rune.png",
+            "ascent": 10,
+            "height": 12,
+            "chars": [
+                "\ue46c"
+            ]
+        },
+        {
+            "type": "bitmap",
+            "file": "minecraft:font/nimbus_cloak_rune.png",
+            "ascent": 10,
+            "height": 12,
+            "chars": [
+                "\ue46d"
+            ]
+        },
+        {
+            "type": "bitmap",
+            "file": "minecraft:font/overgrowth_rune.png",
+            "ascent": 10,
+            "height": 12,
+            "chars": [
+                "\ue46e"
+            ]
+        },
+        {
+            "type": "bitmap",
+            "file": "minecraft:font/presence_of_mind_rune.png",
+            "ascent": 10,
+            "height": 12,
+            "chars": [
+                "\ue46f"
+            ]
+        },
+        {
+            "type": "bitmap",
+            "file": "minecraft:font/relentless_hunter_rune.png",
+            "ascent": 10,
+            "height": 12,
+            "chars": [
+                "\ue470"
+            ]
+        },
+        {
+            "type": "bitmap",
+            "file": "minecraft:font/revitalize_rune.png",
+            "ascent": 10,
+            "height": 12,
+            "chars": [
+                "\ue471"
+            ]
+        },
+        {
+            "type": "bitmap",
+            "file": "minecraft:font/scorch_rune.png",
+            "ascent": 10,
+            "height": 12,
+            "chars": [
+                "\ue472"
+            ]
+        },
+        {
+            "type": "bitmap",
+            "file": "minecraft:font/second_wind_rune.png",
+            "ascent": 10,
+            "height": 12,
+            "chars": [
+                "\ue473"
+            ]
+        },
+        {
+            "type": "bitmap",
+            "file": "minecraft:font/shield_bash_rune.png",
+            "ascent": 10,
+            "height": 12,
+            "chars": [
+                "\ue474"
+            ]
+        },
+        {
+            "type": "bitmap",
+            "file": "minecraft:font/sixth_sense_rune.png",
+            "ascent": 10,
+            "height": 12,
+            "chars": [
+                "\ue475"
+            ]
+        },
+        {
+            "type": "bitmap",
+            "file": "minecraft:font/sudden_impact_rune.png",
+            "ascent": 10,
+            "height": 12,
+            "chars": [
+                "\ue476"
+            ]
+        },
+        {
+            "type": "bitmap",
+            "file": "minecraft:font/taste_of_blood_rune.png",
+            "ascent": 10,
+            "height": 12,
+            "chars": [
+                "\ue477"
+            ]
+        },
+        {
+            "type": "bitmap",
+            "file": "minecraft:font/time_warp_tonic_rune.png",
+            "ascent": 10,
+            "height": 12,
+            "chars": [
+                "\ue478"
+            ]
+        },
+        {
+            "type": "bitmap",
+            "file": "minecraft:font/transcendence_rune.png",
+            "ascent": 10,
+            "height": 12,
+            "chars": [
+                "\ue479"
+            ]
+        },
+        {
+            "type": "bitmap",
+            "file": "minecraft:font/treasure_hunter_rune.png",
+            "ascent": 10,
+            "height": 12,
+            "chars": [
+                "\ue47a"
+            ]
+        },
+        {
+            "type": "bitmap",
+            "file": "minecraft:font/triple_tonic_rune.png",
+            "ascent": 10,
+            "height": 12,
+            "chars": [
+                "\ue47b"
+            ]
+        },
+        {
+            "type": "bitmap",
+            "file": "minecraft:font/triumph_rune.png",
+            "ascent": 10,
+            "height": 12,
+            "chars": [
+                "\ue47c"
+            ]
+        },
+        {
+            "type": "bitmap",
+            "file": "minecraft:font/ultimate_hunter_rune.png",
+            "ascent": 10,
+            "height": 12,
+            "chars": [
+                "\ue47d"
+            ]
+        },
+        {
+            "type": "bitmap",
+            "file": "minecraft:font/unflinching_rune.png",
+            "ascent": 10,
+            "height": 12,
+            "chars": [
+                "\ue47e"
+            ]
+        },
+        {
+            "type": "bitmap",
+            "file": "minecraft:font/waterwalking_rune.png",
+            "ascent": 10,
+            "height": 12,
+            "chars": [
+                "\ue47f"
+            ]
+        }
+    ]
+}

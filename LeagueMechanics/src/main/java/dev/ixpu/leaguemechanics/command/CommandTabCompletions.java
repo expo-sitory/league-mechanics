@@ -1,9 +1,8 @@
 package dev.ixpu.leaguemechanics.command;
 
-import dev.ixpu.leaguemechanics.rune.CooldownHandler;
-import dev.ixpu.leaguemechanics.rune.RunePath;
-import dev.ixpu.leaguemechanics.rune.RuneRegistry;
-import dev.ixpu.leaguemechanics.rune.RuneSlot;
+import dev.ixpu.leaguemechanics.manager.BuffManager;
+import dev.ixpu.leaguemechanics.buff.BuffType;
+import dev.ixpu.leaguemechanics.util.RuneRegistry;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
@@ -15,9 +14,6 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 public class CommandTabCompletions implements org.bukkit.command.TabCompleter {
-    private static final List<String> PATHS = List.of(
-            "domination", "precision", "inspiration", "resolve", "sorcery"
-    );
 
     private final RuneRegistry runeRegistry;
 
@@ -38,11 +34,29 @@ public class CommandTabCompletions implements org.bukkit.command.TabCompleter {
             if (player.hasPermission("leaguemechanics.admin")) {
                 completions.add("reload");
                 completions.add("setlevel");
+                completions.add("givebuff");
                 completions.add("shop");
             }
             completions.add("inspect");
+            completions.add("party");
             completions.add("dash");
             return filter(completions, args[0]);
+        }
+
+        if (args[0].equalsIgnoreCase("givebuff") && player.hasPermission("leaguemechanics.admin")) {
+            if (args.length == 2) {
+                for (BuffType type : BuffType.values()) {
+                    completions.add(BuffManager.getId(type));
+                }
+                return filter(completions, args[1]);
+            }
+            if (args.length == 3) {
+                return org.bukkit.Bukkit.getOnlinePlayers().stream()
+                        .map(org.bukkit.entity.Player::getName)
+                        .filter(name -> name.toLowerCase().startsWith(args[2].toLowerCase()))
+                        .collect(Collectors.toList());
+            }
+            return new ArrayList<>();
         }
 
         if (args.length == 2 && args[0].equalsIgnoreCase("dash")) {

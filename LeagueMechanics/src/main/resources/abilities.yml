@@ -1,0 +1,157 @@
+skills:
+  paranoia:
+    cooldown-seconds: 90
+    min-cooldown-seconds: 20.0
+    duration-seconds: 10
+    hunger-cost: 4
+    range: 25
+    require-pvp: true
+  riftwalk:
+    cooldown-seconds: 10
+    min-cooldown-seconds: 3.0
+    hunger-cost: 4
+    range: 10
+    radius: 3
+    damage: 6
+    damage-per-extra-cast: 3
+    ap-scaling: 30
+    combo-window-seconds: 5
+    extra-hunger-per-cast: 2
+    require-pvp: true
+  cosmic-radiance:
+    cooldown-seconds: 45
+    min-cooldown-seconds: 20.0
+    hunger-cost: 4
+    duration-seconds: 3
+    invulnerable-seconds: 2
+    cooldown-after-effect: true
+    radius: 5
+    absorption-hearts: 40
+  seismic-bastion:
+    cooldown-seconds: 60
+    min-cooldown-seconds: 20.0
+    hunger-cost: 4
+    duration-seconds: 7
+    cooldown-after-effect: true
+    radius: 10
+    absorption-hearts: 40
+    slow-percent: 40
+    require-pvp: true
+  shield-of-durand:
+    cooldown-seconds: 90
+    hunger-cost: 4
+    duration-seconds: 10
+    cooldown-after-effect: true
+    armor-percent: 60
+    range: 10
+    charge-start-range: 3
+    charge-range-step: 1
+    charge-step-seconds: 0.5
+    charge-slow-percent: 50
+    stun-seconds: 2
+    require-pvp: true
+  final-hour:
+    cooldown-seconds: 90
+    hunger-cost: 4
+    duration-seconds: 16
+    cooldown-after-effect: true
+    attack-speed: 20
+    vanish-seconds: 1.0
+  undying-rage:
+    cooldown-seconds: 90
+    hunger-cost: 0
+    duration-seconds: 7
+    cooldown-after-effect: true
+    min-health: 1
+  wish:
+    cooldown-seconds: 90
+    hunger-cost: 8
+    heal-percent: 70
+    range: 50
+  ragnarok:
+    cooldown-seconds: 90
+    min-cooldown-seconds: 20.0
+    hunger-cost: 0
+    duration-seconds: 3
+    cooldown-after-effect: true
+    attack-speed: 40
+    movement-speed: 30
+  hollowed-mist:
+    cooldown-seconds: 40
+    min-cooldown-seconds: 15.0
+    hunger-cost: 4
+    duration-seconds: 8
+    cooldown-after-effect: true
+    radius: 5
+  petrifying-gaze:
+    cooldown-seconds: 60
+    min-cooldown-seconds: 15.0
+    hunger-cost: 4
+    range: 7
+    duration-seconds: 2.5
+    cone-angle: 70
+    facing-angle: 60
+    slow-percent: 40
+    require-pvp: true
+  sanguine-pool:
+    cooldown-seconds: 30
+    min-cooldown-seconds: 10.0
+    hunger-cost: 4
+    duration-seconds: 4
+    cooldown-after-effect: true
+    movement-speed: 30
+    scale-percent: 1
+    radius: 5
+  lambs-sprite:
+    cooldown-seconds: 90
+    min-cooldown-seconds: 15.0
+    hunger-cost: 4
+    duration-seconds: 5
+    cooldown-after-effect: true
+    radius: 7
+    vertical-range: 5
+    min-health: 1
+    heal-percent: 30
+  spray-and-pray:
+    cooldown-seconds: 90
+    min-cooldown-seconds: 15.0
+    hunger-cost: 4
+    duration-seconds: 12
+    cooldown-after-effect: true
+    poison-seconds: 10
+  surround-sounds:
+    cooldown-seconds: 60
+    min-cooldown-seconds: 15.0
+    hunger-cost: 4
+    duration-seconds: 10
+    cooldown-after-effect: true
+    radius: 7
+    absorption-hearts: 10
+    heal-percent: 20
+  inspire:
+    cooldown-seconds: 20
+    min-cooldown-seconds: 10.0
+    hunger-cost: 4
+    duration-seconds: 7
+    cooldown-after-effect: true
+    radius: 7
+    absorption-hearts: 40
+    movement-speed: 30
+    attack-speed: 80
+  meditate:
+    cooldown-seconds: 60
+    min-cooldown-seconds: 15.0
+    hunger-cost: 0
+    duration-seconds: 5
+    heal-percent: 5
+    heal-interval-ticks: 20
+    damage-reduction-percent: 90
+    cooldown-after-effect: true
+  battle-roar:
+    cooldown-seconds: 45
+    min-cooldown-seconds: 15.0
+    hunger-cost: 0
+    duration-seconds: 3
+    window-seconds: 3
+    movement-speed: 50
+    dome-radius: 5

@@ -11,8 +11,8 @@ import org.bukkit.plugin.java.JavaPlugin;
 import dev.ixpu.leaguemechanics.LeagueMechanics;
 import dev.ixpu.leaguemechanics.entity.player.PlayerRuneData;
 import dev.ixpu.leaguemechanics.rune.CooldownHandler;
-import dev.ixpu.leaguemechanics.rune.RunePath;
-import dev.ixpu.leaguemechanics.rune.RuneRegistry;
+import dev.ixpu.leaguemechanics.rune.paths.RunePath;
+import dev.ixpu.leaguemechanics.util.RuneRegistry;
 import dev.ixpu.leaguemechanics.util.RunePersistence;
 
 public class RuneManager {

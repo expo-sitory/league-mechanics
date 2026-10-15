@@ -1,0 +1,32 @@
+{
+	"format_version": "1.21.11",
+	"credit": "Made by DinoBrik",
+	"parent": "item/generated",
+	"textures": {
+		"2": "item/gui/aging_barrel",
+		"particle": "item/gui/aging_barrel"
+	},
+	"elements": [
+		{
+			"from": [-16, 0, 0],
+			"to": [28, 20, 0],
+			"shade": false,
+			"light_emission": 15,
+			"rotation": {"angle": 0, "axis": "y", "origin": [-16, 0, 0]},
+			"faces": {
+				"north": {"uv": [0, 0, 11, 5], "texture": "#2"},
+				"east": {"uv": [2, 8, 2, 16], "texture": "#missing"},
+				"south": {"uv": [0, 0, 11, 5], "texture": "#2"},
+				"west": {"uv": [0, 8, 0, 16], "texture": "#missing"},
+				"up": {"uv": [0, 0, 16, 0], "texture": "#missing"},
+				"down": {"uv": [0, 2, 16, 2], "texture": "#missing"}
+			}
+		}
+	],
+	"display": {
+		"gui": {
+			"translation": [-64, 14, 0],
+			"scale": [4, 4, 0.1]
+		}
+	}
+}

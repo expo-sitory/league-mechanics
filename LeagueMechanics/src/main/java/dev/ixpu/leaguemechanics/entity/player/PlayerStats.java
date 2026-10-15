@@ -1,17 +1,22 @@
 package dev.ixpu.leaguemechanics.entity.player;
 
 import dev.ixpu.leaguemechanics.LeagueMechanics;
+import dev.ixpu.leaguemechanics.manager.ClassAbilitiesManager;
 import dev.ixpu.leaguemechanics.manager.ItemStatsManager;
-import dev.ixpu.leaguemechanics.rune.keystones.precision.LethalTempo;
-import dev.ixpu.leaguemechanics.rune.keystones.domination.HailOfBlades;
+import dev.ixpu.leaguemechanics.rune.paths.precision.LethalTempo;
+import dev.ixpu.leaguemechanics.rune.paths.domination.HailOfBlades;
 import dev.ixpu.leaguemechanics.rune.CooldownHandler;
+import dev.ixpu.leaguemechanics.manager.BuffManager;
+import dev.ixpu.leaguemechanics.manager.AbilityEffectManager;
 import dev.ixpu.leaguemechanics.manager.DebuffManager;
-import dev.ixpu.leaguemechanics.rune.DebuffType;
+import dev.ixpu.leaguemechanics.debuff.DebuffType;
 import dev.ixpu.leaguemechanics.item.passives.ItemPassivesRegistry;
-import dev.ixpu.leaguemechanics.item.passives.dark_seal;
+import dev.ixpu.leaguemechanics.item.passives.basic.dark_seal;
 import dev.ixpu.leaguemechanics.rune.shards.ShardStats;
-import dev.ixpu.leaguemechanics.rune.RuneShard;
+import dev.ixpu.leaguemechanics.rune.shards.RuneShard;
 
+import dev.ixpu.leaguemechanics.entity.player.abilities.ClassAbilities;
+import dev.ixpu.leaguemechanics.util.ActionBarEntry;
 import dev.ixpu.leaguemechanics.util.Icons;
 import org.bukkit.entity.Player;
 import org.bukkit.Material;
@@ -28,8 +33,6 @@ import static dev.ixpu.leaguemechanics.entity.player.PlayerClass.*;
 public class PlayerStats {
     private static final Map<UUID, PlayerStats> INSTANCE_CACHE = new ConcurrentHashMap<>();
 
-    private static final double PLAYER_DAMAGE_BALANCER = 7.0;
-
     private static final double BASE_HEALING_MULTIPLIER = 1.0;
 
     private double temporaryADModification = 0.0;
@@ -41,10 +44,19 @@ public class PlayerStats {
     private double temporaryMSModification = 0.0;
     private double temporaryASModification = 0.0;
     private double temporaryCritDamageModification = 0.0;
+    private double temporaryHealingModification = 0.0;
+    private double temporaryAbsorptionModification = 0.0;
+
+    private double LEVEL_18_BONUS_TRUE_DAMAGE = 3.5;
+    private double LEVEL_13_BONUS_TRUE_DAMAGE = 2.7;
+    private double LEVEL_8_BONUS_TRUE_DAMAGE = 2.2;
+    private double LEVEL_3_BONUS_TRUE_DAMAGE = 1.7;
+    private double BASE_BONUS_TRUE_DAMAGE = 0;
 
     private int graspHearts = 0;
 
     private ShardStats shardStats;
+    private final Map<String, Long> actionBarOrder = new HashMap<>();
     private int leagueLevel = 1;
 
     public static PlayerStats getOrCreate(Player player) {
@@ -55,10 +67,6 @@ public class PlayerStats {
             stats.setLeagueLevel(leagueLevel);
             return stats;
         });
-    }
-
-    public double getDamageBalancer() {
-        return PLAYER_DAMAGE_BALANCER;
     }
 
     public static void invalidateCache(UUID uuid) {
@@ -100,7 +108,8 @@ public class PlayerStats {
 
     public double getPlayerHR(Player player) {
         ItemStatsManager itemStatsManager = LeagueMechanics.getInstance().getStatsManager();
-        return itemStatsManager.getItemHR(player) + getRuneShards(player).getHealthRegen();
+        return itemStatsManager.getItemHR(player) + getRuneShards(player).getHealthRegen()
+                + BuffManager.getInstance().getBonus(player, BuffManager.Stat.HR);
     }
 
 
@@ -116,7 +125,8 @@ public class PlayerStats {
         if (itemStatsManager != null) {
             itemAD += itemStatsManager.getItemAD(player);
         }
-        double totalAD = Math.max(0, baseAD + itemAD + enchantAD + temporaryADModification);
+        double totalAD = Math.max(0, (baseAD + itemAD + temporaryADModification) * (1.0 + enchantAD)
+                * BuffManager.getInstance().getMultiplier(player, BuffManager.Stat.AD));
 
         if (player.hasPotionEffect(PotionEffectType.WEAKNESS)) {
             int amplifier = player.getPotionEffect(PotionEffectType.WEAKNESS).getAmplifier();
@@ -124,7 +134,7 @@ public class PlayerStats {
             totalAD = Math.max(0, totalAD * multiplier);
         }
 
-        return totalAD / PLAYER_DAMAGE_BALANCER;
+        return totalAD;
     }
 
     public double getPlayerAP(Player player) {
@@ -140,7 +150,8 @@ public class PlayerStats {
             itemAP += darkSeal.getAbilityPower(player);
         }
 
-        double totalAP = Math.max(0, baseAP + itemAP + temporaryAPModification);
+        double totalAP = Math.max(0, (baseAP + itemAP + temporaryAPModification)
+                * BuffManager.getInstance().getMultiplier(player, BuffManager.Stat.AP));
 
         if (player.hasPotionEffect(PotionEffectType.WEAKNESS)) {
             int amplifier = player.getPotionEffect(PotionEffectType.WEAKNESS).getAmplifier();
@@ -148,7 +159,7 @@ public class PlayerStats {
             totalAP = Math.max(0, totalAP * multiplier);
         }
 
-        return totalAP / PLAYER_DAMAGE_BALANCER;
+        return totalAP;
     }
 
     public double getPlayerAF(Player player) {
@@ -167,7 +178,7 @@ public class PlayerStats {
         ItemStatsManager itemStatsManager = LeagueMechanics.getInstance().getStatsManager();
         double itemTD = 0;
         double baseTD = 0;
-        double bonusTD = levelBasedTD(player);
+        double bonusTD = levelBasedTD();
         if (itemStatsManager != null) {
             itemTD += itemStatsManager.getItemTD(player);
         }
@@ -202,7 +213,9 @@ public class PlayerStats {
         double weaponAS = getWeaponAS(player);
         double shardsAS = getRuneShards(player).getAttackSpeed();
         double asRatio = getPlayerClassAttackSpeedRatio(player);
-        double bonusASMultiplier = (itemAS + weaponAS + asRatio + shardsAS) / 100.0;
+        double buffAS = BuffManager.getInstance().getBonus(player, BuffManager.Stat.AS)
+                + AbilityEffectManager.getInstance().getAttackSpeedBonus(player);
+        double bonusASMultiplier = (itemAS + runeAS + weaponAS + asRatio + shardsAS + buffAS) / 100.0;
         return asRatio * bonusASMultiplier + baseAS;
     }
 
@@ -215,6 +228,8 @@ public class PlayerStats {
         }
         double totalAR = baseAR + itemAR + temporaryARModification;
         totalAR = totalAR * getProtectionARBonus(player);
+        totalAR *= BuffManager.getInstance().getMultiplier(player, BuffManager.Stat.AR);
+        totalAR *= AbilityEffectManager.getInstance().getArmorMultiplier(player);
 
         if (player.hasPotionEffect(PotionEffectType.RESISTANCE)) {
             int amplifier = player.getPotionEffect(PotionEffectType.RESISTANCE).getAmplifier();
@@ -234,6 +249,7 @@ public class PlayerStats {
         }
         double totalMR = baseMR + itemMR + temporaryMRModification;
         totalMR = totalMR * getProtectionMRBonus(player);
+        totalMR *= BuffManager.getInstance().getMultiplier(player, BuffManager.Stat.MR);
 
         if (player.hasPotionEffect(PotionEffectType.RESISTANCE)) {
             int amplifier = player.getPotionEffect(PotionEffectType.RESISTANCE).getAmplifier();
@@ -262,6 +278,9 @@ public class PlayerStats {
             totalMS += (speedEffectBonus * 100);
             totalMS += itemMS + shardsMS;
             totalMS += temporaryMSModification;
+            totalMS += BuffManager.getInstance().getBonus(player, BuffManager.Stat.MS);
+            totalMS += ClassPassives.getMovementSpeedBonus(player);
+            totalMS += AbilityEffectManager.getInstance().getMovementSpeedBonus(player);
 
             return totalMS;
         } catch (Exception e) {
@@ -275,7 +294,7 @@ public class PlayerStats {
     }
 
     public double getPlayerCH(Player player) {
-        double shardsCH = getRuneShards(player).getCooldownHaste();
+        double shardsCH = getRuneShards(player).getCooldownHaste() + BuffManager.getInstance().getBonus(player, BuffManager.Stat.CH);
         ItemStatsManager itemStatsManager = LeagueMechanics.getInstance().getStatsManager();
         if (itemStatsManager == null) {
             return shardsCH;
@@ -287,21 +306,21 @@ public class PlayerStats {
         ItemStatsManager itemStatsManager = LeagueMechanics.getInstance().getStatsManager();
         if (itemStatsManager == null) return 0;
         double shardsTN = getRuneShards(player).getTenacity();
-        return itemStatsManager.getItemTN(player) + shardsTN;
+        return itemStatsManager.getItemTN(player) + shardsTN + BuffManager.getInstance().getBonus(player, BuffManager.Stat.TN);
     }
 
-    private double levelBasedTD(Player player) {
-        double playerLevel = player.getLevel();
-        if (playerLevel >= 300) {
-            return 15;
-        } else if (playerLevel >= 200) {
-            return 12;
-        } else if (playerLevel >= 100) {
-            return 8;
-        } else if (playerLevel >= 50) {
-            return 4;
+    private double levelBasedTD() {
+        int level = getLeagueLevel();
+        if (level >= 18) {
+            return LEVEL_18_BONUS_TRUE_DAMAGE;
+        } else if (level >= 13) {
+            return LEVEL_13_BONUS_TRUE_DAMAGE;
+        } else if (level >= 8) {
+            return LEVEL_8_BONUS_TRUE_DAMAGE;
+        } else if (level >= 3) {
+            return LEVEL_3_BONUS_TRUE_DAMAGE;
         } else {
-            return 2;
+            return BASE_BONUS_TRUE_DAMAGE;
         }
     }
 
@@ -336,7 +355,7 @@ public class PlayerStats {
         if (sharpnessLevel == 0) {
             return 0;
         }
-        return 0.5 + (sharpnessLevel * 0.5) * 7;
+        return sharpnessLevel * 0.10;
     }
 
     public double getWeaponAS(Player player) {
@@ -354,7 +373,7 @@ public class PlayerStats {
                 totalProtectionLevel += armor.getEnchantmentLevel(Enchantment.PROTECTION);
             }
         }
-        return 1.0 + (totalProtectionLevel * 0.05);
+        return 1.0 + (totalProtectionLevel * 0.15);
     }
 
     public double getProtectionARBonus(Player player) {
@@ -364,7 +383,7 @@ public class PlayerStats {
                 totalProtectionLevel += armor.getEnchantmentLevel(Enchantment.PROTECTION);
             }
         }
-        return 1.0 + (totalProtectionLevel * 0.05);
+        return 1.0 + (totalProtectionLevel * 0.10);
     }
 
     public void modifyAD(double amount) {
@@ -406,7 +425,7 @@ public class PlayerStats {
     public double getHealingMultiplier(Player player) {
         ItemStatsManager itemStatsManager = LeagueMechanics.getInstance().getStatsManager();
         double itemHM = itemStatsManager != null ? itemStatsManager.getItemHM(player) : 0;
-        return BASE_HEALING_MULTIPLIER * (1.0 + itemHM / 100.0);
+        return BASE_HEALING_MULTIPLIER * (1.0 + itemHM / 100.0) * BuffManager.getInstance().getHealingMultiplier(player);
     }
 
     public boolean hasGrievousWounds(Player player) {
@@ -417,23 +436,24 @@ public class PlayerStats {
     public double getEffectiveHealingMultiplier(Player player) {
         double base = getHealingMultiplier(player);
         if (hasGrievousWounds(player)) {
-            base *= 0.6;
+            base *= 0.4;
         }
         return base;
     }
 
     public double getEffectiveLifeSteal(Player player, double baseLifeStealPercent) {
         if (hasGrievousWounds(player)) {
-            return baseLifeStealPercent * 0.6;
+            return baseLifeStealPercent * 0.4;
         }
         return baseLifeStealPercent;
     }
 
     public double getEffectiveHealthRegen(Player player, double baseRegen) {
+        double regen = baseRegen * getHealingMultiplier(player);
         if (hasGrievousWounds(player)) {
-            return baseRegen * 0.6;
+            return regen * 0.4;
         }
-        return baseRegen;
+        return regen;
     }
 
     public double getPlayerCSD(Player player) {
@@ -449,41 +469,51 @@ public class PlayerStats {
     public String getActionBarSections(Player player) {
         if (player == null) return "";
 
-        StringBuilder sb = new StringBuilder();
-
-        DebuffManager debuffs = DebuffManager.getInstance();
-        if (debuffs.hasDebuff(player, DebuffType.GRIEVOUS_WOUNDS)) {
-            double remaining = debuffs.getRemainingSeconds(player, DebuffType.GRIEVOUS_WOUNDS);
-            sb.append(Icons.get("status.grievous-wounds") + " §4(").append(String.format("%.1f", remaining)).append("s)");
-        }
-        if (debuffs.hasDebuff(player, DebuffType.INFLAME)) {
-            double remaining = debuffs.getRemainingSeconds(player, DebuffType.INFLAME);
-            sb.append(Icons.get("status.burned") + " §6(").append(String.format("%.1f", remaining)).append("s)");
-        }
-        org.bukkit.potion.PotionEffect slow = player.getPotionEffect(PotionEffectType.SLOWNESS);
-        if (slow != null && slow.getDuration() > 0) {
-            sb.append(Icons.get("status.slowed") + " §b(").append(String.format("%.1f", slow.getDuration() / 20.0)).append("s)");
-        }
+        List<ActionBarEntry> entries = new ArrayList<>();
+        entries.addAll(DebuffManager.getInstance().getActionBarEntries(player));
+        entries.addAll(BuffManager.getInstance().getActionBarEntries(player));
+        entries.addAll(AbilityEffectManager.getInstance().getActionBarEntries(player));
 
         dev.ixpu.leaguemechanics.manager.ItemPassivesManager passiveManager =
                 dev.ixpu.leaguemechanics.manager.ItemPassivesManager.getInstance();
         if (passiveManager != null) {
-            appendPassiveCooldown(sb, passiveManager, player, "hextech-alternator", "§7" + Icons.get("items.hextech-alternator"));
-            appendPassiveCooldown(sb, passiveManager, player, "scouts-slingshot", "§7" + Icons.get("items.scouts-slingshot"));
-            appendPassiveCooldown(sb, passiveManager, player, "hexdrinker", "§7" + Icons.get("items.hexdrinker"));
-            appendPassiveCooldown(sb, passiveManager, player, "bamis-cinder", "§7" + Icons.get("items.bamis-cinder"));
-            appendPassiveCooldown(sb, passiveManager, player, "verdant-barrier", "§7" + Icons.get("items.verdant-barrier"));
+            for (String passiveId : new String[]{"hextech-alternator", "scouts-slingshot", "hexdrinker", "bamis-cinder", "verdant-barrier"}) {
+                addCooldownEntry(entries, "passive:" + passiveId, Icons.get("items." + passiveId),
+                        passiveManager.getRemainingCooldownSeconds(player, passiveId));
+            }
         }
 
+        addCooldownEntry(entries, "class:support_transfer", Icons.get("passives.soraka_astral"), ClassPassives.getSupportTransferCooldownSeconds(player));
+        addCooldownEntry(entries, "class:mage_absorb", Icons.get("passives.malzahar_void_shift"), ClassPassives.getMageAbsorbCooldownSeconds(player));
+        addCooldownEntry(entries, "class:assassin_recall", Icons.get("passives.assassin_shadow_recall"), ClassPassives.getAssassinRecallCooldownSeconds(player));
+
+        ClassAbilitiesManager classSkills = ClassAbilitiesManager.getInstance();
+        ClassAbilities selectedSkill = classSkills.getSelectedSkill(player);
+        if (selectedSkill != null) {
+            addCooldownEntry(entries, "skill:" + selectedSkill.getId(), Icons.get(selectedSkill.getIconKey()),
+                    classSkills.getRemainingCooldownSeconds(player, selectedSkill));
+        }
+
+        long now = System.nanoTime();
+        Set<String> active = new HashSet<>();
+        for (ActionBarEntry entry : entries) {
+            active.add(entry.key());
+            actionBarOrder.putIfAbsent(entry.key(), now);
+        }
+        actionBarOrder.keySet().retainAll(active);
+        entries.sort(Comparator.comparingLong(entry -> actionBarOrder.get(entry.key())));
+
+        StringBuilder sb = new StringBuilder();
+        for (ActionBarEntry entry : entries) {
+            if (sb.length() > 0) sb.append(" ");
+            sb.append(entry.text());
+        }
         return sb.toString();
     }
 
-    private void appendPassiveCooldown(StringBuilder sb,
-                                       dev.ixpu.leaguemechanics.manager.ItemPassivesManager manager,
-                                       Player player, String passiveId, String icon) {
-        double remaining = manager.getRemainingCooldownSeconds(player, passiveId);
+    private void addCooldownEntry(List<ActionBarEntry> entries, String key, String icon, double remaining) {
         if (remaining <= 0) return;
-        sb.append(" ").append(icon).append(" §7").append(String.format("%.1fs", remaining));
+        entries.add(new ActionBarEntry(key, "§7" + icon + " §7" + String.format("%.1fs", remaining)));
     }
 
     public ShardStats getRuneShards(Player player) {

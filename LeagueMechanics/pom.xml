@@ -6,7 +6,7 @@
 
     <groupId>dev.ixpu</groupId>
     <artifactId>LeagueMechanics</artifactId>
-    <version>2.1.4</version>
+    <version>2.2.4</version>
     <packaging>jar</packaging>
 
     <name>LeagueMechanics</name>
@@ -37,9 +37,31 @@
             <scope>provided</scope>
         </dependency>
         <dependency>
+            <groupId>com.github.MilkBowl</groupId>
+            <artifactId>VaultAPI</artifactId>
+            <version>1.7</version>
+            <scope>provided</scope>
+            <exclusions>
+                <exclusion>
+                    <groupId>org.bukkit</groupId>
+                    <artifactId>bukkit</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>org.bukkit</groupId>
+                    <artifactId>craftbukkit</artifactId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+        <dependency>
             <groupId>com.github.PlaceholderAPI</groupId>
             <artifactId>PlaceholderAPI</artifactId>
             <version>2.11.5</version>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>net.dmulloy2</groupId>
+            <artifactId>ProtocolLib</artifactId>
+            <version>5.3.0</version>
             <scope>provided</scope>
         </dependency>
         <dependency>

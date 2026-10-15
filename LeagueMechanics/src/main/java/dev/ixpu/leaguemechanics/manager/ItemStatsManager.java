@@ -31,6 +31,48 @@ public class ItemStatsManager {
         return count;
     }
 
+    public void enforceItemLimit(Player player) {
+        int totalLimit = 6;
+        ItemStack[] contents = player.getInventory().getContents();
+        dev.ixpu.leaguemechanics.item.shop.ItemShopData shopData = dev.ixpu.leaguemechanics.item.shop.ItemShopData.getInstance();
+
+        Map<String, Integer> owned = new HashMap<>();
+        int removed = 0;
+        for (int i = 0; i < contents.length; i++) {
+            ItemStack item = contents[i];
+            if (item == null || item.getType().isAir()) {
+                continue;
+            }
+            String itemId = ItemModifier.getItemId(item);
+            if (itemId == null || !shopData.hasItem(itemId)) {
+                continue;
+            }
+            int count = owned.merge(itemId, 1, Integer::sum);
+            if (count > shopData.getLimit(itemId)) {
+                player.getInventory().setItem(i, null);
+                contents[i] = null;
+                removed++;
+            }
+        }
+
+        List<Integer> slots = new ArrayList<>();
+        for (int i = 0; i < contents.length; i++) {
+            ItemStack item = contents[i];
+            if (item != null && !item.getType().isAir() && ItemModifier.getItemId(item) != null) {
+                slots.add(i);
+            }
+        }
+        for (int i = slots.size() - 1; i >= totalLimit; i--) {
+            player.getInventory().setItem(slots.get(i), null);
+            removed++;
+        }
+
+        if (removed > 0) {
+            invalidateCache(player.getUniqueId());
+            player.sendMessage(net.kyori.adventure.text.Component.text("§cLeague item limit exceeded, removed " + removed + " extra item(s)"));
+        }
+    }
+
     public void invalidateCache(UUID uuid) {
         statsCache.remove(uuid);
         cacheTimestamp.remove(uuid);

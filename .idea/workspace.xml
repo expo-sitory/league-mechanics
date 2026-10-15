@@ -4,24 +4,13 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="cda9b1ea-0c5c-4d4f-b093-41df2f38c092" name="Changes" comment="Modified">
-      <change afterPath="$PROJECT_DIR$/.idea/sshConfigs.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/LeagueMechanics/src/main/java/dev/ixpu/leaguemechanics/entity/player/PlayerStats.java" beforeDir="false" afterPath="$PROJECT_DIR$/LeagueMechanics/src/main/java/dev/ixpu/leaguemechanics/entity/player/PlayerStats.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/LeagueMechanics/src/main/java/dev/ixpu/leaguemechanics/entity/player/skills/Dash.java" beforeDir="false" afterPath="$PROJECT_DIR$/LeagueMechanics/src/main/java/dev/ixpu/leaguemechanics/entity/player/skills/Dash.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/LeagueMechanics/src/main/java/dev/ixpu/leaguemechanics/entity/player/skills/DoubleJump.java" beforeDir="false" afterPath="$PROJECT_DIR$/LeagueMechanics/src/main/java/dev/ixpu/leaguemechanics/entity/player/skills/DoubleJump.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/LeagueMechanics/src/main/java/dev/ixpu/leaguemechanics/entity/player/skills/Parry.java" beforeDir="false" afterPath="$PROJECT_DIR$/LeagueMechanics/src/main/java/dev/ixpu/leaguemechanics/entity/player/skills/Parry.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/LeagueMechanics/src/main/java/dev/ixpu/leaguemechanics/gui/ItemShopGUI.java" beforeDir="false" afterPath="$PROJECT_DIR$/LeagueMechanics/src/main/java/dev/ixpu/leaguemechanics/gui/ItemShopGUI.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/LeagueMechanics/src/main/java/dev/ixpu/leaguemechanics/item/ItemStatsData.java" beforeDir="false" afterPath="$PROJECT_DIR$/LeagueMechanics/src/main/java/dev/ixpu/leaguemechanics/item/ItemStatsData.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/LeagueMechanics/src/main/java/dev/ixpu/leaguemechanics/item/ItemStatsRegistry.java" beforeDir="false" afterPath="$PROJECT_DIR$/LeagueMechanics/src/main/java/dev/ixpu/leaguemechanics/item/ItemStatsRegistry.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/LeagueMechanics/src/main/java/dev/ixpu/leaguemechanics/item/passives/oblivion_orb.java" beforeDir="false" afterPath="$PROJECT_DIR$/LeagueMechanics/src/main/java/dev/ixpu/leaguemechanics/item/passives/oblivion_orb.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/LeagueMechanics/src/main/java/dev/ixpu/leaguemechanics/listener/DamageListener.java" beforeDir="false" afterPath="$PROJECT_DIR$/LeagueMechanics/src/main/java/dev/ixpu/leaguemechanics/listener/DamageListener.java" afterDir="false" />
+    <list default="true" id="cda9b1ea-0c5c-4d4f-b093-41df2f38c092" name="Changes" comment="Balancing Stage">
+      <change beforePath="$PROJECT_DIR$/LeagueMechanics/packs/Bedrock/LeagueMechanics.zip" beforeDir="false" afterPath="$PROJECT_DIR$/LeagueMechanics/packs/Bedrock/LeagueMechanics.zip" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/LeagueMechanics/packs/Bedrock/font/glyph_E4.png" beforeDir="false" afterPath="$PROJECT_DIR$/LeagueMechanics/packs/Bedrock/font/glyph_E4.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/LeagueMechanics/packs/Bedrock/manifest.json" beforeDir="false" afterPath="$PROJECT_DIR$/LeagueMechanics/packs/Bedrock/manifest.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/LeagueMechanics/packs/Java/assets/minecraft/font/default.json" beforeDir="false" afterPath="$PROJECT_DIR$/LeagueMechanics/packs/Java/assets/minecraft/font/default.json" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/LeagueMechanics/src/main/java/dev/ixpu/leaguemechanics/manager/DamageManager.java" beforeDir="false" afterPath="$PROJECT_DIR$/LeagueMechanics/src/main/java/dev/ixpu/leaguemechanics/manager/DamageManager.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/LeagueMechanics/src/main/java/dev/ixpu/leaguemechanics/manager/ItemStatsManager.java" beforeDir="false" afterPath="$PROJECT_DIR$/LeagueMechanics/src/main/java/dev/ixpu/leaguemechanics/manager/ItemStatsManager.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/LeagueMechanics/src/main/java/dev/ixpu/leaguemechanics/placeholder/PlaceholderRegistry.java" beforeDir="false" afterPath="$PROJECT_DIR$/LeagueMechanics/src/main/java/dev/ixpu/leaguemechanics/placeholder/PlaceholderRegistry.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/LeagueMechanics/src/main/java/dev/ixpu/leaguemechanics/rune/keystones/domination/HailOfBlades.java" beforeDir="false" afterPath="$PROJECT_DIR$/LeagueMechanics/src/main/java/dev/ixpu/leaguemechanics/rune/keystones/domination/HailOfBlades.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/LeagueMechanics/src/main/java/dev/ixpu/leaguemechanics/util/ItemModifier.java" beforeDir="false" afterPath="$PROJECT_DIR$/LeagueMechanics/src/main/java/dev/ixpu/leaguemechanics/util/ItemModifier.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/README.md" beforeDir="false" afterPath="$PROJECT_DIR$/README.md" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/LeagueMechanics/src/main/resources/icons.yml" beforeDir="false" afterPath="$PROJECT_DIR$/LeagueMechanics/src/main/resources/icons.yml" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -180,6 +169,7 @@
     &quot;Maven.LeagueMechanics [clean,package].executor&quot;: &quot;Run&quot;,
     &quot;Maven.LeagueMechanics [clean,validate,compile...].executor&quot;: &quot;Run&quot;,
     &quot;Maven.LeagueMechanics [clean].executor&quot;: &quot;Run&quot;,
+    &quot;Maven.LeagueMechanics [install].executor&quot;: &quot;Run&quot;,
     &quot;Maven.LeagueMechanics [verify].executor&quot;: &quot;Run&quot;,
     &quot;Maven.cullingames [clean].executor&quot;: &quot;Run&quot;,
     &quot;Maven.item-origin [clean].executor&quot;: &quot;Run&quot;,
@@ -200,7 +190,7 @@
     &quot;git-widget-placeholder&quot;: &quot;debug-session&quot;,
     &quot;junie.onboarding.icon.badge.shown&quot;: &quot;true&quot;,
     &quot;kotlin-language-version-configured&quot;: &quot;true&quot;,
-    &quot;last_opened_file_path&quot;: &quot;/home/exponent/minecraft-projects/league-mechanics/LeagueMechanics/target&quot;,
+    &quot;last_opened_file_path&quot;: &quot;/home/exponent/minecraft-projects/test-server&quot;,
     &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,
     &quot;node.js.detected.package.jshint&quot;: &quot;true&quot;,
     &quot;node.js.detected.package.tslint&quot;: &quot;true&quot;,
@@ -211,7 +201,7 @@
     &quot;project.structure.last.edited&quot;: &quot;Project&quot;,
     &quot;project.structure.proportion&quot;: &quot;0.0&quot;,
     &quot;project.structure.side.proportion&quot;: &quot;0.2&quot;,
-    &quot;settings.editor.selected.configurable&quot;: &quot;configurable.group.build&quot;,
+    &quot;settings.editor.selected.configurable&quot;: &quot;reference.settings.project.maven.runner&quot;,
     &quot;to.speed.mode.migration.done&quot;: &quot;true&quot;
   }
 }</component>
@@ -236,10 +226,10 @@
   </component>
   <component name="RunManager">
     <configuration name="Test Server" type="JarApplication">
-      <option name="JAR_PATH" value="$PROJECT_DIR$/test-server/server.jar" />
-      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/test-server" />
-      <option name="ALTERNATIVE_JRE_PATH_ENABLED" value="true" />
-      <option name="ALTERNATIVE_JRE_PATH" value="/usr/lib/jvm/java-25-openjdk" />
+      <option name="JAR_PATH" value="$PROJECT_DIR$/../test-server/server.jar" />
+      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/../test-server" />
+      <option name="ALTERNATIVE_JRE_PATH" />
+      <module name="LeagueMechanics" />
       <method v="2" />
     </configuration>
   </component>
@@ -298,10 +288,10 @@
     <MESSAGE value="Fixed guaranteed Crit on percentage greater than 99" />
     <MESSAGE value="Update README.md" />
     <MESSAGE value="debug session" />
-    <MESSAGE value="Balancing Stage" />
     <MESSAGE value="Update plugin version" />
     <MESSAGE value="Modified" />
-    <option name="LAST_COMMIT_MESSAGE" value="Modified" />
+    <MESSAGE value="Balancing Stage" />
+    <option name="LAST_COMMIT_MESSAGE" value="Balancing Stage" />
   </component>
   <component name="XSLT-Support.FileAssociations.UIState">
     <expand />

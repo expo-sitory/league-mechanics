@@ -3,6 +3,8 @@
 
 general-settings:
   debug: true
+  # true = always use the custom item models (pack loaded client-side / not pushed by the server)
+  assume-client-pack: true
   debug-disabled-worlds:
     - world_nether
     - world_the_end
@@ -25,288 +27,71 @@ general-settings:
     max-lifetime: 1800000
     connection-timeout: 30000
 
-icons:
-  stats:
-    ad: "\uE228"
-    ap: "\uE222"
-    ar: "\uE224"
-    mr: "\uE230"
-    hp: "\uE22B"
-    hr: "\uE22C"
-    sr: "🍖"
-    as: "\uE229"
-    ls: "\uE22D"
-    cc: "\uE22A"
-    apen-flat: "\uE226"
-    apen-percent: "\uE225"
-    mpen: "\uE22F"
-    ch: "\uE221"
-    tn: "\uE232"
-    ms: "\uE231"
-    critical-damage-magic: "\uE252"
-    critical-damage-physical: "\uE253"
-    critical-damage: "\uE255"
-    physical-damage: "\uE227"
-    magic-damage: "\uE22E"
-  paths:
-    domination: "\uE200"
-    sorcery: "\uE201"
-    resolve: "\uE202"
-    inspiration: "\uE203"
-    precision: "\uE204"
-  classes:
-    fighter: "\uE241"
-    mage: "\uE242"
-    tank: "\uE245"
-    marksman: "\uE243"
-    assassin: "\uE240"
-    support: "\uE244"
-  keystones:
-    first-strike: "\uE206"
-    glacial-augment: "\uE207"
-    unsealed-spellbook: "\uE205"
-    guardian: "\uE208"
-    after-shock: "\uE209"
-    grasp-of-the-undying: "\uE20A"
-    deathfire-touch: "\uE20B"
-    storm-raider-surge: "\uE20C"
-    arcane-comet: "\uE20D"
-    hail-of-blades: "\uE20E"
-    dark-harvest: "\uE20F"
-    electrocute: "\uE210"
-    conqueror: "\uE211"
-    fleet-footwork: "\uE212"
-    lethal-tempo: "\uE213"
-    press-the-attack: "\uE214"
-  regions:
-    bandle_city: "\uE220"
-    bilgewater: "\uE21F"
-    demacia: "\uE21E"
-    freljord: "\uE21D"
-    ionia: "\uE21C"
-    noxus: "\uE21B"
-    piltover_zaun: "\uE21A"
-    shadow_isles: "\uE219"
-    shurima: "\uE215"
-    targon: "\uE218"
-    void: "\uE216"
-    zaun: "\uE217"
-  spells:
-    barrier: "\uE246"
-    cleanse: "\uE247"
-    exhaust: "\uE248"
-    ghost: "\uE249"
-    heal: "\uE24A"
-    ignite: "\uE24B"
-    smite: "\uE24C"
-  status:
-    blind: "\uE24D"
-    channeling: "\uE24E"
-    silenced: "\uE24F"
-    slowed: "\uE250"
-    burned: "\uE254"
-    grievous-wounds: "\uE251"
-  items:
-    aether-wisp: "\uE260"
-    amplifying-tome: "\uE261"
-    b-f-sword: "\uE262"
-    bamis-cinder: "\uE263"
-    bandleglass-mirror: "\uE264"
-    berserkers-greaves: "\uE265"
-    blasting-wand: "\uE266"
-    blightting-jewel: "\uE267"
-    boots: "\uE268"
-    bramble-vest: "\uE269"
-    caulfields-warhammer: "\uE26A"
-    chain-vest: "\uE26B"
-    cloak-of-agility: "\uE26C"
-    cloth-armor: "\uE26D"
-    crystalline-bracer: "\uE26E"
-    cull: "\uE26F"
-    dagger: "\uE270"
-    dark-seal: "\uE271"
-    dorans-blade: "\uE272"
-    dorans-bow: "\uE273"
-    dorans-helm: "\uE274"
-    dorans-ring: "\uE275"
-    dorans-shield: "\uE276"
-    executioners-calling: "\uE277"
-    faeri-charm: "\uE278"
-    fated-ashes: "\uE279"
-    flendish-codex: "\uE27A"
-    giants-belt: "\uE27B"
-    glowing-mote: "\uE27C"
-    hearthbound-axe: "\uE27D"
-    hexdrinker: "\uE27E"
-    hextech-alternator: "\uE27F"
-    kindlegem: "\uE280"
-    last-whisper: "\uE281"
-    long-sword: "\uE282"
-    lost-chapter: "\uE283"
-    mercurys-treads: "\uE284"
-    needlessly-large-rod: "\uE285"
-    negatron-cloak: "\uE286"
-    noonquiver: "\uE287"
-    null-magic-mantle: "\uE288"
-    oblivion-orb: "\uE289"
-    phage: "\uE28A"
-    pickaxe: "\uE28B"
-    plated-steelcaps: "\uE28C"
-    rectrix: "\uE28D"
-    recurve-bow: "\uE28E"
-    rejuvenation-bead: "\uE28F"
-    ruby-crystal: "\uE290"
-    scouts-slingshot: "\uE291"
-    serrated-dirk: "\uE292"
-    sorcerers-shoes: "\uE293"
-    spectres-cowl: "\uE294"
-    steel-sigil: "\uE295"
-    the-brutalizer: "\uE296"
-    tunneler: "\uE297"
-    vampiric-scepter: "\uE298"
-    verdant-barrier: "\uE299"
-    wardens-mail: "\uE29A"
-    winged-moonplate: "\uE29B"
-    zeal: "\uE29C"
-
-runes:
-
-  keystones:
-
-    # ============================= #
-    #        DOMINATION PATH        #
-    # ============================= #
-
-    domination:
-
-      dark-harvest:
-        base-adaptive-damage-per-stack: 2.5 # hardcoded max stack: 20
-        cooldown: 60 # seconds - Cooldown before next soul reap
-
-      electrocute:
-        base-adaptive-damage: 24.5
-        cooldown: 25 # seconds
-
-      hail-of-blades:
-        base-attack-speed: 10.0 # default: 10%
-        base-true-damage: 7.0 #  default: 7%
-        ad-percentage-multiplier: 8.0 # bonus true damage percentage from total AP percent - default: 8%
-        ap-percentage-multiplier: 6.0 # bonus true damage percentage from total AP percent - default: 6%
-        cooldown: 60 # seconds
-
-
-    # ============================= #
-    #       PRECISION PATH          #
-    # ============================= #
-
-    precision:
-      conqueror:
-        base-adaptive-damage-per-stack: 1.8 # hard coded max stack: 12
-
-      fleet-footwork:
-        blocks-per-stack: 10.0 # blocks to pass to gain 1 stack
-        projectile-stack-gain: 5 # stack to gain when hitting projectiles
-        heal-percent: 25.0 # missing health percentage - default: 25%
-        ad-percentage-multiplier: 10.0 # bonus healing percentage from total AD percent - default: this is 10%
-        ap-percentage-multiplier: 5.0 # bonus healing percentage from total AP percent - default: this is 5%
-
-      lethal-tempo:
-        base-adaptive-damage: 2.7 # adaptive damage when on max/active state
-        attack-speed: 60.0 # when on max stacks/active state - # percentage - default: 60%
-        cooldown: 30 # seconds
-
-      press-the-attack:
-        base-adaptive-damage: 9.5
-        cooldown: 6 # seconds
-
-    # ============================= #
-    #       INSPIRATION PATH        #
-    # ============================= #
-
-    inspiration:
-
-      glacial-augment:
-        base-freeze-duration: 120 # in ticks
-        ad-percentage-multiplier: 7.0 # bonus freeze duration from total AD percent - default 7%
-        ap-percentage-multiplier: 6.0 # bonus freeze duration from total AP percent - default 6%
-        cooldown: 45 # seconds
-
-      first-strike:
-        initial-xp: 24.0 # starting xp
-        buff-duration: 3 #seconds
-        true-damage-percent: 7.0 # while on active state
-        ad-percentage: 20.0 # bonus true damage from total AD percent - default: 20%
-        ap-percentage: 15.0 # bonus true damage from total AP percent - default: 15%
-        cooldown: 25 # seconds
-
-    # ============================= #
-    #       RESOLVE PATH            #
-    # ============================= #
-
-    resolve:
-
-      aftershock:
-        bonus-armor-percent: 75.0 # bonus armor percentage
-        bonus-magic-resist-percent: 75.0 # bonus magic-resist percentage
-        base-shockwave-damage: 12.5 # base shockwave magic damage
-        shockwave-bonus-hp-percent: 25.0 # bonus magic damage from total hp percentage
-        cooldown: 20 # seconds
-
-      grasp-of-the-undying:
-        heal-percent: 60.0 # missing health percent - default: 60%
-        cooldown: 45 # seconds
-
-      guardian:
-        max-players: 5 # max number of players that will get the effect
-        armor-percentage: 80
-        magic-resist-percentage: 80
-        cooldown: 60 # seconds
-
-
-    # ============================= #
-    #       SORCERY PATH            #
-    # ============================= #
-
-    sorcery:
-
-      arcane-comet:
-        base-adaptive-damage: 17.5
-        ad-percentage-multiplier: 5.0 # bonus adaptive damage from total AD percent - default: 5%
-        ap-percentage-multiplier: 15.0 # bonus adaptive damage from total AP percent - default: 15%
-        cooldown: 20 # seconds
-
-      deathfire-torch:
-        base-magic-damage: 2.5 # base magic damage per tick
-        ad-percentage-multiplier: 3.0 # bonus magic damage from total AD percent - default: 3%
-        ap-percentage-multiplier: 6.0 # bonus magic damage from total AP percent - default: 6%
-
-      storm-raider-surge:
-        damage-percent-threshold: 30.0 # damage threshold to activate - default: 30%
-        cooldown: 25 # seconds
+buffs:
+  crest_of_insight:
+    display-name: "Crest of Insight"
+    duration-seconds: 120
+    ch: 10
+    sr: 5
+  crest_of_cinders:
+    display-name: "Crest of Cinders"
+    duration-seconds: 120
+    slow-strength: 25
+    slow-duration-ticks: 60
+    inflame-duration-ticks: 60
+  chemtech_blight:
+    display-name: "Chemtech Blight"
+    duration-seconds: 120
+    tn: 24
+    heal-multiplier: 1.7
+  cloudbringers_grace:
+    display-name: "Cloudbringer's Grace"
+    duration-seconds: 120
+    tn: 20
+    ms: 20
+  hextech_prowess:
+    display-name: "Hextech Prowess"
+    duration-seconds: 120
+    ch: 20
+    as: 40
+  infernal_might:
+    display-name: "Infernal Might"
+    duration-seconds: 120
+    ad-percent: 20
+    ap-percent: 20
+  mountainous_vigor:
+    display-name: "Mountainous Vigor"
+    duration-seconds: 120
+    ar-percent: 20
+    mr-percent: 20
+  oceanic_will:
+    display-name: "Oceanic Will"
+    duration-seconds: 120
+    hr: 5
 
 # Mob Statistics Configuration
 mob-stats:
   zombie:
-    ad: 37.0
+    ad: 27.0
     ap: 12.0
-    ar: 150.0
+    ar: 130.0
     mr: 70.0
     type: UNDEAD
   skeleton:
     ad: 15.0
-    ap: 35.0
+    ap: 25.0
     ar: 40.0
-    mr: 175.0
+    mr: 125.0
     type: UNDEAD
   spider:
-    ad: 38.0
-    ap: 22.0
-    ar: 30.0
-    mr: 100.0
+    ad: 28.0
+    ap: 0.0
+    ar: 80.0
+    mr: 150.0
     type: ARTHROPOD
   cave_spider:
     ad: 34.0
-    ap: 46.0
+    ap: 0.0
     ar: 400.0
     mr: 60.0
     type: ARTHROPOD
@@ -317,20 +102,20 @@ mob-stats:
     mr: 399.0
     type: CRITTER
   enderman:
-    ad: 70.0
-    ap: 70.0
+    ad: 40.0
+    ap: 40.0
     ar: 120.0
     mr: 820.0
     type: ENDERMAN
   witch:
     ad: 0.0
-    ap: 485.0
+    ap: 185.0
     ar: 55.0
     mr: 530.0
     type: WITCH
   slime:
-    ad: 70.0
-    ap: 70.0
+    ad: 50.0
+    ap: 50.0
     ar: 999.0
     mr: 10.0
     type: SLIME
@@ -377,13 +162,13 @@ mob-stats:
     mr: 120.0
     type: UNDEAD
   iron_golem:
-    ad: 250.0
+    ad: 80.0
     ap: 0.0
     ar: 700.0
     mr: 180.0
     type: IRON_GOLEM
   drowned:
-    ad: 48.0
+    ad: 28.0
     ap: 18.0
     ar: 160.0
     mr: 85.0
@@ -473,7 +258,7 @@ mob-stats:
     mr: 92.0
     type: PARCHED
   phantom:
-    ad: 62.0
+    ad: 42.0
     ap: 42.0
     ar: 95.0
     mr: 140.0

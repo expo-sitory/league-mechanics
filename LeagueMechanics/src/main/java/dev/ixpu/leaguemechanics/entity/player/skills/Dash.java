@@ -6,6 +6,8 @@ import org.bukkit.boss.BarStyle;
 import org.bukkit.boss.BossBar;
 import org.bukkit.entity.Player;
 import dev.ixpu.leaguemechanics.LeagueMechanics;
+import dev.ixpu.leaguemechanics.entity.player.ClassPassives;
+import dev.ixpu.leaguemechanics.rune.CooldownHandler;
 
 import java.util.HashMap;
 import java.util.Locale;
@@ -13,49 +15,60 @@ import java.util.Map;
 import java.util.UUID;
 
 public class Dash {
-    private final Map<UUID, Long> playerCooldowns = new HashMap<>();
+    private final CooldownHandler cooldown = new CooldownHandler("dash") {
+        @Override
+        protected double effectiveCooldownSeconds(Player player) {
+            return cooldownMs(player) / 1000.0;
+        }
+    };
     private final Map<UUID, BossBar> dashBars = new HashMap<>();
 
-    private static final long COOLDOWN_MS = 7000L;
+    private static final long BASE_COOLDOWN_MS = 7000L;
+
+    private static long cooldownMs(Player player) {
+        return (long) (BASE_COOLDOWN_MS * ClassPassives.getMobilityCooldownMultiplier(player));
+    }
 
     public boolean isOnCooldown(Player player) {
-        UUID uuid = player.getUniqueId();
-        Long lastActivation = playerCooldowns.get(uuid);
-        if (lastActivation == null) {
-            return false;
-        }
-        long elapsed = System.currentTimeMillis() - lastActivation;
-        return elapsed < COOLDOWN_MS;
+        return getRemainingMs(player) > 0;
+    }
+
+    public long getRemainingMs(Player player) {
+        return (long) (cooldown.getRemainingCooldown(player) * 1000.0);
     }
 
     public void startCooldown(Player player) {
-        UUID uuid = player.getUniqueId();
-        playerCooldowns.put(uuid, System.currentTimeMillis());
-        showCooldownBar(player);
+        cooldown.resetCooldown(player);
+        showCooldownBar(player, cooldownMs(player));
     }
 
     private static String formatSeconds(long remainingMs) {
         return String.format(Locale.ROOT, "(%.1fs)", Math.max(0L, remainingMs) / 1000.0);
     }
 
-    private void showCooldownBar(Player player) {
+    private void showCooldownBar(Player player, long durationMs) {
         UUID uuid = player.getUniqueId();
         BossBar bar = dashBars.get(uuid);
         if (bar == null) {
-            bar = Bukkit.createBossBar("§bDash §f" + formatSeconds(COOLDOWN_MS), BarColor.BLUE, BarStyle.SOLID);
+            bar = Bukkit.createBossBar("§bDash §f" + formatSeconds(durationMs), BarColor.BLUE, BarStyle.SOLID);
             bar.addPlayer(player);
             dashBars.put(uuid, bar);
         }
 
         bar.setProgress(0.0);
-        startCooldownAnimation(player);
+        startCooldownAnimation(player, durationMs);
     }
 
-    private void startCooldownAnimation(Player player) {
+    private void startCooldownAnimation(Player player, long cooldownMs) {
         UUID uuid = player.getUniqueId();
-        long startTime = System.currentTimeMillis();
+        long startTime = cooldown.getLastActivation(player);
 
         Bukkit.getScheduler().runTaskTimer(LeagueMechanics.getInstance(), task -> {
+            if (!Long.valueOf(startTime).equals(cooldown.getLastActivation(player))) {
+                task.cancel();
+                return;
+            }
+
             if (!player.isOnline()) {
                 task.cancel();
                 BossBar bar = dashBars.remove(uuid);
@@ -70,11 +83,11 @@ public class Dash {
             }
 
             long elapsed = System.currentTimeMillis() - startTime;
-            double progress = Math.min(1.0, (double) elapsed / COOLDOWN_MS);
+            double progress = Math.min(1.0, (double) elapsed / cooldownMs);
             bar.setProgress(progress);
-            bar.setTitle("§bDash §f" + formatSeconds(COOLDOWN_MS - elapsed));
+            bar.setTitle("§bDash §f" + formatSeconds(cooldownMs - elapsed));
 
-            if (elapsed >= COOLDOWN_MS) {
+            if (elapsed >= cooldownMs) {
                 task.cancel();
                 bar.removeAll();
                 dashBars.remove(uuid);
@@ -88,6 +101,6 @@ public class Dash {
         if (bar != null) {
             bar.removeAll();
         }
-        playerCooldowns.remove(uuid);
+        cooldown.clearPlayerCooldown(player);
     }
 }

@@ -1,6 +1,5 @@
 package dev.ixpu.leaguemechanics.rune.shards;
 
-import dev.ixpu.leaguemechanics.rune.RuneShard;
 import org.bukkit.entity.Player;
 import dev.ixpu.leaguemechanics.entity.player.PlayerStats;
 
