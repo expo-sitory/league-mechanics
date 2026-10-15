@@ -1,5 +1,5 @@
 name: LeagueMechanics
-version: 2.1.4
+version: 2.2.4
 main: dev.ixpu.leaguemechanics.LeagueMechanics
 api-version: 1.21
 description: League of Legends Mechanics
